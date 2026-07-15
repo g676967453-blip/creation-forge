@@ -1,0 +1,31 @@
+{
+  "name": "spark-forge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "星火工坊 - 基于项目制学习的人机协作独立游戏开发工作室",
+  "workspaces": [
+    "shared/*",
+    "projects/tutorial/*",
+    "projects/originals/*",
+    "projects/sandbox/*"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "scaffold": "npx tsx tools/scaffold-game.ts",
+    "journal": "npx tsx tools/new-journal.ts"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.0.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.7.0",
+    "tsx": "^4.0.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

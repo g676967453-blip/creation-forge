@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "npm install",
+      "npm run",
+      "npx tsx",
+      "git status",
+      "git diff",
+      "git log",
+      "git branch",
+      "git add",
+      "git commit"
+    ]
+  },
+  "hooks": {
+    "pre-commit": "npm run lint"
+  }
+}
