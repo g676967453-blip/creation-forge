@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目制学习 + 人机协作 + 做中学 · 第三期 · 什么是项目制学习</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .card-1 { background: #141414; color: #f0f0f0; }
+  .card-2 { background: #1a1a1a; color: #e0e0e0; }
+  .card-3 { background: #141414; color: #f0f0f0; }
+  .card-4 { background: #1a1a1a; color: #e0e0e0; }
+  .card-5 { background: #141414; color: #f0f0f0; }
+  .card-6 { background: #1a1a1a; color: #e0e0e0; }
+
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; }
+
+  /* Card 1 - Cover */
+  .card-1 .emoji { font-size: 64px; margin-bottom: 30px; }
+  .card-1 h1 { font-size: 60px; font-weight: 900; line-height: 1.25; margin-bottom: 25px; letter-spacing: 2px; }
+  .card-1 h1 .highlight { color: #ff6b35; }
+  .card-1 .flow-tags { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+  .card-1 .flow-tags .tag { font-size: 20px; font-weight: 600; padding: 8px 16px; border-radius: 20px; background: rgba(255,107,53,0.1); color: #ff8c5a; border: 1px solid rgba(255,107,53,0.15); }
+  .card-1 .flow-tags .arr { color: rgba(255,255,255,0.30); }
+  .card-1 .accent-bar { width: 60px; height: 3px; background: #ff6b35; border-radius: 2px; margin: 30px auto; }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.60); line-height: 1.6; }
+
+  /* Card 2 */
+  .card-2 h2 { font-size: 46px; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px; }
+  .card-2 .split { display: flex; gap: 30px; width: 100%; justify-content: center; }
+  .card-2 .split-box { flex: 1; max-width: 380px; border-radius: 20px; padding: 35px 30px; }
+  .card-2 .split-box.dim { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); }
+  .card-2 .split-box.bright { background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.2); }
+  .card-2 .split-box .tag-label { font-size: 20px; font-weight: 700; margin-bottom: 25px; letter-spacing: 1px; }
+  .card-2 .split-box.dim .tag-label { color: rgba(255,255,255,0.30); }
+  .card-2 .split-box.bright .tag-label { color: #ff8c5a; }
+  .card-2 .split-box .flow-list { font-size: 26px; font-weight: 700; line-height: 2.1; }
+  .card-2 .split-box.dim .flow-list { color: rgba(255,255,255,0.30); }
+  .card-2 .split-box.bright .flow-list { color: #ff8c5a; }
+
+  /* Card 3 */
+  .card-3 h2 { font-size: 46px; font-weight: 800; margin-bottom: 40px; letter-spacing: 1px; }
+  .card-3 .example-card { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 45px 55px; text-align: left; width: 100%; border-left: 3px solid #ff6b35; }
+  .card-3 .example-card .goal-line { color: #ff8c5a; font-weight: 800; font-size: 28px; margin-bottom: 25px; }
+  .card-3 .example-card .learn-line { font-size: 22px; color: rgba(255,255,255,0.60); line-height: 2; }
+  .card-3 .example-card .learn-line em { color: #ff8c5a; font-style: normal; font-weight: 600; }
+  .card-3 .footnote { font-size: 20px; color: rgba(255,255,255,0.30); margin-top: 40px; }
+
+  /* Card 4 */
+  .card-4 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 25px; font-weight: 600; }
+  .card-4 h2 { font-size: 50px; font-weight: 900; margin-bottom: 50px; letter-spacing: 1px; }
+  .card-4 .insight-text { font-size: 28px; line-height: 2; color: rgba(255,255,255,0.60); }
+  .card-4 .insight-text b { color: #f0f0f0; font-weight: 800; }
+  .card-4 .contrast-row { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 55px; }
+  .card-4 .contrast-row .strike { font-size: 24px; color: rgba(255,255,255,0.30); text-decoration: line-through; }
+  .card-4 .contrast-row .arrow { font-size: 20px; color: rgba(255,255,255,0.30); }
+  .card-4 .contrast-row .bold { font-size: 24px; color: #ff8c5a; font-weight: 800; }
+
+  /* Card 5 */
+  .card-5 h2 { font-size: 46px; font-weight: 800; margin-bottom: 45px; letter-spacing: 1px; }
+  .card-5 .result-card { background: rgba(255,107,53,0.05); border-radius: 20px; padding: 45px 55px; text-align: left; width: 100%; border: 1px solid rgba(255,107,53,0.12); }
+  .card-5 .result-card .product-line { font-size: 30px; font-weight: 800; color: #f0f0f0; margin-bottom: 20px; }
+  .card-5 .result-card .bonus-line { font-size: 22px; color: rgba(255,255,255,0.60); line-height: 2; }
+  .card-5 .result-card .bonus-line .check { color: #ff8c5a; font-weight: 700; }
+  .card-5 .big-statement { font-size: 30px; font-weight: 800; color: #ff8c5a; margin-top: 50px; line-height: 1.5; }
+
+  /* Card 6 */
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.25; margin-bottom: 35px; letter-spacing: 1px; }
+  .card-6 h2 .highlight { color: #ff6b35; }
+  .card-6 .closing-quote { font-size: 28px; color: rgba(255,255,255,0.60); line-height: 1.7; margin-bottom: 55px; }
+  .card-6 .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; }
+  .card-6 .cta-line { font-size: 22px; color: #ff8c5a; margin-top: 18px; font-weight: 600; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🎯</div>
+  <h1>什么是<br><span class="highlight">项目制学习</span></h1>
+  <div class="flow-tags">
+    <span class="tag">定目标</span><span class="arr">→</span>
+    <span class="tag">遇问题</span><span class="arr">→</span>
+    <span class="tag">学知识</span><span class="arr">→</span>
+    <span class="tag">解决</span><span class="arr">→</span>
+    <span class="tag">完成</span>
+  </div>
+  <div class="accent-bar"></div>
+  <p class="subtitle">你要学的东西不由课本决定<br>由你的项目决定</p>
+  <div class="creation-badge">项目制学习 + 人机协作 + 做中学</div>
+</div>
+
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <h2>两种学习路径</h2>
+  <div class="split">
+    <div class="split-box dim">
+      <div class="tag-label">传统：广度优先</div>
+      <div class="flow-list">第1章<br>第2章<br>第3章<br>… 最后做项目</div>
+    </div>
+    <div class="split-box bright">
+      <div class="tag-label">项目制：深度优先</div>
+      <div class="flow-list">我要做 X<br>卡住了<br>学需要的<br>继续做</div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <h2>一个真实的例子</h2>
+  <div class="example-card">
+    <div class="goal-line">🎮 我要做一个平台跳跃游戏</div>
+    <div class="learn-line">
+      遇到「怎么让人物跳起来」→ 学会了 <em>物理引擎</em><br><br>
+      遇到「怎么检测踩到敌人」→ 学会了 <em>碰撞系统</em><br><br>
+      遇到「怎么加音效」→ 学会了 <em>音频管理</em>
+    </div>
+  </div>
+  <p class="footnote">你不是「学完引擎」再去做游戏，你是「做着游戏」学会引擎</p>
+</div>
+
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">核心区别</div>
+  <h2>为什么而学</h2>
+  <div class="insight-text">
+    <b>传统：</b>因为课本上有一章讲这个<br><br>
+    <b>项目制：</b>因为我真的需要用它来解决眼前的问题
+  </div>
+  <div class="contrast-row">
+    <span class="strike">这个以后会用到的</span>
+    <span class="arrow">→</span>
+    <span class="bold">我现在就需要这个</span>
+  </div>
+</div>
+
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <h2>知识是项目的<br>「副作用」</h2>
+  <div class="result-card">
+    <div class="product-line">你做出了一个游戏 🎮</div>
+    <div class="bonus-line">
+      顺便学会了：<br>
+      <span class="check">✓</span> 物理引擎原理<br>
+      <span class="check">✓</span> 碰撞检测算法<br>
+      <span class="check">✓</span> 游戏状态管理<br>
+      <span class="check">✓</span> 音频系统集成
+    </div>
+  </div>
+  <p class="big-statement">知识不是前置条件<br>是项目留给你的痕迹</p>
+</div>
+
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <h2>不是因为懂了<br><span class="highlight">才去做</span></h2>
+  <p class="closing-quote">而是因为做了，才真的懂了</p>
+  <div class="brand-line">项目制学习 + 人机协作 + 做中学</div>
+  <p class="cta-line">关注我，每天解决一个问题</p>
+</div>
+
+</body>
+</html>

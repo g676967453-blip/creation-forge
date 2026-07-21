@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv \"开仙门-GDD-v0.1.md\" design/)",
+      "Bash(mv \"开仙门-MVP需求文档-v0.1.md\" requirements/)",
+      "Bash(mv \"开仙门-最小MVP待办任务文档-v0.1.md\" planning/)",
+      "Bash(mv \"功能需求文档模板.md\" templates/)",
+      "Bash(mv \"功能规划文档模板.md\" templates/)",
+      "Read(//c/c/Users/Administrator/lobsterai/project/GAME-002/开仙门/**)",
+      "Bash(mkdir -p _unused_tres)",
+      "Bash(mv waves/*.tres _unused_tres/)",
+      "Bash(mkdir -p source runtime)",
+      "Bash(mv psd_export _exported)",
+      "Bash(cd \"c:\\\\Users\\\\Administrator\\\\lobsterai\\\\project\\\\GAME-002\" && mkdir -p assets_tmp)",
+      "Bash(python3 \"C:\\\\Users\\\\Administrator\\\\.claude\\\\skills\\\\lovart-api\\\\agent_skill.py\" chat --prompt \"pixel art sword tower icon, xianxia Chinese fantasy style, a stone pagoda tower with floating swords circling around it, golden and silver metallic colors, painted on solid magenta #FF00FF background, chunky visible large pixels designed at low resolution, each pixel block clearly defined, limited color palette, 16-bit pixel art, game icon\" --json --download --output-dir \"c:\\\\Users\\\\Administrator\\\\lobsterai\\\\project\\\\GAME-002\\\\assets_tmp\")",
+      "Bash(PYTHONUTF8=1 python3 \"C:\\\\Users\\\\Administrator\\\\.claude\\\\skills\\\\lovart-api\\\\agent_skill.py\" confirm --thread-id \"72143f45-bcbc-4052-9fd7-adaddac321f0\" --json --download --output-dir \"c:\\\\Users\\\\Administrator\\\\lobsterai\\\\project\\\\GAME-002\\\\assets_tmp\")",
+      "Bash(git add *)",
+      "Bash(git commit -m 'chore: 卡牌/功法/战斗流程配置更新 *)",
+      "Bash(git reset *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Administrator\\lobsterai\\project\\GAME-002"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+card_id = "card_dmg_up"
+card_name = "锋锐加持"
+description = "所有山峰攻击力+25%"
+target_peak_id = "global"
+effect_type = "modify_damage"
+effect_value = 0.25

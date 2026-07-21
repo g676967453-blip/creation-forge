@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 第五期 · 为什么从做游戏开始</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .screenshot-hint { position: absolute; top: 20px; right: 30px; font-size: 14px; color: rgba(255,255,255,0.2); letter-spacing: 2px; }
+  .card-1 { background: linear-gradient(135deg, #1a0a14, #2d1224, #1a0a14); color: #fff; }
+  .card-2 { background: #1d0e18; color: #e0d0d8; }
+  .card-3 { background: #2d1224; color: #fff; }
+  .card-4 { background: #1a0c14; color: #e0d0d8; }
+  .card-5 { background: #1d0e18; color: #fff; }
+  .card-6 { background: linear-gradient(135deg, #2d1224, #1a0a14); color: #fff; }
+
+  .card-1 .emoji { font-size: 72px; margin-bottom: 40px; }
+  .card-1 h1 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; }
+  .card-1 h1 span { color: #f472b6; }
+  .card-1 .subtitle { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .card-1 .creation-badge { position: absolute; bottom: 60px; font-size: 20px; color: rgba(255,255,255,0.2); letter-spacing: 4px; }
+
+  .card-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-2 .reasons { width: 100%; display: flex; flex-direction: column; gap: 35px; }
+  .card-2 .reason { display: flex; align-items: flex-start; gap: 30px; text-align: left; }
+  .card-2 .reason .num { width: 52px; height: 52px; border-radius: 50%; background: rgba(244,114,182,0.15); color: #f472b6; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; flex-shrink: 0; }
+  .card-2 .reason .text { font-size: 24px; line-height: 1.8; }
+  .card-2 .reason .text .title { font-weight: 700; color: #f472b6; font-size: 26px; }
+  .card-2 .reason .text .desc { color: rgba(255,255,255,0.5); }
+
+  .card-3 .label { font-size: 20px; color: rgba(255,255,255,0.3); letter-spacing: 6px; margin-bottom: 30px; }
+  .card-3 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-3 .mind-map { font-size: 28px; line-height: 2.5; font-weight: 600; }
+  .card-3 .mind-map .center { color: #f472b6; font-size: 36px; }
+  .card-3 .mind-map .branch { color: rgba(255,255,255,0.6); }
+  .card-3 .mind-map .conn { color: rgba(244,114,182,0.3); }
+
+  .card-4 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-4 .quote { font-size: 30px; line-height: 2; color: rgba(255,255,255,0.6); }
+  .card-4 .quote b { color: #f472b6; }
+  .card-4 .highlight-box { background: rgba(244,114,182,0.06); border: 1px solid rgba(244,114,182,0.15); border-radius: 20px; padding: 40px; margin-top: 50px; font-size: 26px; color: #f472b6; line-height: 1.8; }
+
+  .card-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-5 .benefits { font-size: 26px; line-height: 2.2; }
+  .card-5 .benefits .check { color: #f472b6; }
+  .card-5 .closing { font-size: 32px; font-weight: 700; color: #f472b6; margin-top: 50px; line-height: 1.6; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; }
+  .card-6 h2 span { color: #f472b6; }
+  .card-6 .quote { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.8; margin-bottom: 60px; }
+  .card-6 .brand { font-size: 22px; color: rgba(255,255,255,0.2); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 40px; }
+  .card-6 .cta { font-size: 24px; color: #f472b6; margin-top: 20px; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+    .card-1 h1 { font-size: 7vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="screenshot-hint">1 / 6</div>
+  <div class="emoji">🎮</div>
+  <h1>为什么从<br><span>做游戏</span>开始</h1>
+  <p class="subtitle">写作业让人拖延<br>做游戏让人熬夜<br>这就是最好的学习驱动力</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="screenshot-hint">2 / 6</div>
+  <h2>四个理由</h2>
+  <div class="reasons">
+    <div class="reason">
+      <div class="num">1</div>
+      <div class="text"><span class="title">即时反馈</span><br><span class="desc">改一行代码，屏幕上的人就动了。大脑喜欢反馈，反馈越多学得越快。</span></div>
+    </div>
+    <div class="reason">
+      <div class="num">2</div>
+      <div class="text"><span class="title">跨学科整合</span><br><span class="desc">编程 + 美术 + 音效 + 数学 + 叙事，一门课学六门知识，还不觉得在「学」。</span></div>
+    </div>
+    <div class="reason">
+      <div class="num">3</div>
+      <div class="text"><span class="title">可伸缩</span><br><span class="desc">两小时做完一个点击变色小游戏，或两个月打磨一个平台跳跃，难度由你控制。</span></div>
+    </div>
+    <div class="reason">
+      <div class="num">4</div>
+      <div class="text"><span class="title">本身就很有趣</span><br><span class="desc">学习的最大敌人不是难度，是无聊。做游戏这件事本身就好玩。</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-3">
+  <div class="screenshot-hint">3 / 6</div>
+  <div class="label">一门课 = 六门课</div>
+  <h2>做一个游戏<br>它们自然汇合</h2>
+  <div class="mind-map">
+    <div class="center">🎮 游戏开发</div>
+    <div class="conn">┌────┼────┬────┐</div>
+    <div class="branch">编程 美术 音效 数学 叙事 设计</div>
+  </div>
+  <p style="font-size:22px; color:rgba(255,255,255,0.4); margin-top:50px;">你不用分别报六门课<br>它们在你做游戏的过程中自然汇合</p>
+</div>
+
+<div class="card card-4">
+  <div class="screenshot-hint">4 / 6</div>
+  <h2>最关键的一点</h2>
+  <div class="quote">
+    学习最大的敌人不是<b>难</b><br>
+    是<b>无聊</b>
+  </div>
+  <div class="highlight-box">
+    做着做着就忘了时间<br>就是最好的学习状态<br>—— 这在教育理论里叫「心流」
+  </div>
+</div>
+
+<div class="card card-5">
+  <div class="screenshot-hint">5 / 6</div>
+  <h2>独立游戏开发<br>是项目制学习的<br>最佳练习场</h2>
+  <div class="benefits">
+    <span class="check">✅</span> 即时反馈——每行代码都看得见<br>
+    <span class="check">✅</span> 跨学科——不用刻意「学」就全接触到了<br>
+    <span class="check">✅</span> 可伸缩——从2小时到2个月，你自己定<br>
+    <span class="check">✅</span> 有产出——做完了就是一个能玩的东西
+  </div>
+  <p class="closing">你的第一个游戏<br>今天就可以开始</p>
+</div>
+
+<div class="card card-6">
+  <div class="screenshot-hint">6 / 6</div>
+  <h2>这门课<br><span>不考试</span><br>但会上瘾</h2>
+  <p class="quote">做游戏让人熬夜<br>不是因为有 deadline<br>是因为好玩</p>
+  <div class="brand">造化坊 · 项目制学习实践</div>
+  <p class="cta">关注我，今天开始你的第一个游戏 🎮</p>
+</div>
+
+</body>
+</html>

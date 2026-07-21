@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目制学习 + 人机协作 + 做中学 · 第一期 · AI时代你躬身入局了吗</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .card-1 { background: #141414; color: #f0f0f0; }
+  .card-2 { background: #1a1a1a; color: #e0e0e0; }
+  .card-3 { background: #141414; color: #f0f0f0; }
+  .card-4 { background: #1a1a1a; color: #e0e0e0; }
+  .card-5 { background: #141414; color: #f0f0f0; }
+  .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; }
+
+  /* --- Accent: warm coral --- */
+  .card-1 .emoji { font-size: 64px; margin-bottom: 30px; }
+  .card-1 h1 { font-size: 60px; font-weight: 900; line-height: 1.25; margin-bottom: 25px; letter-spacing: 2px; }
+  .card-1 h1 .highlight { color: #ff6b6b; }
+  .card-1 .accent-bar { width: 60px; height: 3px; background: #ff6b6b; border-radius: 2px; margin: 30px auto; }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.60); line-height: 1.6; }
+
+  .card-2 .big-num { font-size: 200px; font-weight: 900; color: rgba(255,255,255,0.03); position: absolute; top: 60px; right: 60px; }
+  .card-2 h2 { font-size: 46px; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px; line-height: 1.35; }
+  .card-2 .list { font-size: 28px; line-height: 2.2; color: rgba(255,255,255,0.30); }
+  .card-2 .list s { color: rgba(255,255,255,0.15); }
+  .card-2 .punch { font-size: 34px; font-weight: 800; margin-top: 55px; color: #ff6b6b; line-height: 1.4; }
+
+  .card-3 .label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 25px; font-weight: 600; }
+  .card-3 h2 { font-size: 50px; font-weight: 900; margin-bottom: 50px; letter-spacing: 1px; }
+  .card-3 .method { background: rgba(255,107,107,0.05); border-radius: 20px; padding: 45px 55px; text-align: left; width: 100%; font-size: 26px; line-height: 2.2; border-left: 3px solid #ff6b6b; }
+  .card-3 .method .arrow { color: #ff6b6b; font-weight: 800; }
+  .card-3 .vs { display: flex; justify-content: center; align-items: center; gap: 40px; width: 100%; margin-top: 50px; }
+  .card-3 .vs .old { font-size: 24px; color: rgba(255,255,255,0.30); text-decoration: line-through; }
+  .card-3 .vs .mid { font-size: 20px; color: rgba(255,255,255,0.30); }
+  .card-3 .vs .new { font-size: 24px; color: #ff6b6b; font-weight: 800; }
+
+  .card-4 h2 { font-size: 46px; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px; line-height: 1.35; }
+  .card-4 .steps { width: 100%; display: flex; flex-direction: column; gap: 25px; }
+  .card-4 .step { display: flex; align-items: center; gap: 30px; background: rgba(255,255,255,0.02); border-radius: 16px; padding: 28px 35px; text-align: left; font-size: 26px; }
+  .card-4 .step-num { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,107,107,0.12); color: #ff6b6b; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; flex-shrink: 0; }
+  .card-4 .bottom-msg { font-size: 22px; color: rgba(255,255,255,0.60); margin-top: 55px; }
+
+  .card-5 h2 { font-size: 46px; font-weight: 800; margin-bottom: 45px; letter-spacing: 1px; line-height: 1.35; }
+  .card-5 .result-list { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 45px; }
+  .card-5 .result-list b { color: #f0f0f0; }
+  .card-5 .closing { font-size: 30px; font-weight: 800; color: #ff6b6b; line-height: 1.5; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.25; margin-bottom: 35px; letter-spacing: 1px; }
+  .card-6 h2 .highlight { color: #ff6b6b; }
+  .card-6 .closing-quote { font-size: 28px; color: rgba(255,255,255,0.60); line-height: 1.7; margin-bottom: 55px; }
+  .card-6 .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; }
+  .card-6 .cta-line { font-size: 22px; color: #ff6b6b; margin-top: 18px; font-weight: 600; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🔥</div>
+  <h1>AI 时代<br>你<span class="highlight">躬身入局</span>了吗</h1>
+  <div class="accent-bar"></div>
+  <p class="subtitle">大部分人还在观望<br>我已经搭好了自己的<br>人机协作系统</p>
+  <div class="creation-badge">项目制学习 + 人机协作 + 做中学</div>
+</div>
+
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="big-num">100</div>
+  <h2>你收藏了多少<br>还没看的内容？</h2>
+  <p class="list">
+    <s>收藏了 100 篇教程</s><br>
+    <s>看了 50 个教学视频</s><br>
+    <s>关注了 30 个 AI 博主</s>
+  </p>
+  <p class="punch">打开电脑<br>一个东西都没做出来</p>
+</div>
+
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="label">我的方法</div>
+  <h2>项目制学习</h2>
+  <div class="method">
+    <span class="arrow">→</span> 定一个想做的事<br>
+    <span class="arrow">→</span> 卡住了就问 AI<br>
+    <span class="arrow">→</span> 解决了继续做<br>
+    <span class="arrow">→</span> 做完就算学会了
+  </div>
+  <div class="vs">
+    <span class="old">学完再去做</span>
+    <span class="mid">→</span>
+    <span class="new">做了就学会</span>
+  </div>
+</div>
+
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <h2>今天我做了什么</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>安装 Trae 编辑器</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>安装 Claude Code</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>接入 DeepSeek 模型</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>搭建本地人机协作系统</div>
+    </div>
+  </div>
+  <p class="bottom-msg">不需要一口气完美<br>只需要第一步存在</p>
+</div>
+
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <h2>现在我的电脑里</h2>
+  <div class="result-list">
+    <b>Agent 操作台</b> 已就绪<br>
+    <b>文件结构</b> 清晰有序<br>
+    <b>协作原则</b> 已定义<br>
+    <b>AI 助手</b> 随时可用
+  </div>
+  <p class="closing">这个系统不是我<br>「学会 AI 之后」搭的<br>是我「用着 AI」搭出来的</p>
+</div>
+
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <h2><span class="highlight">躬身入局</span><br>不是姿势，是行动</h2>
+  <p class="closing-quote">装好工具的那一刻<br>你就已经进来了</p>
+  <div class="brand-line">项目制学习 + 人机协作 + 做中学</div>
+  <p class="cta-line">关注我，每天解决一个问题</p>
+</div>
+
+</body>
+</html>

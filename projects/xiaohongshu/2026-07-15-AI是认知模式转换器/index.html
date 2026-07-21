@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 第八期 · AI 是认知模式转换器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .screenshot-hint { position: absolute; top: 20px; right: 30px; font-size: 14px; color: rgba(255,255,255,0.2); letter-spacing: 2px; }
+  .card-1 { background: linear-gradient(135deg, #120a24, #1e1240, #120a24); color: #fff; }
+  .card-2 { background: #160e2a; color: #d0c8e8; }
+  .card-3 { background: #241840; color: #fff; }
+  .card-4 { background: #120c22; color: #d0c8e8; }
+  .card-5 { background: #160e2a; color: #fff; }
+  .card-6 { background: linear-gradient(135deg, #241840, #120a24); color: #fff; }
+
+  .card-1 .emoji { font-size: 72px; margin-bottom: 40px; }
+  .card-1 h1 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; }
+  .card-1 h1 span { color: #a78bfa; }
+  .card-1 .subtitle { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .card-1 .creation-badge { position: absolute; bottom: 60px; font-size: 20px; color: rgba(255,255,255,0.2); letter-spacing: 4px; }
+
+  .card-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-2 .redefine { font-size: 28px; line-height: 2.5; }
+  .card-2 .redefine .old { color: rgba(255,255,255,0.3); text-decoration: line-through; display: block; }
+  .card-2 .redefine .new { color: #a78bfa; font-weight: 700; display: block; font-size: 38px; }
+  .card-2 .redefine .arrow-big { color: #a78bfa; font-size: 48px; display: block; margin: 10px 0; }
+
+  .card-3 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-3 .transform { width: 100%; display: flex; flex-direction: column; gap: 30px; }
+  .card-3 .t-item { background: rgba(167,139,250,0.06); border-left: 4px solid #a78bfa; border-radius: 0 16px 16px 0; padding: 30px 40px; text-align: left; }
+  .card-3 .t-item .from-to { font-size: 22px; }
+  .card-3 .t-item .from { color: rgba(255,255,255,0.25); text-decoration: line-through; }
+  .card-3 .t-item .to { color: #a78bfa; font-weight: 700; }
+
+  .card-4 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-4 .big-think { font-size: 120px; opacity: 0.03; position: absolute; top: 100px; right: 60px; }
+  .card-4 .new-def { font-size: 32px; font-weight: 700; color: #a78bfa; line-height: 1.6; margin-bottom: 40px; }
+  .card-4 .explain { font-size: 24px; color: rgba(255,255,255,0.45); line-height: 1.8; }
+
+  .card-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-5 .liberation { font-size: 26px; line-height: 2.2; }
+  .card-5 .liberation .free { color: #a78bfa; font-weight: 700; }
+  .card-5 .closing { font-size: 32px; font-weight: 700; color: #a78bfa; margin-top: 50px; line-height: 1.6; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; }
+  .card-6 h2 span { color: #a78bfa; }
+  .card-6 .quote { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.8; margin-bottom: 60px; }
+  .card-6 .brand { font-size: 22px; color: rgba(255,255,255,0.2); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 40px; }
+  .card-6 .cta { font-size: 24px; color: #a78bfa; margin-top: 20px; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+    .card-1 h1 { font-size: 7vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="screenshot-hint">1 / 6</div>
+  <div class="emoji">🧠</div>
+  <h1>AI 是<br><span>认知模式转换器</span></h1>
+  <p class="subtitle">「学会」不再是「我记住了」<br>而是「我知道怎么驾驭 AI 做出来」</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="screenshot-hint">2 / 6</div>
+  <h2>重新定义<br>「学会」</h2>
+  <div class="redefine">
+    <span class="old">我记住了 = 学会了</span>
+    <span class="arrow-big">↓</span>
+    <span class="new">我能做出来 = 学会了</span>
+  </div>
+  <p style="font-size:24px; color:rgba(255,255,255,0.4); margin-top:50px;">「知道」和「记住」变成了两件事<br>—— AI 帮你记住，你负责知道怎么用</p>
+</div>
+
+<div class="card card-3">
+  <div class="screenshot-hint">3 / 6</div>
+  <h2>认知模式的<br>四个转换</h2>
+  <div class="transform">
+    <div class="t-item">
+      <div class="from-to"><span class="from">知识记忆</span> → <span class="to">知识检索</span></div>
+    </div>
+    <div class="t-item">
+      <div class="from-to"><span class="from">自己搞懂所有细节</span> → <span class="to">知道问什么问题</span></div>
+    </div>
+    <div class="t-item">
+      <div class="from-to"><span class="from">独立完成全部工作</span> → <span class="to">驾驭 AI 高效协作</span></div>
+    </div>
+    <div class="t-item">
+      <div class="from-to"><span class="from">衡量你「知道多少」</span> → <span class="to">衡量你「做出什么」</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-4">
+  <div class="screenshot-hint">4 / 6</div>
+  <div class="big-think">?</div>
+  <h2>最重要的能力<br>从「答」<br>变成了「问」</h2>
+  <div class="new-def">知道问什么<br>比知道答案更重要</div>
+  <div class="explain">AI 时代，提问质量 = 思考质量<br>你不需要记住所有答案<br>但你要知道怎么让 AI 帮你找到答案</div>
+</div>
+
+<div class="card card-5">
+  <div class="screenshot-hint">5 / 6</div>
+  <h2>大脑的解放</h2>
+  <div class="liberation">
+    <span class="free">释放</span> 记忆存储空间<br>
+    <span class="free">释放</span> 重复劳动时间<br>
+    <span class="free">释放</span> 信息检索精力<br><br>
+    把这三样东西交给 AI<br>你的大脑只做一件事：
+  </div>
+  <p class="closing">创造</p>
+</div>
+
+<div class="card card-6">
+  <div class="screenshot-hint">6 / 6</div>
+  <h2><span>驾驭 AI</span><br>是 AI 时代的<br>核心素养</h2>
+  <p class="quote">不是 AI 替代你<br>而是 AI 解放你<br>让你专注在只有你能做的事上</p>
+  <div class="brand">造化坊 · 项目制学习实践</div>
+  <p class="cta">关注我，重新定义「学会」 🔥</p>
+</div>
+
+</body>
+</html>

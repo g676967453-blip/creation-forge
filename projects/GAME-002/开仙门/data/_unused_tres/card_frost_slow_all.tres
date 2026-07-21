@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+card_id = "card_frost_slow_all"
+card_name = "寒霜领域"
+description = "寒冰峰周围形成减速光环"
+target_peak_id = "peak_frost"
+effect_type = "modify_slow_aura"
+effect_value = 0.15

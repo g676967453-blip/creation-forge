@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 第七期 · AI 是即时学习引擎</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .screenshot-hint { position: absolute; top: 20px; right: 30px; font-size: 14px; color: rgba(255,255,255,0.2); letter-spacing: 2px; }
+  .card-1 { background: linear-gradient(135deg, #0a1a18, #0d2623, #0a1a18); color: #fff; }
+  .card-2 { background: #0e1d1a; color: #c0e0d8; }
+  .card-3 { background: #122d28; color: #fff; }
+  .card-4 { background: #0b1815; color: #c0e0d8; }
+  .card-5 { background: #0e1d1a; color: #fff; }
+  .card-6 { background: linear-gradient(135deg, #122d28, #0a1a18); color: #fff; }
+
+  .card-1 .emoji { font-size: 72px; margin-bottom: 40px; }
+  .card-1 h1 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; }
+  .card-1 h1 span { color: #2dd4bf; }
+  .card-1 .subtitle { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .card-1 .creation-badge { position: absolute; bottom: 60px; font-size: 20px; color: rgba(255,255,255,0.2); letter-spacing: 4px; }
+
+  .card-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-2 .compare { display: flex; gap: 40px; width: 100%; justify-content: center; }
+  .card-2 .box { flex: 1; max-width: 380px; border-radius: 24px; padding: 40px 30px; font-size: 22px; line-height: 2; }
+  .card-2 .box.old { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); }
+  .card-2 .box.new { background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.2); color: rgba(255,255,255,0.8); }
+  .card-2 .box .head { font-size: 26px; font-weight: 700; margin-bottom: 20px; }
+  .card-2 .box.old .head { color: rgba(255,255,255,0.3); }
+  .card-2 .box.new .head { color: #2dd4bf; }
+  .card-2 .arrow-big { display: flex; align-items: center; font-size: 40px; color: #2dd4bf; }
+
+  .card-3 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-3 .before-after { width: 100%; }
+  .card-3 .ba-row { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; font-size: 22px; }
+  .card-3 .ba-before { flex: 1; text-align: right; color: rgba(255,255,255,0.3); text-decoration: line-through; }
+  .card-3 .ba-arrow { color: #2dd4bf; font-weight: 700; font-size: 24px; flex-shrink: 0; }
+  .card-3 .ba-after { flex: 1; text-align: left; color: #2dd4bf; font-weight: 600; }
+
+  .card-4 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-4 .speed { font-size: 200px; font-weight: 900; color: #2dd4bf; opacity: 0.08; position: absolute; top: 200px; right: 80px; }
+  .card-4 .metric { font-size: 28px; line-height: 2.5; }
+  .card-4 .metric .old { color: rgba(255,255,255,0.25); text-decoration: line-through; }
+  .card-4 .metric .new { color: #2dd4bf; font-weight: 700; font-size: 36px; }
+
+  .card-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-5 .insight { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.6); }
+  .card-5 .insight b { color: #fff; }
+  .card-5 .closing { font-size: 32px; font-weight: 700; color: #2dd4bf; margin-top: 50px; line-height: 1.6; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; }
+  .card-6 h2 span { color: #2dd4bf; }
+  .card-6 .quote { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.8; margin-bottom: 60px; }
+  .card-6 .brand { font-size: 22px; color: rgba(255,255,255,0.2); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 40px; }
+  .card-6 .cta { font-size: 24px; color: #2dd4bf; margin-top: 20px; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+    .card-1 h1 { font-size: 7vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="screenshot-hint">1 / 6</div>
+  <div class="emoji">⚡</div>
+  <h1>AI 是<span>即时学习引擎</span></h1>
+  <p class="subtitle">卡住了就问 AI<br>学习从「检索」变成「对话」</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="screenshot-hint">2 / 6</div>
+  <h2>学习方式的<br>根本性变化</h2>
+  <div class="compare">
+    <div class="box old">
+      <div class="head">以前</div>
+      翻书<br>搜文档<br>查 StackOverflow<br>看教程视频<br>花几小时找答案
+    </div>
+    <div class="arrow-big">→</div>
+    <div class="box new">
+      <div class="head">现在</div>
+      问 AI<br>秒回<br>解释清楚<br>附带代码<br>继续做你的事
+    </div>
+  </div>
+</div>
+
+<div class="card card-3">
+  <div class="screenshot-hint">3 / 6</div>
+  <h2>瓶颈变了</h2>
+  <div class="before-after">
+    <div class="ba-row">
+      <span class="ba-before">怎么找到答案</span>
+      <span class="ba-arrow">→</span>
+      <span class="ba-after">答案秒到</span>
+    </div>
+    <div class="ba-row">
+      <span class="ba-before">去哪里学</span>
+      <span class="ba-arrow">→</span>
+      <span class="ba-after">问就行</span>
+    </div>
+    <div class="ba-row">
+      <span class="ba-before">学不会怎么办</span>
+      <span class="ba-arrow">→</span>
+      <span class="ba-after">换种方式再问</span>
+    </div>
+    <div class="ba-row">
+      <span class="ba-before">没人能问</span>
+      <span class="ba-arrow">→</span>
+      <span class="ba-after">24小时在线导师</span>
+    </div>
+  </div>
+  <p style="font-size:24px; color:rgba(255,255,255,0.4); margin-top:50px;">唯一剩下的瓶颈：你有没有在做一个具体的事</p>
+</div>
+
+<div class="card card-4">
+  <div class="screenshot-hint">4 / 6</div>
+  <div class="speed">60x</div>
+  <h2>学习加速</h2>
+  <div class="metric">
+    <div>以前卡一次：<span class="old">半天</span></div>
+    <div>现在卡一次：<span class="new">几分钟</span></div>
+    <div style="margin-top: 30px;">以前学一个框架：<span class="old">几周</span></div>
+    <div>现在学一个框架：<span class="new">边做边学</span></div>
+  </div>
+  <p style="font-size:24px; color:rgba(255,255,255,0.4); margin-top:50px;">不是因为你变聪明了<br>是因为「获取知识」的瓶颈被移除了</p>
+</div>
+
+<div class="card card-5">
+  <div class="screenshot-hint">5 / 6</div>
+  <h2>这意味着什么</h2>
+  <div class="insight">
+    <b>过去：</b>你得先「学会」才能「做出」<br>
+    所以大多数人在「学」的阶段就放弃了<br><br>
+    <b>现在：</b>你可以「做着」同时「学着」<br>
+    「学」不再是一个前置条件<br>
+    它变成了「做」的过程中自然发生的事
+  </div>
+  <p class="closing">AI 不能替你创造<br>但它把学习的成本打到了接近零</p>
+</div>
+
+<div class="card card-6">
+  <div class="screenshot-hint">6 / 6</div>
+  <h2><span>即时学习</span><br>让「做中学」<br>第一次真正可行</h2>
+  <p class="quote">不是「先学再做」<br>而是「边做边学」<br>卡住了就问</p>
+  <div class="brand">造化坊 · 项目制学习实践</div>
+  <p class="cta">关注我，体验 AI 时代的学习方式 🔥</p>
+</div>
+
+</body>
+</html>

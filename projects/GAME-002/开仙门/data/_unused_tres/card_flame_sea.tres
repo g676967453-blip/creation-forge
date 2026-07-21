@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+card_id = "card_flame_sea"
+card_name = "燎原火海"
+description = "灼烧变为范围效果"
+target_peak_id = "peak_flame"
+effect_type = "modify_burn"
+effect_value = 1.0

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 第四期 · 项目制学习是传统学习的反面</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .screenshot-hint { position: absolute; top: 20px; right: 30px; font-size: 14px; color: rgba(255,255,255,0.2); letter-spacing: 2px; }
+  .card-1 { background: linear-gradient(135deg, #0a1a0a, #0d260d, #0a1a0a); color: #fff; }
+  .card-2 { background: #0d1a0d; color: #d0e0d0; }
+  .card-3 { background: #0f240f; color: #fff; }
+  .card-4 { background: #0a180a; color: #d0e0d0; }
+  .card-5 { background: #0d1a0d; color: #fff; }
+  .card-6 { background: linear-gradient(135deg, #0f240f, #0a1a0a); color: #fff; }
+
+  .card-1 .emoji { font-size: 72px; margin-bottom: 40px; }
+  .card-1 h1 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; }
+  .card-1 h1 span { color: #4ade80; }
+  .card-1 .subtitle { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .card-1 .creation-badge { position: absolute; bottom: 60px; font-size: 20px; color: rgba(255,255,255,0.2); letter-spacing: 4px; }
+
+  .card-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-2 .arrows { font-size: 22px; line-height: 2.5; }
+  .card-2 .arrows .old { color: rgba(255,255,255,0.3); }
+  .card-2 .arrows .new { color: #4ade80; font-weight: 700; }
+  .card-2 .flip { font-size: 36px; font-weight: 700; margin-top: 60px; color: #4ade80; }
+
+  .card-3 .label { font-size: 20px; color: rgba(255,255,255,0.3); letter-spacing: 6px; margin-bottom: 30px; }
+  .card-3 h2 { font-size: 52px; font-weight: 900; margin-bottom: 50px; }
+  .card-3 .vs-table { width: 100%; }
+  .card-3 .vs-row { display: flex; justify-content: space-between; align-items: center; padding: 25px 40px; margin: 5px 0; border-radius: 12px; font-size: 22px; }
+  .card-3 .vs-row.header { font-size: 18px; color: rgba(255,255,255,0.4); letter-spacing: 2px; padding: 10px 40px; }
+  .card-3 .vs-row .left { flex: 1; text-align: center; color: rgba(255,255,255,0.35); }
+  .card-3 .vs-row .right { flex: 1; text-align: center; color: #4ade80; font-weight: 600; }
+  .card-3 .vs-row .mid { width: 40px; text-align: center; color: rgba(255,255,255,0.2); font-size: 20px; }
+  .card-3 .vs-row.data { background: rgba(255,255,255,0.03); }
+
+  .card-4 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-4 .quote-box { background: rgba(74,222,128,0.06); border-left: 4px solid #4ade80; border-radius: 0 16px 16px 0; padding: 50px 60px; font-size: 28px; line-height: 2; text-align: left; width: 100%; }
+  .card-4 .quote-box .who { font-size: 20px; color: rgba(255,255,255,0.3); margin-top: 15px; }
+
+  .card-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-5 .result { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.5); }
+  .card-5 .result b { color: #fff; }
+  .card-5 .result .green { color: #4ade80; font-weight: 700; }
+  .card-5 .punch { font-size: 32px; font-weight: 700; color: #4ade80; margin-top: 60px; line-height: 1.6; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; }
+  .card-6 h2 span { color: #4ade80; }
+  .card-6 .quote { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.8; margin-bottom: 60px; }
+  .card-6 .brand { font-size: 22px; color: rgba(255,255,255,0.2); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 40px; }
+  .card-6 .cta { font-size: 24px; color: #4ade80; margin-top: 20px; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+    .card-1 h1 { font-size: 7vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="screenshot-hint">1 / 6</div>
+  <div class="emoji">🔄</div>
+  <h1>项目制学习<br>是<span>传统学习的反面</span></h1>
+  <p class="subtitle">传统是「给你答案，去找问题」<br>项目制是「给你问题，去找答案」</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="screenshot-hint">2 / 6</div>
+  <h2>两个完全<br>相反的方向</h2>
+  <div class="arrows">
+    <span class="old">传统：学 → 学 → 学 → 做</span><br><br>
+    <span class="new">项目制：做 → 卡 → 学 → 继续做</span>
+  </div>
+  <p class="flip">顺序一变<br>整个世界反过来了</p>
+</div>
+
+<div class="card card-3">
+  <div class="screenshot-hint">3 / 6</div>
+  <div class="label">五个维度对比</div>
+  <h2>哪里不一样</h2>
+  <div class="vs-table">
+    <div class="vs-row header"><span class="left">传统学习</span><span class="mid"></span><span class="right">项目制学习</span></div>
+    <div class="vs-row data"><span class="left">先学再练</span><span class="mid">→</span><span class="right">先做再学</span></div>
+    <div class="vs-row data"><span class="left">按知识体系走</span><span class="mid">→</span><span class="right">按问题驱动走</span></div>
+    <div class="vs-row data"><span class="left">学完了再开始</span><span class="mid">→</span><span class="right">开始了就算开始</span></div>
+    <div class="vs-row data"><span class="left">评价你记住多少</span><span class="mid">→</span><span class="right">评价你做出什么</span></div>
+    <div class="vs-row data"><span class="left">知识广度优先</span><span class="mid">→</span><span class="right">知识深度优先</span></div>
+  </div>
+</div>
+
+<div class="card card-4">
+  <div class="screenshot-hint">4 / 6</div>
+  <h2>不是哪个更好</h2>
+  <div class="quote-box">
+    "AI 时代，获取知识不再是瓶颈<br>项目制的优势被无限放大了"<br><br>
+    "过去你需要先学完才能做事<br>现在你边做事边学<br>卡住了问 AI，秒回，附带代码"
+    <div class="who">—— 这就是游戏规则变了</div>
+  </div>
+</div>
+
+<div class="card card-5">
+  <div class="screenshot-hint">5 / 6</div>
+  <h2>做中学的核心优势</h2>
+  <div class="result">
+    ✅ 学到的是<b>你真正需要的</b>，不是课本安排的<br>
+    ✅ 知识<b>马上就用</b>，不需要「囤着等以后」<br>
+    ✅ 每解决一个问题<span class="green">都有正反馈</span><br>
+    ✅ 项目本身就是<b>最好的简历</b><br>
+  </div>
+  <p class="punch">做完一件事学到的东西<br>比看完一本书学到的<br>记得更牢，用得更活</p>
+</div>
+
+<div class="card card-6">
+  <div class="screenshot-hint">6 / 6</div>
+  <h2><span>顺序</span>决定一切</h2>
+  <p class="quote">把「学」放到「做」后面<br>整个学习体验<br>从痛苦变成上瘾</p>
+  <div class="brand">造化坊 · 项目制学习实践</div>
+  <p class="cta">关注我，颠覆你的学习方式 🔥</p>
+</div>
+
+</body>
+</html>

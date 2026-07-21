@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+id = "peak_flame"
+display_name = "焚天峰"
+attack_type = "ranged"
+base_damage = 20.0
+base_range = 180.0
+base_attack_speed = 1.5
+max_hp = 100.0
+target_type = "nearest"
+color = Color(1.0, 0.2, 0.1, 1.0)
+scene_path = "res://scenes/peaks/peak_template.tscn"
+special_mechanic = "burn"
+special_param = 3.0

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 第二期 · AI 让「做中学」成为可能</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .screenshot-hint {
+    position: absolute; top: 20px; right: 30px;
+    font-size: 14px; color: rgba(255,255,255,0.25); letter-spacing: 2px;
+  }
+  .card-1 { background: linear-gradient(135deg, #0a1628, #0d2137, #0f2b47); color: #fff; }
+  .card-2 { background: #0d2137; color: #e0e8f0; }
+  .card-3 { background: #0f2b47; color: #fff; }
+  .card-4 { background: #0c1f33; color: #e0e8f0; }
+  .card-5 { background: #0d2137; color: #fff; }
+  .card-6 { background: linear-gradient(135deg, #0d2137, #0a1628); color: #fff; }
+
+  .card-1 .emoji { font-size: 72px; margin-bottom: 40px; }
+  .card-1 h1 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; }
+  .card-1 h1 span { color: #4dc9f6; }
+  .card-1 .subtitle { font-size: 28px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+  .card-1 .creation-badge {
+    position: absolute; bottom: 60px;
+    font-size: 20px; color: rgba(255,255,255,0.25); letter-spacing: 4px;
+  }
+
+  .card-2 .big-year { font-size: 160px; font-weight: 900; opacity: 0.04; position: absolute; top: 60px; right: 60px; }
+  .card-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-2 .problem-list { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.55); text-align: left; max-width: 700px; }
+  .card-2 .problem-list .highlight { color: #ff6b6b; font-weight: 700; }
+  .card-2 .punch { font-size: 36px; font-weight: 700; margin-top: 60px; color: #4dc9f6; }
+
+  .card-3 .label { font-size: 22px; color: rgba(255,255,255,0.35); letter-spacing: 6px; margin-bottom: 30px; text-transform: uppercase; }
+  .card-3 h2 { font-size: 52px; font-weight: 900; margin-bottom: 60px; line-height: 1.3; }
+  .card-3 .bottleneck {
+    display: flex; gap: 50px; width: 100%; justify-content: center; margin-bottom: 50px;
+  }
+  .card-3 .bn-box {
+    background: rgba(255,255,255,0.06); border-radius: 24px; padding: 40px 50px;
+    font-size: 24px; line-height: 1.8; flex: 1; max-width: 380px;
+  }
+  .card-3 .bn-box.old { border: 2px solid rgba(255,107,107,0.3); }
+  .card-3 .bn-box.new { border: 2px solid rgba(77,201,246,0.4); }
+  .card-3 .bn-box .head { font-size: 28px; font-weight: 700; margin-bottom: 15px; }
+  .card-3 .bn-box.old .head { color: #ff6b6b; }
+  .card-3 .bn-box.new .head { color: #4dc9f6; }
+  .card-3 .arrow-down { font-size: 40px; color: #4dc9f6; }
+
+  .card-4 h2 { font-size: 48px; font-weight: 700; margin-bottom: 60px; line-height: 1.4; }
+  .card-4 .comparison { width: 100%; display: flex; flex-direction: column; gap: 40px; }
+  .card-4 .comp-row {
+    display: flex; align-items: center; gap: 30px;
+    font-size: 24px; line-height: 1.6;
+  }
+  .card-4 .comp-old {
+    flex: 1; background: rgba(255,107,107,0.08); border-left: 4px solid rgba(255,107,107,0.5);
+    padding: 25px 30px; border-radius: 0 16px 16px 0; text-align: left;
+    color: rgba(255,255,255,0.45);
+  }
+  .card-4 .comp-arrow { font-size: 32px; color: #4dc9f6; font-weight: 700; flex-shrink: 0; }
+  .card-4 .comp-new {
+    flex: 1; background: rgba(77,201,246,0.1); border-left: 4px solid #4dc9f6;
+    padding: 25px 30px; border-radius: 0 16px 16px 0; text-align: left;
+    color: #fff; font-weight: 600;
+  }
+  .card-4 .comp-time {
+    text-align: center; font-size: 30px; font-weight: 900; margin-top: 30px;
+  }
+  .card-4 .comp-time .fast { color: #4dc9f6; font-size: 48px; }
+  .card-4 .comp-time .slow { color: rgba(255,255,255,0.3); text-decoration: line-through; font-size: 24px; }
+
+  .card-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-5 .insight-box {
+    background: rgba(77,201,246,0.08); border-radius: 24px; padding: 50px 60px;
+    font-size: 26px; line-height: 2; text-align: left; width: 100%;
+    border: 1px solid rgba(77,201,246,0.15);
+  }
+  .card-5 .insight-box b { color: #4dc9f6; }
+  .card-5 .closing { font-size: 32px; font-weight: 700; color: #4dc9f6; line-height: 1.6; margin-top: 50px; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; }
+  .card-6 h2 span { color: #4dc9f6; }
+  .card-6 .quote { font-size: 28px; color: rgba(255,255,255,0.55); line-height: 1.8; margin-bottom: 60px; }
+  .card-6 .brand {
+    font-size: 22px; color: rgba(255,255,255,0.25); letter-spacing: 4px;
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 40px;
+  }
+  .card-6 .cta { font-size: 24px; color: #4dc9f6; margin-top: 20px; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+    .card-1 h1 { font-size: 7vw; }
+    .card-2 h2, .card-3 h2, .card-4 h2, .card-5 h2 { font-size: 5vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="screenshot-hint">1 / 6</div>
+  <div class="emoji">🤖</div>
+  <h1><span>「做中学」</span><br>不是新概念</h1>
+  <p class="subtitle">杜威一百年前就提出来了<br>但直到 AI 出现<br>它才真正变得可行</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="screenshot-hint">2 / 6</div>
+  <div class="big-year">1915</div>
+  <h2>一个好想法<br>为什么等了一百年？</h2>
+  <p class="problem-list">
+    <span class="highlight">✕</span> 做项目会不停卡住<br>
+    <span class="highlight">✕</span> 翻书搜文档要花几小时<br>
+    <span class="highlight">✕</span> 热情在「找答案」中耗尽<br>
+    <span class="highlight">✕</span> 大多数人卡第二次就放弃了
+  </p>
+  <p class="punch">瓶颈不在「做」<br>瓶颈在「卡住之后怎么办」</p>
+</div>
+
+<div class="card card-3">
+  <div class="screenshot-hint">3 / 6</div>
+  <div class="label">AI 改变了什么</div>
+  <h2>瓶颈被移除了</h2>
+  <div class="bottleneck">
+    <div class="bn-box old">
+      <div class="head">过去的瓶颈</div>
+      获取知识<br>找答案<br>搜文档<br>翻教程
+    </div>
+    <div class="bn-box new">
+      <div class="head">现在的瓶颈</div>
+      你有没有<br>在做一个<br>具体的事
+    </div>
+  </div>
+  <div class="arrow-down">↓</div>
+  <p style="font-size:24px; color:rgba(255,255,255,0.5); margin-top:20px;">唯一的瓶颈，从「外部」变成了「内部」</p>
+</div>
+
+<div class="card card-4">
+  <div class="screenshot-hint">4 / 6</div>
+  <h2>同一个「卡住」<br>两种体验</h2>
+  <div class="comparison">
+    <div class="comp-row">
+      <div class="comp-old">翻 3 篇文档 → 看 2 个视频<br>→ StackOverflow → 试错 → 放弃</div>
+      <div class="comp-arrow">→</div>
+      <div class="comp-new">问 AI → 秒回<br>→ 带代码 → 继续做</div>
+    </div>
+  </div>
+  <div class="comp-time">
+    以前卡一次：<span class="slow">2小时</span><br>
+    现在卡一次：<span class="fast">2分钟</span>
+  </div>
+</div>
+
+<div class="card card-5">
+  <div class="screenshot-hint">5 / 6</div>
+  <h2>AI 不能替你创造</h2>
+  <div class="insight-box">
+    <b>❌ AI 不会：</b>替你想出那个游戏的点子<br>
+    <b>❌ AI 不会：</b>替你决定今天要做什么<br>
+    <b>❌ AI 不会：</b>替你按下那个「开始」键<br><br>
+    <b>✅ 但 AI 会：</b>把你「卡住」的成本<br>
+    从几小时打到几分钟<br>
+    从几分钟打到几秒钟
+  </div>
+  <p class="closing">学习成本 → 接近于零<br>剩下的 → 你的创造欲</p>
+</div>
+
+<div class="card card-6">
+  <div class="screenshot-hint">6 / 6</div>
+  <h2>你不需要<br><span>准备好</span>才开始</h2>
+  <p class="quote">打开编辑器<br>问 AI 第一个问题<br>你就已经开始了</p>
+  <div class="brand">造化坊 · 项目制学习实践</div>
+  <p class="cta">关注我，看 AI 时代怎么「做中学」🔥</p>
+</div>
+
+</body>
+</html>

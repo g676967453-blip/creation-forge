@@ -1,13 +1,23 @@
-# Spark Forge (星火工坊)
+# Creation Forge (造化坊)
 
 > _A single spark can start a prairie fire._ — Chinese proverb
 
-Spark Forge is an indie game development studio built on **project-based learning** and **human-AI collaboration**.
+Creation Forge is the practice ground for **a new learning philosophy for the AI era**:
+start with a project → encounter problems → learn what's needed → solve → ship.
 
-## Three Pillars
+AI makes this "learning by doing" truly practical for the first time — when you're stuck,
+ask AI, get an instant answer with code, keep building. The bottleneck shifts from
+"how to find knowledge" to "are you building something right now?"
 
-1. **Project-Based Learning** — Learn by building games, not reading textbooks. Start simple, iterate fast.
-2. **Human-AI Collaboration** — AI acts as collaborator, mentor, and accelerator, switching modes based on context.
+Our vehicle is **indie game development** — instant feedback, cross-disciplinary by nature,
+infinitely scalable, and inherently fun.
+
+> 📖 The full manifesto: [AI时代的新学习思想](../zh-CN/manifesto.md) (Chinese)
+
+## Our Approach
+
+1. **Project-Based Learning** — Learn by building games, not reading textbooks. Start simple, iterate fast. Done beats perfect.
+2. **Human-AI Collaboration** — AI plays a dual role: instant learning engine (makes just-in-time learning fast enough) and cognitive shift enabler (redefines "learned it" from "I remember" to "I can harness AI to build it").
 3. **Indie Game Development** — Make playable games. Gameplay > graphics. Done > perfect.
 
 ## Tech Stack
@@ -24,8 +34,8 @@ Spark Forge is an indie game development studio built on **project-based learnin
 
 ```bash
 npm install
-cp -r templates/game-phaser projects/tutorial/01-hello-canvas
-cd projects/tutorial/01-hello-canvas
+cp -r templates/game-phaser projects/<your-project>
+cd projects/<your-project>
 npm install
 npm run dev
 ```

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat)",
+      "Bash(python /tmp/gm_patch.py)",
+      "Read(//c/Program Files/Godot/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Read(//c/Users/Administrator/**)",
+      "Read(//c/Users/Administrator/Downloads/**)",
+      "Read(//c/Users/Administrator/Desktop/**)",
+      "Bash(./Godot.exe --headless --path \"开仙门\" --quit)",
+      "Bash(\"C:/Users/Administrator/lobsterai/project/GAME-002/Godot.exe\" --headless --path \"C:/Users/Administrator/lobsterai/project/GAME-002/开仙门\" --quit)",
+      "Bash(\"/c/Users/Administrator/Documents/l2dfz-0.33.0-win/l2dfz-0.33.0-win/Godot_v4.4-stable_win64_console.exe\" --headless --path \"/c/Users/Administrator/lobsterai/project/GAME-002/开仙门\" --quit)"
+    ]
+  }
+}

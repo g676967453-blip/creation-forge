@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+card_id = "card_main_smite"
+card_name = "诛邪神雷"
+description = "主峰每15秒自动攻击最高血量敌人"
+target_peak_id = "main_peak"
+effect_type = "main_peak_smite"
+effect_value = 80.0

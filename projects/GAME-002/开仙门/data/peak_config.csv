@@ -1,0 +1,7 @@
+peak_id,peak_name,school_name,school_tag,school_desc,entry_form_id,icon_path,repair_cost,upgrade_cost_base,upgrade_cost_per_level
+peak_sword,剑峰,剑修,飞剑连击·极致单体,以气驭剑，千里取敌首级。万剑归宗之日，便是纵横三界之时,form_sword_01,res://assets/_exported/主殿-书.png,20,30,15
+peak_buddha,佛峰,佛修,金刚护体·群战控制,佛门金刚神通。狮子一吼妖魔惧，金钟罩体万法不侵,form_buddha_01,res://assets/_exported/主殿-佛.png,20,30,15
+peak_magic,法峰,御法,雷霆万钧,驾驭天地元素，雷霆冰风皆为我所用。四象归一，生生不息,form_thunder_01,res://assets/_exported/主殿-鼎.png,20,30,15
+peak_demon,魔峰,魔修,炼魂诅咒·持续腐蚀,以魂为祭，以蛊为器。敌越战越弱，唯我魔道永存,form_demon_01,res://assets/_exported/主殿-鼎.png,20,30,15
+peak_beast,兽峰,御兽,灵兽助战·群战大师,与天地灵兽缔结契约。一纸契书，便是千军万马,form_beast_01,res://assets/_exported/主殿-佛.png,20,30,15
+peak_artifact,宝峰,炼宝,法器环绕·阵地防守,炼天地万物为宝。法器护身，法阵困敌，万器共鸣,form_artifact_01,res://assets/_exported/主殿-书.png,20,30,15

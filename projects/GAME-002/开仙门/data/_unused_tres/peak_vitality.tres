@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+id = "peak_vitality"
+display_name = "长春峰"
+attack_type = "aura"
+base_damage = 0.0
+base_range = 200.0
+base_attack_speed = 1.0
+max_hp = 180.0
+target_type = "nearest"
+color = Color(0.2, 0.8, 0.3, 1.0)
+scene_path = "res://scenes/peaks/peak_template.tscn"
+special_mechanic = "heal"
+special_param = 5.0

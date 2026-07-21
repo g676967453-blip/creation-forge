@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 第六期 · 两小时做出第一个游戏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .screenshot-hint { position: absolute; top: 20px; right: 30px; font-size: 14px; color: rgba(255,255,255,0.2); letter-spacing: 2px; }
+  .card-1 { background: linear-gradient(135deg, #1a1500, #2d2400, #1a1500); color: #fff; }
+  .card-2 { background: #1f1a05; color: #e0d8b0; }
+  .card-3 { background: #2d2400; color: #fff; }
+  .card-4 { background: #1a1403; color: #e0d8b0; }
+  .card-5 { background: #1f1a05; color: #fff; }
+  .card-6 { background: linear-gradient(135deg, #2d2400, #1a1500); color: #fff; }
+
+  .card-1 .emoji { font-size: 72px; margin-bottom: 40px; }
+  .card-1 h1 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; }
+  .card-1 h1 span { color: #facc15; }
+  .card-1 .subtitle { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .card-1 .creation-badge { position: absolute; bottom: 60px; font-size: 20px; color: rgba(255,255,255,0.2); letter-spacing: 4px; }
+
+  .card-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-2 .old-way { font-size: 24px; line-height: 2.2; color: rgba(255,255,255,0.35); }
+  .card-2 .old-way s { color: rgba(255,255,255,0.2); }
+  .card-2 .result { font-size: 28px; color: #ff6b6b; font-weight: 700; margin-top: 40px; }
+  .card-2 .new-way { margin-top: 50px; font-size: 28px; font-weight: 700; color: #facc15; line-height: 1.8; }
+
+  .card-3 h2 { font-size: 48px; font-weight: 700; margin-bottom: 40px; line-height: 1.4; }
+  .card-3 .timeline { width: 100%; position: relative; padding-left: 60px; }
+  .card-3 .tl-item { display: flex; align-items: flex-start; gap: 30px; margin-bottom: 40px; text-align: left; }
+  .card-3 .tl-time { font-size: 28px; font-weight: 900; color: #facc15; min-width: 80px; }
+  .card-3 .tl-desc { font-size: 24px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+  .card-3 .tl-desc .highlight { color: #facc15; font-weight: 600; }
+
+  .card-4 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-4 .chat-demo { width: 100%; }
+  .card-4 .chat-msg { padding: 20px 30px; border-radius: 16px; margin-bottom: 15px; font-size: 22px; text-align: left; line-height: 1.6; }
+  .card-4 .chat-msg.user { background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.2); color: rgba(255,255,255,0.6); }
+  .card-4 .chat-msg.ai { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4); margin-left: 20px; }
+  .card-4 .chat-msg .role { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+  .card-4 .chat-msg.user .role { color: #facc15; }
+  .card-4 .chat-msg.ai .role { color: rgba(255,255,255,0.3); }
+
+  .card-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; line-height: 1.4; }
+  .card-5 .evolution { font-size: 24px; line-height: 2.5; color: rgba(255,255,255,0.5); }
+  .card-5 .evolution .arrow { color: #facc15; font-weight: 700; }
+  .card-5 .punch { font-size: 32px; font-weight: 700; color: #facc15; margin-top: 50px; line-height: 1.6; }
+
+  .card-6 h2 { font-size: 56px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; }
+  .card-6 h2 span { color: #facc15; }
+  .card-6 .quote { font-size: 28px; color: rgba(255,255,255,0.5); line-height: 1.8; margin-bottom: 60px; }
+  .card-6 .brand { font-size: 22px; color: rgba(255,255,255,0.2); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 40px; }
+  .card-6 .cta { font-size: 24px; color: #facc15; margin-top: 20px; }
+
+  @media (max-width: 1100px) {
+    .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; }
+    .card-1 h1 { font-size: 7vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="screenshot-hint">1 / 6</div>
+  <div class="emoji">⏱️</div>
+  <h1><span>两小时</span><br>做出第一个游戏</h1>
+  <p class="subtitle">不需要学会所有东西才开始<br>你只需要：一个想法 + 编辑器 + AI</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="screenshot-hint">2 / 6</div>
+  <h2>传统路径 vs 项目制路径</h2>
+  <div class="old-way">
+    <s>先学 TypeScript → 再学 Phaser</s><br>
+    <s>→ 看三个教程 → 然后动手</s>
+  </div>
+  <p class="result">两周的流程<br>大多数人第一周就放弃了</p>
+  <div class="new-way">
+    项目制路径 ↓<br>
+    打开编辑器 → 问 AI → 两分钟后<br>→ 你有了一个能跑的游戏雏形
+  </div>
+</div>
+
+<div class="card card-3">
+  <div class="screenshot-hint">3 / 6</div>
+  <h2>第一个两小时</h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">00:00</div>
+      <div class="tl-desc">打开编辑器，<span class="highlight">空白屏幕</span></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">00:05</div>
+      <div class="tl-desc">问 AI：「帮我生成一个 Phaser 项目，让方块能在屏幕上移动」<br><span class="highlight">→ 两分钟后，方块动起来了</span></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">00:30</div>
+      <div class="tl-desc">「怎么加跳跃？」<span class="highlight">→ 方块会跳了</span></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">01:00</div>
+      <div class="tl-desc">「加一个平台」「怎么计分？」<span class="highlight">→ 游戏越来越完整</span></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">02:00</div>
+      <div class="tl-desc"><span class="highlight">→ 你做出了一个能玩的东西</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-4">
+  <div class="screenshot-hint">4 / 6</div>
+  <h2>你只需要会一件事</h2>
+  <div class="chat-demo">
+    <div class="chat-msg user">
+      <div class="role">🧑 你</div>
+      帮我生成一个 Phaser 项目，让一个彩色方块能在屏幕上左右移动
+    </div>
+    <div class="chat-msg ai">
+      <div class="role">🤖 AI</div>
+      好的，这是完整的项目代码：[生成代码]，直接复制运行就能看到方块在屏幕上移动。
+    </div>
+    <div class="chat-msg user">
+      <div class="role">🧑 你</div>
+      怎么给方块加跳跃？
+    </div>
+    <div class="chat-msg ai">
+      <div class="role">🤖 AI</div>
+      加上这段跳跃代码：[代码]。现在按空格键方块就会跳起来了。
+    </div>
+  </div>
+</div>
+
+<div class="card card-5">
+  <div class="screenshot-hint">5 / 6</div>
+  <h2>每一次提问<br>游戏就进化一点</h2>
+  <div class="evolution">
+    方块能动了 <span class="arrow">→</span> 会跳了 <span class="arrow">→</span> 有平台了<br>
+    <span class="arrow">→</span> 能计分了 <span class="arrow">→</span> 有音效了<br>
+    <span class="arrow">→</span> 能玩了
+  </div>
+  <p class="punch">到最后你不再纠结<br>「我是不是还没学会」<br>因为你已经做出了一个能玩的东西</p>
+</div>
+
+<div class="card card-6">
+  <div class="screenshot-hint">6 / 6</div>
+  <h2>你的第一个游戏<br><span>不需要完美</span><br>只需要存在</h2>
+  <p class="quote">两小时的「烂游戏」<br>比两周后还停留在第一页教程<br>更接近一个游戏开发者</p>
+  <div class="brand">造化坊 · 项目制学习实践</div>
+  <p class="cta">关注我，现在就打开编辑器 🔥</p>
+</div>
+
+</body>
+</html>

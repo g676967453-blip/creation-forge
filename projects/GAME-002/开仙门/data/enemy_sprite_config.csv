@@ -1,0 +1,10 @@
+enemy_id,sheet_path,frames,frame_w,frame_h,fps
+enemy_rush,res://assets/runtime/enemies/enemy_rush_sheet.png,4,25,25,6.0
+enemy_flank,res://assets/runtime/enemies/enemy_flank_sheet.png,4,19,28,10.0
+enemy_giant,res://assets/runtime/enemies/enemy_giant_sheet.png,4,31,24,10.0
+enemy_boss,res://assets/runtime/enemies/boss_dragon_sheet.png,6,70,73,8.0
+enemy_ranged,res://assets/runtime/enemies/enemy_flank_sheet.png,4,19,28,10.0
+enemy_frost_beast,res://assets/runtime/enemies/enemy_flank_sheet.png,4,19,28,10.0
+enemy_armored,res://assets/runtime/enemies/enemy_giant_sheet.png,4,31,24,10.0
+enemy_flyer,res://assets/runtime/enemies/enemy_flank_sheet.png,4,19,28,12.0
+enemy_summoner,res://assets/runtime/enemies/enemy_rush_sheet.png,4,25,25,8.0

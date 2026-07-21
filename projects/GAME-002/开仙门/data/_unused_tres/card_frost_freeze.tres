@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+card_id = "card_frost_freeze"
+card_name = "极寒冰封"
+description = "减速60%，10%冻结2秒"
+target_peak_id = "peak_frost"
+effect_type = "modify_slow"
+effect_value = 0.6
