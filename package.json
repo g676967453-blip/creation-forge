@@ -1,8 +1,8 @@
 {
-  "name": "spark-forge",
+  "name": "creation-forge",
   "version": "0.1.0",
   "private": true,
-  "description": "星火工坊 - 基于项目制学习的人机协作独立游戏开发工作室",
+  "description": "造化坊 - 基于项目制学习的人机协作独立游戏开发工作室",
   "workspaces": [
     "shared/*",
     "projects/tutorial/*",
@@ -18,11 +18,12 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.0.0",
-    "typescript-eslint": "^8.0.0",
     "eslint": "^9.0.0",
+    "exceljs": "^4.4.0",
     "prettier": "^3.0.0",
-    "typescript": "^5.7.0",
     "tsx": "^4.0.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.0.0",
     "vitest": "^3.0.0"
   },
   "engines": {

@@ -36,7 +36,7 @@ async function main(): Promise<void> {
     output: process.stdout,
   });
 
-  console.log('\n🎮 星火工坊 — 游戏项目脚手架\n');
+  console.log('\n🎮 造化坊 — 游戏项目脚手架\n');
 
   // 选择项目类型
   console.log('项目类型:');
@@ -72,8 +72,8 @@ async function main(): Promise<void> {
   // 更新 package.json
   const pkgPath = path.join(targetDir, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as Record<string, unknown>;
-  pkg.name = `@spark-forge/${name}`;
-  pkg.description = `星火工坊游戏项目: ${name}`;
+  pkg.name = `@creation-forge/${name}`;
+  pkg.description = `造化坊游戏项目: ${name}`;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
 
   // 创建项目 README

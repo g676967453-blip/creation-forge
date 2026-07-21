@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不会设计的人怎么做小红书图文 · 第一期 v5</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px; text-align: center;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .card-1 { background: #141414; color: #f0f0f0; }
+  .card-2 { background: #1a1a1a; color: #e0e0e0; }
+  .card-3 { background: #141414; color: #f0f0f0; }
+  .card-4 { background: #1a1a1a; color: #e0e0e0; }
+  .card-5 { background: #141414; color: #f0f0f0; }
+  .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; }
+
+  :root { --accent: #ff6b6b; }
+
+  /* ============ Card 1: 提出问题 ============ */
+  .card-1 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; }
+  .card-1 h1 { font-size: 50px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; }
+  .card-1 .problem-statement { font-size: 24px; color: rgba(255,255,255,0.60); line-height: 1.9; text-align: left; max-width: 700px; }
+
+  /* ============ Card 2: AI时代思维拆解 ============ */
+  .card-2 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; }
+  .card-2 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; }
+  .card-2 .decompose { width: 100%; display: flex; flex-direction: column; gap: 30px; }
+  .card-2 .layer { border-radius: 16px; padding: 35px 40px; text-align: left; }
+  .card-2 .layer.ops { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+  .card-2 .layer.dec { background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.12); }
+  .card-2 .layer .layer-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 15px; }
+  .card-2 .layer.ops .layer-head { color: rgba(255,255,255,0.30); }
+  .card-2 .layer.dec .layer-head { color: var(--accent); }
+  .card-2 .layer .layer-items { font-size: 22px; line-height: 2; }
+  .card-2 .layer.ops .layer-items { color: rgba(255,255,255,0.50); }
+  .card-2 .layer.dec .layer-items { color: rgba(255,255,255,0.75); }
+  .card-2 .question { font-size: 26px; font-weight: 700; margin-top: 45px; color: #f0f0f0; line-height: 1.5; }
+
+  /* ============ Card 3: 准备工具 ============ */
+  .card-3 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; }
+  .card-3 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; }
+  .card-3 .tools { display: flex; gap: 25px; width: 100%; justify-content: center; }
+  .card-3 .tool { flex: 1; max-width: 250px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 35px 25px; }
+  .card-3 .tool .icon { font-size: 40px; margin-bottom: 15px; }
+  .card-3 .tool .name { font-size: 22px; font-weight: 700; color: #f0f0f0; margin-bottom: 8px; }
+  .card-3 .tool .role { font-size: 17px; color: rgba(255,255,255,0.40); line-height: 1.6; }
+  .card-3 .note { font-size: 22px; color: rgba(255,255,255,0.40); margin-top: 50px; line-height: 1.6; }
+
+  /* ============ Card 4: 人机协作流程 ============ */
+  .card-4 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; }
+  .card-4 h2 { font-size: 44px; font-weight: 800; margin-bottom: 55px; line-height: 1.3; letter-spacing: 1px; }
+  .card-4 .steps { width: 100%; display: flex; flex-direction: column; gap: 24px; }
+  .card-4 .step { display: flex; align-items: flex-start; gap: 28px; background: rgba(255,255,255,0.02); border-radius: 16px; padding: 28px 35px; text-align: left; }
+  .card-4 .step-num { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,107,107,0.10); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; flex-shrink: 0; }
+  .card-4 .step .step-content { flex: 1; }
+  .card-4 .step .step-title { font-size: 24px; font-weight: 700; color: #f0f0f0; margin-bottom: 4px; }
+  .card-4 .step .step-detail { font-size: 18px; color: rgba(255,255,255,0.40); line-height: 1.6; }
+  .card-4 .step .step-detail .who { color: rgba(255,255,255,0.55); }
+  .card-4 .summary { font-size: 22px; color: rgba(255,255,255,0.55); margin-top: 50px; line-height: 1.6; }
+
+  /* ============ Card 5: 产出结果 ============ */
+  .card-5 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; }
+  .card-5 h2 { font-size: 44px; font-weight: 800; margin-bottom: 45px; line-height: 1.3; letter-spacing: 1px; }
+  .card-5 .output-specs { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .card-5 .spec-row { display: flex; align-items: center; gap: 20px; font-size: 24px; text-align: left; }
+  .card-5 .spec-row .spec-label { color: rgba(255,255,255,0.30); min-width: 120px; font-size: 20px; }
+  .card-5 .spec-row .spec-value { color: rgba(255,255,255,0.75); }
+
+  /* ============ Card 6: 复盘记录 ============ */
+  .card-6 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; }
+  .card-6 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.3; letter-spacing: 1px; }
+  .card-6 .retro { width: 100%; display: flex; flex-direction: column; gap: 30px; }
+  .card-6 .retro-block { border-radius: 16px; padding: 35px 40px; text-align: left; }
+  .card-6 .retro-block.works { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); }
+  .card-6 .retro-block.next { background: rgba(255,107,107,0.04); border: 1px solid rgba(255,107,107,0.10); }
+  .card-6 .retro-block .retro-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 18px; }
+  .card-6 .retro-block.works .retro-head { color: rgba(255,255,255,0.30); }
+  .card-6 .retro-block.next .retro-head { color: var(--accent); }
+  .card-6 .retro-block .retro-items { font-size: 22px; line-height: 2; color: rgba(255,255,255,0.60); }
+  .card-6 .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; margin-top: 55px; font-weight: 600; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- ====== Card 1: 提出问题 ====== -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="section-label">提出问题</div>
+  <h1>要做小红书图文<br>但不会设计</h1>
+  <div class="problem-statement">
+    不是「想学设计」。<br>
+    是「需要一组能发的图文，现在」。<br><br>
+    不会 Photoshop。<br>
+    没学过排版。<br>
+    没有设计师预算。<br><br>
+    问题摆在这里。
+  </div>
+  <div class="creation-badge">项目制学习 + 人机协作 + 做中学</div>
+</div>
+
+<!-- ====== Card 2: AI时代思维拆解 ====== -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">拆解问题</div>
+  <h2>把「不会设计」<br>拆开看</h2>
+  <div class="decompose">
+    <div class="layer ops">
+      <div class="layer-head">操作层 · 需要工具技能</div>
+      <div class="layer-items">排版 / 配色 / 字体 / 间距 / 导出</div>
+    </div>
+    <div class="layer dec">
+      <div class="layer-head">决策层 · 需要判断力</div>
+      <div class="layer-items">说什么 / 什么好看 / 发不发</div>
+    </div>
+  </div>
+  <p class="question">AI 能覆盖操作层。<br>那「不会设计」还是问题吗？</p>
+</div>
+
+<!-- ====== Card 3: 准备工具 ====== -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">准备工具</div>
+  <h2>工具链</h2>
+  <div class="tools">
+    <div class="tool">
+      <div class="icon">💬</div>
+      <div class="name">Trae CN</div>
+      <div class="role">跟 AI 对话<br>写文案<br>写 HTML/CSS</div>
+    </div>
+    <div class="tool">
+      <div class="icon">🔌</div>
+      <div class="name">Pixso MCP</div>
+      <div class="role">code_to_design<br>代码直接转为<br>设计节点</div>
+    </div>
+    <div class="tool">
+      <div class="icon">🎨</div>
+      <div class="name">Pixso</div>
+      <div class="role">预览效果<br>微调<br>导出图片</div>
+    </div>
+  </div>
+  <p class="note">没装 Photoshop。<br>没开任何设计软件。</p>
+</div>
+
+<!-- ====== Card 4: 人机协作流程 ====== -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">协作流程</div>
+  <h2>人怎么和 AI 分工</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">选题</div>
+        <div class="step-detail"><span class="who">人：</span>决定今天讲什么</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">拆卡</div>
+        <div class="step-detail"><span class="who">人：</span>定每张卡的论点方向<br><span class="who">AI：</span>出文案初稿</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">排版</div>
+        <div class="step-detail"><span class="who">AI：</span>写 HTML/CSS<br><span class="who">人：</span>Pixso 看效果，给反馈</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">出图</div>
+        <div class="step-detail"><span class="who">人：</span>Pixso 导出 → 发布</div>
+      </div>
+    </div>
+  </div>
+  <p class="summary">人在这个流程里的角色：做决定。<br>AI 的角色：执行。</p>
+</div>
+
+<!-- ====== Card 5: 产出结果 ====== -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">产出结果</div>
+  <h2>做出来了什么</h2>
+  <div class="output-specs">
+    <div class="spec-row">
+      <span class="spec-label">格式</span>
+      <span class="spec-value">6 张图文卡片，1080 × 1440px</span>
+    </div>
+    <div class="spec-row">
+      <span class="spec-label">配色</span>
+      <span class="spec-value">暗色背景（#141414 / #1a1a1a）</span>
+    </div>
+    <div class="spec-row">
+      <span class="spec-label">强调色</span>
+      <span class="spec-value">珊瑚红 #ff6b6b</span>
+    </div>
+    <div class="spec-row">
+      <span class="spec-label">字体</span>
+      <span class="spec-value">Noto Sans SC</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Card 6: 复盘记录 ====== -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">复盘记录</div>
+  <h2>哪些有效<br>哪些要改</h2>
+  <div class="retro">
+    <div class="retro-block works">
+      <div class="retro-head">✓ 有效的</div>
+      <div class="retro-items">
+        HTML → Pixso MCP code_to_design，这条路走得通<br>
+        AI 对「太闷了」「字小了」这种模糊反馈<br>　的理解比预期好<br>
+        不需要 Photoshop，不需要设计师
+      </div>
+    </div>
+    <div class="retro-block next">
+      <div class="retro-head">→ 下一步</div>
+      <div class="retro-items">
+        Pixso 中微调后导出最终图片<br>
+        继续做第 2~10 期的排版
+      </div>
+    </div>
+  </div>
+  <div class="brand-line">项目制学习 + 人机协作 + 做中学</div>
+</div>
+
+</body>
+</html>

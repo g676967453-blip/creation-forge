@@ -1,4 +1,10 @@
 {
+  "mcpServers": {
+    "pixso": {
+      "type": "sse",
+      "url": "http://127.0.0.1:3667/mcp"
+    }
+  },
   "permissions": {
     "allow": [
       "npm install",

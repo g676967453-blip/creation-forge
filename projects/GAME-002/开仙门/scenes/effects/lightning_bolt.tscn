@@ -1,0 +1,94 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/lightning_bolt.gd" id="1_blt"]
+[ext_resource type="Texture2D" path="res://assets/runtime/projectiles/lightning_bolt.png" id="2_blt"]
+[ext_resource type="Texture2D" path="res://assets/runtime/projectiles/thunder_impact.png" id="3_imp"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_add"]
+blend_mode = 1
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0"]
+atlas = ExtResource("2_blt")
+region = Rect2(0, 0, 64, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("2_blt")
+region = Rect2(64, 0, 64, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2"]
+atlas = ExtResource("2_blt")
+region = Rect2(128, 0, 64, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3"]
+atlas = ExtResource("2_blt")
+region = Rect2(192, 0, 64, 512)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bolt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="ImpactAtlas_0"]
+atlas = ExtResource("3_imp")
+region = Rect2(0, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="ImpactAtlas_1"]
+atlas = ExtResource("3_imp")
+region = Rect2(128, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="ImpactAtlas_2"]
+atlas = ExtResource("3_imp")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="ImpactAtlas_3"]
+atlas = ExtResource("3_imp")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_impact"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("ImpactAtlas_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("ImpactAtlas_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("ImpactAtlas_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("ImpactAtlas_3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 7.0
+}]
+
+[node name="LightningBolt" type="Node2D"]
+script = ExtResource("1_blt")
+
+[node name="BoltAnim" type="AnimatedSprite2D" parent="."]
+material = SubResource("CanvasItemMaterial_add")
+sprite_frames = SubResource("SpriteFrames_bolt")
+
+[node name="Impact" type="AnimatedSprite2D" parent="."]
+modulate = Color(1.6737204, 7.4238973, 10.998333, 1)
+material = SubResource("CanvasItemMaterial_add")
+position = Vector2(0, -257)
+sprite_frames = SubResource("SpriteFrames_impact")
+autoplay = "default"

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+card_id = "card_flysword_seek"
+card_name = "心念御剑"
+description = "飞剑自动追踪最远的敌人"
+target_peak_id = "peak_flysword"
+effect_type = "add_seeking"
+effect_value = 1.0

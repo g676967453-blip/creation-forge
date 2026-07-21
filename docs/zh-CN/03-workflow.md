@@ -19,19 +19,20 @@
 
 ```bash
 # 1. 确定项目位置
-#    tutorial  → projects/tutorial/<编号>-<名称>
+#    tutorial  → projects/tutorial/<名称>
 #    original  → projects/originals/<名称>
 #    sandbox   → projects/sandbox/<名称>
+#    独立游戏  → projects/GAME-XXX/<名称>（如 GAME-002/开仙门）
 
-# 2. 复制模板
-cp -r templates/game-phaser projects/tutorial/01-hello-canvas
+# 2. 复制模板（以 Phaser 为例）
+cp -r templates/game-phaser projects/<项目路径>
 
 # 3. 修改 package.json
-#    把 "name" 改成 "@spark-forge/hello-canvas"
+#    把 "name" 改成 "@creation-forge/<项目名>"
 #    更新 "description"
 
 # 4. 安装依赖
-cd projects/tutorial/01-hello-canvas
+cd projects/<项目路径>
 npm install
 
 # 5. 启动开发

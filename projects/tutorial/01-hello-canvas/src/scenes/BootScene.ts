@@ -22,7 +22,7 @@ export class BootScene extends Phaser.Scene {
   create(): void {
     // 游戏标题
     this.add
-      .text(400, 280, '星火工坊 — 游戏启动!', {
+      .text(400, 280, '造化坊 — 游戏启动!', {
         fontSize: '28px',
         color: '#ffffff',
         fontFamily: 'Arial, sans-serif',

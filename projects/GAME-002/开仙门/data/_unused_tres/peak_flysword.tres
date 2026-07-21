@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=1 format=3]
+
+[resource]
+id = "peak_flysword"
+display_name = "飞剑峰"
+attack_type = "ranged"
+base_damage = 12.0
+base_range = 250.0
+base_attack_speed = 1.2
+max_hp = 150.0
+target_type = "nearest"
+color = Color(0.0, 0.8, 0.8, 1.0)
+scene_path = "res://scenes/peaks/peak_template.tscn"
+special_mechanic = "split"
+special_param = 3.0

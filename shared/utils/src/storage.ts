@@ -4,7 +4,7 @@
  */
 
 /** 存储键名前缀，避免与浏览器其他数据冲突 */
-const PREFIX = 'spark-forge:';
+const PREFIX = 'creation-forge:';
 
 /**
  * 保存数据到 localStorage
@@ -45,7 +45,7 @@ export function remove(key: string): void {
 }
 
 /**
- * 清除所有星火工坊相关的存储数据
+ * 清除所有造化坊相关的存储数据
  */
 export function clearAll(): void {
   const keysToRemove: string[] = [];

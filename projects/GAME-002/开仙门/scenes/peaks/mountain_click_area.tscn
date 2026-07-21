@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[sub_resource type="RectangleShape2D" id="RectShape"]
+size = Vector2(86.4, 64.8)
+
+[node name="MountainClickArea" type="Area2D"]
+input_pickable = true
+monitoring = false
+collision_layer = 1
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectShape")

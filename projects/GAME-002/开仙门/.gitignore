@@ -1,0 +1,15 @@
+
+# Godot 生成物
+.godot/
+*.uid
+*.import
+*.translation
+
+# 导入缓存
+*.import/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db

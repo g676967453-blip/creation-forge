@@ -1,5 +1,5 @@
 {
-  "name": "@spark-forge/types",
+  "name": "@creation-forge/types",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",

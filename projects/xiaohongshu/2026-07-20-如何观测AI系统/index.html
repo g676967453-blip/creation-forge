@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何观测AI系统 · 造化坊 · 预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #38bdf8; }
+
+  /* Card 1 */ .card-1 .emoji { font-size: 56px; margin-bottom: 25px; } .card-1 h1 { font-size: 50px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; } .card-1 h1 .highlight { color: var(--accent); } .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.55); line-height: 1.8; text-align: center; }
+  /* Card 2 */ .card-2 .section-label, .card-3 .section-label, .card-4 .section-label, .card-5 .section-label, .card-6 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; } .card-2 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-2 .compare { width: 100%; display: flex; gap: 30px; justify-content: center; } .card-2 .compare-box { flex: 1; max-width: 380px; border-radius: 20px; padding: 35px 30px; text-align: left; } .card-2 .compare-box.old { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); } .card-2 .compare-box.new { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.12); } .card-2 .compare-box .box-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 20px; text-align: left; } .card-2 .compare-box.old .box-head { color: rgba(255,255,255,0.30); } .card-2 .compare-box.new .box-head { color: var(--accent); } .card-2 .compare-box .box-items { font-size: 22px; line-height: 2; text-align: left; } .card-2 .compare-box.old .box-items { color: rgba(255,255,255,0.50); } .card-2 .compare-box.new .box-items { color: rgba(255,255,255,0.75); } .card-2 .question { font-size: 26px; font-weight: 700; margin-top: 45px; color: #f0f0f0; line-height: 1.5; text-align: center; }
+  /* Card 3 */ .card-3 h2 { font-size: 42px; font-weight: 800; margin-bottom: 55px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-3 .tools { width: 100%; display: flex; flex-direction: column; gap: 24px; } .card-3 .tool { display: flex; align-items: flex-start; gap: 28px; background: rgba(255,255,255,0.02); border-radius: 16px; padding: 28px 35px; text-align: left; } .card-3 .tool-icon { font-size: 36px; flex-shrink: 0; width: 56px; text-align: center; } .card-3 .tool .tool-content { flex: 1; text-align: left; } .card-3 .tool .tool-title { font-size: 24px; font-weight: 700; color: #f0f0f0; margin-bottom: 4px; text-align: left; } .card-3 .tool .tool-desc { font-size: 18px; color: rgba(255,255,255,0.40); line-height: 1.6; text-align: left; } .card-3 .summary { font-size: 22px; color: rgba(255,255,255,0.55); margin-top: 50px; line-height: 1.6; text-align: center; }
+  /* Card 4 */ .card-4 h2 { font-size: 42px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-4 .sheets { width: 100%; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; } .card-4 .sheet { width: 280px; border-radius: 12px; padding: 25px 22px; text-align: left; } .card-4 .sheet.s1 { background: rgba(74,144,217,0.08); border: 1px solid rgba(74,144,217,0.15); } .card-4 .sheet.s2 { background: rgba(232,93,58,0.08); border: 1px solid rgba(232,93,58,0.15); } .card-4 .sheet.s3 { background: rgba(123,97,255,0.08); border: 1px solid rgba(123,97,255,0.15); } .card-4 .sheet.s4 { background: rgba(76,175,80,0.08); border: 1px solid rgba(76,175,80,0.15); } .card-4 .sheet.s5 { background: rgba(255,152,0,0.08); border: 1px solid rgba(255,152,0,0.15); } .card-4 .sheet.s6 { background: rgba(96,125,139,0.08); border: 1px solid rgba(96,125,139,0.15); } .card-4 .sheet .s-icon { font-size: 22px; margin-bottom: 10px; } .card-4 .sheet .s-name { font-size: 20px; font-weight: 700; color: #f0f0f0; margin-bottom: 6px; text-align: left; } .card-4 .sheet .s-desc { font-size: 15px; color: rgba(255,255,255,0.45); line-height: 1.6; text-align: left; } .card-4 .closing { font-size: 22px; color: rgba(255,255,255,0.55); margin-top: 45px; line-height: 1.7; text-align: center; }
+  /* Card 5 */ .card-5 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-5 .principle { width: 100%; display: flex; flex-direction: column; gap: 30px; } .card-5 .principle-card { border-radius: 16px; padding: 35px 40px; text-align: left; } .card-5 .principle-card.dark { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); } .card-5 .principle-card.light { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.10); } .card-5 .principle-card .p-head { font-size: 20px; font-weight: 700; margin-bottom: 12px; text-align: left; } .card-5 .principle-card.dark .p-head { color: rgba(255,255,255,0.40); } .card-5 .principle-card.light .p-head { color: var(--accent); } .card-5 .principle-card .p-body { font-size: 22px; line-height: 1.9; text-align: left; } .card-5 .principle-card.dark .p-body { color: rgba(255,255,255,0.50); } .card-5 .principle-card.light .p-body { color: rgba(255,255,255,0.80); } .card-5 .punch { font-size: 28px; font-weight: 700; margin-top: 50px; color: #f0f0f0; line-height: 1.5; text-align: center; }
+  /* Card 6 */ .card-6 h2 { font-size: 48px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; } .card-6 h2 .highlight { color: var(--accent); } .card-6 .body-text { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 50px; text-align: center; } .card-6 .body-text b { color: #f0f0f0; font-weight: 700; } .card-6 .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; } .card-6 .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🔭</div>
+  <h1>如何<br><span class="highlight">观测 AI 系统</span>？</h1>
+  <p class="subtitle">AI 帮你干活<br>但你知道它在干什么吗？<br><br>不是看 CPU 和内存<br>是看它留下的痕迹</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 拆解问题 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">拆解问题</div>
+  <h2>观测对象<br>变了</h2>
+  <div class="compare">
+    <div class="compare-box old">
+      <div class="box-head">传统软件</div>
+      <div class="box-items">CPU 使用率<br>内存占用<br>请求延迟<br>错误日志</div>
+    </div>
+    <div class="compare-box new">
+      <div class="box-head">AI 协作系统</div>
+      <div class="box-items">产出物和痕迹<br>任务完成率<br>规则透明度<br>日志可追溯性</div>
+    </div>
+  </div>
+  <p class="question">AI 不是一个进程。<br>它是一个协作系统。<br>观测方式得从底层换。</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 观测方案 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">观测方案</div>
+  <h2>三条脉搏<br>一条命令</h2>
+  <div class="tools">
+    <div class="tool">
+      <div class="tool-icon">📝</div>
+      <div class="tool-content">
+        <div class="tool-title">works/ 工作日志</div>
+        <div class="tool-desc">一事一记，每个问题从「遇到什么」到「怎么解决」全记录。不是事后回忆，是实时痕迹。</div>
+      </div>
+    </div>
+    <div class="tool">
+      <div class="tool-icon">📊</div>
+      <div class="tool-content">
+        <div class="tool-title">汇报说明书</div>
+        <div class="tool-desc">一条命令自动生成 6 Sheet Excel：动态、任务、架构、配置——全局脉搏一览。</div>
+      </div>
+    </div>
+    <div class="tool">
+      <div class="tool-icon">📐</div>
+      <div class="tool-content">
+        <div class="tool-title">CLAUDE.md 规则引擎</div>
+        <div class="tool-desc">AI 的行为边界、设计规范、工作流——全部写在明处。规则透明 = 系统可观测。</div>
+      </div>
+    </div>
+  </div>
+  <p class="summary">npx tsx tools/generate-report.ts<br>→ 一份 Excel，整个项目尽收眼底</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 实战案例 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">实战案例</div>
+  <h2>打开汇报说明书<br>能看到什么</h2>
+  <div class="sheets">
+    <div class="sheet s1">
+      <div class="s-icon">🏭</div>
+      <div class="s-name">造化坊简介</div>
+      <div class="s-desc">核心理念、价值观、学习路径</div>
+    </div>
+    <div class="sheet s2">
+      <div class="s-icon">📡</div>
+      <div class="s-name">近期动态</div>
+      <div class="s-desc">工作日志列表、Git 提交、项目状态</div>
+    </div>
+    <div class="sheet s3">
+      <div class="s-icon">🎨</div>
+      <div class="s-name">设计体系</div>
+      <div class="s-desc">架构层级、文档索引、视觉规范</div>
+    </div>
+    <div class="sheet s4">
+      <div class="s-icon">📋</div>
+      <div class="s-name">任务看板</div>
+      <div class="s-desc">14 项任务、状态分色、一目了然</div>
+    </div>
+    <div class="sheet s5">
+      <div class="s-icon">🔗</div>
+      <div class="s-name">项目与资产</div>
+      <div class="s-desc">所有路径、平台入口、外部资源</div>
+    </div>
+    <div class="sheet s6">
+      <div class="s-icon">⚙️</div>
+      <div class="s-name">项目配置</div>
+      <div class="s-desc">命令、技能、AI 模式、技术栈</div>
+    </div>
+  </div>
+  <p class="closing">一份 Excel，6 个维度<br>AI 系统在干什么——全部可见</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 核心原理 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">核心原理</div>
+  <h2>不观测黑盒<br>观测影响</h2>
+  <div class="principle">
+    <div class="principle-card dark">
+      <div class="p-head">❌ 不要试图观测</div>
+      <div class="p-body">AI 的「内部状态」——它是黑盒<br>「它在想什么」是不可知的</div>
+    </div>
+    <div class="principle-card light">
+      <div class="p-head">✅ 去观测这些</div>
+      <div class="p-body">产出物：日志、代码、文档<br>进度：任务完成率、阻塞项<br>规则：行为边界是否被遵守<br>痕迹：每件事是否有记录</div>
+    </div>
+  </div>
+  <p class="punch">观测 AI 系统 =<br>把不可见的协作<br>变成可追溯的数据</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>你的 AI 系统<br><span class="highlight">有观测层吗</span>？</h2>
+  <div class="body-text">
+    <b>三件事</b>今天就做：<br>
+    ① 建一个 works/，每件事留日志<br>
+    ② 写一份 CLAUDE.md，规则透明化<br>
+    ③ 跑一条命令，自动生成全局报告<br>
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

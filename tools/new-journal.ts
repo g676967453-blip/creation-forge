@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     output: process.stdout,
   });
 
-  console.log('\n📝 星火工坊 — 学习日志生成器\n');
+  console.log('\n📝 造化坊 — 学习日志生成器\n');
 
   const now = new Date();
   const year = now.getFullYear().toString();

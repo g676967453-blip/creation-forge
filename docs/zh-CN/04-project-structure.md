@@ -3,7 +3,7 @@
 ## 全景图
 
 ```
-spark-forge/                        # 项目根目录
+creation-forge/                     # 项目根目录
 │
 ├── 📄 CLAUDE.md                    # ★ AI协作指南（最重要）
 ├── 📄 README.md                    # 项目主页
@@ -19,6 +19,9 @@ spark-forge/                        # 项目根目录
 │
 ├── 📁 docs/                        # 📚 文档中心
 │   ├── zh-CN/                      # 中文文档（主要）
+│   │   ├── manifesto.md            # 🔥 AI时代的新学习思想（核心理念）
+│   │   ├── operational-loop.md      # 🔄 日常运转线路图
+│   │   ├── user-manual.md            # 📖 操作手册（给人看的）
 │   │   ├── 01-project-philosophy.md
 │   │   ├── 02-tech-stack.md
 │   │   ├── 03-workflow.md
@@ -26,12 +29,17 @@ spark-forge/                        # 项目根目录
 │   │   ├── 05-coding-standards.md
 │   │   ├── 06-git-conventions.md
 │   │   └── 07-glossary.md
-│   └── en/                         # 英文文档（精简版）
-│       └── README.md
+│   ├── en/                         # 英文文档（精简版）
+│   │   └── README.md
+│   └── xiaohongshu/                # 📱 小红书自媒体素材
 │
 ├── 📁 journals/                    # 📝 学习日志
 │   ├── template.md                 # 日志模板
 │   └── 2026/07/                    # 按年月组织
+│
+├── 📁 works/                       # 🔄 日常运转工作单元（一事一记）
+│   ├── README.md                   # 目录说明
+│   └── _template.md                # 工作单元模板（日志+视频草案）
 │
 ├── 📁 ai-collab/                   # 🤖 AI 协作产物
 │   ├── prompts/                    # 可复用提示词模板
@@ -39,9 +47,9 @@ spark-forge/                        # 项目根目录
 │   └── retrospectives/             # 项目复盘
 │
 ├── 📁 shared/                      # 📦 共享代码库
-│   ├── utils/                      # @spark-forge/utils
+│   ├── utils/                      # @creation-forge/utils
 │   │   └── src/                    # 工具函数
-│   ├── types/                      # @spark-forge/types
+│   ├── types/                      # @creation-forge/types
 │   │   └── src/                    # 类型定义
 │   └── assets/                     # 共享资源
 │       ├── fonts/
@@ -56,14 +64,13 @@ spark-forge/                        # 项目根目录
 │   │   ├── package.json            # 项目配置
 │   │   ├── tsconfig.json           # TS 配置
 │   │   └── vite.config.ts          # Vite 配置
-│   └── game-godot/                 # Godot 模板（未来）
+│   └── game-godot/                 # Godot 模板
 │       └── README.md
 │
-├── 📁 projects/                    # 🎮 游戏项目
-│   ├── tutorial/                   # 教程项目（编号排序）
-│   │   ├── 01-hello-canvas/
-│   │   ├── 02-moving-sprites/
-│   │   └── ...
+├── 📁 projects/                    # 🚀 所有项目
+│   ├── GAME-002/                   # 开仙门（Godot 4.7 独立游戏）
+│   ├── xiaohongshu/                # 小红书自媒体内容创作
+│   ├── tutorial/                   # 教程项目（按需创建）
 │   ├── originals/                  # 原创游戏
 │   └── sandbox/                    # 实验沙盒
 │
@@ -95,6 +102,14 @@ spark-forge/                        # 项目根目录
 - 下一步计划
 - 心情指数 (1-5 ⭐)
 
+### `works/` — 日常运转工作单元
+
+**一事一记**。一个文件 = 问题解决日志 + 视频生产草案。
+
+文件命名：`YYYY-MM-DD-简短描述.md`。每条线独立运转，互不交叉。
+
+详见 [运转线路图](./operational-loop.md) 了解完整循环。
+
 ### `ai-collab/` — AI 协作产物
 
 | 子目录            | 内容                     | 格式        |
@@ -105,11 +120,11 @@ spark-forge/                        # 项目根目录
 
 ### `shared/` — 共享库
 
-使用 npm workspace 协议 (`@spark-forge/*`) 引用。不写相对路径 `../../../shared/utils`。
+使用 npm workspace 协议 (`@creation-forge/*`) 引用。不写相对路径 `../../../shared/utils`。
 
 ```typescript
 // ✅ 正确
-import { clamp, lerp } from '@spark-forge/utils';
+import { clamp, lerp } from '@creation-forge/utils';
 
 // ❌ 避免
 import { clamp } from '../../../shared/utils/src/math';

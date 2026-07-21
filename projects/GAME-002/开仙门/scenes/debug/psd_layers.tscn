@@ -1,0 +1,242 @@
+[gd_scene format=3 uid="uid://ddv0mwtfsoiqj"]
+
+[ext_resource type="Texture2D" uid="uid://dl17dubh3iync" path="res://assets/_exported/云朵-01.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://c7da74rufgb2v" path="res://assets/_exported/云朵-02.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bxd85l2hreyij" path="res://assets/_exported/云朵-02_拷贝.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://i1b6yd4t3ye7" path="res://assets/_exported/云朵-02_拷贝_2.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://c4ubx1btjb0aj" path="res://assets/_exported/云朵-02_拷贝_3.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://ct1hcd3o5m3ab" path="res://assets/_exported/云朵-03.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://pnfpan8ta2d2" path="res://assets/_exported/云朵-03_拷贝.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://dpj7a2o2f1abo" path="res://assets/_exported/佛像场景背景层.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cv5bf7odygx10" path="res://assets/_exported/图层_10.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://4btexp471vd7" path="res://assets/_exported/图层_10_拷贝.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dlrl6l2nokjsg" path="res://assets/_exported/图层_11.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://ck23daa5fcqwi" path="res://assets/_exported/图层_11_拷贝.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://dtog0f556opql" path="res://assets/_exported/图层_11_拷贝_2.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://c45h6c1dto46g" path="res://assets/_exported/图层_12.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://cog1xwwpn44r2" path="res://assets/_exported/图层_13.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://d4h5ft5jembol" path="res://assets/_exported/图层_14.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://bn0o50q48rfjg" path="res://assets/_exported/图层_14_拷贝.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://b53qlq0wmimh8" path="res://assets/_exported/图层_2.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://bnthbtecbruv4" path="res://assets/_exported/图层_21.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://qlbnx7nl6cic" path="res://assets/_exported/图层_21_拷贝.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://bpxgxe0ff8fo3" path="res://assets/_exported/图层_21_拷贝_2.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://dackbmxa8cwbg" path="res://assets/_exported/图层_21_拷贝_3.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://bci5uehdjb1wp" path="res://assets/_exported/图层_2_拷贝.png" id="23"]
+[ext_resource type="Texture2D" uid="uid://crtk8p6x8d0gy" path="res://assets/_exported/图层_2_拷贝_2.png" id="24"]
+[ext_resource type="Texture2D" uid="uid://hdr571mkq02e" path="res://assets/_exported/图层_3.png" id="25"]
+[ext_resource type="Texture2D" uid="uid://bb427wtflmvcv" path="res://assets/_exported/图层_6.png" id="26"]
+[ext_resource type="Texture2D" uid="uid://dt0yhtj8w0cn1" path="res://assets/_exported/图层_6_拷贝.png" id="27"]
+[ext_resource type="Texture2D" uid="uid://bsxa5gqfmp5of" path="res://assets/_exported/图层_6_拷贝_2.png" id="28"]
+[ext_resource type="Texture2D" uid="uid://dmw3y1cintpib" path="res://assets/_exported/图层_7.png" id="29"]
+[ext_resource type="Texture2D" uid="uid://hw1nch2voneq" path="res://assets/_exported/图层_8.png" id="30"]
+[ext_resource type="Texture2D" uid="uid://f8wk14nmi7wn" path="res://assets/_exported/图层_8_拷贝.png" id="31"]
+[ext_resource type="Texture2D" uid="uid://dgrngal6jwf6g" path="res://assets/_exported/图层_9.png" id="32"]
+[ext_resource type="Texture2D" uid="uid://cgtaebwc3gh3h" path="res://assets/_exported/图层_9_拷贝.png" id="33"]
+[ext_resource type="Texture2D" uid="uid://3v4iq8rql53y" path="res://assets/_exported/山峰01.png" id="34"]
+[ext_resource type="Texture2D" uid="uid://kerweru3eul1" path="res://assets/_exported/山峰02.png" id="35"]
+[ext_resource type="Texture2D" uid="uid://yt6dkgxywame" path="res://assets/_exported/山峰03.png" id="36"]
+[ext_resource type="Texture2D" uid="uid://dg3l0b5n3qia0" path="res://assets/_exported/山峰04.png" id="37"]
+[ext_resource type="Texture2D" uid="uid://c2e0qs1fnbg2l" path="res://assets/_exported/山峰05.png" id="38"]
+[ext_resource type="Texture2D" uid="uid://bap4pfqlg6f5e" path="res://assets/_exported/山峰06.png" id="39"]
+[ext_resource type="Texture2D" uid="uid://ce2lv41xerjuf" path="res://assets/_exported/杂役弟子-中.png" id="40"]
+[ext_resource type="Texture2D" uid="uid://bcerruoq6fo61" path="res://assets/_exported/杂役弟子-近.png" id="41"]
+[ext_resource type="Texture2D" uid="uid://y0m4xvng0h08" path="res://assets/_exported/杂役弟子-远.png" id="42"]
+[ext_resource type="Texture2D" uid="uid://c2lfpvgspeoff" path="res://assets/_exported/背景.png" id="43"]
+[ext_resource type="Texture2D" uid="uid://qkt0ypqdtylp" path="res://assets/_exported/藏经阁.png" id="44"]
+[ext_resource type="Texture2D" uid="uid://uyebk2l0tc1f" path="res://assets/_exported/阵法阁楼.png" id="45"]
+
+[node name="PSD_Sprites" type="Node2D" unique_id=1655077901]
+
+[node name="背景" type="Sprite2D" parent="." unique_id=1125597243]
+position = Vector2(640, 360)
+texture = ExtResource("43")
+
+[node name="佛像场景背景层" type="Sprite2D" parent="." unique_id=92538398]
+position = Vector2(640, 360)
+texture = ExtResource("8")
+
+[node name="图层 3" type="Sprite2D" parent="." unique_id=1120115365]
+position = Vector2(698.5, 598)
+texture = ExtResource("25")
+
+[node name="云朵-03" type="Sprite2D" parent="." unique_id=1506039347]
+position = Vector2(184.5, 590)
+texture = ExtResource("6")
+
+[node name="云朵-03 拷贝" type="Sprite2D" parent="." unique_id=1583610500]
+position = Vector2(92.5, 597.5)
+texture = ExtResource("7")
+
+[node name="云朵-02 拷贝 3" type="Sprite2D" parent="." unique_id=1935596766]
+position = Vector2(976.5, 597.5)
+texture = ExtResource("5")
+
+[node name="云朵-02 拷贝" type="Sprite2D" parent="." unique_id=1568353393]
+position = Vector2(1210.5, 533)
+texture = ExtResource("3")
+
+[node name="云朵-02 拷贝 2" type="Sprite2D" parent="." unique_id=2072485351]
+position = Vector2(1084.5, 590)
+texture = ExtResource("4")
+
+[node name="云朵-02" type="Sprite2D" parent="." unique_id=132931855]
+position = Vector2(908, 603)
+texture = ExtResource("2")
+
+[node name="云朵-01" type="Sprite2D" parent="." unique_id=435534534]
+position = Vector2(1160, 581.5)
+texture = ExtResource("1")
+
+[node name="云朵-04" type="Sprite2D" parent="." unique_id=858358586]
+position = Vector2(-25.5, 552)
+texture = ExtResource("1")
+
+[node name="云朵-05" type="Sprite2D" parent="." unique_id=468914093]
+position = Vector2(1314.5, 596)
+texture = ExtResource("2")
+
+[node name="山峰01" type="Sprite2D" parent="." unique_id=403553847]
+position = Vector2(185, 598)
+texture = ExtResource("34")
+
+[node name="山峰02" type="Sprite2D" parent="." unique_id=411875881]
+position = Vector2(381.5, 594.5)
+texture = ExtResource("35")
+
+[node name="山峰03" type="Sprite2D" parent="." unique_id=449240940]
+position = Vector2(506.5, 604.5)
+texture = ExtResource("36")
+
+[node name="山峰04" type="Sprite2D" parent="." unique_id=1902126258]
+position = Vector2(1116, 607)
+texture = ExtResource("37")
+
+[node name="山峰05" type="Sprite2D" parent="." unique_id=121585417]
+position = Vector2(928.5, 605.5)
+texture = ExtResource("38")
+
+[node name="山峰06" type="Sprite2D" parent="." unique_id=1729152828]
+position = Vector2(781.5, 612.5)
+texture = ExtResource("39")
+
+[node name="图层 2" type="Sprite2D" parent="." unique_id=710907100]
+position = Vector2(1265.5, 649.5)
+texture = ExtResource("18")
+
+[node name="图层 9" type="Sprite2D" parent="." unique_id=2129374923]
+position = Vector2(286.5, 663)
+texture = ExtResource("32")
+
+[node name="图层 9 拷贝" type="Sprite2D" parent="." unique_id=1462468976]
+position = Vector2(809.5, 653)
+texture = ExtResource("33")
+
+[node name="图层 11" type="Sprite2D" parent="." unique_id=1311425399]
+position = Vector2(649.5, 669)
+texture = ExtResource("11")
+
+[node name="图层 11 拷贝" type="Sprite2D" parent="." unique_id=155424401]
+position = Vector2(737.5, 702)
+texture = ExtResource("12")
+
+[node name="图层 7" type="Sprite2D" parent="." unique_id=2024509821]
+position = Vector2(488.5, 651)
+texture = ExtResource("29")
+
+[node name="图层 10" type="Sprite2D" parent="." unique_id=1487143539]
+position = Vector2(986.5, 661)
+texture = ExtResource("9")
+
+[node name="图层 10 拷贝" type="Sprite2D" parent="." unique_id=2011385161]
+position = Vector2(1068.5, 661)
+texture = ExtResource("10")
+
+[node name="图层 6" type="Sprite2D" parent="." unique_id=678086165]
+position = Vector2(347.5, 675)
+texture = ExtResource("26")
+
+[node name="图层 6 拷贝 2" type="Sprite2D" parent="." unique_id=377445678]
+position = Vector2(886.5, 669)
+texture = ExtResource("28")
+
+[node name="图层 6 拷贝" type="Sprite2D" parent="." unique_id=6093220]
+position = Vector2(1148, 663)
+texture = ExtResource("27")
+
+[node name="图层 8" type="Sprite2D" parent="." unique_id=1943513540]
+position = Vector2(1193.5, 703.5)
+texture = ExtResource("30")
+
+[node name="图层 2 拷贝" type="Sprite2D" parent="." unique_id=2050660386]
+position = Vector2(124, 664)
+texture = ExtResource("23")
+
+[node name="图层 2 拷贝 2" type="Sprite2D" parent="." unique_id=1358721652]
+position = Vector2(23, 696)
+texture = ExtResource("24")
+
+[node name="图层 11 拷贝 2" type="Sprite2D" parent="." unique_id=285312000]
+position = Vector2(515.5, 696)
+texture = ExtResource("13")
+
+[node name="图层 8 拷贝" type="Sprite2D" parent="." unique_id=1071043103]
+position = Vector2(182.5, 709.5)
+texture = ExtResource("31")
+
+[node name="杂役弟子-近" type="Sprite2D" parent="." unique_id=1911118152]
+visible = false
+position = Vector2(377.5, 453)
+texture = ExtResource("41")
+
+[node name="杂役弟子-中" type="Sprite2D" parent="." unique_id=998257527]
+visible = false
+position = Vector2(434.5, 463.5)
+texture = ExtResource("40")
+
+[node name="杂役弟子-远" type="Sprite2D" parent="." unique_id=799535495]
+visible = false
+position = Vector2(475, 471.5)
+texture = ExtResource("42")
+
+[node name="阵法阁楼" type="Sprite2D" parent="." unique_id=973944222]
+visible = false
+position = Vector2(835, 513.5)
+texture = ExtResource("45")
+
+[node name="藏经阁" type="Sprite2D" parent="." unique_id=1178808238]
+visible = false
+position = Vector2(460.5, 601)
+texture = ExtResource("44")
+
+[node name="图层 12" type="Sprite2D" parent="." unique_id=327840648]
+position = Vector2(407.5, 665)
+texture = ExtResource("14")
+
+[node name="图层 13" type="Sprite2D" parent="." unique_id=1674042887]
+position = Vector2(767.5, 646)
+texture = ExtResource("15")
+
+[node name="图层 14" type="Sprite2D" parent="." unique_id=1764104238]
+position = Vector2(851, 675.5)
+texture = ExtResource("16")
+
+[node name="图层 14 拷贝" type="Sprite2D" parent="." unique_id=1788164077]
+position = Vector2(328, 612.5)
+texture = ExtResource("17")
+
+[node name="图层 21" type="Sprite2D" parent="." unique_id=2049282885]
+position = Vector2(448, 692)
+texture = ExtResource("19")
+
+[node name="图层 21 拷贝" type="Sprite2D" parent="." unique_id=676352940]
+position = Vector2(800, 688)
+texture = ExtResource("20")
+
+[node name="图层 21 拷贝 2" type="Sprite2D" parent="." unique_id=208608204]
+position = Vector2(1097, 696)
+texture = ExtResource("21")
+
+[node name="图层 21 拷贝 3" type="Sprite2D" parent="." unique_id=34315140]
+position = Vector2(24, 680)
+texture = ExtResource("22")
