@@ -1,0 +1,16 @@
+# 临时文件
+_drafts/
+_temp/
+*.tmp
+
+# Python
+__pycache__/
+*.pyc
+
+# 中间产物（未通过验收的生成）
+*-draft-*.png
+*-temp-*.png
+
+# 系统文件
+.DS_Store
+Thumbs.db

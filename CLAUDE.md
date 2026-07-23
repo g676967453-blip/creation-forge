@@ -169,10 +169,10 @@ AI 不是替代人类创造力，而是放大它。它同时扮演两个底层�
 ```
 creation-forge/
 ├── docs/
-│   └── zh-CN/        ← 📚 中文文档（主要）
-│       └── manifesto.md ← 🔥 AI时代的新学习思想宣言
-├── journals/         ← 📝 学习日志（按日期组织）
-├── ai-collab/        ← 🤖 AI协作产物（提示词、决策、复盘）
+│   ├── zh-CN/        ← 📚 项目文档（哲学/技术栈/工作流/规范）
+│   │   └── manifesto.md ← 🔥 AI时代的新学习思想宣言
+│   ├── workflows/    ← 🔄 标准化协作流程（双层：知识层+SKILL执行层）
+│   └── tool-guides/  ← 📖 工具知识库（Git/GitHub/Pixso 操作与人机协作）
 ├── shared/           ← 📦 共享库（跨项目复用的代码和资源）
 ├── templates/        ← 🔧 项目模板（快速创建新项目）
 ├── projects/         ← 🚀 所有项目

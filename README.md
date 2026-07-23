@@ -92,8 +92,6 @@ creation-forge/
 ├── docs/
 │   └── zh-CN/           ← 📚 中文文档（含宣言、哲学、技术栈等）
 │       └── manifesto.md ← 🔥 必读：AI 时代的新学习思想
-├── journals/            ← 📝 学习日志（按日期组织）
-├── ai-collab/           ← 🤖 AI 协作产物（提示词、决策记录、复盘）
 ├── shared/              ← 📦 共享库（跨项目复用的工具和类型）
 │   ├── utils/           ← @creation-forge/utils
 │   ├── types/           ← @creation-forge/types

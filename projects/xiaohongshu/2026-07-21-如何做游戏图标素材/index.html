@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何做游戏图标素材 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #f59e0b; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+
+  /* Card 1 */ .card-1 .emoji { font-size: 56px; margin-bottom: 25px; } .card-1 h1 { font-size: 50px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; } .card-1 h1 .highlight { color: var(--accent); } .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.55); line-height: 1.8; text-align: center; }
+
+  /* Card 2 */ .card-2 h2 { font-size: 42px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-2 .gates { display: flex; gap: 30px; width: 100%; justify-content: center; } .card-2 .gate { flex: 1; max-width: 380px; border-radius: 20px; padding: 35px 30px; text-align: left; } .card-2 .gate.g1 { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); } .card-2 .gate.g2 { background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.10); } .card-2 .gate .gate-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 18px; text-align: left; } .card-2 .gate.g1 .gate-head { color: rgba(255,255,255,0.30); } .card-2 .gate.g2 .gate-head { color: var(--accent); } .card-2 .gate .gate-body { font-size: 20px; line-height: 2; text-align: left; } .card-2 .gate.g1 .gate-body { color: rgba(255,255,255,0.50); } .card-2 .gate.g2 .gate-body { color: rgba(255,255,255,0.75); }
+
+  /* Card 3 */ .card-3 h2 { font-size: 42px; font-weight: 800; margin-bottom: 55px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-3 .triad { display: flex; gap: 25px; width: 100%; justify-content: center; } .card-3 .role { flex: 1; max-width: 260px; border-radius: 16px; padding: 32px 22px; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); } .card-3 .role .r-icon { font-size: 40px; margin-bottom: 12px; } .card-3 .role .r-name { font-size: 22px; font-weight: 700; color: #f0f0f0; margin-bottom: 8px; text-align: center; } .card-3 .role .r-desc { font-size: 17px; color: rgba(255,255,255,0.40); line-height: 1.6; text-align: center; } .card-3 .note { font-size: 22px; color: rgba(255,255,255,0.55); margin-top: 50px; line-height: 1.6; text-align: center; }
+
+  /* Card 4 */ .card-4 h2 { font-size: 40px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-4 .iter { width: 100%; display: flex; flex-direction: column; gap: 18px; } .card-4 .iter-row { display: flex; align-items: center; gap: 20px; font-size: 22px; padding: 16px 0; } .card-4 .iter-row .i-num { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; flex-shrink: 0; } .card-4 .iter-row .i-num.fail { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.30); } .card-4 .iter-row .i-num.hit { background: rgba(245,158,11,0.15); color: var(--accent); } .card-4 .iter-row .i-desc { text-align: left; } .card-4 .iter-row .i-desc .i-label { color: rgba(255,255,255,0.25); font-size: 16px; } .card-4 .iter-row .i-desc .i-text { color: rgba(255,255,255,0.65); } .card-4 .key { font-size: 24px; font-weight: 700; margin-top: 40px; color: var(--accent); line-height: 1.5; text-align: center; }
+
+  /* Card 5 */ .card-5 h2 { font-size: 42px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-5 .insights { width: 100%; display: flex; flex-direction: column; gap: 24px; } .card-5 .insight-box { border-radius: 16px; padding: 30px 35px; text-align: left; background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.10); } .card-5 .insight-box .i-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; text-align: left; color: var(--accent); } .card-5 .insight-box .i-body { font-size: 20px; line-height: 1.9; text-align: left; color: rgba(255,255,255,0.75); } .card-5 .punch { font-size: 24px; color: rgba(255,255,255,0.55); margin-top: 45px; line-height: 1.7; text-align: center; }
+
+  /* Card 6 */ .card-6 h2 { font-size: 50px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; } .card-6 h2 .highlight { color: var(--accent); } .card-6 .cta-body { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 50px; text-align: center; }
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🎮</div>
+  <h1>如何做<br><span class="highlight">游戏图标素材</span>？</h1>
+  <p class="subtitle">没有美术团队<br>不会 PS、不会建模<br><br>Lovart + AI + 你自己<br>就够了</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 两个门槛 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">两个门槛</div>
+  <h2>一个人做图标<br>最难的是什么</h2>
+  <div class="gates">
+    <div class="gate g1">
+      <div class="gate-head">门槛一：风格命中</div>
+      <div class="gate-body">Prompt 写不对 → 国风变写实<br>不知道改什么关键词<br>像开盲盒，试了 4 次才中</div>
+    </div>
+    <div class="gate g2">
+      <div class="gate-head">门槛二：批量处理</div>
+      <div class="gate-body">AI 生成是一整张图<br>需要抠图、切图、去底<br>PS 脚本写了 7 版全挂</div>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 三角协作 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">协作模型</div>
+  <h2>三角分工</h2>
+  <div class="triad">
+    <div class="role">
+      <div class="r-icon">🎨</div>
+      <div class="r-name">Lovart</div>
+      <div class="r-desc">AI 图像生成引擎<br>负责「画出来」</div>
+    </div>
+    <div class="role">
+      <div class="r-icon">🤖</div>
+      <div class="r-name">Claude Code</div>
+      <div class="r-desc">调 Prompt + 写脚本<br>负责「控制生成精度」<br>和「自动化后处理」</div>
+    </div>
+    <div class="role">
+      <div class="r-icon">👁️</div>
+      <div class="r-name">你</div>
+      <div class="r-desc">眼睛判断好不好看<br>决定要不要调整<br>负责「审美终判」</div>
+    </div>
+  </div>
+  <p class="note">Lovart = 引擎 · AI = 双手 · 你 = 眼睛</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 风格命中实战 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">实战 · 风格命中</div>
+  <h2>一个 Prompt<br>改了 4 次</h2>
+  <div class="iter">
+    <div class="iter-row">
+      <div class="i-num fail">1</div>
+      <div class="i-desc"><div class="i-label">Pixar 3D animated</div><div class="i-text">❌ 偏国风手绘，方向完全不对</div></div>
+    </div>
+    <div class="iter-row">
+      <div class="i-num fail">2</div>
+      <div class="i-desc"><div class="i-label">王国觉醒 Rise of Kingdoms</div><div class="i-text">❌ 太写实，材质太真，不够卡通</div></div>
+    </div>
+    <div class="iter-row">
+      <div class="i-num fail">3</div>
+      <div class="i-desc"><div class="i-label">卡通比例 + 风格化纹理</div><div class="i-text">⚠️ 方向对了，但不够精准</div></div>
+    </div>
+    <div class="iter-row">
+      <div class="i-num hit">4</div>
+      <div class="i-desc"><div class="i-label">Clash Royale + Supercell cel-shaded</div><div class="i-text">✅ 命中！风格关键词锁死，只换道具名</div></div>
+    </div>
+  </div>
+  <p class="key">风格关键词的颗粒度<br>= 输出的精度</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 两个认知 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">核心认知</div>
+  <h2>踩过的坑</h2>
+  <div class="insights">
+    <div class="insight-box">
+      <div class="i-head">① 关键词精度决定一切</div>
+      <div class="i-body">Pixar → 电影写实风 · Clash Royale → 游戏图标风<br>两个词，两个世界。别用模糊词，用具体的产品名对标。</div>
+    </div>
+    <div class="insight-box">
+      <div class="i-head">② 工具链会变，管线要灵活</div>
+      <div class="i-body">PS 2026 移除了旧 API，7 版脚本全废。<br>最终回到绿底色键 + PIL，反而更稳定。<br>AI 写代码很快，但排查兼容性还得人上。</div>
+    </div>
+  </div>
+  <p class="punch">一个人搞定游戏图标，不是不可能<br>只是需要正确的协作模型</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>今天就能生成<br><span class="highlight">第一个游戏图标</span></h2>
+  <div class="cta-body">
+    ① 打开 Lovart，输入你的第一个 Prompt<br>
+    ② 不满意？换个对标产品名再试<br>
+    ③ 风格命中后，锁死 Prompt，只换内容<br>
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

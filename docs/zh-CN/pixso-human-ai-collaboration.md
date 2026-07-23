@@ -134,7 +134,7 @@ Pixso MCP 提供 **25 个工具**，分为五大类：
                 │  桌面端  │
                 └────┬─────┘
                      │ MCP Server (port 3667)
-                     │ SSE 协议
+                     │ Streamable HTTP 协议
                      ↓
           ┌──────────────────┐
           │   AI (Claude)     │
@@ -324,6 +324,8 @@ Step 6: 复盘归档（AI 辅助）
   }
 }
 ```
+
+> **协议说明**：Pixso MCP 实际使用 **Streamable HTTP** 传输协议（非经典 SSE）。`type: "sse"` 在 Claude Code 中可正常工作（Claude Code 自动尝试多种传输方式）。直接调用时，POST 请求需同时接受 `application/json` 和 `text/event-stream`。
 
 ### 环境要求
 

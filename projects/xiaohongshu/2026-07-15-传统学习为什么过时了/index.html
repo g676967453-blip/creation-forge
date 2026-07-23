@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>传统学习为什么过时了 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #f87171; }
+
+  /* Card 1 */ .card-1 .emoji { font-size: 56px; margin-bottom: 25px; } .card-1 h1 { font-size: 50px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; } .card-1 h1 .highlight { color: var(--accent); } .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.55); line-height: 1.8; text-align: center; }
+  /* Card 2 */ .card-2 .section-label, .card-3 .section-label, .card-4 .section-label, .card-5 .section-label, .card-6 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; } .card-2 h2, .card-3 h2, .card-4 h2, .card-5 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-2 .pain-points { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 2.2; text-align: center; } .card-2 .pain-points s { color: rgba(255,255,255,0.25); } .card-2 .punch { font-size: 28px; font-weight: 700; margin-top: 50px; color: var(--accent); line-height: 1.5; text-align: center; }
+  /* Card 3 */ .card-3 .compare { display: flex; gap: 30px; width: 100%; justify-content: center; } .card-3 .compare-box { flex: 1; max-width: 350px; border-radius: 20px; padding: 35px 30px; text-align: left; } .card-3 .compare-box.old { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); } .card-3 .compare-box.new { background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.12); } .card-3 .compare-box .box-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 18px; text-align: left; } .card-3 .compare-box.old .box-head { color: rgba(255,255,255,0.30); } .card-3 .compare-box.new .box-head { color: var(--accent); } .card-3 .compare-box .box-body { font-size: 22px; line-height: 2; text-align: left; } .card-3 .compare-box.old .box-body { color: rgba(255,255,255,0.50); } .card-3 .compare-box.new .box-body { color: rgba(255,255,255,0.75); }
+  /* Card 4 */ .card-4 .insight { font-size: 28px; color: rgba(255,255,255,0.55); line-height: 2; text-align: center; } .card-4 .insight b { color: #f0f0f0; font-weight: 800; }
+  /* Card 5 */ .card-5 .quotes { width: 100%; display: flex; flex-direction: column; gap: 30px; } .card-5 .quote-box { border-radius: 16px; padding: 35px 40px; text-align: left; background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.10); } .card-5 .quote-box .quote-text { font-size: 26px; font-weight: 700; color: rgba(255,255,255,0.80); line-height: 1.6; text-align: left; }
+  /* Card 6 */ .card-6 h2 { font-size: 50px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; } .card-6 h2 .highlight { color: var(--accent); } .card-6 .body-text { font-size: 28px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 50px; text-align: center; } .card-6 .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; } .card-6 .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">📚</div>
+  <h1>传统学习<br><span class="highlight">为什么过时了</span>？</h1>
+  <p class="subtitle">书越买越多，看完的越来越少<br>教程越收藏越多，动手的越来越少<br><br>总觉得「还没准备好」<br>所以永远不开始</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">你的日常</div>
+  <h2>你中了几条</h2>
+  <p class="pain-points">
+    <s>收藏了 100 篇教程 —— 已收藏 = 已学会</s><br>
+    <s>买了 20 本技术书 —— 翻了前三页</s><br>
+    <s>关注了 30 个学习博主 —— 看标题就当学过了</s><br>
+    <s>收藏夹里吃灰的课程 —— 够读三年</s>
+  </p>
+  <p class="punch">打开编辑器<br>还是不知道从哪开始</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">根因分析</div>
+  <h2>两套逻辑</h2>
+  <div class="compare">
+    <div class="compare-box old">
+      <div class="box-head">学校逻辑</div>
+      <div class="box-body">课本有边界<br>考试范围已知<br>老师告诉你学什么<br>「学完了就能考试」</div>
+    </div>
+    <div class="compare-box new">
+      <div class="box-head">现实逻辑</div>
+      <div class="box-body">知识是无限的<br>没有考试范围<br>没人告诉你学什么<br>「你永远学不完」</div>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">反转认知</div>
+  <h2>不是你的问题</h2>
+  <p class="insight">
+    你不够努力？<b>不是。</b><br>
+    你不够自律？<b>不是。</b><br><br>
+    是<b>「先学完再去做」</b><br>
+    这套模式本身<br>就不适用于真实世界
+  </p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">金句</div>
+  <h2>记住这两句</h2>
+  <div class="quotes">
+    <div class="quote-box">
+      <p class="quote-text">传统教育教你「学好了再去做」。<br>现实世界告诉你——你永远学不完。</p>
+    </div>
+    <div class="quote-box">
+      <p class="quote-text">「没准备好」<br>是传统学习模式给你上的最后一道锁。<br>砸掉它。</p>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2><span class="highlight">砸掉</span>那把锁</h2>
+  <p class="body-text">
+    打开编辑器<br>写下第一行代码<br>你就已经超过了<br>99% 还在「准备」的人
+  </p>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>
