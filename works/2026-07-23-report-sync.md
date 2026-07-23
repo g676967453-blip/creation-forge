@@ -74,3 +74,19 @@
 ### 关联项目
 
 造化坊 · 基础设施 + 小红书 + GAME-002 + asset-pipeline
+
+---
+
+## 附：周度复盘 + 5 项改进执行
+
+同日进行了第一周全盘复盘（[week1-retrospective](2026-07-23-week1-retrospective.md)），发现 5 个改进项并全部执行：
+
+| # | 改进项 | 状态 |
+|---|--------|------|
+| #0 | 改进追踪文档 `docs/workflows/改进追踪.md` | ✅ |
+| #1 | SKILL 实质化：YAML frontmatter + `description` 自动发现 + 触发词修正 | ✅ |
+| #2 | Excel 锁文件前置检查 | ✅ |
+| #3 | CLAUDE.md 每日日志检查规则 | ✅ |
+| #4 | workDescs 自动从标题行提取（手动映射表清空） | ✅ |
+
+**重要认识修正**：`.claude/skills/*.md` 扁平文件本身就是有效的 SKILL，不是"假 SKILL"。加上 `description` 后 Claude 可根据上下文自动发现。

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人机协作第一周复盘 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; text-align: right; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #f59e0b; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  .punch { font-size: 24px; font-weight: 700; line-height: 1.5; text-align: center; }
+
+  /* === Card 1: Cover === */
+  .card-1 .emoji { font-size: 56px; margin-bottom: 25px; text-align: center; }
+  .card-1 h1 { font-size: 48px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; }
+  .card-1 h1 .highlight { color: var(--accent); }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 1.8; text-align: center; }
+  .card-1 .subtitle .divider { color: rgba(255,255,255,0.18); margin: 0 10px; }
+
+  /* === Card 2: Why a body === */
+  .card-2 h2 { font-size: 44px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-2 h2 .highlight { color: var(--accent); }
+  .card-2 .pain-list { width: 100%; display: flex; flex-direction: column; gap: 18px; }
+  .card-2 .pain-item { display: flex; align-items: center; gap: 18px; padding: 20px 30px; border-radius: 10px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-2 .pain-item .pain-x { font-size: 20px; color: rgba(255,255,255,0.20); min-width: 28px; text-align: center; }
+  .card-2 .pain-item .pain-text { font-size: 22px; color: rgba(255,255,255,0.55); line-height: 1.5; text-align: left; }
+  .card-2 .punch { margin-top: 45px; color: var(--accent); }
+
+  /* === Card 3: Brain === */
+  .card-3 h2 { font-size: 42px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-3 h2 .highlight { color: var(--accent); }
+  .card-3 .flow { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 40px; }
+  .card-3 .flow-node { flex: 0 0 auto; text-align: center; }
+  .card-3 .flow-node .n-icon { font-size: 28px; margin-bottom: 10px; text-align: center; }
+  .card-3 .flow-node .n-label { font-size: 16px; color: rgba(255,255,255,0.55); font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+  .card-3 .flow-node .n-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 16px 24px; font-size: 20px; font-weight: 700; color: #f0f0f0;
+    min-width: 120px; text-align: center; white-space: nowrap;
+  }
+  .card-3 .flow-arrow { font-size: 22px; color: var(--accent); margin: 0 8px; flex-shrink: 0; text-align: center; }
+  .card-3 .insight-box { width: 100%; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.12); border-radius: 14px; padding: 30px 35px; text-align: left; }
+  .card-3 .insight-box .i-title { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; text-align: left; }
+  .card-3 .insight-box .i-body { font-size: 21px; color: rgba(255,255,255,0.70); line-height: 1.8; text-align: left; }
+
+  /* === Card 4: Mouth === */
+  .card-4 h2 { font-size: 42px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-4 h2 .highlight { color: var(--accent); }
+  .card-4 .pipe { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 40px; }
+  .card-4 .pipe-node { flex: 0 0 auto; text-align: center; }
+  .card-4 .pipe-node .pn-icon { font-size: 30px; margin-bottom: 8px; text-align: center; }
+  .card-4 .pipe-node .pn-label { font-size: 16px; color: rgba(255,255,255,0.40); letter-spacing: 1px; margin-bottom: 6px; text-align: center; }
+  .card-4 .pipe-node .pn-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 14px 20px; font-size: 18px; font-weight: 700; color: #f0f0f0;
+    text-align: center; white-space: nowrap;
+  }
+  .card-4 .pipe-arrow { font-size: 22px; color: var(--accent); margin: 0 8px; flex-shrink: 0; text-align: center; }
+  .card-4 .insight-box { width: 100%; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 30px 35px; text-align: left; }
+  .card-4 .insight-box .i-title { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; text-align: left; }
+  .card-4 .insight-box .i-body { font-size: 21px; color: rgba(255,255,255,0.65); line-height: 1.8; text-align: left; }
+
+  /* === Card 5: Hands + External === */
+  .card-5 h2 { font-size: 42px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-5 h2 .highlight { color: var(--accent); }
+  .card-5 .section-sub { font-size: 18px; color: rgba(255,255,255,0.25); letter-spacing: 4px; margin-bottom: 20px; font-weight: 600; text-align: center; }
+  .card-5 .tools-row { width: 100%; display: flex; gap: 20px; justify-content: center; margin-bottom: 36px; }
+  .card-5 .tool-card { flex: 1; max-width: 240px; border-radius: 14px; padding: 28px 20px; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); }
+  .card-5 .tool-card .t-icon { font-size: 36px; margin-bottom: 12px; text-align: center; }
+  .card-5 .tool-card .t-name { font-size: 20px; font-weight: 700; color: #f0f0f0; margin-bottom: 8px; text-align: center; }
+  .card-5 .tool-card .t-desc { font-size: 15px; color: rgba(255,255,255,0.40); line-height: 1.5; text-align: center; }
+  .card-5 .github-box { width: 100%; display: flex; align-items: center; gap: 24px; border-radius: 14px; padding: 28px 35px; text-align: left; background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.10); }
+  .card-5 .github-box .gh-icon { font-size: 36px; flex-shrink: 0; text-align: center; }
+  .card-5 .github-box .gh-content { flex: 1; text-align: left; }
+  .card-5 .github-box .gh-name { font-size: 20px; font-weight: 700; color: #f0f0f0; margin-bottom: 6px; text-align: left; }
+  .card-5 .github-box .gh-desc { font-size: 17px; color: rgba(255,255,255,0.50); line-height: 1.5; text-align: left; }
+  .card-5 .punch { margin-top: 40px; color: var(--accent); }
+
+  /* === Card 6: CTA === */
+  .card-6 h2 { font-size: 48px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; }
+  .card-6 h2 .highlight { color: var(--accent); }
+  .card-6 .cta-body { font-size: 24px; line-height: 2.2; color: rgba(255,255,255,0.55); margin-bottom: 50px; text-align: center; }
+  .card-6 .cta-body span { color: rgba(255,255,255,0.25); font-size: 20px; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🧬</div>
+  <h1>9天，我给AI协作系统<br>装了<span class="highlight">一个身体</span></h1>
+  <p class="subtitle">
+    🧠 大脑观测<span class="divider">·</span>👄 嘴巴发声<span class="divider">·</span>✋ 双手创作<span class="divider">·</span>🔗 外援加持<br><br>人+AI 协作不是一句口号<br>它需要具体的「器官」
+  </p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 为什么需要身体 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">出发点</div>
+  <h2>人+AI 协作<br><span class="highlight">不是一句口号</span></h2>
+  <div class="pain-list">
+    <div class="pain-item">
+      <span class="pain-x">×</span>
+      <span class="pain-text">想法很多，工具散落各处——没有统一调度</span>
+    </div>
+    <div class="pain-item">
+      <span class="pain-x">×</span>
+      <span class="pain-text">做过什么记不住——没有记忆系统</span>
+    </div>
+    <div class="pain-item">
+      <span class="pain-x">×</span>
+      <span class="pain-text">做完没留下痕迹——没有对外输出</span>
+    </div>
+    <div class="pain-item">
+      <span class="pain-x">×</span>
+      <span class="pain-text">每次协作靠临时描述——没有可复用的规则</span>
+    </div>
+  </div>
+  <p class="punch">协作需要一套看得见的系统<br>→ 于是给 AI 装了一个身体</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 🧠 大脑 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">🧠 大脑</div>
+  <h2>造化坊说明书<br><span class="highlight">= 系统的观测器</span></h2>
+  <div class="flow">
+    <div class="flow-node">
+      <div class="n-icon">📝</div>
+      <div class="n-label">记录</div>
+      <div class="n-box">works/ 日志</div>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">
+      <div class="n-icon">📊</div>
+      <div class="n-label">汇聚</div>
+      <div class="n-box">Excel 说明书</div>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">
+      <div class="n-icon">🔍</div>
+      <div class="n-label">审视</div>
+      <div class="n-box">周复盘</div>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node">
+      <div class="n-icon">📋</div>
+      <div class="n-label">驱动</div>
+      <div class="n-box">改进清单</div>
+    </div>
+  </div>
+  <div class="insight-box">
+    <div class="i-title">💡 核心认知</div>
+    <div class="i-body">大脑不是做事的，是<b>看</b>的。<br>看得见做过什么 → 才看得见哪里有问题 → 才能迭代。<br>没有观测器，协作就是盲飞。</div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 👄 嘴巴 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">👄 嘴巴</div>
+  <h2>小红书图文<br><span class="highlight">= 对外的发声器</span></h2>
+  <div class="pipe">
+    <div class="pipe-node">
+      <div class="pn-icon">📝</div>
+      <div class="pn-label">素材</div>
+      <div class="pn-box">works/ 日志</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node">
+      <div class="pn-icon">⚡</div>
+      <div class="pn-label">触发</div>
+      <div class="pn-box">/新帖子 SKILL</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node">
+      <div class="pn-icon">🎨</div>
+      <div class="pn-label">排版</div>
+      <div class="pn-box">6 卡图文</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node">
+      <div class="pn-icon">📱</div>
+      <div class="pn-label">发布</div>
+      <div class="pn-box">小红书</div>
+    </div>
+  </div>
+  <div class="insight-box">
+    <div class="i-title">💡 核心认知</div>
+    <div class="i-body">不是自言自语，是把"做中学"的过程<b>说出去</b>。<br>一个素材来源（works/）→ 一个产出物（帖子）→ 一个可复用流程（/新帖子）。<br>嘴巴让系统有了对外的影响力。</div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: ✋ 手 + 🔗 外援 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">✋ 双手 + 🔗 外援</div>
+  <h2>创作工具链<br><span class="highlight">= 从想法到作品</span></h2>
+
+  <div class="section-sub">✋ 双手 — 把想法变成作品</div>
+  <div class="tools-row">
+    <div class="tool-card">
+      <div class="t-icon">🎨</div>
+      <div class="t-name">Pixso</div>
+      <div class="t-desc">UI 设计<br>HTML 一键导入</div>
+    </div>
+    <div class="tool-card">
+      <div class="t-icon">🎬</div>
+      <div class="t-name">Lovart</div>
+      <div class="t-desc">AI 生图<br>视频 · 音乐</div>
+    </div>
+    <div class="tool-card">
+      <div class="t-icon">📺</div>
+      <div class="t-name">LiblibTV</div>
+      <div class="t-desc">视频创作<br>素材处理</div>
+    </div>
+  </div>
+
+  <div class="section-sub">🔗 外援 — 最强后盾</div>
+  <div class="github-box">
+    <div class="gh-icon">🔗</div>
+    <div class="gh-content">
+      <div class="gh-name">GitHub</div>
+      <div class="gh-desc">版本控制 + 代码托管 + 开源协作 —— 所有代码的"时光机"和"备份盘"</div>
+    </div>
+  </div>
+
+  <p class="punch">手负责把想法变成作品<br>外援保证不掉链子、不怕丢失</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>你的 AI 协作系统<br><span class="highlight">有身体吗</span>？</h2>
+  <div class="cta-body">
+    ① 你怎么观测你的 AI 协作？<span>（大脑）</span><br>
+    ② 你做的东西怎么对外发声？<span>（嘴巴）</span><br>
+    ③ 你的工具链能覆盖想法→作品吗？<span>（双手）</span>
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

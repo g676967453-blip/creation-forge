@@ -32,6 +32,10 @@ window/size/always_on_top=true
 window/dpi/allow_hidpi=true
 window/stretch/mode=0
 
+[gui]
+
+theme/custom="res://themes/default_theme.tres"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/auto_reload/plugin.cfg")

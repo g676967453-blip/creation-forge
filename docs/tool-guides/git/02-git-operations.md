@@ -64,4 +64,4 @@ refactor: 重构输入系统
 chore: 更新依赖
 ```
 
-> 详细规范见 `docs/zh-CN/06-git-conventions.md`
+> 详细规范见 [../../zh-CN/06-git-conventions.md](../../zh-CN/06-git-conventions.md)

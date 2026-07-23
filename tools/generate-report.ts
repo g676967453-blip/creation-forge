@@ -134,6 +134,26 @@ function listWorks(): string[] {
   }
 }
 
+/** 从 works/ 文件标题行自动提取描述 */
+function autoDesc(filename: string): string | null {
+  try {
+    const content = fs.readFileSync(path.join(ROOT, "works", filename), "utf-8");
+    // 匹配第一行标题: # [YYYY-MM-DD] 标题 或 # YYYY-MM-DD 标题
+    const match = content.match(/^#\s*(?:\[[\d-]+\]\s*)?(.+)/m);
+    if (match) {
+      const title = match[1].trim();
+      // 去掉日期前缀（如果有的话）
+      return title.replace(/^[\d-]+\s*/, "");
+    }
+  } catch {}
+  return null;
+}
+
+/** 获取 works 文件的描述（优先自动提取，fallback 到手动映射） */
+function getWorkDesc(filename: string, manualDescs: Record<string, string>): string {
+  return autoDesc(filename) ?? manualDescs[filename] ?? "—";
+}
+
 // ============================================================
 // 主生成逻辑
 // ============================================================
@@ -175,7 +195,7 @@ async function main() {
       ],
       [
         "学习方式",
-        "项目制学习 —— 不由课本决定学什么，由你选的项目决定。\n当前活跃项目：GAME-002 开仙门（Godot 4.7）+ 小红书自媒体内容线",
+        "项目制学习 —— 不由课本决定学什么，由你选的项目决定。\n活跃项目：GAME-002 开仙门（Godot 4.7）+ 小红书自媒体 + asset-pipeline 资产管线",
         "",
         "",
       ],
@@ -206,28 +226,14 @@ async function main() {
     // 2.1 工作日志
     addHeader(sheet, ["日期", "类型", "标题", "说明"]);
     const works = listWorks();
-    const workDescs: Record<string, string> = {
-      "2026-07-22-开场黑幕UI制作.md": "游戏界面制作工作流 — 梳理 UI 制作标准化流程，以开场黑幕为实战案例走通全流程",
-      "2026-07-21-workflow-solidified.md": "道具图标工作流固化 — 三个风格案例验证后，将流程固化为标准工作流文档",
-      "2026-07-21-workflow-system.md": "标准化工作流管理体系 — 双层结构（5 流程文档 + 3 SKILL），统一人机协作流程",
-      "2026-07-21-workflow-maintenance.md": "工作流文档维护 — 手动巡检更新多份文档，确认 SKILL 存放位置与共享局限性",
-      "2026-07-21-xiaohongshu-post13-14.md": "小红书 2 期新帖 — 工作流管理 + 游戏图标管线转为图文帖子",
-      "2026-07-21-clash-royale-icons.md": "皇室战争风格道具图标 — Supercell 3D cel-shaded + 三国题材融合",
-      "2026-07-21-asset-pipeline.md": "Lovart + Photoshop 道具图标生产线 — 1024→256 二次元风格批量产出",
-      "2026-07-20-xiaohongshu-restructure.md": "小红书项目重构 — 目录扁平化（14 主题统一为日期-主题），Pixso 单文件导入",
-      "2026-07-20-remove-preset-learning-path.md": "去除预设三阶段学习路径 — 回归项目制学习本意",
-      "2026-07-17-xiaohongshu-restructure.md": "小红书项目 4 库结构重组 — 文案库/HTML库/Pixso截图/ + CLAUDE.md",
-      "2026-07-17-xiaohongshu-post11-pixso-fix.md": "post-11 产出 + Pixso 四问题修复 — 嵌套/命名/单图/对齐",
-      "2026-07-17-game002-onboarding.md": "GAME-002「开仙门」项目接入 — 35 脚本/4721 行/10 CSV，Godot 4.7",
-      "2026-07-16-pixso-layout.md": "Pixso 排版设计 — v2 暗色模板 + MCP 协作指南 + 三轮设计迭代",
-      "2026-07-15-first-xiaohongshu-post.md": "第一篇小红书发布记录 — 造化坊理念首次对外传播",
-      "2026-07-15-ai-era-action.md": "AI 时代行动方案 — 核心理念体系建设的执行计划",
-    };
+    // 手动映射仅用于覆盖自动提取不准确的情况（通常无需维护）
+    const manualDescs: Record<string, string> = {};
     works.forEach((w, idx) => {
       const date = w.substring(0, 10);
+      const desc = getWorkDesc(w, manualDescs);
       addRow(
         sheet,
-        [date, "工作日志", w, workDescs[w] ?? "—"],
+        [date, "工作日志", w, desc],
         { fillColor: idx % 2 === 0 ? "FFFFF8F0" : "FFFFFFFF" }
       );
     });
@@ -249,20 +255,32 @@ async function main() {
     addRow(sheet, [
       "GAME-002「开仙门」",
       "🟢 活跃开发中",
-      "Godot 4.x",
-      "修仙题材策略游戏。已建立完整协作体系（宪法/角色/5 阶段 SOP/质量体系/AI 记忆），游戏数据采用 CSV 驱动（card/enemy/form/peak/spirit/wave 等表）",
+      "Godot 4.7",
+      "修仙题材 Roguelike 塔防。V0.1 进度 11%，设计-代码断层，19 项待定决策。",
+    ]);
+    addRow(sheet, [
+      "小红书自媒体",
+      "🟢 内容持续产出",
+      "HTML/CSS + Pixso",
+      "AI 协作内容创作。14 期帖子（扁平目录），/new-post SKILL 自动化流程。",
+    ]);
+    addRow(sheet, [
+      "asset-pipeline",
+      "🟢 资产管线运行中",
+      "Lovart + Photoshop",
+      "游戏道具图标生产线。docs/scripts/outputs/templates 四层结构，3 个风格案例已验证。",
     ]);
     addRow(sheet, [
       "tutorial/01-hello-canvas",
       "🟡 教程项目（稳定）",
       "Phaser 3.80+",
-      "Phaser 入门教程，了解项目结构和渲染循环",
+      "Phaser 入门教程，按需创建。",
     ]);
     addRow(sheet, [
       "核心理念体系",
-      "🟢 进行中",
+      "🟢 持续演进",
       "文档",
-      "完善 AI 时代新学习思想文档体系。截至 07-17：删除预设三阶段学习路径，学习内容由实际项目驱动。",
+      "工作流管理体系（双层）+ 工具知识库 + SKILL 执行层。07-23 周度复盘：5 项改进全部落地。",
     ]);
   }
 
@@ -285,7 +303,7 @@ async function main() {
       ["文档层", "docs/zh-CN/", "中文文档（宣言/技术栈/工作流/结构/规范/术语）", "项目知识库主阵地"],
       ["共享层", "shared/types + shared/utils", "跨项目复用的类型定义和工具函数", "npm workspaces 子包"],
       ["模板层", "templates/game-phaser + game-godot", "新项目快速启动模板", "Vite + Phaser 或 Godot"],
-      ["项目层", "projects/GAME-002 + xiaohongshu + tutorial + originals + sandbox", "两个活跃项目 + 教程/原创/实验", "GAME-002(Godot 4.7) + 小红书自媒体"],
+      ["项目层", "projects/GAME-002 + xiaohongshu + asset-pipeline + tutorial + originals + sandbox", "3 个活跃项目 + 教程/原创/实验", "GAME-002 + 小红书 + asset-pipeline"],
       ["工具层", "tools/", "脚手架、日志生成、报告生成等脚本", "开发效率工具"],
       ["工作层", "works/", "一事一记 + 视频草案", "每个问题都是一个交付"],
       ["工作流", "docs/workflows/", "标准化协作流程（双层：知识层+SKILL）", "5 个流程 / 3 个 SKILL"],
@@ -310,7 +328,10 @@ async function main() {
       ["Git 规范", "06-git-conventions.md", "docs/zh-CN/", "分支策略与提交规范"],
       ["术语表", "07-glossary.md", "docs/zh-CN/", "项目术语定义"],
       ["用户手册", "user-manual.md", "docs/zh-CN/", "新人上手操作指南"],
-      ["小红书", "xiaohongshu-workflow.md", "docs/zh-CN/", "自媒体发布流程"],
+      ["小红书", "xiaohongshu-workflow.md", "docs/zh-CN/", "自媒体发布流程（已迁移至 workflows/）"],
+      ["工作流体系", "docs/workflows/ (7 文档)", "docs/workflows/", "标准化协作流程：小红书/Pixso/Git/汇报/GAME002"],
+      ["SKILL 执行层", ".claude/skills/ (3 SKILL)", ".claude/skills/", "可执行命令：/new-post /git-commit /sync-report"],
+      ["工具知识库", "docs/tool-guides/ (7 文档)", "docs/tool-guides/", "Git/GitHub/Pixso 操作与人机协作"],
       ["视觉设计", "Pixso MCP", "http://127.0.0.1:3667/mcp", "连接 Pixso 设计工具"],
     ];
     designDocs.forEach((r, idx) => {
@@ -345,7 +366,12 @@ async function main() {
       ["9", "✅ 已完成", "自媒体", "小红书项目 4 库结构重组", "文案库/HTML库/Pixso截图/ + CLAUDE.md"],
       ["10", "🔵 按需", "教程", "教程项目按需创建（不做预设路线）", "模板在 templates/，随时可开工"],
       ["11", "📋 计划中", "自媒体", "持续发布小红书内容", "基于 works/ 视频草案生产 (11 期存量)"],
-      ["12", "📋 计划中", "基础设施", "建立汇报体系（本说明书）", "定期更新此 Excel"],
+      ["12", "✅ 已完成", "基础设施", "建立汇报体系（本说明书）", "07-23 周度复盘 + 5 项改进落地"],
+      ["13", "✅ 已完成", "基础设施", "工作流管理体系（双层结构）", "docs/workflows/ (7 文档) + .claude/skills/ (3 SKILL)"],
+      ["14", "✅ 已完成", "基础设施", "工具知识库", "docs/tool-guides/ (Git/GitHub/Pixso 共 7 文档)"],
+      ["15", "✅ 已完成", "项目", "asset-pipeline 资产管线搭建", "Lovart + Photoshop 道具图标生产线"],
+      ["16", "📋 计划中", "自媒体", "持续发布小红书内容", "基于 works/ 视频草案生产 (14 期存量)"],
+      ["17", "📋 计划中", "项目", "GAME-002 经营系统决策 (X1~X4)", "阻塞 3 周，需用户逐项拍板"],
     ];
     tasks.forEach((r, idx) => {
       const status = r[1];
@@ -377,7 +403,9 @@ async function main() {
     addHeader(sheet, ["类别", "名称", "本地路径", "说明"]);
     const paths = [
       ["项目根目录", "造化工坊", "j:\\ceshi\\", "Monorepo 根，npm workspaces"],
-      ["活动项目", "GAME-002「开仙门」", "j:\\ceshi\\projects\\GAME-002\\", "Godot 修仙策略游戏"],
+      ["活动项目", "GAME-002「开仙门」", "j:\\ceshi\\projects\\GAME-002\\", "Godot 修仙 Roguelike 塔防"],
+      ["活动项目", "小红书自媒体", "j:\\ceshi\\projects\\xiaohongshu\\", "AI 协作内容创作"],
+      ["活动项目", "asset-pipeline", "j:\\ceshi\\projects\\asset-pipeline\\", "游戏道具图标资产管线"],
       ["教程项目", "01-hello-canvas", "j:\\ceshi\\projects\\tutorial\\01-hello-canvas\\", "Phaser 入门"],
       ["共享类型", "shared/types", "j:\\ceshi\\shared\\types\\", "跨项目 TypeScript 类型定义"],
       ["共享工具", "shared/utils", "j:\\ceshi\\shared\\utils\\", "跨项目工具函数"],
@@ -402,7 +430,7 @@ async function main() {
     const external = [
       ["设计工具", "Pixso（MCP 已连接）", "http://127.0.0.1:3667/mcp", "UI 设计，通过 MCP 协议集成"],
       ["代码仓库", "GitHub", "main 分支", "当前分支: main"],
-      ["自媒体", "小红书", "projects/xiaohongshu/", "11 期帖子 + 4 库结构 + CLAUDE.md 规范"],
+      ["自媒体", "小红书", "projects/xiaohongshu/", "14 期帖子 + 扁平目录 + /new-post SKILL"],
       ["包管理", "npm (workspaces)", "creation-forge@0.1.0", "shared/* + projects/*/*"],
       ["引擎", "Phaser", "3.80+ (2D)", "教程项目主力引擎"],
       ["引擎", "Godot", "4.x (备选)", "GAME-002 主力引擎"],

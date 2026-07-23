@@ -1,0 +1,6 @@
+[gd_resource type="Theme" load_steps=2 format=3]
+
+[ext_resource type="FontFile" uid="uid://dyce7c7e7p640" path="res://.godot/imported/AlibabaPuHuiTi-3-55-Regular.woff2-4f46918de52ec40f28291f69ac28e1ce.fontdata" id="1"]
+
+[resource]
+default_font = ExtResource("1")
