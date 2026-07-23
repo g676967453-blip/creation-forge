@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI如何做游戏策划案原型图 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #10b981; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+
+  /* Card 1 */ .card-1 .emoji { font-size: 56px; margin-bottom: 25px; } .card-1 h1 { font-size: 48px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; } .card-1 h1 .highlight { color: var(--accent); } .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.55); line-height: 1.8; text-align: center; }
+
+  /* Card 2 */ .card-2 h2 { font-size: 42px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-2 .gap { width: 100%; } .card-2 .gap-row { display: flex; align-items: center; gap: 15px; margin-bottom: 28px; } .card-2 .gap-row .gr-role { font-size: 18px; color: rgba(255,255,255,0.30); min-width: 80px; text-align: left; letter-spacing: 1px; } .card-2 .gap-row .gr-says { font-size: 22px; line-height: 1.6; text-align: left; flex: 1; } .card-2 .gap-row:nth-child(1) .gr-says { color: var(--accent); font-weight: 600; } .card-2 .gap-row:nth-child(2) .gr-says { color: rgba(255,255,255,0.45); } .card-2 .gap-row:nth-child(3) .gr-says { color: rgba(255,255,255,0.40); } .card-2 .punch { font-size: 28px; font-weight: 700; margin-top: 40px; color: var(--accent); line-height: 1.5; text-align: center; }
+
+  /* Card 3 */ .card-3 h2 { font-size: 40px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-3 .roles { width: 100%; display: flex; flex-direction: column; gap: 18px; } .card-3 .role { display: flex; align-items: flex-start; gap: 22px; padding: 22px 28px; border-radius: 14px; text-align: left; } .card-3 .role:nth-child(1) { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.10); } .card-3 .role:nth-child(2) { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); } .card-3 .role:nth-child(3) { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); } .card-3 .role .r-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; flex-shrink: 0; } .card-3 .role:nth-child(1) .r-num { background: rgba(16,185,129,0.15); color: var(--accent); } .card-3 .role:nth-child(2) .r-num, .card-3 .role:nth-child(3) .r-num { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.30); } .card-3 .role .r-content { flex: 1; text-align: left; } .card-3 .role .r-name { font-size: 20px; font-weight: 700; color: #f0f0f0; margin-bottom: 4px; text-align: left; } .card-3 .role .r-desc { font-size: 16px; line-height: 1.6; text-align: left; } .card-3 .role:nth-child(1) .r-desc { color: rgba(255,255,255,0.65); } .card-3 .role:nth-child(2) .r-desc, .card-3 .role:nth-child(3) .r-desc { color: rgba(255,255,255,0.40); }
+
+  /* Card 4 */ .card-4 h2 { font-size: 40px; font-weight: 800; margin-bottom: 40px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-4 .case-box { width: 100%; border-radius: 18px; padding: 32px 36px; text-align: left; background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.10); } .card-4 .case-box .case-title { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 14px; text-align: left; } .card-4 .case-box .case-flow { font-size: 18px; color: rgba(255,255,255,0.55); line-height: 2.2; text-align: left; } .card-4 .case-box .case-flow b { color: #f0f0f0; } .card-4 .note { font-size: 22px; color: rgba(255,255,255,0.55); margin-top: 35px; line-height: 1.7; text-align: center; }
+
+  /* Card 5 */ .card-5 h2 { font-size: 38px; font-weight: 800; margin-bottom: 40px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-5 .rules { width: 100%; display: flex; flex-direction: column; gap: 20px; } .card-5 .rule { border-radius: 14px; padding: 24px 30px; text-align: left; background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.10); } .card-5 .rule .ru-head { font-size: 17px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; text-align: left; color: var(--accent); } .card-5 .rule .ru-body { font-size: 18px; line-height: 1.8; text-align: left; color: rgba(255,255,255,0.70); }
+
+  /* Card 6 */ .card-6 h2 { font-size: 46px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; } .card-6 h2 .highlight { color: var(--accent); } .card-6 .cta-body { font-size: 24px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 50px; text-align: center; }
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">📋</div>
+  <h1>AI 如何做<br><span class="highlight">游戏策划案原型图</span>？</h1>
+  <p class="subtitle">策划写完案，AI 出原型<br>不等美术、不等开发<br>策划阶段就能验证<br>你的想法到底对不对</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 策划到实现的鸿沟 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">核心问题</div>
+  <h2>策划写清楚了<br>别人做成另一个东西</h2>
+  <div class="gap">
+    <div class="gap-row">
+      <div class="gr-role">策划说</div>
+      <div class="gr-says">「开场放一段故事背景，氛围要大气」</div>
+    </div>
+    <div class="gap-row">
+      <div class="gr-role">美术做成</div>
+      <div class="gr-says">卷轴展开动画 + 山水画背景</div>
+    </div>
+    <div class="gap-row">
+      <div class="gr-role">开发做成</div>
+      <div class="gr-says">黑底白字，渐显渐隐</div>
+    </div>
+  </div>
+  <p class="punch">三个人，三个版本<br>发现不对时，已经花了三天</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: AI 原型的三个作用 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">原型的作用</div>
+  <h2>不是交付物<br>是检查工具</h2>
+  <div class="roles">
+    <div class="role">
+      <div class="r-num">1</div>
+      <div class="r-content">
+        <div class="r-name">可视化检查 AI 写的策划案</div>
+        <div class="r-desc">AI 帮写策划案 → AI 出原型 → 你看着原型验证。文字描述有歧义，但一个可交互的 HTML 原型不会骗人。策划阶段就发现问题，不要等到开发落地才后悔。</div>
+      </div>
+    </div>
+    <div class="role">
+      <div class="r-num">2</div>
+      <div class="r-content">
+        <div class="r-name">为后续 AI 美术生产留思路</div>
+        <div class="r-desc">原型的视觉方向、布局、交互逻辑，就是给美术 AI 的「需求说明书」。不用再写一长段描述——截图 + 标注就够了。</div>
+      </div>
+    </div>
+    <div class="role">
+      <div class="r-num">3</div>
+      <div class="r-content">
+        <div class="r-name">图层按程序规则命名</div>
+        <div class="r-desc">Pixso 中的图层不用 HTML 标签名，用引擎能识别的语义标识。后续美术资产和程序接口不需要重新梳理图层——一键导入。</div>
+      </div>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 实战案例 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">实战案例</div>
+  <h2>开场黑幕<br>30 分钟纠偏</h2>
+  <div class="case-box">
+    <div class="case-title">🎮 GAME-002 开仙门</div>
+    <div class="case-flow">
+      <b>①</b> AI 写策划案 → <b>②</b> AI 出 HTML 原型<br>
+      <b>③</b> 人打开一看：「方向反了——有人没理解策划意图」<br>
+      <b>④</b> 纠正方向 → AI 重出 → <b>⑤</b> 通过<br>
+      <b>⑥</b> 原型截图 + 标注 → 交给美术 AI 参考<br>
+      <b>⑦</b> 图层命名按程序规则，后续对接引擎
+    </div>
+  </div>
+  <p class="note">不是「AI 出图有多快」<br>而是「偏差在策划阶段就被看到了」</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 两个设计约束 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">设计约束</div>
+  <h2>两个硬规则</h2>
+  <div class="rules">
+    <div class="rule">
+      <div class="ru-head">① 必须先看原型再往下走</div>
+      <div class="ru-body">策划案写完 → AI 出原型 → 人确认「视觉和交互都对」。不走到这一步，不进入美术和开发。原型是策划的镜子，也是下游的起点。</div>
+    </div>
+    <div class="rule">
+      <div class="ru-head">② 图层命名按程序规范</div>
+      <div class="ru-body">Pixso 图层不用 HTML 标签，用引擎可识别的语义命名。原型通过后，美术资产和程序接口直接对得上——不需要重新梳理。</div>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>下次策划案写完<br><span class="highlight">先让 AI 出原型</span></h2>
+  <div class="cta-body">
+    ① 拿一份写完的策划案<br>
+    ② 让 AI 出 HTML 原型 → 打开看<br>
+    ③ 问自己：我写清楚了没有？<br>
+    ④ 改策划案 → 再出原型 → 直到通过
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

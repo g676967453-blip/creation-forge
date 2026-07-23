@@ -207,10 +207,18 @@ async function main() {
     addHeader(sheet, ["日期", "类型", "标题", "说明"]);
     const works = listWorks();
     const workDescs: Record<string, string> = {
-      "2026-07-20-remove-preset-learning-path.md": "去除预设三阶段学习路径 — 回归项目制学习本意，同步更新 6 份关联文档",
-      "2026-07-17-xiaohongshu-restructure.md": "小红书项目 4 库结构重组 — 文案库/HTML库/Pixso截图/ + CLAUDE.md 行为规范",
-      "2026-07-17-xiaohongshu-post11-pixso-fix.md": "post-11 产出 + Pixso 四问题修复 — 嵌套/命名/单图/对齐，确立 6+1 文件结构",
-      "2026-07-17-game002-onboarding.md": "GAME-002「开仙门」项目接入 — 35 脚本/4721 行/10 CSV，Godot 4.7 升级确认",
+      "2026-07-22-开场黑幕UI制作.md": "游戏界面制作工作流 — 梳理 UI 制作标准化流程，以开场黑幕为实战案例走通全流程",
+      "2026-07-21-workflow-solidified.md": "道具图标工作流固化 — 三个风格案例验证后，将流程固化为标准工作流文档",
+      "2026-07-21-workflow-system.md": "标准化工作流管理体系 — 双层结构（5 流程文档 + 3 SKILL），统一人机协作流程",
+      "2026-07-21-workflow-maintenance.md": "工作流文档维护 — 手动巡检更新多份文档，确认 SKILL 存放位置与共享局限性",
+      "2026-07-21-xiaohongshu-post13-14.md": "小红书 2 期新帖 — 工作流管理 + 游戏图标管线转为图文帖子",
+      "2026-07-21-clash-royale-icons.md": "皇室战争风格道具图标 — Supercell 3D cel-shaded + 三国题材融合",
+      "2026-07-21-asset-pipeline.md": "Lovart + Photoshop 道具图标生产线 — 1024→256 二次元风格批量产出",
+      "2026-07-20-xiaohongshu-restructure.md": "小红书项目重构 — 目录扁平化（14 主题统一为日期-主题），Pixso 单文件导入",
+      "2026-07-20-remove-preset-learning-path.md": "去除预设三阶段学习路径 — 回归项目制学习本意",
+      "2026-07-17-xiaohongshu-restructure.md": "小红书项目 4 库结构重组 — 文案库/HTML库/Pixso截图/ + CLAUDE.md",
+      "2026-07-17-xiaohongshu-post11-pixso-fix.md": "post-11 产出 + Pixso 四问题修复 — 嵌套/命名/单图/对齐",
+      "2026-07-17-game002-onboarding.md": "GAME-002「开仙门」项目接入 — 35 脚本/4721 行/10 CSV，Godot 4.7",
       "2026-07-16-pixso-layout.md": "Pixso 排版设计 — v2 暗色模板 + MCP 协作指南 + 三轮设计迭代",
       "2026-07-15-first-xiaohongshu-post.md": "第一篇小红书发布记录 — 造化坊理念首次对外传播",
       "2026-07-15-ai-era-action.md": "AI 时代行动方案 — 核心理念体系建设的执行计划",
@@ -280,7 +288,8 @@ async function main() {
       ["项目层", "projects/GAME-002 + xiaohongshu + tutorial + originals + sandbox", "两个活跃项目 + 教程/原创/实验", "GAME-002(Godot 4.7) + 小红书自媒体"],
       ["工具层", "tools/", "脚手架、日志生成、报告生成等脚本", "开发效率工具"],
       ["工作层", "works/", "一事一记 + 视频草案", "每个问题都是一个交付"],
-      ["协作层", "ai-collab/", "决策记录/提示词库/复盘", "AI 协作可追溯"],
+      ["工作流", "docs/workflows/", "标准化协作流程（双层：知识层+SKILL）", "5 个流程 / 3 个 SKILL"],
+      ["知识库", "docs/tool-guides/", "工具软件知识库（Git/GitHub/Pixso）", "介绍+操作+人机协作"],
     ];
     arch.forEach((r, idx) => {
       addRow(sheet, r, { fillColor: idx % 2 === 0 ? "FFF4F0FF" : "FFFFFFFF" });
@@ -379,7 +388,7 @@ async function main() {
       ["工作日志", "works/", "j:\\ceshi\\works\\", "一事一记 + 视频草案"],
       ["中文文档", "docs/zh-CN/", "j:\\ceshi\\docs\\zh-CN\\", "项目知识库主阵地"],
       ["小红书素材", "projects/xiaohongshu/", "j:\\ceshi\\projects\\xiaohongshu\\", "自媒体发布素材库"],
-      ["AI 记忆", "ai-collab/", "j:\\ceshi\\ai-collab\\", "决策/提示词/复盘"],
+      ["工具知识库", "docs/tool-guides/", "j:\\ceshi\\docs\\tool-guides\\", "Git/GitHub/Pixso 操作与人机协作"],
       ["汇报输出", "reports/", "j:\\ceshi\\reports\\", "汇报说明书输出目录"],
     ];
     paths.forEach((r, idx) => {

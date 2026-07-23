@@ -1,3 +1,5 @@
+> 👉 已迁移至 [docs/workflows/Pixso-导入操作.md](../workflows/Pixso-导入操作.md)
+
 # Pixso 添加一期帖子 — 操作流程
 
 > 适用于：已有 Pixso 文件 + MCP 连接，需新增一期小红书帖子排版。

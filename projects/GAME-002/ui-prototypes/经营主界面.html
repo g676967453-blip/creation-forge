@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>经营主界面</title>
+<style> * { margin: 0; padding: 0; box-sizing: border-box; } </style>
+</head>
+<body style="margin:0; padding:0; background:#1a1a1a; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+
+<!-- @pixso ManageMainUi -->
+<section style="width:1280px; height:720px; position:relative; overflow:hidden; flex-shrink:0;">
+
+  <!-- @pixso Root (DOM first → Pixso 图层树底部 = 视觉顶层) -->
+  <main style="position:absolute; inset:0; z-index:3;">
+
+    <!-- ====== TopArea ====== -->
+    <!-- @pixso TopArea -->
+    <header style="position:absolute; top:0; left:0; right:0; height:72px; display:flex; align-items:center; padding:0 24px; gap:24px;">
+
+      <!-- @pixso Bg -->
+      <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,20,0.95) 0%, rgba(10,10,20,0.7) 100%); border-bottom:1px solid rgba(240,192,64,0.15);"></div>
+
+      <!-- @pixso SpiritArea -->
+      <div style="position:relative; z-index:1; display:flex; align-items:center; gap:8px;">
+        <!-- @pixso Icon -->
+        <div style="width:28px; height:28px; background:radial-gradient(circle, #4ecca3 0%, #2a8a6a 100%); border-radius:50%; box-shadow:0 0 10px rgba(78,204,163,0.4);"></div>
+        <!-- @pixso ValueText -->
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:18px; font-weight:700; color:#4ecca3;">灵气 125</p>
+      </div>
+
+      <div style="position:relative; z-index:1; width:1px; height:28px; background:rgba(255,255,255,0.1);"></div>
+
+      <!-- @pixso LevelText -->
+      <p style="position:relative; z-index:1; margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">Lv.3</p>
+
+      <!-- @pixso ExpArea -->
+      <div style="position:relative; z-index:1; display:flex; align-items:center; gap:6px;">
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#8888aa;">EXP</p>
+        <!-- @pixso Bg -->
+        <div style="width:120px; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+          <!-- @pixso ExpFill -->
+          <div style="width:60%; height:100%; background:linear-gradient(90deg, #4ecca3, #2a8a6a); border-radius:4px;"></div>
+        </div>
+      </div>
+
+      <div style="position:relative; z-index:1; width:1px; height:28px; background:rgba(255,255,255,0.1);"></div>
+
+      <!-- @pixso HpArea -->
+      <div style="position:relative; z-index:1; display:flex; align-items:center; gap:6px;">
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#c03030;">HP</p>
+        <!-- @pixso Bg -->
+        <div style="width:180px; height:10px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden;">
+          <div style="width:78%; height:100%; background:linear-gradient(90deg, #44ff44, #2a8a2a); border-radius:5px;"></div>
+        </div>
+        <!-- @pixso HpText -->
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#c8c8d8;">78/100</p>
+      </div>
+    </header>
+
+    <!-- ====== PeakList ====== -->
+    <!-- @pixso PeakList -->
+    <nav style="position:absolute; top:100px; left:50%; transform:translateX(-50%); width:1000px; height:400px;">
+
+      <!-- @pixso Bg -->
+      <div style="display:none;"></div>
+
+      <!-- @pixso PeakItem1 — 剑峰 -->
+      <figure style="position:absolute; left:60px; top:140px; width:120px; display:flex; flex-direction:column; align-items:center; margin:0;">
+        <!-- @pixso Root -->
+        <div style="display:flex; flex-direction:column; align-items:center; position:relative;">
+          <!-- @pixso Bg -->
+          <div style="width:100px; height:100px; background:rgba(26,26,46,0.8); border:1px solid rgba(200,200,216,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+            <!-- @pixso Icon -->
+            <div style="width:44px; height:56px; background:linear-gradient(160deg, #c8c8d8 0%, #666688 100%); clip-path:polygon(50% 0%, 100% 100%, 0% 100%);"></div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">剑峰</p>
+          <!-- @pixso StatusText -->
+          <p style="margin:2px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#c03030;">未修复</p>
+        </div>
+        <!-- @pixso SelectMark -->
+        <div style="position:absolute; top:2px; left:10px; width:100px; height:100px; border:2px solid #f0c040; border-radius:50%; opacity:0; box-shadow:0 0 16px rgba(240,192,64,0.5);"></div>
+      </figure>
+
+      <!-- @pixso PeakItem2 — 佛峰 -->
+      <figure style="position:absolute; left:190px; top:60px; width:120px; display:flex; flex-direction:column; align-items:center; margin:0;">
+        <!-- @pixso Root -->
+        <div style="display:flex; flex-direction:column; align-items:center; position:relative;">
+          <!-- @pixso Bg -->
+          <div style="width:100px; height:100px; background:rgba(26,26,46,0.8); border:1px solid rgba(200,200,216,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+            <!-- @pixso Icon -->
+            <div style="width:44px; height:56px; background:linear-gradient(160deg, #f0c040 0%, #a08020 100%); clip-path:polygon(50% 0%, 100% 100%, 0% 100%);"></div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">佛峰</p>
+          <!-- @pixso StatusText -->
+          <p style="margin:2px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#4ecca3;">已修复</p>
+        </div>
+        <!-- @pixso SelectMark -->
+        <div style="position:absolute; top:2px; left:10px; width:100px; height:100px; border:2px solid #f0c040; border-radius:50%; opacity:0; box-shadow:0 0 16px rgba(240,192,64,0.5);"></div>
+      </figure>
+
+      <!-- @pixso PeakItem3 — 魂峰 -->
+      <figure style="position:absolute; left:320px; top:20px; width:120px; display:flex; flex-direction:column; align-items:center; margin:0;">
+        <!-- @pixso Root -->
+        <div style="display:flex; flex-direction:column; align-items:center; position:relative;">
+          <!-- @pixso Bg -->
+          <div style="width:100px; height:100px; background:rgba(26,26,46,0.8); border:1px solid rgba(200,200,216,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+            <!-- @pixso Icon -->
+            <div style="width:44px; height:56px; background:linear-gradient(160deg, #9030c0 0%, #501880 100%); clip-path:polygon(50% 0%, 100% 100%, 0% 100%);"></div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">魂峰</p>
+          <!-- @pixso StatusText -->
+          <p style="margin:2px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#f0c040;">已激活-炼魂诀</p>
+        </div>
+        <!-- @pixso SelectMark -->
+        <div style="position:absolute; top:2px; left:10px; width:100px; height:100px; border:2px solid #f0c040; border-radius:50%; opacity:0.85; box-shadow:0 0 20px rgba(240,192,64,0.6);"></div>
+      </figure>
+
+      <!-- @pixso PeakItem4 — 灵峰 -->
+      <figure style="position:absolute; right:320px; top:20px; width:120px; display:flex; flex-direction:column; align-items:center; margin:0;">
+        <!-- @pixso Root -->
+        <div style="display:flex; flex-direction:column; align-items:center; position:relative;">
+          <!-- @pixso Bg -->
+          <div style="width:100px; height:100px; background:rgba(26,26,46,0.8); border:1px solid rgba(200,200,216,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+            <!-- @pixso Icon -->
+            <div style="width:44px; height:56px; background:linear-gradient(160deg, #4ecca3 0%, #1a6a4a 100%); clip-path:polygon(50% 0%, 100% 100%, 0% 100%);"></div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">灵峰</p>
+          <!-- @pixso StatusText -->
+          <p style="margin:2px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#c03030;">未修复</p>
+        </div>
+        <!-- @pixso SelectMark -->
+        <div style="position:absolute; top:2px; left:10px; width:100px; height:100px; border:2px solid #f0c040; border-radius:50%; opacity:0; box-shadow:0 0 16px rgba(240,192,64,0.5);"></div>
+      </figure>
+
+      <!-- @pixso PeakItem5 — 器峰 -->
+      <figure style="position:absolute; right:190px; top:60px; width:120px; display:flex; flex-direction:column; align-items:center; margin:0;">
+        <!-- @pixso Root -->
+        <div style="display:flex; flex-direction:column; align-items:center; position:relative;">
+          <!-- @pixso Bg -->
+          <div style="width:100px; height:100px; background:rgba(26,26,46,0.8); border:1px solid rgba(200,200,216,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+            <!-- @pixso Icon -->
+            <div style="width:44px; height:56px; background:linear-gradient(160deg, #4080f0 0%, #2040a0 100%); clip-path:polygon(50% 0%, 100% 100%, 0% 100%);"></div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">器峰</p>
+          <!-- @pixso StatusText -->
+          <p style="margin:2px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#c03030;">未修复</p>
+        </div>
+        <!-- @pixso SelectMark -->
+        <div style="position:absolute; top:2px; left:10px; width:100px; height:100px; border:2px solid #f0c040; border-radius:50%; opacity:0; box-shadow:0 0 16px rgba(240,192,64,0.5);"></div>
+      </figure>
+
+      <!-- @pixso PeakItem6 — 雷峰 -->
+      <figure style="position:absolute; right:60px; top:140px; width:120px; display:flex; flex-direction:column; align-items:center; margin:0;">
+        <!-- @pixso Root -->
+        <div style="display:flex; flex-direction:column; align-items:center; position:relative;">
+          <!-- @pixso Bg -->
+          <div style="width:100px; height:100px; background:rgba(26,26,46,0.8); border:1px solid rgba(200,200,216,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+            <!-- @pixso Icon -->
+            <div style="width:44px; height:56px; background:linear-gradient(160deg, #f0c040 0%, #c09030 100%); clip-path:polygon(50% 0%, 100% 100%, 0% 100%); position:relative;">
+              <div style="position:absolute; top:20px; left:14px; width:4px; height:16px; background:#fff8dc; transform:rotate(-15deg);"></div>
+            </div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#c8c8d8;">雷峰</p>
+          <!-- @pixso StatusText -->
+          <p style="margin:2px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#4ecca3;">已修复</p>
+        </div>
+        <!-- @pixso SelectMark -->
+        <div style="position:absolute; top:2px; left:10px; width:100px; height:100px; border:2px solid #f0c040; border-radius:50%; opacity:0; box-shadow:0 0 16px rgba(240,192,64,0.5);"></div>
+      </figure>
+
+    </nav>
+
+    <!-- ====== SpiritArea ====== -->
+    <!-- @pixso SpiritArea -->
+    <section style="position:absolute; bottom:100px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center;">
+      <!-- @pixso Bg -->
+      <div style="display:none;"></div>
+      <!-- @pixso HpArea -->
+      <div style="margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+        <!-- @pixso Bg -->
+        <div style="width:140px; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+          <div style="width:78%; height:100%; background:linear-gradient(90deg, #44ff44, #2a8a2a); border-radius:4px;"></div>
+        </div>
+        <!-- @pixso HpText -->
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#c8c8d8;">78%</p>
+      </div>
+      <!-- @pixso Icon -->
+      <div style="width:80px; height:80px; background:radial-gradient(circle at 50% 40%, rgba(240,192,64,0.4) 0%, rgba(240,192,64,0.1) 50%, rgba(26,26,46,0.9) 100%); border:2px solid rgba(240,192,64,0.5); border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 32px rgba(240,192,64,0.3);">
+        <div style="width:40px; height:32px; background:linear-gradient(135deg, #f0c040 0%, #c09030 100%); border-radius:3px; position:relative;">
+          <div style="position:absolute; top:4px; left:50%; transform:translateX(-50%); width:24px; height:2px; background:rgba(0,0,0,0.2);"></div>
+          <div style="position:absolute; top:10px; left:50%; transform:translateX(-50%); width:18px; height:2px; background:rgba(0,0,0,0.15);"></div>
+          <div style="position:absolute; top:16px; left:50%; transform:translateX(-50%); width:22px; height:2px; background:rgba(0,0,0,0.15);"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 底部按钮 ====== -->
+    <!-- @pixso SettingsBtn -->
+    <div style="position:absolute; left:24px; bottom:24px; height:40px; padding:0 20px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:6px;">
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#8888aa;">设 置</p>
+    </div>
+
+    <!-- @pixso BattleBtn -->
+    <div style="position:absolute; right:24px; bottom:24px; height:48px; padding:0 32px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #c03030 0%, #801818 100%); border-radius:6px; box-shadow:0 4px 16px rgba(192,48,48,0.35);">
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:18px; font-weight:700; color:#ffffff; letter-spacing:4px;">开 战</p>
+    </div>
+
+  </main>
+
+  <!-- @pixso Bg (DOM 最后 → Pixso 图层树顶部 = 视觉底层) -->
+  <div style="position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, #0a0a14 0%, #16213e 30%, #1a1a2e 70%, #0f0f23 100%);"></div>
+
+</section>
+
+</body>
+</html>

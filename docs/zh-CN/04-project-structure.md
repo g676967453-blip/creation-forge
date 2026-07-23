@@ -29,22 +29,12 @@ creation-forge/                     # 项目根目录
 │   │   ├── 05-coding-standards.md
 │   │   ├── 06-git-conventions.md
 │   │   └── 07-glossary.md
-│   ├── en/                         # 英文文档（精简版）
-│   │   └── README.md
-│   └── xiaohongshu/                # 📱 小红书自媒体素材
-│
-├── 📁 journals/                    # 📝 学习日志
-│   ├── template.md                 # 日志模板
-│   └── 2026/07/                    # 按年月组织
+│   └── en/                         # 英文文档（精简版）
+│       └── README.md
 │
 ├── 📁 works/                       # 🔄 日常运转工作单元（一事一记）
 │   ├── README.md                   # 目录说明
 │   └── _template.md                # 工作单元模板（日志+视频草案）
-│
-├── 📁 ai-collab/                   # 🤖 AI 协作产物
-│   ├── prompts/                    # 可复用提示词模板
-│   ├── decisions/                  # 架构决策记录 (ADR)
-│   └── retrospectives/             # 项目复盘
 │
 ├── 📁 shared/                      # 📦 共享代码库
 │   ├── utils/                      # @creation-forge/utils
@@ -92,16 +82,6 @@ creation-forge/                     # 项目根目录
 | 英文精简 | `en/` 下只放概览，详细内容指向中文   |
 | 即查即用 | 每个文档独立可读，不要求按顺序读     |
 
-### `journals/` — 学习日志
-
-按 `年/月/日-主题.md` 组织。每篇日志包含：
-
-- 学了什么
-- 遇到什么问题
-- AI 如何协助了
-- 下一步计划
-- 心情指数 (1-5 ⭐)
-
 ### `works/` — 日常运转工作单元
 
 **一事一记**。一个文件 = 问题解决日志 + 视频生产草案。
@@ -109,14 +89,6 @@ creation-forge/                     # 项目根目录
 文件命名：`YYYY-MM-DD-简短描述.md`。每条线独立运转，互不交叉。
 
 详见 [运转线路图](./operational-loop.md) 了解完整循环。
-
-### `ai-collab/` — AI 协作产物
-
-| 子目录            | 内容                     | 格式        |
-| ----------------- | ------------------------ | ----------- |
-| `prompts/`        | 经过验证好用的提示词模板 | Markdown    |
-| `decisions/`      | 架构决策记录 (ADR)       | 编号 + 标题 |
-| `retrospectives/` | 项目完成后复盘           | 模板化      |
 
 ### `shared/` — 共享库
 

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>器灵选择</title>
+<style> * { margin: 0; padding: 0; box-sizing: border-box; } </style>
+</head>
+<body style="margin:0; padding:0; background:#1a1a1a; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+
+<!-- @pixso SpiritSelectUi -->
+<section style="width:1280px; height:720px; position:relative; overflow:hidden; flex-shrink:0;">
+
+  <!-- @pixso Root (DOM first → Pixso 图层树底部 = 视觉顶层) -->
+  <main style="position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+
+    <!-- @pixso TitleText -->
+    <p style="margin:0 0 8px 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:32px; font-weight:700; color:#f0c040; text-align:center; letter-spacing:6px;">选择器灵</p>
+
+    <!-- @pixso HintText -->
+    <p style="margin:0 0 48px 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:14px; color:#8888aa; text-align:center;">选好后点击开始游戏，进入经营阶段</p>
+
+    <!-- @pixso CardList -->
+    <nav style="display:flex; gap:32px; margin-bottom:48px;">
+
+      <!-- @pixso Bg -->
+      <div style="display:none;"></div>
+
+      <!-- @pixso CardItem1 — 百世书 -->
+      <figure style="width:240px; height:320px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; position:relative;">
+        <!-- @pixso Root -->
+        <div style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content:center;">
+          <!-- @pixso Bg -->
+          <div style="position:absolute; inset:0; background:linear-gradient(145deg, rgba(240,192,64,0.18) 0%, rgba(26,26,46,0.9) 100%); border:2px solid #f0c040; border-radius:8px; box-shadow:0 0 24px rgba(240,192,64,0.25);"></div>
+          <!-- @pixso Icon -->
+          <div style="position:relative; width:96px; height:96px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
+            <div style="width:80px; height:64px; background:linear-gradient(135deg, #f0c040 0%, #c09030 100%); border-radius:4px; box-shadow:0 4px 16px rgba(240,192,64,0.4); position:relative;">
+              <div style="position:absolute; top:8px; left:50%; transform:translateX(-50%); width:48px; height:2px; background:rgba(0,0,0,0.3);"></div>
+              <div style="position:absolute; top:16px; left:50%; transform:translateX(-50%); width:36px; height:2px; background:rgba(0,0,0,0.2);"></div>
+              <div style="position:absolute; top:24px; left:50%; transform:translateX(-50%); width:44px; height:2px; background:rgba(0,0,0,0.2);"></div>
+              <div style="position:absolute; top:32px; left:50%; transform:translateX(-50%); width:32px; height:2px; background:rgba(0,0,0,0.25);"></div>
+              <div style="position:absolute; top:40px; left:50%; transform:translateX(-50%); width:40px; height:2px; background:rgba(0,0,0,0.2);"></div>
+            </div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="position:relative; margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:20px; font-weight:600; color:#f0c040; text-align:center;">百世书</p>
+          <!-- @pixso HintText -->
+          <p style="position:relative; margin:6px 0 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#8888aa; text-align:center; line-height:1.5; padding:0 16px;">蕴藏万界知识<br>修复神器·重开仙门</p>
+        </div>
+      </figure>
+
+      <!-- @pixso CardItem2 — 诛仙剑（锁定） -->
+      <figure style="width:240px; height:320px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; position:relative; opacity:0.45;">
+        <!-- @pixso Root -->
+        <div style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content:center;">
+          <!-- @pixso Bg -->
+          <div style="position:absolute; inset:0; background:rgba(26,26,46,0.6); border:2px dashed #555577; border-radius:8px;"></div>
+          <!-- @pixso Icon -->
+          <div style="position:relative; width:96px; height:96px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
+            <div style="width:12px; height:72px; background:linear-gradient(180deg, #666688 0%, #444466 100%); border-radius:2px 2px 6px 6px; position:relative;">
+              <div style="position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:28px; height:8px; background:#555577; border-radius:2px;"></div>
+            </div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="position:relative; margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:20px; font-weight:600; color:#555577; text-align:center;">???</p>
+        </div>
+      </figure>
+
+      <!-- @pixso CardItem3 — 神农鼎（锁定） -->
+      <figure style="width:240px; height:320px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0; position:relative; opacity:0.45;">
+        <!-- @pixso Root -->
+        <div style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content:center;">
+          <!-- @pixso Bg -->
+          <div style="position:absolute; inset:0; background:rgba(26,26,46,0.6); border:2px dashed #555577; border-radius:8px;"></div>
+          <!-- @pixso Icon -->
+          <div style="position:relative; width:96px; height:96px; margin-bottom:16px; display:flex; align-items:center; justify-content:center;">
+            <div style="width:56px; height:48px; border:4px solid #666688; border-radius:8px 8px 4px 4px; position:relative;">
+              <div style="position:absolute; top:-12px; left:8px; width:16px; height:12px; border:3px solid #666688; border-bottom:none; border-radius:4px 4px 0 0;"></div>
+              <div style="position:absolute; top:-12px; right:8px; width:16px; height:12px; border:3px solid #666688; border-bottom:none; border-radius:4px 4px 0 0;"></div>
+            </div>
+          </div>
+          <!-- @pixso NameText -->
+          <p style="position:relative; margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:20px; font-weight:600; color:#555577; text-align:center;">???</p>
+        </div>
+      </figure>
+
+    </nav>
+
+    <!-- @pixso StartBtn -->
+    <div style="width:200px; height:48px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #f0c040 0%, #c09030 100%); border-radius:6px; box-shadow:0 4px 16px rgba(240,192,64,0.35);">
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:18px; font-weight:700; color:#1a1a2e; letter-spacing:4px;">开 始 游 戏</p>
+    </div>
+
+  </main>
+
+  <!-- @pixso Mask (DOM 中间 → Pixso 图层树中间) -->
+  <div style="position:absolute; inset:0; z-index:2; background:rgba(0,0,0,0.55);"></div>
+
+  <!-- @pixso Bg (DOM 最后 → Pixso 图层树顶部 = 视觉底层) -->
+  <div style="position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%);"></div>
+
+</section>
+
+</body>
+</html>

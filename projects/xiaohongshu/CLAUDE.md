@@ -14,14 +14,14 @@
 4. **品牌标记**：底部 `.creation-badge`「造化坊」
 
 ### HTML 产出规范
-5. **单文件产出**：每期只产出一个 `index.html`，6 张卡片合并在一个文件里
+5. **单文件产出 + 自动预览**：每期只产出一个 `index.html`，6 张卡片合并在一个文件里。产出后自动用 `start` 命令在浏览器打开预览
    ```
    YYYY-MM-DD-主题/
    └── index.html      ← 6 张卡片，浏览器预览 + Pixso 导入两用
    ```
    示例：`2026-07-20-如何观测AI系统/index.html`
 6. **文字对齐显式声明**：所有文字元素必须显式声明 `text-align`（不依赖 CSS 继承），确保 Pixso `code_to_design` 导入后对齐正确
-7. **设计继承模板**：所有帖子 HTML 继承 `_template-v2.html` 的暗色系风格
+7. **设计继承**：从最新帖子拷贝样式，保持暗色系风格一致
 
 ### Pixso 导入规范
 8. **导入流程**：`code_to_design` 导入 index.html → 重命名 frame 为 `YYYY-MM-DD-主题`
@@ -64,18 +64,15 @@
 ```
 xiaohongshu/
 ├── CLAUDE.md                ← 本文件（AI 行为规范）
-├── _template.md             ← 文案模板（markdown）
-├── _template-v2.html        ← HTML 卡片模板（设计基准）
-├── all-posts.html           ← 全部帖子汇总页
+├── _template.md             ← 选题草稿模板
 ├── YYYY-MM-DD-主题/         ← 每期一个文件夹
 │   ├── index.md             ← 文案
 │   └── index.html           ← 排版（6 张卡片，浏览器预览 + Pixso 导入两用）
-├── _archive/                ← 旧版迭代存档
 ├── Pixso截图/               ← Pixso 导出截图
 └── 造化坊汇报说明书.xlsx    ← 项目汇报文档
 ```
 
-> 文件夹命名：`日期-主题`（日期 YYYY-MM-DD，主题用中文）。每期只含 `index.md` + `index.html`。
+> 文件夹命名：`日期-主题`（日期 YYYY-MM-DD，主题用中文）。
 > Pixso frame 命名：`YYYY-MM-DD-主题`。
 
 ---
@@ -84,20 +81,20 @@ xiaohongshu/
 
 ```
 1. Pixso 点击画布空白（取消选中）⚠️ 必须！
-2. code_to_design 导入 card-01.html
-3. apply_design 重命名 → YYYY-MM-DD-主题-卡1
-4. 重复 1-3，导入 card-02 ~ card-06
-5. 检查文字对齐，必要时 apply_design 修正 textAlignHorizontal
-6. 每张卡独立导出 PNG
+2. code_to_design 导入 index.html
+3. apply_design 重命名 → YYYY-MM-DD-主题
+4. 检查文字对齐，必要时修正
+5. 导出 PNG
 ```
 
-> 完整流程见 [Pixso 添加帖子操作流程](../../docs/zh-CN/pixso-workflow-add-post.md)
+> 详细流程见 [Pixso-导入操作](../../docs/workflows/Pixso-导入操作.md)
 
 ---
 
 ## 关联资源
 
 - 素材来源：[works/](../works/) 工作日志
-- 协作流程：[小红书人+AI 协作工作流](../../docs/zh-CN/xiaohongshu-workflow.md)
+- 工作流文档：[docs/workflows/小红书-制作帖子.md](../../docs/workflows/小红书-制作帖子.md) · SKILL：`/新帖子`
+- Pixso 导入：[docs/workflows/Pixso-导入操作.md](../../docs/workflows/Pixso-导入操作.md)
 - Pixso 指南：[Pixso 人机协作指南](../../docs/zh-CN/pixso-human-ai-collaboration.md)
 - 运转线路图：[日常运转线路图](../../docs/zh-CN/operational-loop.md)

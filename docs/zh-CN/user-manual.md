@@ -62,7 +62,6 @@ cp works/_template.md works/2026-07-16-phaser-collision-detection.md
 | 你在做什么 | 文件放哪 | 命名规则 |
 |------------|----------|----------|
 | 解决具体问题 | `works/` | `YYYY-MM-DD-简短描述.md` |
-| 阶段性学习总结 | `journals/` | 按年月目录 |
 | 宏观选题素材 | `projects/xiaohongshu/` | 编号 + 主题 |
 | 小红书视频草案 | 直接在 works/ 文件里（区块二） | 同上 |
 

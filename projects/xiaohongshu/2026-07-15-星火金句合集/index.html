@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星火金句合集 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #f59e0b; }
+
+  /* Card 1 */ .card-1 .emoji { font-size: 56px; margin-bottom: 25px; } .card-1 h1 { font-size: 50px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; } .card-1 h1 .highlight { color: var(--accent); } .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.55); line-height: 1.8; text-align: center; }
+  /* Card 2-5 shared */ .card-2 .section-label, .card-3 .section-label, .card-4 .section-label, .card-5 .section-label, .card-6 .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 25px; font-weight: 600; text-align: center; } .card-2 h2, .card-3 h2, .card-4 h2, .card-5 h2 { font-size: 40px; font-weight: 800; margin-bottom: 40px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-2 h2 .highlight, .card-3 h2 .highlight, .card-4 h2 .highlight, .card-5 h2 .highlight { color: var(--accent); } .quotes-wrap { width: 100%; display: flex; flex-direction: column; gap: 22px; } .q-item { border-radius: 14px; padding: 28px 35px; text-align: left; background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.10); } .q-item .q-text { font-size: 22px; font-weight: 600; color: rgba(255,255,255,0.75); line-height: 1.6; text-align: left; }
+  /* Card 6 */ .card-6 h2 { font-size: 48px; font-weight: 900; line-height: 1.3; margin-bottom: 35px; letter-spacing: 2px; text-align: center; } .card-6 h2 .highlight { color: var(--accent); } .card-6 .body-text { font-size: 28px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 50px; text-align: center; } .card-6 .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; } .card-6 .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">✨</div>
+  <h1><span class="highlight">星火金句</span><br>合集</h1>
+  <p class="subtitle">15 句话<br>关于学习、AI、创造、和开始行动<br><br>每一句都可以独立截图转发</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">关于学习</div>
+  <h2>学习的<span class="highlight">真相</span></h2>
+  <div class="quotes-wrap">
+    <div class="q-item"><p class="q-text">传统教育教你「学好了再去做」。现实世界告诉你——你永远学不完。</p></div>
+    <div class="q-item"><p class="q-text">「没准备好」是传统学习模式给你上的最后一道锁。砸掉它。</p></div>
+    <div class="q-item"><p class="q-text">不是因为懂了才去做，而是因为做了才真懂。</p></div>
+    <div class="q-item"><p class="q-text">完成比完美重要。</p></div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">关于 AI</div>
+  <h2>AI 的<span class="highlight">意义</span></h2>
+  <div class="quotes-wrap">
+    <div class="q-item"><p class="q-text">过去，学习的瓶颈是「怎么找到答案」。现在，唯一的瓶颈是「你有没有在做一个具体的事」。</p></div>
+    <div class="q-item"><p class="q-text">AI 不能替你创造，但它把「学习」的成本打到了接近于零。剩下的是你的创造欲。</p></div>
+    <div class="q-item"><p class="q-text">过去学习是「一个人面对一整本书」。现在学习是「和 AI 对话，针对你的问题获得即时解答」。</p></div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">关于学会</div>
+  <h2>重新定义<br><span class="highlight">「学会」</span></h2>
+  <div class="quotes-wrap">
+    <div class="q-item"><p class="q-text">「学会」不再是「我记住了」，而是「我知道怎么让 AI 帮我做出来」。</p></div>
+    <div class="q-item"><p class="q-text">脑子不是硬盘。脑子是指挥部。</p></div>
+    <div class="q-item"><p class="q-text">你不学知识，你驾驭知识。</p></div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">关于创造</div>
+  <h2><span class="highlight">创造者</span></h2>
+  <div class="quotes-wrap">
+    <div class="q-item"><p class="q-text">知识是项目给你留下的「副作用」——你做出一个游戏，顺便学会了一堆技能。</p></div>
+    <div class="q-item"><p class="q-text">写作业让人拖延，做游戏让人熬夜——这就是最好的学习驱动力。</p></div>
+    <div class="q-item"><p class="q-text">创造者的定义不是「知道很多的人」，而是「能做出东西的人」。</p></div>
+    <div class="q-item"><p class="q-text">独立游戏开发 = 编程 + 设计 + 美术 + 音乐 + 叙事，一门课学六门知识。</p></div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">关于开始</div>
+  <h2><span class="highlight">星火</span>可以燎原</h2>
+  <p class="body-text">
+    你不是来学知识的<br>你是来做游戏的<br>知识只是你路上捡到的装备<br><br>星星之火，可以燎原<br>每一个小项目<br>都是点燃你创造力的火花
+  </p>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

@@ -7,7 +7,11 @@ const FONT_PATH := "res://assets/fonts/AlibabaPuHuiTi-3-55-Regular.woff2"
 var _black_layer: CanvasLayer
 var _state := 0  # 0=animating, 1=revealed, 2=done
 
+
 func _ready() -> void:
+	# 强制窗口尺寸 = 1280×720（Godot 4.7 兼容）
+	_fix_window_size()
+
 	# 独立高层 CanvasLayer
 	_black_layer = CanvasLayer.new()
 	_black_layer.layer = 100
@@ -64,6 +68,16 @@ func _ready() -> void:
 			tween.tween_property(child, "modulate:a", 1.0, 0.9)
 	tween.tween_property(tips, "modulate:a", 1.0, 0.6)
 	tween.finished.connect(func(): _state = 1)
+
+	# 下一帧再次确认窗口尺寸（防止 Godot 4.7 在 _ready 后覆盖）
+	if not OS.has_feature("web"):
+		call_deferred("_fix_window_size")
+
+
+func _fix_window_size() -> void:
+	"""强制窗口为 1280×720，兼容 Godot 4.7 编辑器测试窗口缩放"""
+	if not OS.has_feature("web"):
+		DisplayServer.window_set_size(Vector2i(1280, 720))
 
 
 func _input(event: InputEvent) -> void:

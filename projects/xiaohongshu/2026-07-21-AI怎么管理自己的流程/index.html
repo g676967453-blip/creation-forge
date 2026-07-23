@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI怎么管理自己的流程 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #06b6d4; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+
+  /* Card 1 */ .card-1 .emoji { font-size: 56px; margin-bottom: 25px; } .card-1 h1 { font-size: 50px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; } .card-1 h1 .highlight { color: var(--accent); } .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.55); line-height: 1.8; text-align: center; }
+
+  /* Card 2 */ .card-2 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-2 .pain-list { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 2.3; text-align: center; } .card-2 .punch { font-size: 26px; font-weight: 700; margin-top: 50px; color: var(--accent); line-height: 1.5; text-align: center; }
+
+  /* Card 3 */ .card-3 h2 { font-size: 42px; font-weight: 800; margin-bottom: 55px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-3 .layers { display: flex; gap: 30px; width: 100%; justify-content: center; } .card-3 .layer { flex: 1; max-width: 380px; border-radius: 20px; padding: 40px 30px; text-align: left; } .card-3 .layer.doc { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); } .card-3 .layer.skill { background: rgba(6,182,212,0.05); border: 1px solid rgba(6,182,212,0.12); } .card-3 .layer .layer-icon { font-size: 36px; margin-bottom: 15px; } .card-3 .layer .layer-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 15px; text-align: left; } .card-3 .layer.doc .layer-head { color: rgba(255,255,255,0.30); } .card-3 .layer.skill .layer-head { color: var(--accent); } .card-3 .layer .layer-body { font-size: 20px; line-height: 2; text-align: left; } .card-3 .layer.doc .layer-body { color: rgba(255,255,255,0.50); } .card-3 .layer.skill .layer-body { color: rgba(255,255,255,0.75); } .card-3 .note { font-size: 22px; color: rgba(255,255,255,0.55); margin-top: 50px; line-height: 1.6; text-align: center; }
+
+  /* Card 4 */ .card-4 h2 { font-size: 42px; font-weight: 800; margin-bottom: 55px; line-height: 1.3; letter-spacing: 1px; text-align: center; } .card-4 .skills { width: 100%; display: flex; flex-direction: column; gap: 24px; } .card-4 .skill-item { display: flex; align-items: flex-start; gap: 28px; background: rgba(255,255,255,0.02); border-radius: 16px; padding: 28px 35px; text-align: left; } .card-4 .skill-item .s-icon { font-size: 32px; flex-shrink: 0; width: 52px; text-align: center; } .card-4 .skill-item .s-content { flex: 1; text-align: left; } .card-4 .skill-item .s-name { font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 4px; text-align: left; } .card-4 .skill-item .s-desc { font-size: 17px; color: rgba(255,255,255,0.40); line-height: 1.6; text-align: left; }
+
+  /* Card 5 */ .card-5 h2 { font-size: 44px; font-weight: 800; margin-bottom: 50px; line-height: 1.35; letter-spacing: 1px; text-align: center; } .card-5 .insight { width: 100%; display: flex; flex-direction: column; gap: 22px; } .card-5 .insight-card { border-radius: 16px; padding: 30px 35px; text-align: left; } .card-5 .insight-card.before { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); } .card-5 .insight-card.after { background: rgba(6,182,212,0.05); border: 1px solid rgba(6,182,212,0.10); } .card-5 .insight-card .i-head { font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; text-align: left; } .card-5 .insight-card.before .i-head { color: rgba(255,255,255,0.30); } .card-5 .insight-card.after .i-head { color: var(--accent); } .card-5 .insight-card .i-body { font-size: 20px; line-height: 1.9; text-align: left; } .card-5 .insight-card.before .i-body { color: rgba(255,255,255,0.50); } .card-5 .insight-card.after .i-body { color: rgba(255,255,255,0.75); } .card-5 .punch { font-size: 28px; font-weight: 700; margin-top: 45px; color: #f0f0f0; line-height: 1.5; text-align: center; }
+
+  /* Card 6 */ .card-6 h2 { font-size: 50px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; } .card-6 h2 .highlight { color: var(--accent); } .card-6 .cta-body { font-size: 26px; line-height: 2.2; color: rgba(255,255,255,0.60); margin-bottom: 50px; text-align: center; }
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">⚙️</div>
+  <h1>AI 怎么<br><span class="highlight">管理自己的流程</span>？</h1>
+  <p class="subtitle">AI 帮你干活<br>但谁管 AI 怎么干活？<br><br>不是每次从头描述<br>而是建立一套可复用的规则</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 拆解问题 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">拆解问题</div>
+  <h2>文档散落<br>操作靠记忆</h2>
+  <p class="pain-list">
+    ❌ 做一期帖子 → 翻三份文档拼流程<br>
+    ❌ 提交代码 → 每次问「commit 格式是啥」<br>
+    ❌ 同步报告 → 手动跑命令、手动检查遗漏<br>
+    ❌ 出现新流程 → 不知道往哪放
+  </p>
+  <p class="punch">重复操作不标准化<br>→ 每次都在浪费决策力</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 方法 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">解决方案</div>
+  <h2>双层体系</h2>
+  <div class="layers">
+    <div class="layer doc">
+      <div class="layer-icon">📖</div>
+      <div class="layer-head">docs/workflows/</div>
+      <div class="layer-body">给人看的完整流程<br>操作步骤、约束规则<br>产出物、已知问题</div>
+    </div>
+    <div class="layer skill">
+      <div class="layer-icon">⚡</div>
+      <div class="layer-head">.claude/skills/</div>
+      <div class="layer-body">给 AI 的执行指令<br>一句话触发<br>自动化全流程</div>
+    </div>
+  </div>
+  <p class="note">人看 workflows 知道怎么做<br>AI 读 skills 知道怎么执行<br>互不干扰，各司其职</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 案例 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">实战案例</div>
+  <h2>三个 SKILL<br>一句话搞定</h2>
+  <div class="skills">
+    <div class="skill-item">
+      <div class="s-icon">🆕</div>
+      <div class="s-content">
+        <div class="s-name">/新帖子</div>
+        <div class="s-desc">选材 → 文案 → HTML → Pixso 导入，原本 6 步手动操作，现在一句话触发</div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <div class="s-icon">📦</div>
+      <div class="s-content">
+        <div class="s-name">/提交</div>
+        <div class="s-desc">自动检查 → lint → 生成规范 commit message → 一次推送</div>
+      </div>
+    </div>
+    <div class="skill-item">
+      <div class="s-icon">📊</div>
+      <div class="s-content">
+        <div class="s-name">/同步报告</div>
+        <div class="s-desc">扫描 works/ → 更新 Excel 全部 6 个 Sheet → 保证一致性</div>
+      </div>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 洞察 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">核心洞察</div>
+  <h2>标准化 ≠ 僵化</h2>
+  <div class="insight">
+    <div class="insight-card before">
+      <div class="i-head">标准化之前</div>
+      <div class="i-body">每次操作都要重新决策<br>操作质量依赖人的记忆<br>出错后无法追溯原因</div>
+    </div>
+    <div class="insight-card after">
+      <div class="i-head">标准化之后</div>
+      <div class="i-body">操作可复制 → 效率翻倍<br>规则可迭代 → 越用越好<br>新人可上手 → 系统不依赖单个人</div>
+    </div>
+  </div>
+  <p class="punch">标准化不是限制创造力<br>是把重复劳动归零<br>让创造力有地方释放</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>你的 AI 系统<br><span class="highlight">有标准化流程吗</span>？</h2>
+  <div class="cta-body">
+    今天就做：<br>
+    ① 把最常做的 3 个操作写成文档<br>
+    ② 建一个 workflows/ 文件夹<br>
+    ③ 下次重复操作时，让 AI 照着执行<br>
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>
