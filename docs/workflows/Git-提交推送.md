@@ -1,10 +1,10 @@
 # Git 提交推送
 
-> 版本：v1 | 最后更新：2026-07-21 | 对应 SKILL：`/提交`
+> 版本：v1 | 最后更新：2026-07-21 | 对应 SKILL：`/git-commit`
 
 ## 触发条件
 
-- 用户说 `/提交` 或 "提交代码" 或 "推到 GitHub"
+- 用户说 `/git-commit` 或 "提交代码" 或 "推到 GitHub"
 - 一次会话结束前
 
 ## 人机分工
@@ -58,6 +58,6 @@ refactor: 重构了什么
 
 ## 关联
 
-- 提交规范：`docs/zh-CN/06-git-conventions.md`
-- 工具知识：`docs/tool-guides/git/`
+- 提交规范：[../zh-CN/06-git-conventions.md](../zh-CN/06-git-conventions.md)
+- 工具知识：[../tool-guides/git/](../tool-guides/git/)
 - 远程仓库：[github.com/g676967453-blip/creation-forge](https://github.com/g676967453-blip/creation-forge)

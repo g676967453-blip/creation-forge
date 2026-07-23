@@ -26,9 +26,18 @@ infinitely scalable, and inherently fun.
 | --------- | ----------------------------- |
 | Language  | TypeScript 5.x (strict)       |
 | 2D Engine | Phaser 3.80+                  |
+| 3D Engine | Godot 4.7 (active track)      |
 | Bundler   | Vite 6.x                      |
+| Linting   | ESLint 9.x + Prettier 3.x     |
 | Testing   | Vitest                        |
-| Future    | Godot 4.x (exploration track) |
+
+## Active Projects
+
+| Project | Tech | Status |
+|---------|------|--------|
+| GAME-002「开仙门」— Roguelike Tower Defense | Godot 4.7 | V0.1 in progress |
+| Xiaohongshu Content Creation | HTML/CSS + Pixso | 14 posts published |
+| asset-pipeline — Game Icon Production | Lovart + Photoshop | 3 styles validated |
 
 ## Quick Start
 
@@ -44,10 +53,17 @@ npm run dev
 
 Primary documentation is in **Chinese** (`docs/zh-CN/`). This English README is a minimal overview.
 
-- [Project Philosophy](../zh-CN/01-project-philosophy.md) (Chinese)
-- [Tech Stack Details](../zh-CN/02-tech-stack.md) (Chinese)
-- [Development Workflow](../zh-CN/03-workflow.md) (Chinese)
-- [Coding Standards](../zh-CN/05-coding-standards.md) (Chinese)
+| # | Document | Description |
+|---|----------|-------------|
+| 01 | [Project Philosophy](../zh-CN/01-project-philosophy.md) | Project-based learning philosophy |
+| 02 | [Tech Stack](../zh-CN/02-tech-stack.md) | Technology choices and rationale |
+| 03 | [Development Workflow](../zh-CN/03-workflow.md) | Daily dev cycle, Git, AI collaboration |
+| 04 | [Project Structure](../zh-CN/04-project-structure.md) | Directory layout and design intent |
+| 05 | [Coding Standards](../zh-CN/05-coding-standards.md) | TypeScript / Phaser conventions |
+| 06 | [Git Conventions](../zh-CN/06-git-conventions.md) | Branch strategy and commit format |
+| 07 | [Glossary](../zh-CN/07-glossary.md) | Chinese↔English terminology |
+
+Additional docs: [Manifesto](../zh-CN/manifesto.md) · [User Manual](../zh-CN/user-manual.md) · [Operational Loop](../zh-CN/operational-loop.md)
 
 The AI collaboration guide is in [CLAUDE.md](../../CLAUDE.md) (Chinese).
 

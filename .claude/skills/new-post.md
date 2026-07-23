@@ -1,7 +1,11 @@
-# /新帖子 — 创建小红书图文笔记
+---
+description: 创建小红书图文笔记的完整工作流：从 works/ 选材 → 出文案 → 生成 HTML → Pixso 导入 → 发布归档。当用户说"做一期小红书""发小红书""新帖子"时使用。
+---
+
+# /new-post — 创建小红书图文笔记
 
 ## 触发
-用户说 "/新帖子" 或 "做一期小红书" 或 "发小红书"
+用户说 `/new-post` 或 "做一期小红书" 或 "发小红书"
 
 ## 执行步骤
 
@@ -24,16 +28,16 @@
 ### 3. HTML
 文案确认后：
 - 询问 accent 色（默认珊瑚红 `#ff6b6b`）
-- 基于 `_template-v2.html` 生成单文件 `index.html`
-- 放入 `projects/xiaohongshu/HTML库/YYYY-MM-DD-主题/`
-- 确认生成完成
+- 从最新帖子拷贝样式，生成单文件 `index.html`
+- 放入 `projects/xiaohongshu/YYYY-MM-DD-主题/`
+- 自动用浏览器打开预览
 
 ### 4. Pixso 导入
 提醒用户：
 - 在 Pixso 中点击画布空白取消选中
-- 然后用 MCP `code_to_design` 导入 `index.html`
+- 用 MCP `code_to_design` 导入 `index.html`
 - 用 `apply_design` 重命名 frame 为 `YYYY-MM-DD-主题`
-- 导出 6 张 PNG，放入 `Pixso截图/日期-主题/卡片N-描述.png`
+- 导出 PNG，放入 `Pixso截图/日期-主题/`
 
 ### 5. 发布 + 记录
 用户发布后告知 AI，AI 记录到当日 works/ 日志。
