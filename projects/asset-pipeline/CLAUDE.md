@@ -225,7 +225,7 @@ python3 {baseDir}/agent_skill.py chat \
   --json --download
 
 # 后处理：PS 色彩范围抠图 → ps_chroma_slice.jsx 切片
-# 详见 docs/06-道具图标工作流.md
+# 详见 docs/workflows/道具图标-生产.md（系统层工作流）
 ```
 
 ### 下载到指定目录
