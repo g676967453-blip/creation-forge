@@ -1,0 +1,294 @@
+/**
+ * 造化坊仪表盘生成器
+ * 生成独立 HTML 文件（8 Tab 切页，暗色系）
+ *
+ * 使用: npx tsx tools/generate-dashboard.ts
+ * 输出: reports/造化坊仪表盘.html
+ */
+
+import * as fs from "fs";
+import * as path from "path";
+import { collectData } from "./collect-data";
+
+const ROOT = path.resolve(__dirname, "..");
+const OUT_DIR = path.join(ROOT, "reports");
+const OUT_FILE = path.join(OUT_DIR, "造化坊仪表盘.html");
+
+export function generateHTML() {
+  const D = collectData();
+  const dataJSON = JSON.stringify(D);
+
+  return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 仪表盘</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#141414;color:#e0e0e0;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+header{padding:32px 0 20px}
+header h1{font-size:28px;font-weight:700;color:#fff}
+header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:24px;flex-wrap:wrap}
+.tab{padding:12px 20px;font-size:13px;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab:hover{color:rgba(255,255,255,.7)}
+.tab.active{color:#ff6b6b;border-bottom-color:#ff6b6b}
+.panel{display:none}
+.panel.active{display:block}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.card{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px}
+.card .label{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:6px}
+.card .value{font-size:28px;font-weight:700;color:#ff6b6b}
+.card .detail{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
+
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:10px 14px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-weight:500;font-size:12px}
+.tbl td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.05)}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;display:inline-block;white-space:nowrap}
+.badge-active{background:rgba(76,175,80,.15);color:#4caf50}
+.badge-idle{background:rgba(255,193,7,.15);color:#ffc107}
+.badge-empty{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)}
+.badge-done{background:rgba(76,175,80,.15);color:#4caf50}
+.badge-active-task{background:rgba(255,152,0,.15);color:#ff9800}
+.badge-planned{background:rgba(156,39,176,.15);color:#ce93d8}
+.badge-mature{background:rgba(76,175,80,.15);color:#4caf50}
+.badge-testing{background:rgba(255,193,7,.15);color:#ffc107}
+.badge-ongoing{background:rgba(33,150,243,.15);color:#42a5f5}
+
+.log-item{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:14px;align-items:flex-start}
+.log-item .log-date{font-size:12px;color:rgba(255,255,255,.35);min-width:80px}
+.log-item .log-file{font-size:13px;color:#fff;min-width:260px}
+.log-item .log-desc{font-size:13px;color:rgba(255,255,255,.55);flex:1}
+.commit-item{padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:12px;align-items:center;font-size:12px}
+.commit-item .hash{font-family:monospace;color:#ff6b6b}
+
+.section-title{font-size:16px;color:#fff;margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.layers{display:flex;gap:8px;margin-bottom:16px}
+.layer-tag{padding:4px 12px;border-radius:4px;font-size:11px}
+.layer-sys{background:rgba(255,107,107,.1);color:#ff6b6b}
+.layer-proj{background:rgba(76,175,80,.1);color:#4caf50}
+.footer{padding:40px 0 20px;text-align:center;font-size:12px;color:rgba(255,255,255,.2)}
+.footer a{color:rgba(255,255,255,.3)}
+
+.credo{background:linear-gradient(135deg,rgba(255,107,107,.08),rgba(255,107,107,.02));border:1px solid rgba(255,107,107,.12);border-radius:10px;padding:18px;margin-bottom:24px}
+.credo p{font-size:14px;color:rgba(255,255,255,.7);line-height:1.8}
+.credo strong{color:#ff6b6b}
+
+.btn{padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font-family:inherit;transition:all .2s}
+.btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+.btn-primary{border-color:rgba(255,107,107,.3);color:#ff6b6b}
+.btn-primary:hover{background:rgba(255,107,107,.1)}
+
+.toast{position:fixed;top:20px;right:20px;background:#1a1a1a;border:1px solid rgba(255,107,107,.3);border-radius:8px;padding:16px 20px;color:#e0e0e0;font-size:13px;z-index:100;opacity:0;transform:translateY(-10px);transition:all .3s;max-width:380px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{border-color:rgba(76,175,80,.3)}
+.toast.err{border-color:rgba(244,67,54,.3)}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:200;display:none;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:28px;width:90%;max-width:600px;max-height:85vh;overflow-y:auto}
+.modal h2{color:#fff;font-size:20px;margin-bottom:20px}
+.modal label{display:block;color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 4px}
+.modal input,.modal textarea,.modal select{width:100%;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#e0e0e0;font-size:13px;font-family:inherit;resize:vertical}
+.modal textarea{min-height:70px}
+.modal select{appearance:none}
+.modal .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <h1>🏭 造化坊 · 仪表盘</h1>
+      <div class="sub">${D.today} · 三层管理：系统层 → 项目层 → 工作流层</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" onclick="doRefresh()" title="重新采集数据并刷新">🔄 更新数据</button>
+      <button class="btn btn-primary" onclick="openLogModal()" title="记录今天的工作日志">📝 总结日志</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('overview',this)">系统总览</button>
+  <button class="tab" onclick="switchTab('projects',this)">项目状态</button>
+  <button class="tab" onclick="switchTab('workflows',this)">工作流清单</button>
+  <button class="tab" onclick="switchTab('activity',this)">近期动态</button>
+  <button class="tab" onclick="switchTab('tasks',this)">任务看板</button>
+  <button class="tab" onclick="switchTab('goals',this)">目标计划</button>
+  <button class="tab" onclick="switchTab('guides',this)">知识库</button>
+  <button class="tab" onclick="switchTab('assets',this)">资产地址</button>
+</div>
+
+<div id="tab-overview" class="panel active">
+  <div class="credo"><p><strong>定一个项目 → 遇到问题 → 学需要的知识 → 解决问题 → 完成</strong> · 匠心造化，万物可成</p></div>
+  <div class="cards" id="cards-overview"></div>
+  <div class="tbl" id="tbl-overview-info"></div>
+</div>
+<div id="tab-projects" class="panel"><div id="tbl-projects"></div></div>
+<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div id="tbl-workflows"></div></div>
+<div id="tab-activity" class="panel"><div class="section-title">works/ 工作日志</div><div id="list-works"></div><div class="section-title">Git 提交历史</div><div id="list-commits"></div></div>
+<div id="tab-tasks" class="panel"><div id="tbl-tasks"></div></div>
+<div id="tab-goals" class="panel"><div class="section-title">📌 用户需求（你提出的任务）</div><div id="tbl-goals-user"></div><div class="section-title">🔍 系统问题（AI 诊断）</div><div id="tbl-goals-issues"></div><div class="section-title">💡 AI 大方向建议</div><div id="tbl-goals-ai"></div></div>
+<div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
+<div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
+
+<footer class="footer">造化坊 (Creation Forge) · 生成于 ${D.today} · <a href="https://github.com/g676967453-blip/creation-forge" target="_blank">GitHub</a></footer>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div id="log-overlay" class="modal-overlay" onclick="if(event.target===this)closeLogModal()">
+<div class="modal">
+  <h2>📝 记录今日工作日志</h2>
+  <label>日期</label><input type="date" id="log-date">
+  <label>标题（简短）</label><input type="text" id="log-title" placeholder="例如：仪表盘交互按钮上线">
+  <label>遇到了什么</label><textarea id="log-problem" placeholder="一句话描述今天解决的问题"></textarea>
+  <label>AI 怎么协作的</label><textarea id="log-ai" placeholder="AI 做了什么、关键决策"></textarea>
+  <label>产出结果</label><textarea id="log-output" placeholder="具体产出物及路径"></textarea>
+  <label>关联项目</label>
+  <select id="log-project">
+    <option>造化坊 · 基础设施</option><option>小红书自媒体</option>
+    <option>GAME-002 开仙门</option><option>asset-pipeline</option>
+  </select>
+  <div class="btn-row">
+    <button class="btn" onclick="closeLogModal()">取消</button>
+    <button class="btn btn-primary" onclick="submitLog()">💾 写入 works/</button>
+  </div>
+</div>
+</div>
+
+<script>
+const D = ${dataJSON};
+
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type||'');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function doRefresh() {
+  try {
+    const r = await fetch('/api/data');
+    if (!r.ok) throw new Error(r.statusText);
+    const nd = await r.json();
+    toast('✅ 数据已刷新，重新渲染页面...', 'ok');
+    setTimeout(() => location.reload(), 500);
+  } catch(e) {
+    toast('⚠️ 仪表盘服务器未启动。请运行: npm run dashboard', 'err');
+  }
+}
+
+function openLogModal() {
+  document.getElementById('log-overlay').classList.add('show');
+  document.getElementById('log-date').value = new Date().toISOString().slice(0,10);
+}
+function closeLogModal() { document.getElementById('log-overlay').classList.remove('show'); }
+
+async function submitLog() {
+  const body = {
+    date: document.getElementById('log-date').value,
+    title: document.getElementById('log-title').value || '工作日志',
+    problem: document.getElementById('log-problem').value,
+    ai: document.getElementById('log-ai').value,
+    output: document.getElementById('log-output').value,
+    project: document.getElementById('log-project').value,
+  };
+  try {
+    const r = await fetch('/api/log', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    const res = await r.json();
+    toast('✅ 日志已写入 works/' + res.filename, 'ok');
+    closeLogModal();
+    doRefresh();
+  } catch(e) {
+    toast('⚠️ 服务器未启动，改为下载 .md 文件', 'err');
+    // Fallback: download as file
+    const md = ['# [',body.date,'] ',body.title,'','','---','','## 问题解决日志','','### 遇到了什么','',body.problem,'','### AI 怎么协作的','',body.ai,'','### 产出结果','',body.output,'','### 关联项目','',body.project].join('\\n');
+    const blob = new Blob([md], {type:'text/markdown'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = body.date + '-' + body.title.replace(/[\\/:*?"<>|]/g,'').replace(/\s+/g,'-').substring(0,40) + '.md';
+    a.click();
+  }
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+}
+(function(){
+  document.getElementById('cards-overview').innerHTML = [
+    {label:'SKILL 数量',value:D.skillCount,detail:'可执行命令'},
+    {label:'工作流数量',value:D.workflowCount,detail:'标准化流程'},
+    {label:'工具知识库',value:D.guideCount,detail:'操作指南'},
+    {label:'works 日志',value:D.worksCount,detail:'一事一记'},
+    {label:'Git 提交',value:D.commitCount,detail:'版本记录'},
+    {label:'活跃项目',value:'3',detail:'GAME-002 + 小红书 + asset-pipeline'},
+  ].map(c=>'<div class="card"><div class="label">'+c.label+'</div><div class="value">'+c.value+'</div><div class="detail">'+c.detail+'</div></div>').join('');
+
+  document.getElementById('tbl-overview-info').innerHTML =
+    '<table class="tbl"><thead><tr><th>板块</th><th>内容</th></tr></thead><tbody>'+
+    '<tr><td>AI 模式</td><td>协作者 · 导师 · 加速器</td></tr>'+
+    '<tr><td>SKILL 调用</td><td>/new-post · /git-commit · /sync-report</td></tr>'+
+    '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>';
+})();
+(function(){
+  const m={active:'badge-active',idle:'badge-idle',empty:'badge-empty'};
+  document.getElementById('tbl-projects').innerHTML='<table class="tbl"><thead><tr><th>项目</th><th>引擎/工具</th><th>状态</th><th>进度</th><th>本周产出</th><th>阻塞项</th></tr></thead><tbody>'+
+    D.projects.map(p=>'<tr><td>'+p.name+'</td><td>'+p.engine+'</td><td><span class="badge '+m[p.status]+'">'+p.statusText+'</span></td><td>'+p.progress+'</td><td>'+p.output+'</td><td>'+p.blocker+'</td></tr>').join('')+'</tbody></table>';
+})();
+(function(){
+  const sm={mature:'badge-mature',testing:'badge-testing',ongoing:'badge-ongoing'};
+  const st={mature:'✅ 成熟',testing:'🟡 待验证',ongoing:'🔄 持续'};
+  document.getElementById('tbl-workflows').innerHTML='<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL</th><th>关联项目</th><th>状态</th></tr></thead><tbody>'+
+    D.workflows.map(w=>'<tr><td>'+w.name+'</td><td>'+w.version+'</td><td>'+w.skill+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td></tr>').join('')+'</tbody></table>';
+})();
+(function(){
+  document.getElementById('list-works').innerHTML=D.worksData.map(w=>'<div class="log-item"><span class="log-date">'+w.date+'</span><span class="log-file">'+w.file+'</span><span class="log-desc">'+w.desc+'</span></div>').join('');
+  document.getElementById('list-commits').innerHTML=D.gitCommits.map(c=>'<div class="commit-item"><span class="log-date">'+c.date+'</span><span>'+c.msg+'</span><span class="hash">'+c.hash+'</span></div>').join('');
+})();
+(function(){
+  const sm={done:'badge-done',active:'badge-active-task',planned:'badge-planned'};
+  document.getElementById('tbl-tasks').innerHTML='<table class="tbl"><thead><tr><th>#</th><th>状态</th><th>类别</th><th>任务</th><th>备注</th></tr></thead><tbody>'+
+    D.tasks.map(t=>'<tr><td>'+t.id+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td>'+t.cat+'</td><td>'+t.task+'</td><td>'+t.note+'</td></tr>').join('')+'</tbody></table>';
+})();
+(function(){
+  const pm={"🔴 紧急":"badge-active-task","🔴 阻塞":"badge-active-task","🔴 优先":"badge-active-task","🟡 本周":"badge-idle","🟡 持续":"badge-idle","🟡 累积":"badge-idle","🟡 便利性":"badge-idle","🟡 建议":"badge-idle","🟢 远期":"badge-empty"};
+  const rt=(d,c)=>'<table class="tbl"><thead><tr>'+c.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+d.map(r=>'<tr>'+r.map((v,i)=>i===c.length-1?'<td><span class="badge '+(pm[v]||'')+'">'+v+'</span></td>':'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+  document.getElementById('tbl-goals-user').innerHTML=rt(D.goalsUser.map(g=>[g.id,g.task,g.detail,g.priority]),['#','任务','详情','优先级']);
+  document.getElementById('tbl-goals-issues').innerHTML=rt(D.goalsIssues.map(g=>[g.id,g.issue,g.source,g.severity]),['#','问题','来源','严重度']);
+  document.getElementById('tbl-goals-ai').innerHTML=rt(D.goalsAI.map(g=>[g.id,g.suggestion,g.detail,g.priority]),['#','建议','详情','优先级']);
+})();
+(function(){
+  document.getElementById('tbl-guides').innerHTML='<table class="tbl"><thead><tr><th>工具</th><th>说明</th><th>介绍</th><th>操作</th><th>人机协作</th><th>文档数</th></tr></thead><tbody>'+
+    D.toolGuides.map(g=>'<tr><td><strong>'+g.tool+'</strong></td><td>'+g.desc+'</td><td>'+g.intro+'</td><td>'+g.ops+'</td><td>'+g.collab+'</td><td>'+g.docs+'</td></tr>').join('')+'</tbody></table>';
+})();
+(function(){
+  const lm={系统层:'layer-sys',项目层:'layer-proj'};
+  document.getElementById('tbl-assets').innerHTML='<table class="tbl"><thead><tr><th>层级</th><th>名称</th><th>路径</th><th>说明</th></tr></thead><tbody>'+
+    D.assets.map(a=>'<tr><td><span class="layer-tag '+(lm[a.layer]||'')+'">'+a.layer+'</span></td><td><strong>'+a.name+'</strong></td><td><code>'+a.path+'</code></td><td>'+a.desc+'</td></tr>').join('')+'</tbody></table>';
+  document.getElementById('tbl-external').innerHTML='<table class="tbl"><thead><tr><th>类别</th><th>名称</th><th>地址</th><th>说明</th></tr></thead><tbody>'+
+    D.external.map(e=>'<tr><td>'+e.cat+'</td><td>'+e.name+'</td><td><code>'+e.addr+'</code></td><td>'+e.desc+'</td></tr>').join('')+'</tbody></table>';
+})();
+
+</script>
+</body>
+</html>`;
+}
+
+// CLI 模式：直接生成静态文件
+if (require.main === module) {
+  if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.writeFileSync(OUT_FILE, generateHTML(), "utf-8");
+  console.log(`✅ 仪表盘已生成: ${OUT_FILE}`);
+}
