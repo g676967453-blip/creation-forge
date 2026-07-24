@@ -97,6 +97,13 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 .modal textarea{min-height:70px}
 .modal select{appearance:none}
 .modal .btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+.sub-tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.sub-tab{padding:6px 16px;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:6px;transition:all .2s;font-family:inherit}
+.sub-tab:hover{color:rgba(255,255,255,.7);background:rgba(255,255,255,.06)}
+.sub-tab.active{color:#ff6b6b;background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25)}
+.sub-count{font-size:10px;color:rgba(255,255,255,.25);margin-left:2px}
+.sub-tab.active .sub-count{color:rgba(255,107,107,.5)}
 </style>
 </head>
 <body>
@@ -131,7 +138,7 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
   <div class="tbl" id="tbl-overview-info"></div>
 </div>
 <div id="tab-projects" class="panel"><div id="tbl-projects"></div></div>
-<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div id="tbl-workflows"></div></div>
+<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('daily',this)">日常<span class="sub-count" id="wf-count-daily"></span></button><button class="sub-tab" onclick="switchWfSub('business',this)">业务工作流<span class="sub-count" id="wf-count-business"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-activity" class="panel"><div class="section-title">works/ 工作日志</div><div id="list-works"></div><div class="section-title">Git 提交历史</div><div id="list-commits"></div></div>
 <div id="tab-tasks" class="panel"><div id="tbl-tasks"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">📌 用户需求（你提出的任务）</div><div id="tbl-goals-user"></div><div class="section-title">🔍 系统问题（AI 诊断）</div><div id="tbl-goals-issues"></div><div class="section-title">💡 AI 大方向建议</div><div id="tbl-goals-ai"></div></div>
@@ -250,9 +257,37 @@ function switchTab(name, el) {
 (function(){
   const sm={mature:'badge-mature',testing:'badge-testing',ongoing:'badge-ongoing'};
   const st={mature:'✅ 成熟',testing:'🟡 待验证',ongoing:'🔄 持续'};
-  const sk = (s) => s === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : '<span class="badge badge-active">'+s+'</span>';
-  document.getElementById('tbl-workflows').innerHTML='<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL 覆盖</th><th>关联项目</th><th>成熟度</th></tr></thead><tbody>'+
-    D.workflows.map(w=>'<tr><td>'+w.name+'</td><td>'+w.version+'</td><td>'+sk(w.skill)+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td></tr>').join('')+'</tbody></table>';
+  const sk = (s) => s === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : (s === '待建' ? '<span class="badge badge-idle">待建</span>' : '<span class="badge badge-active">'+s+'</span>');
+  const catBadge = {'日常':'badge-ongoing','业务工作流':'badge-mature'};
+
+  function renderWfTable(data, mode) {
+    if (mode === 'skill') {
+      const stype = function(t){return t==='标准'?'<span class="badge badge-mature">标准</span>':'<span class="badge badge-active">扁平</span>';};
+      const swf = function(w){return w?'<span style="font-size:12px;color:rgba(255,255,255,.45)">'+w+'</span>':'<span style="color:rgba(255,255,255,.15)">—</span>';};
+      return '<table class="tbl"><thead><tr><th>SKILL 名称</th><th>类型</th><th>路径</th><th>关联工作流</th></tr></thead><tbody>'+
+        data.map(function(s){return '<tr><td><strong>'+s.name+'</strong></td><td>'+stype(s.type)+'</td><td><code>'+s.path+'</code></td><td>'+swf(s.linkedWorkflow)+'</td></tr>';}).join('')+'</tbody></table>';
+    }
+    // mode === 'all' 时显示分类列
+    return '<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL 覆盖</th><th>关联项目</th><th>成熟度</th><th>分类</th></tr></thead><tbody>'+
+      data.map(function(w){return '<tr><td>'+w.name+'</td><td>'+w.version+'</td><td>'+sk(w.skill)+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td><td><span class="badge '+(catBadge[w.category]||'')+'">'+w.category+'</span></td></tr>';}).join('')+'</tbody></table>';
+  }
+
+  window.switchWfSub = function(cat, el) {
+    document.querySelectorAll('#wf-sub-tabs .sub-tab').forEach(function(t){t.classList.remove('active');});
+    el.classList.add('active');
+    var data;
+    if (cat === 'all') data = D.workflows;
+    else if (cat === 'skill') data = D.skills;
+    else data = D.workflows.filter(function(w){return w.category === (cat === 'daily' ? '日常' : '业务工作流');});
+    document.getElementById('tbl-workflows').innerHTML = renderWfTable(data, cat);
+  };
+
+  // 初始渲染全部 + 设置计数
+  document.getElementById('tbl-workflows').innerHTML = renderWfTable(D.workflows, 'all');
+  document.getElementById('wf-count-all').textContent = '('+D.workflows.length+')';
+  document.getElementById('wf-count-daily').textContent = '('+D.workflows.filter(function(w){return w.category==='日常';}).length+')';
+  document.getElementById('wf-count-business').textContent = '('+D.workflows.filter(function(w){return w.category==='业务工作流';}).length+')';
+  document.getElementById('wf-count-skill').textContent = '('+D.skills.length+')';
 })();
 (function(){
   document.getElementById('list-works').innerHTML=D.worksData.map(w=>'<div class="log-item"><span class="log-date">'+w.date+'</span><span class="log-file">'+w.file+'</span><span class="log-desc">'+w.desc+'</span></div>').join('');

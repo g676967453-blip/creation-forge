@@ -90,14 +90,65 @@ ${project}
   return filename;
 }
 
+export interface SkillInfo {
+  name: string;
+  type: "标准" | "扁平";
+  path: string;
+  linkedWorkflow?: string;
+}
+
+/**
+ * 扫描 .claude/skills/ 目录，收集所有 SKILL
+ * 标准 SKILL：目录内有 SKILL.md
+ * 扁平 SKILL：独立 .md 文件
+ */
+export function listSkills(skillsDir: string): SkillInfo[] {
+  const skills: SkillInfo[] = [];
+  try {
+    const walk = (dir: string, basePath: string) => {
+      for (const f of fs.readdirSync(dir)) {
+        if (f.startsWith(".")) continue;
+        const full = path.join(dir, f);
+        const rel = path.join(basePath, f).replace(/\\/g, "/");
+        try {
+          const stat = fs.statSync(full);
+          if (stat.isDirectory()) {
+            if (fs.existsSync(path.join(full, "SKILL.md"))) {
+              skills.push({ name: f, type: "标准", path: rel + "/" });
+            } else {
+              walk(full, rel);
+            }
+          } else if (f.endsWith(".md") && !f.startsWith("_") && f !== "README.md") {
+            const name = f.replace(/\.md$/, "");
+            skills.push({ name, type: "扁平", path: rel });
+          }
+        } catch {}
+      }
+    };
+    walk(skillsDir, ".claude/skills");
+  } catch {}
+  return skills;
+}
+
+/** 检测 SKILL 与工作流的关联 */
+export function linkSkillToWorkflow(skillName: string): string | undefined {
+  const map: Record<string, string> = {
+    "git-commit": "Git-提交推送",
+    "new-post": "小红书-制作帖子",
+    "sync-report": "汇报说明书同步",
+    "item-icon": "道具图标-生产",
+  };
+  return map[skillName];
+}
+
 export function collectData() {
   const today = new Date().toLocaleDateString("zh-CN");
   const worksFiles = listWorks();
   const worksData = worksFiles.map(f => ({ date: f.substring(0, 10), file: f, desc: autoDesc(f) }));
   const gitCommits = gitLog(5);
   const commitCount = gitCommitCount();
-  const skills = countSkills(path.join(ROOT, ".claude/skills"));
-  const skillCount = skills.total;
+  const skillsCount = countSkills(path.join(ROOT, ".claude/skills"));
+  const skillCount = skillsCount.total;
   const workflowCount = countFiles(path.join(ROOT, "docs/workflows"));
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
@@ -110,16 +161,21 @@ export function collectData() {
   ];
 
   const workflows = [
-    { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature" },
-    { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature" },
-    { name: "Git-提交推送", version: "v1", skill: "/git-commit", project: "全局", status: "mature" },
-    { name: "汇报说明书同步", version: "v1", skill: "/sync-report", project: "全局", status: "mature" },
-    { name: "道具图标-生产", version: "v1", skill: "待建", project: "asset-pipeline", status: "mature" },
-    { name: "GAME002-UI制作", version: "v2", skill: "待建", project: "GAME-002", status: "mature" },
-    { name: "GAME002-UI层命名规范", version: "v2", skill: "—", project: "GAME-002", status: "mature" },
-    { name: "GAME002-功能开发", version: "v1", skill: "待建", project: "GAME-002", status: "testing" },
-    { name: "改进追踪", version: "v1", skill: "—", project: "全局", status: "ongoing" },
+    { name: "Git-提交推送", version: "v1", skill: "/git-commit", project: "全局", status: "mature", category: "日常" },
+    { name: "汇报说明书同步", version: "v1", skill: "/sync-report", project: "全局", status: "mature", category: "日常" },
+    { name: "改进追踪", version: "v1", skill: "—", project: "全局", status: "ongoing", category: "日常" },
+    { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature", category: "业务工作流" },
+    { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "业务工作流" },
+    { name: "道具图标-生产", version: "v1", skill: "待建", project: "asset-pipeline", status: "mature", category: "业务工作流" },
+    { name: "GAME002-UI制作", version: "v2", skill: "待建", project: "GAME-002", status: "mature", category: "业务工作流" },
+    { name: "GAME002-UI层命名规范", version: "v2", skill: "—", project: "GAME-002", status: "mature", category: "业务工作流" },
+    { name: "GAME002-功能开发", version: "v1", skill: "待建", project: "GAME-002", status: "testing", category: "业务工作流" },
   ];
+
+  // 采集 SKILL 数据
+  const skillsDir = path.join(ROOT, ".claude/skills");
+  const skillsRaw = listSkills(skillsDir);
+  const skills = skillsRaw.map(s => ({ ...s, linkedWorkflow: linkSkillToWorkflow(s.name) }));
 
   const tasks = [
     { id: "1", status: "done", statusText: "✅ 已完成", cat: "核心理念", task: "创建宣言文档 (manifesto.md)", note: "2026-07-15" },
@@ -162,7 +218,7 @@ export function collectData() {
     { tool: "Git", intro: "01-git-intro.md", ops: "02-git-operations.md", collab: "03-git-human-ai-collab.md", desc: "分布式版本控制系统", docs: 3 },
     { tool: "GitHub", intro: "01-github-intro.md", ops: "02-github-operations.md", collab: "03-github-human-ai-collab.md", desc: "代码托管与协作平台", docs: 3 },
     { tool: "Pixso", intro: "—", ops: "—", collab: "—", desc: "UI 设计工具（待补充）", docs: 0 },
-    { tool: "Claude Code Skills", intro: "game-dev-skills.md", ops: "—", collab: "—", desc: `标准 ${skills.standard} + 扁平 ${skills.flat} = ${skills.total} 个技能（Godot/Phaser/Three.js 等）`, docs: skills.total },
+    { tool: "Claude Code Skills", intro: "game-dev-skills.md", ops: "—", collab: "—", desc: `标准 ${skillsCount.standard} + 扁平 ${skillsCount.flat} = ${skillsCount.total} 个技能（Godot/Phaser/Three.js 等）`, docs: skillsCount.total },
     { tool: "Claude Code 配置", intro: "—", ops: ".claude/settings.json", collab: "CLAUDE.md", desc: "权限/hooks/MCP/记忆", docs: 4 },
   ];
 
@@ -188,9 +244,9 @@ export function collectData() {
 
   return {
     today, worksData, gitCommits, commitCount,
-    skillCount, skillStandard: skills.standard, skillFlat: skills.flat,
+    skillCount, skillStandard: skillsCount.standard, skillFlat: skillsCount.flat,
     workflowCount, guideCount, worksCount: worksFiles.length,
-    projects, workflows, tasks, goalsUser, goalsIssues, goalsAI,
+    projects, workflows, skills, tasks, goalsUser, goalsIssues, goalsAI,
     toolGuides, assets, external,
   };
 }
