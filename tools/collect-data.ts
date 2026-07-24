@@ -28,6 +28,27 @@ export function countFiles(dir: string): number {
   catch { return 0; }
 }
 
+/** 递归统计 SKILL 文件 */
+export function countSkills(skillsDir: string): { total: number; standard: number; flat: number } {
+  let standard = 0, flat = 0;
+  try {
+    const walk = (dir: string) => {
+      for (const f of fs.readdirSync(dir)) {
+        if (f.startsWith(".")) continue;
+        const full = path.join(dir, f);
+        if (fs.statSync(full).isDirectory()) {
+          if (fs.existsSync(path.join(full, "SKILL.md"))) { standard++; walk(full); }
+          else walk(full);
+        } else if (f.endsWith(".md") && !f.startsWith("_") && f !== "README.md") {
+          flat++;
+        }
+      }
+    };
+    walk(skillsDir);
+  } catch {}
+  return { total: standard + flat, standard, flat };
+}
+
 export function gitLog(count: number): { date: string; msg: string; hash: string }[] {
   try {
     const out = execSync(`git log --oneline -${count} --format="%ad|%s|%h" --date=short`, { cwd: ROOT, timeout: 3000 }).toString().trim();
@@ -75,7 +96,8 @@ export function collectData() {
   const worksData = worksFiles.map(f => ({ date: f.substring(0, 10), file: f, desc: autoDesc(f) }));
   const gitCommits = gitLog(5);
   const commitCount = gitCommitCount();
-  const skillCount = countFiles(path.join(ROOT, ".claude/skills"));
+  const skills = countSkills(path.join(ROOT, ".claude/skills"));
+  const skillCount = skills.total;
   const workflowCount = countFiles(path.join(ROOT, "docs/workflows"));
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
@@ -140,7 +162,7 @@ export function collectData() {
     { tool: "Git", intro: "01-git-intro.md", ops: "02-git-operations.md", collab: "03-git-human-ai-collab.md", desc: "分布式版本控制系统", docs: 3 },
     { tool: "GitHub", intro: "01-github-intro.md", ops: "02-github-operations.md", collab: "03-github-human-ai-collab.md", desc: "代码托管与协作平台", docs: 3 },
     { tool: "Pixso", intro: "—", ops: "—", collab: "—", desc: "UI 设计工具（待补充）", docs: 0 },
-    { tool: "Claude Code Skills", intro: "game-dev-skills.md", ops: "—", collab: "—", desc: "48 个游戏开发技能（Godot/Phaser/Three.js 等）", docs: 1 },
+    { tool: "Claude Code Skills", intro: "game-dev-skills.md", ops: "—", collab: "—", desc: `标准 ${skills.standard} + 扁平 ${skills.flat} = ${skills.total} 个技能（Godot/Phaser/Three.js 等）`, docs: skills.total },
     { tool: "Claude Code 配置", intro: "—", ops: ".claude/settings.json", collab: "CLAUDE.md", desc: "权限/hooks/MCP/记忆", docs: 4 },
   ];
 
@@ -166,7 +188,8 @@ export function collectData() {
 
   return {
     today, worksData, gitCommits, commitCount,
-    skillCount, workflowCount, guideCount, worksCount: worksFiles.length,
+    skillCount, skillStandard: skills.standard, skillFlat: skills.flat,
+    workflowCount, guideCount, worksCount: worksFiles.length,
     projects, workflows, tasks, goalsUser, goalsIssues, goalsAI,
     toolGuides, assets, external,
   };
