@@ -228,7 +228,7 @@ function switchTab(name, el) {
 }
 (function(){
   document.getElementById('cards-overview').innerHTML = [
-    {label:'SKILL 数量',value:D.skillCount,detail:'可执行命令'},
+    {label:'SKILL 总数',value:D.skillCount,detail:'标准 '+D.skillStandard+' · 扁平 '+D.skillFlat+' · <a href=\"../docs/workflows/变更日志.md\" style=\"color:#ff6b6b\">变更日志</a>'},
     {label:'工作流数量',value:D.workflowCount,detail:'标准化流程'},
     {label:'工具知识库',value:D.guideCount,detail:'操作指南'},
     {label:'works 日志',value:D.worksCount,detail:'一事一记'},
@@ -250,8 +250,9 @@ function switchTab(name, el) {
 (function(){
   const sm={mature:'badge-mature',testing:'badge-testing',ongoing:'badge-ongoing'};
   const st={mature:'✅ 成熟',testing:'🟡 待验证',ongoing:'🔄 持续'};
-  document.getElementById('tbl-workflows').innerHTML='<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL</th><th>关联项目</th><th>状态</th></tr></thead><tbody>'+
-    D.workflows.map(w=>'<tr><td>'+w.name+'</td><td>'+w.version+'</td><td>'+w.skill+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td></tr>').join('')+'</tbody></table>';
+  const sk = (s) => s === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : '<span class="badge badge-active">'+s+'</span>';
+  document.getElementById('tbl-workflows').innerHTML='<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL 覆盖</th><th>关联项目</th><th>成熟度</th></tr></thead><tbody>'+
+    D.workflows.map(w=>'<tr><td>'+w.name+'</td><td>'+w.version+'</td><td>'+sk(w.skill)+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td></tr>').join('')+'</tbody></table>';
 })();
 (function(){
   document.getElementById('list-works').innerHTML=D.worksData.map(w=>'<div class="log-item"><span class="log-date">'+w.date+'</span><span class="log-file">'+w.file+'</span><span class="log-desc">'+w.desc+'</span></div>').join('');
