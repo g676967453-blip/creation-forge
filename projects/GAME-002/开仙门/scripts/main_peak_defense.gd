@@ -59,13 +59,12 @@ func take_damage(amount: float) -> void:
 	_peak.current_hp -= final_damage
 	_peak.queue_redraw()
 	if _peak.current_hp <= 0:
-		# 百世书 death prevention
-		var gm: Node = _peak.get_tree().current_scene.get_node_or_null("Managers/GameManager")
-		if gm and gm.get("selected_spirit_id") == "spirit_book":
+		# 百世书 death prevention — 从 MainPeak meta 读取器灵类型
+		var spirit_profile: String = _peak.get_meta(&"spirit_profile", &"")
+		if spirit_profile == "spirit_book":
 			_peak.current_hp = 1.0
 			_peak.queue_redraw()
-			if gm.has_method("on_spirit_revived"):
-				gm.on_spirit_revived()
+			print("[MainPeakDefense] 百世书免死触发 — HP 锁定为 1")
 			return
 		_peak.main_peak_destroyed.emit()
 

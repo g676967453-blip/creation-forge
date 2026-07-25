@@ -94,12 +94,33 @@ export interface SkillInfo {
   name: string;
   type: "标准" | "扁平";
   path: string;
+  description: string;
+  difficulty: string;
   linkedWorkflow?: string;
+}
+
+/** 从 SKILL.md 文件中提取 YAML frontmatter 中的 description 和 difficulty */
+function parseSkillMetadata(filePath: string): { description: string; difficulty: string } {
+  try {
+    const content = fs.readFileSync(filePath, "utf-8");
+    // 匹配 --- 之间的 YAML frontmatter（兼容 \r\n 和 \n）
+    const fm = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if (!fm) return { description: "", difficulty: "" };
+    // 提取 description（> 折叠标量的第一行有效文本）
+    const descMatch = fm[1].match(/^description:\s*>\s*\r?\n(\s{2,}.+)/m);
+    const description = descMatch ? descMatch[1].trim() : "";
+    // 提取 difficulty
+    const diffMatch = fm[1].match(/^\s+difficulty:\s*(\w+)/m);
+    const difficulty = diffMatch ? diffMatch[1] : "";
+    return { description, difficulty };
+  } catch {
+    return { description: "", difficulty: "" };
+  }
 }
 
 /**
  * 扫描 .claude/skills/ 目录，收集所有 SKILL
- * 标准 SKILL：目录内有 SKILL.md
+ * 标准 SKILL：目录内有 SKILL.md，解析其 frontmatter
  * 扁平 SKILL：独立 .md 文件
  */
 export function listSkills(skillsDir: string): SkillInfo[] {
@@ -114,13 +135,15 @@ export function listSkills(skillsDir: string): SkillInfo[] {
           const stat = fs.statSync(full);
           if (stat.isDirectory()) {
             if (fs.existsSync(path.join(full, "SKILL.md"))) {
-              skills.push({ name: f, type: "标准", path: rel + "/" });
+              const meta = parseSkillMetadata(path.join(full, "SKILL.md"));
+              skills.push({ name: f, type: "标准", path: rel + "/", description: meta.description, difficulty: meta.difficulty });
             } else {
               walk(full, rel);
             }
           } else if (f.endsWith(".md") && !f.startsWith("_") && f !== "README.md") {
             const name = f.replace(/\.md$/, "");
-            skills.push({ name, type: "扁平", path: rel });
+            const meta = parseSkillMetadata(full);
+            skills.push({ name, type: "扁平", path: rel, description: meta.description, difficulty: meta.difficulty });
           }
         } catch {}
       }

@@ -263,9 +263,16 @@ function switchTab(name, el) {
   function renderWfTable(data, mode) {
     if (mode === 'skill') {
       const stype = function(t){return t==='标准'?'<span class="badge badge-mature">标准</span>':'<span class="badge badge-active">扁平</span>';};
+      const sdiff = function(d){
+        if (d === 'beginner') return '<span class="badge badge-mature">入门</span>';
+        if (d === 'intermediate') return '<span class="badge badge-idle">进阶</span>';
+        if (d === 'advanced') return '<span class="badge badge-active-task">高级</span>';
+        return '<span style="color:rgba(255,255,255,.15)">—</span>';
+      };
       const swf = function(w){return w?'<span style="font-size:12px;color:rgba(255,255,255,.45)">'+w+'</span>':'<span style="color:rgba(255,255,255,.15)">—</span>';};
-      return '<table class="tbl"><thead><tr><th>SKILL 名称</th><th>类型</th><th>路径</th><th>关联工作流</th></tr></thead><tbody>'+
-        data.map(function(s){return '<tr><td><strong>'+s.name+'</strong></td><td>'+stype(s.type)+'</td><td><code>'+s.path+'</code></td><td>'+swf(s.linkedWorkflow)+'</td></tr>';}).join('')+'</tbody></table>';
+      const sdesc = function(d){return d?'<span style="font-size:12px;color:rgba(255,255,255,.55)" title="'+d.replace(/"/g,'&quot;')+'">'+d+'</span>':'<span style="color:rgba(255,255,255,.15)">—</span>';};
+      return '<table class="tbl"><thead><tr><th>SKILL 名称</th><th>类型</th><th>难度</th><th>用途</th><th>路径</th><th>关联工作流</th></tr></thead><tbody>'+
+        data.map(function(s){return '<tr><td><strong>'+s.name+'</strong></td><td>'+stype(s.type)+'</td><td>'+sdiff(s.difficulty)+'</td><td>'+sdesc(s.description)+'</td><td><code style="font-size:11px">'+s.path+'</code></td><td>'+swf(s.linkedWorkflow)+'</td></tr>';}).join('')+'</tbody></table>';
     }
     // mode === 'all' 时显示分类列
     return '<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL 覆盖</th><th>关联项目</th><th>成熟度</th><th>分类</th></tr></thead><tbody>'+
