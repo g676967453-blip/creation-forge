@@ -154,10 +154,14 @@ func _clear_battlefield() -> void:
 	var battlefield = get_tree().current_scene.get_node_or_null(SCENE_BATTLEFIELD)
 	if not battlefield:
 		return
-	for child in battlefield.get_node(NODE_ENEMIES).get_children():
-		child.queue_free()
-	for child in battlefield.get_node(NODE_PROJECTILES).get_children():
-		child.queue_free()
+	var enemies_node := battlefield.get_node_or_null(NODE_ENEMIES)
+	if enemies_node:
+		for child in enemies_node.get_children():
+			child.queue_free()
+	var projectiles_node := battlefield.get_node_or_null(NODE_PROJECTILES)
+	if projectiles_node:
+		for child in projectiles_node.get_children():
+			child.queue_free()
 
 
 func restart_game() -> void:

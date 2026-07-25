@@ -25,20 +25,19 @@ DataManager="*res://autoload/data_manager.gd"
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/size/window_width_override=1280
-window/size/window_height_override=720
 window/size/resizable=false
 window/size/always_on_top=true
-window/dpi/allow_hidpi=true
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode=0
-
-[gui]
-
-theme/custom="res://themes/default_theme.tres"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/auto_reload/plugin.cfg")
+
+[gui]
+
+theme/custom="res://themes/default_theme.tres"
 
 [rendering]
 

@@ -98,7 +98,7 @@ func _setup_sprite() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if current_hp <= 0.0:
+	if not data or current_hp <= 0.0:
 		return
 
 	if _siege_mode:
@@ -362,6 +362,8 @@ func _shoot_at_main_peak() -> void:
 
 
 func _draw() -> void:
+	if not data:
+		return
 	var r: float = data.size * 14.0
 	if data.enemy_type == "boss":
 		draw_circle(Vector2.ZERO, r + 10.0, Color(0.35, 0.05, 0.05, 0.8))
