@@ -244,7 +244,7 @@ export function collectData() {
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
   const projects = [
-    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~30%", output: "Phase 0-3 完成：7新模块+集成+数据", blocker: "待旧代码清理+UI适配+完整测试" },
+    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~40%", output: "闭环完整+MCP在线+5层防御+15波+6功法+35/93任务✅+文档审计修复", blocker: "待祝福3选1UI+弟子接入主循环+旧模块删除" },
     { name: "小红书自媒体", engine: "HTML/CSS + Pixso", status: "active", statusText: "活跃", progress: "14 期帖子", output: "post-13/14 + 目录扁平化", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
     { name: "tutorial/01-hello-canvas", engine: "Phaser 3.80+", status: "idle", statusText: "待机", progress: "仅骨架", output: "—", blocker: "优先级低" },
@@ -278,7 +278,10 @@ export function collectData() {
     { id: "6", status: "done", statusText: "✅ 已完成", cat: "自媒体", task: "小红书素材库 14 期 + /new-post SKILL", note: "07-15 → 07-23" },
     { id: "12", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 V0.1 8项设计决策确认", note: "X19混合策略+X5胜负+X7祝福池+X9挂件+X12精英+X13/X14/X18（07-26）" },
     { id: "13", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 Phase 0-3：代码清理+架构+集成+数据", note: "删除22废弃文件+7新模块+6弟子18祝福6法宝+MCP验证通过（07-26）" },
-    { id: "7", status: "active", statusText: "🟢 进行中", cat: "项目", task: "GAME-002 Phase 3：旧代码删除+UI适配+完整测试", note: "Phase 0-2 已完成，待删除旧card/summons/upgrades模块" },
+    { id: "14", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 全面诊断（架构/代码/性能/MCP）", note: "godot-master框架+源码静态分析+CSV交叉验证（07-26）" },
+    { id: "15", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 118份文档审计+6矛盾修复", note: "数值总览+CODE_WIKI+GDD+协作规则修复+3新V0.1规格（07-26）" },
+    { id: "16", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "仪表盘数据同步+路线图/任务表清理", note: "35/93任务✅+30归档标记+统计刷新+V0.1决策进度标注（07-26）" },
+    { id: "7", status: "active", statusText: "🟢 进行中", cat: "项目", task: "GAME-002 Phase 3：旧代码删除+UI适配+完整测试", note: "Phase 0-2 已完成。祝福3选1UI+弟子接入主循环+删除旧card/summons" },
     { id: "8", status: "active", statusText: "🟢 进行中", cat: "项目", task: "asset-pipeline 资产管线运行", note: "3 风格已验证" },
     { id: "9", status: "planned", statusText: "📋 计划中", cat: "自媒体", task: "持续发布小红书内容", note: "基于 works/ 素材生产" },
     { id: "11", status: "planned", statusText: "📋 计划中", cat: "基础设施", task: "SKILL 扩展（/开发功能 /道具图标）", note: "待流程成熟" },
@@ -286,15 +289,17 @@ export function collectData() {
 
   const goalsUser = [
     { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏", priority: "🟡 持续" },
-    { id: "U5", task: "GAME-002 设计决策确认（8/19）✅", detail: "07-26 集中确认 Tier 1-2 共 8 项：混合策略/胜负条件/祝福池/挂件槽/精英波次/弟子数/休息波/防御链", priority: "✅ 已完成" },
+    { id: "U5", task: "GAME-002 设计决策确认（9/19）✅", detail: "07-26 集中确认 Tier 1-2 共 9 项（X5/X7/X9/X12/X13/X14/X18/X19）+ Tier 3 默认值", priority: "✅ 已完成" },
     { id: "U6", task: "GAME-002 V0.1 核心架构搭建 ✅", detail: "7 新模块（SpiritSeat/Disciple/BlessingManager+3 Data类）+ GameManager 集成 + MCP 编译验证通过", priority: "✅ 已完成" },
-    { id: "U2", task: "GAME-002 Phase 3：旧代码清理 + UI适配 + 完整测试", detail: "删除旧 card_manager/summons/upgrades；祝福选择独立面板；Godot 手动跑通闭环", priority: "🟡 本周" },
+    { id: "U7", task: "GAME-002 全面诊断 + 文档修复 ✅", detail: "godot-master框架诊断（3高优修复项）+118份文档审计（6矛盾修复+30归档标记+3新V0.1规格+验证日期刷新）", priority: "✅ 已完成" },
+    { id: "U2", task: "GAME-002 Phase 3：祝福3选1UI + 弟子接入 + 旧代码删除", detail: "创建独立祝福选择面板；DiscipleSquad接入战斗循环；删除card_manager/summons/upgrades旧模块", priority: "🔴 本周" },
     { id: "U4", task: "asset-pipeline 产出 GAME-002 实际素材", detail: "道具图标管线已验证，需对接到 GAME-002 的具体需求", priority: "🟢 远期" },
   ];
 
   const goalsIssues = [
     { id: "I1", issue: "GAME-002 V0.1 旧代码模块待删除（card_manager/summons/upgrades）", source: "Phase 2 集成完成，旧模块仍并行运行", severity: "🟡 累积" },
     { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
+    { id: "I7", issue: "CODE_WIKI.md 已更新 V0.0→V0.1 过渡状态，数值总览已同步 CSV", source: "07-26 文档修复完成（1/3轮），第三轮归档标注待补充", severity: "🟢 跟踪" },
     { id: "I3", issue: "tutorial 教程线 0% —— hello-canvas 仅骨架无代码", source: "项目扫描，5% 完成度", severity: "🟢 远期" },
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
