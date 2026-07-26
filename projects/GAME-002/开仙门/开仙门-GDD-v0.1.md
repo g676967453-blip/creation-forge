@@ -4,9 +4,9 @@ AIGC:
     ContentProducer: 001191110102MACQD9K64018705
     ProduceID: 2285250748359075_0-data_volume/7645578886197231872-files/所有对话/主对话/开仙门/开仙门-GDD-v0.1.md
 
-> **数据验证日期**：2026-07-11
-> **验证来源**：form_config.csv / card_config.csv / enemy_config.csv / wave_config.csv / form_level_config.csv
-> **关键变更**：功法 7→6（离火诀已删除，雷霆诀已加入）、卡牌 33→28、敌人 5→9（新增霜寒兽/铁甲卫/翼魔/召魔师）、战斗波次 10→15
+> **数据验证日期**：2026-07-26
+> **验证来源**：form_config.csv / card_config.csv / enemy_config.csv / wave_config.csv / form_level_config.csv / spirit_growth.csv
+> **关键变更**：功法 7→6（离火诀已删除，雷霆诀已加入）、卡牌 33→28、敌人 5→9（新增霜寒兽/铁甲卫/翼魔/召魔师）、战斗波次 10→15、器灵 HP 500→2000
     ReservedCode1: ""
     ContentPropagator: 001191110102MACQD9K64028705
     PropagateID: 2285250748359075#1781707648449

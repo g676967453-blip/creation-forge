@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=1 format=3]
-
-[resource]
-card_id = "card_range_up"
-card_name = "灵识扩展"
-description = "所有山峰攻击范围+15%"
-target_peak_id = "global"
-effect_type = "modify_range"
-effect_value = 0.15

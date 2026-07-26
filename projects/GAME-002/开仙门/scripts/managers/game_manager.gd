@@ -18,13 +18,17 @@ const NODE_COUNTDOWN := ^"UI/CountdownLabel"
 const NODE_INTRO := ^"UI/IntroScreen"
 
 @onready var wave_manager: WaveManager = $WaveManager
-@onready var card_manager: CardManager = $CardManager
 @onready var economy_manager: EconomyManager = $EconomyManager
 @onready var battle_flow: BattleFlowController = $BattleFlowController
 @onready var ui_coordinator: UIStateCoordinator = $UIStateCoordinator
 @onready var mountain_manager: Node = get_node_or_null("../MountainManager")
+@onready var spirit_growth_manager: SpiritGrowthManager = _get_or_create_spirit_growth()
+## V0.1 新模块
+@onready var blessing_manager: BlessingManager = _get_or_create_blessing_manager()
+@onready var disciple_squad: DiscipleSquad = _get_or_create_disciple_squad()
 
 var main_peak
+var spirit_seat: SpiritSeat = null  ## V0.1 器灵引用
 var main_peak_select_panel: Control
 var battle_hud: Control
 var card_selection_ui: Control
@@ -52,7 +56,8 @@ func _ready() -> void:
 
 	if battle_hud and battle_hud.has_method("setup_main_peak"):
 		battle_hud.setup_main_peak(main_peak)
-	economy_manager.setup(main_peak, mountain_manager, card_manager, card_selection_ui, battle_hud)
+	# V0.1: 注入新模块
+	economy_manager.setup(main_peak, mountain_manager, card_selection_ui, battle_hud, blessing_manager, disciple_squad)
 	battle_flow.setup(main_peak, wave_manager, battle_hud, result_ui, countdown_label, ui_coordinator, economy_manager)
 	ui_coordinator.setup(main_peak, main_peak_select_panel, battle_hud, card_selection_ui, result_ui, repair_prompt_ui, battle_start_button_ui, settings_button_ui, economy_manager, mountain_manager, intro_screen)
 
@@ -73,6 +78,8 @@ func _ready() -> void:
 			mountain_manager.mountain_deselected.connect(ui_coordinator.on_mountain_deselected)
 		if mountain_manager.has_signal("repair_prompt_requested"):
 			mountain_manager.repair_prompt_requested.connect(ui_coordinator._on_repair_prompt_requested)
+		if mountain_manager.has_signal("mountain_repaired") and spirit_growth_manager:
+			mountain_manager.mountain_repaired.connect(spirit_growth_manager.on_mountain_repaired)
 	if repair_prompt_ui and repair_prompt_ui.has_signal("repair_requested"):
 		repair_prompt_ui.repair_requested.connect(economy_manager.repair_selected_mountain)
 	if repair_prompt_ui and repair_prompt_ui.has_signal("upgrade_requested"):
@@ -90,8 +97,9 @@ func _ready() -> void:
 		economy_manager._auto_display_timer.wait_time = mpcfg.spirit_display_interval if mpcfg else 1.0
 		economy_manager._auto_display_timer.timeout.connect(economy_manager._on_auto_display_tick)
 
-	card_manager.initialize(DataManager.get_all_cards())
-	card_manager.card_applied.connect(economy_manager._on_card_applied)
+	blessing_manager.initialize(DataManager.get_all_blessings())
+	blessing_manager.blessing_applied.connect(_on_blessing_applied)
+	disciple_squad.setup(null)
 	wave_manager.load_waves(DataManager.get_waves())
 	wave_manager.all_waves_completed.connect(battle_flow._on_victory)
 	wave_manager.wave_changed.connect(battle_flow._on_wave_changed)
@@ -103,7 +111,6 @@ func _ready() -> void:
 	economy_manager.spirit_updated.connect(func(_val): ui_coordinator.update_ui())
 	economy_manager.upgrade_triggered.connect(func(): ui_coordinator.set_state(GameState.CARD_SELECTION))
 	economy_manager.card_resolved.connect(func(): ui_coordinator.set_state(GameState.BATTLE))
-	economy_manager.card_applied.connect(_on_card_applied_relay)
 	ui_coordinator.state_changed.connect(func(new_state): state_changed.emit(new_state))
 	ui_coordinator.battle_start_button_pressed.connect(battle_flow.start_battle)
 
@@ -114,11 +121,6 @@ func _ready() -> void:
 
 func _on_intro_finished() -> void:
 	ui_coordinator.set_state(GameState.MAIN_PEAK_SELECT)
-
-
-func _on_card_applied_relay(form_id: String, effect_type: String, effect_value: float) -> void:
-	if main_peak and main_peak.has_method("apply_upgrade"):
-		main_peak.apply_upgrade(form_id, effect_type, effect_value)
 
 
 func _on_start_game_requested(profile_id: String) -> void:
@@ -163,3 +165,46 @@ func _input(event: InputEvent) -> void:
 	elif event.keycode == KEY_F3:
 		if ui_coordinator.current_state == GameState.BATTLE:
 			economy_manager._trigger_battle_upgrade()
+
+
+func _get_or_create_spirit_growth() -> SpiritGrowthManager:
+	var existing := get_node_or_null("SpiritGrowthManager")
+	if existing and existing is SpiritGrowthManager:
+		return existing as SpiritGrowthManager
+	var new_node := SpiritGrowthManager.new()
+	new_node.name = "SpiritGrowthManager"
+	add_child(new_node)
+	return new_node
+
+
+func _get_or_create_blessing_manager() -> BlessingManager:
+	var existing := get_node_or_null("BlessingManager")
+	if existing and existing is BlessingManager:
+		return existing as BlessingManager
+	var new_node := BlessingManager.new()
+	new_node.name = "BlessingManager"
+	add_child(new_node)
+	return new_node
+
+
+func _get_or_create_disciple_squad() -> DiscipleSquad:
+	var existing := get_node_or_null("DiscipleSquad")
+	if existing and existing is DiscipleSquad:
+		return existing as DiscipleSquad
+	var new_node := DiscipleSquad.new()
+	new_node.name = "DiscipleSquad"
+	add_child(new_node)
+	return new_node
+
+
+func _on_blessing_applied(category: String, effect_type: String, effect_value: float, _tier: int) -> void:
+	## V0.1 祝福应用：分发到对应目标
+	match category:
+		"disciple":
+			disciple_squad.apply_blessing_to_all(effect_type, effect_value)
+		"technique":
+			disciple_squad.apply_blessing_to_all(effect_type, effect_value)
+		"buff":
+			disciple_squad.apply_blessing_to_all(effect_type, effect_value)
+	if spirit_seat:
+		spirit_seat.apply_blessing(effect_type, effect_value)

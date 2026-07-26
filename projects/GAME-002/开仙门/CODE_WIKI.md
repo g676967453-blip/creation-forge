@@ -1,6 +1,9 @@
 # 开仙门 - Code Wiki
 
-> 180 度扇面防御 × 肉鸽塔防 × 修仙题材的 Godot 4.6 独立游戏
+> ⚠️ **V0.1 过渡中**：核心架构（器灵自动攻击塔防）已稳定，弟子/赐福/法宝模块代码就位待接入游戏循环。本文档描述当前运行中的 V0.0 架构，V0.1 新增模块见 §5.2 标注。
+> 最后更新：2026-07-26
+
+> 180 度扇面防御 × 肉鸽塔防 × 修仙题材的 Godot 4.7 独立游戏
 >
 > 本文档基于源码静态分析生成，覆盖项目整体架构、模块职责、关键类与函数、依赖关系与运行方式。
 
@@ -25,6 +28,8 @@
 
 **开仙门** 是一款以修仙为题材的塔防肉鸽游戏。玩家扮演宗门掌门，通过修复 6 座山峰、激活 6 种功法、选择器灵开局，在 180 度扇面战场上抵御 15 波怪物进攻。
 
+> **V0.1 过渡中**：弟子小队、赐福、法宝系统代码已就位（见 §5.2），尚未接入游戏主循环。
+
 核心玩法循环：
 - **经营阶段**：点击主殿（器灵）获取灵气 → 修复/升级山峰 → 激活功法
 - **战斗阶段**：3 秒倒计时 → 15 波怪物从扇面外缘推进 → 主殿（器灵）自动攻击防御
@@ -36,7 +41,7 @@
 
 | 项 | 说明 |
 |----|------|
-| 游戏引擎 | Godot 4.6（`config/features=PackedStringArray("4.6")`） |
+| 游戏引擎 | Godot 4.7（`config/features=PackedStringArray("4.7")`） |
 | 编程语言 | GDScript 2.x |
 | 渲染管线 | `gl_compatibility`（兼容性渲染，启用 GPU 像素对齐） |
 | 分辨率 | 1280 × 720，不可缩放，始终置顶 |
@@ -70,7 +75,10 @@
 │   ├── projectile.gd            ← 投射物（弹道/链式/循环剑）
 │   ├── projectile_visual.gd     ← 投射物视觉绘制
 │   ├── summon_fox.gd            ← 召唤物：灵狐
-│   └── summon_artifact_sword.gd ← 召唤物：环绕法器剑
+│   ├── summon_artifact_sword.gd ← 召唤物：环绕法器剑
+│   ├── disciple.gd              ← [V0.1] 弟子实体
+│   ├── disciple_squad.gd        ← [V0.1] 弟子小队
+│   └── spirit_seat.gd           ← [V0.1] 器灵席位
 │
 ├── scenes/                      ← 所有 .tscn 场景
 │   ├── main.tscn                ← 主入口（场景树根）
@@ -84,14 +92,18 @@
 ├── data/                        ← 运行时 CSV 配置（唯一数据来源）
 │   ├── main_peak_config.csv     ← 器灵全局参数
 │   ├── form_config.csv          ← 6 种功法
-│   ├── form_level_config.csv    ← 功法逐级数值
+│   ├── form_level_config.csv    ← 功法逐级数值（102 行）
 │   ├── enemy_config.csv         ← 9 种敌人
 │   ├── enemy_sprite_config.csv  ← 敌人精灵表
 │   ├── card_config.csv          ← 28 张卡牌（分布4/5/5/5/5/4）
 │   ├── peak_config.csv          ← 6 座山峰
-│   ├── wave_config.csv          ← 15 波次配置
+│   ├── wave_config.csv          ← 15 波次配置（51 行数据）
 │   ├── spirit_profile_config.csv← 1 种器灵档案（百世书）
+│   ├── spirit_growth.csv        ← 器灵成长数据（7 级）
 │   ├── mountain_sprite_map.csv  ← 山峰 PSD 图层名 → peak_id 映射
+│   ├── disciple_config.csv      ← [V0.1] 弟子配置
+│   ├── blessing_config.csv      ← [V0.1] 赐福配置（18 条）
+│   ├── artifact_config.csv      ← [V0.1] 法宝配置
 │   └── _unused_tres/            ← 废弃 .tres（不要新增）
 │
 ├── assets/                      ← 美术资源
@@ -202,10 +214,14 @@ INTRO  →  MAIN_PEAK_SELECT  →  PREPARATION  →  BATTLE  →  CARD_SELECTION
 | `enemy_database` | enemy_config.csv | EnemyData | 9 种敌人 |
 | `form_database` | form_config.csv | FormConfig | 6 种功法 |
 | `form_level_database` | form_level_config.csv | Dictionary | 功法逐级数值（key=`form_id_level`） |
-| `card_database` | card_config.csv | CardData | 卡牌天赋 |
+| `card_database` | card_config.csv | CardData | 28 张卡牌天赋 |
 | `spirit_profile_database` | spirit_profile_config.csv | SpiritProfileConfig | 1 种器灵档案（百世书） |
+| `spirit_growth_database` | spirit_growth.csv | Dictionary | 器灵成长数据（7 级） |
 | `enemy_sprite_database` | enemy_sprite_config.csv | Dictionary | 敌人精灵表配置 |
 | `wave_database` | wave_config.csv | WaveData | 15 波次（按 wave_index 聚合） |
+| `disciple_database` | disciple_config.csv | DiscipleData | ⬜ V0.1 弟子配置 |
+| `blessing_database` | blessing_config.csv | BillData | ⬜ V0.1 赐福配置 |
+| `artifact_database` | artifact_config.csv | ArtifactData | ⬜ V0.1 法宝配置 |
 
 ### 5.2 逻辑层（Managers）
 
@@ -250,6 +266,12 @@ INTRO  →  MAIN_PEAK_SELECT  →  PREPARATION  →  BATTLE  →  CARD_SELECTION
 #### UIStateCoordinator — [scripts/managers/ui_state_coordinator.gd](file:///c:/Users/Administrator/lobsterai/project/GAME-002/开仙门/scripts/managers/ui_state_coordinator.gd)
 UI 状态机。`set_state(new_state)` 按 6 状态切换 10 个面板的 `visible`，并联动 `economy_manager.set_active()`、`battle_start_button.set_enabled()`。
 
+#### SpiritGrowthManager — [scripts/managers/spirit_growth_manager.gd](file:///c:/Users/Administrator/lobsterai/project/GAME-002/开仙门/scripts/managers/spirit_growth_manager.gd)
+⬜ **V0.1** 器灵成长管理。监听 `mountain_repaired` 信号，按修复次数查询 `spirit_growth.csv` 应用成长加成（HP/灵气/经验/槽位）。
+
+#### BillManager — [scripts/managers/blessing_manager.gd](file:///c:/Users/Administrator/lobsterai/project/GAME-002/开仙门/scripts/managers/blessing_manager.gd)
+⬜ **V0.1** 赐福系统管理。18 条赐福按 3 种类别（战斗/经济/辅助）× 3 稀有度（普通/稀有/史诗）组织，通过弟子/山峰过滤器分配。
+
 ### 5.3 运行时对象（表现层 + 逻辑混合）
 
 #### MainPeak — [scripts/main_peak.gd](file:///c:/Users/Administrator/lobsterai/project/GAME-002/开仙门/scripts/main_peak.gd)
@@ -293,6 +315,9 @@ UI 状态机。`set_state(new_state)` 按 6 状态切换 10 个面板的 `visibl
 | `WaveData` | wave_data.gd | 波次（含 `WaveEnemyGroup` 数组） |
 | `WaveEnemyGroup` | wave_enemy_group.gd | 波次内敌人组（id/数量/间隔/路径） |
 | `SpiritProfileConfig` | spirit_profile_config.gd | 器灵档案（开局加成） |
+| `DiscipleData` | disciple_data.gd | ⬜ V0.1 弟子（HP/攻击/速度/技能/费用） |
+| `BillData` | blessing_data.gd | ⬜ V0.1 赐福（类别/稀有度/效果/过滤器） |
+| `ArtifactData` | artifact_data.gd | ⬜ V0.1 法宝（槽位/稀有度/效果） |
 
 > `FormConfig.get_special_params()`：惰性解析 `special_param` 字段的 JSON 字符串并缓存，是功法特殊机制参数的标准取值入口。
 
@@ -531,7 +556,7 @@ MainPeak.take_damage()
 
 ### 9.1 环境准备
 
-1. 安装 **Godot 4.6**（需 4.6+，因 `config/features=PackedStringArray("4.6")`）
+1. 安装 **Godot 4.7**（需 4.6+，因 `config/features=PackedStringArray("4.7")`）
 2. 用 Godot 启动器打开 `开仙门/project.godot`
 
 ### 9.2 编辑器运行

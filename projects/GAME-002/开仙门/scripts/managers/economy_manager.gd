@@ -1,13 +1,12 @@
 extends Node
 class_name EconomyManager
-## 灵气经济 + EXP 升级 + 卡牌选择流程
+## V0.1 灵气经济 + EXP 升级 + 祝福选择流程
 
 const FLOATING_TEXT_SCENE: PackedScene = preload("res://scenes/ui/floating_text.tscn")
 
 signal spirit_updated(value: int)
 signal upgrade_triggered
 signal card_resolved
-signal card_applied(form_id: String, effect_type: String, effect_value: float)
 
 var spirit: int = 0
 var _spirit_accumulated: int = 0
@@ -19,24 +18,26 @@ var _spirit_bonus: float = 0.0
 var _damage_bonus: float = 0.0
 var _exp_bonus: float = 0.0
 var spirit_active: bool = false
-var _in_card_selection: bool = false
+var _in_selection: bool = false
 
 @onready var _auto_spirit_timer: Timer = $AutoSpiritTimer
 @onready var _auto_display_timer: Timer = $AutoDisplayTimer
 
 var main_peak
 var mountain_manager: Node
-var card_manager: CardManager
 var card_selection_ui: Control
 var battle_hud: Control
+var blessing_manager: BlessingManager = null
+var disciple_squad: DiscipleSquad = null
 
 
-func setup(p_main_peak, p_mountain_manager, p_card_manager, p_card_selection_ui, p_battle_hud) -> void:
+func setup(p_main_peak, p_mountain_manager, p_card_selection_ui, p_battle_hud, p_blessing_manager, p_disciple_squad) -> void:
 	main_peak = p_main_peak
 	mountain_manager = p_mountain_manager
-	card_manager = p_card_manager
 	card_selection_ui = p_card_selection_ui
 	battle_hud = p_battle_hud
+	blessing_manager = p_blessing_manager
+	disciple_squad = p_disciple_squad
 
 
 func set_bonuses(spirit_bonus: float, damage_bonus: float, exp_bonus: float) -> void:
@@ -75,7 +76,7 @@ func reset_progress() -> void:
 	current_exp = 0
 	exp_to_next = 100
 	_pending_upgrade_count = 0
-	_in_card_selection = false
+	_in_selection = false
 
 
 func handle_main_peak_clicked(screen_position: Vector2 = Vector2.ZERO) -> void:
@@ -196,36 +197,50 @@ func add_exp(amount: int) -> void:
 		var mpcfg = DataManager.main_peak_config; exp_to_next += mpcfg.exp_per_level_increase if mpcfg else 25
 		_pending_upgrade_count += 1
 		leveled_up = true
-	if leveled_up and not _in_card_selection:
+	if leveled_up and not _in_selection:
 		_trigger_battle_upgrade()
 	spirit_updated.emit(spirit)
 
 
 func _trigger_battle_upgrade() -> void:
 	get_tree().paused = true
-	_in_card_selection = true
+	_in_selection = true
 	upgrade_triggered.emit()
-	var active_form_ids: Array = []
+	var active_peak_ids: Array[String] = []
 	if mountain_manager and mountain_manager.has_method("get_all_activated_form_ids"):
-		active_form_ids = mountain_manager.get_all_activated_form_ids()
-	var cards: Array = card_manager.draw_three_cards(active_form_ids)
+		active_peak_ids = mountain_manager.get_all_activated_form_ids()
+	var active_disciple_ids: Array[String] = []
+	if disciple_squad:
+		for d in disciple_squad.get_disciples():
+			active_disciple_ids.append(d.disciple_id)
+	var blessings: Array = blessing_manager.draw_three(active_peak_ids, active_disciple_ids)
+	# 桥接：BlessingData → 字典格式给 card_selection_panel
+	var cards: Array = []
+	for b in blessings:
+		cards.append({
+			"card_id": b.blessing_id,
+			"card_name": b.blessing_name,
+			"description": b.description,
+			"form_id": b.category,
+			"rarity": b.tier,
+			"effect_type": b.effect_type,
+			"effect_value": b.effect_value,
+			"_is_blessing": true,
+			"_blessing": b,
+		})
 	if card_selection_ui and card_selection_ui.has_method("show_cards"):
 		card_selection_ui.show_cards(cards)
 
 
 func on_card_selected(card) -> void:
-	var active_form_ids: Array = []
-	if mountain_manager and mountain_manager.has_method("get_all_activated_form_ids"):
-		active_form_ids = mountain_manager.get_all_activated_form_ids()
-	card_manager.apply_card(card, active_form_ids)
-	_pending_upgrade_count = max(0, _pending_upgrade_count - 1)
-	if _pending_upgrade_count > 0:
-		_trigger_battle_upgrade()
-		return
-	get_tree().paused = false
-	_in_card_selection = false
-	card_resolved.emit()
-
-
-func _on_card_applied(form_id: String, effect_type: String, effect_value: float) -> void:
-	card_applied.emit(form_id, effect_type, effect_value)
+	if card is Dictionary and card.get("_is_blessing", false):
+		var blessing: BlessingData = card.get("_blessing")
+		if blessing and blessing_manager:
+			blessing_manager.apply(blessing)
+			_pending_upgrade_count = max(0, _pending_upgrade_count - 1)
+			if _pending_upgrade_count > 0:
+				_trigger_battle_upgrade()
+				return
+			get_tree().paused = false
+			_in_selection = false
+			card_resolved.emit()

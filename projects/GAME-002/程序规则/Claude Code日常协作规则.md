@@ -119,16 +119,17 @@ AI 在动手改代码前，必须先回答：
 | 项 | 现状 |
 |----|------|
 | 数据来源 | CSV（DataManager 加载） |
-| 波次配置 | data/wave_config.csv（15波） |
-| 敌人配置 | data/enemy_config.csv |
-| 功法配置 | data/form_config.csv |
-| 山峰配置 | data/peak_config.csv |
-| 卡牌配置 | data/card_config.csv |
-| 器灵配置 | data/main_peak_config.csv |
+| 波次配置 | data/wave_config.csv（15波，51行数据） |
+| 敌人配置 | data/enemy_config.csv（9种，含 flying 类型） |
+| 功法配置 | data/form_config.csv（6种） |
+| 山峰配置 | data/peak_config.csv（6座） |
+| 卡牌配置 | data/card_config.csv（28张，分布4/5/5/5/5/4） |
+| 器灵配置 | data/main_peak_config.csv（HP=2000） |
+| V0.1 新增 | disciple/blessing/artifact/spirit_growth（4份CSV就位，代码待接入） |
 | 场景入口 | scenes/main.tscn |
-| 全局单例 | CsvLoader + DataManager（autoload/） |
-| 管理器 | GameManager / WaveManager / CardManager / MountainManager / EconomyManager / BattleFlowController / UIStateCoordinator / SpiritGrowthManager |
-| Godot 版本 | 4.6（GL Compatibility） |
+| 全局单例 | CsvLoader + DataManager + MCPRuntimeProbe（autoload/） |
+| 管理器 | GameManager / WaveManager / CardManager / MountainManager / EconomyManager / BattleFlowController / UIStateCoordinator / SpiritGrowthManager / BillManager |
+| Godot 版本 | 4.7（GL Compatibility） |
 | 窗口 | 1280×720，不可缩放 |
 
 ---

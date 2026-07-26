@@ -4,13 +4,25 @@ extends Control
 
 signal card_selected(card)
 
-## 稀有度配色常量（与 Pixso 设计一致）
+## 稀有度配色常量（V0.1 扩展：common/legend 为祝福系统新增）
 const RARITY_COLORS := {
+	"common": {
+		"border": Color("#338543"), "badge_bg": Color("#0D381A"),
+		"badge_text": Color("#5CBF6B"), "btn": Color("#144726"),
+		"card_bg": Color("#0F1229"), "name": Color("#F2F2FF"),
+		"icon_bg": Color("#051A0D"),
+	},
 	"普通": {
 		"border": Color("#338543"), "badge_bg": Color("#0D381A"),
 		"badge_text": Color("#5CBF6B"), "btn": Color("#144726"),
 		"card_bg": Color("#0F1229"), "name": Color("#F2F2FF"),
 		"icon_bg": Color("#051A0D"),
+	},
+	"rare": {
+		"border": Color("#1F61D1"), "badge_bg": Color("#0F3880"),
+		"badge_text": Color("#73CCFF"), "btn": Color("#1A4794"),
+		"card_bg": Color("#0F1229"), "name": Color("#F2F2FF"),
+		"icon_bg": Color("#081A3D"),
 	},
 	"稀有": {
 		"border": Color("#1F61D1"), "badge_bg": Color("#0F3880"),
@@ -18,11 +30,23 @@ const RARITY_COLORS := {
 		"card_bg": Color("#0F1229"), "name": Color("#F2F2FF"),
 		"icon_bg": Color("#081A3D"),
 	},
+	"epic": {
+		"border": Color("#852EE6"), "badge_bg": Color("#380F6B"),
+		"badge_text": Color("#B366FF"), "btn": Color("#521A7A"),
+		"card_bg": Color("#120D26"), "name": Color("#F2C2FF"),
+		"icon_bg": Color("#140533"),
+	},
 	"史诗": {
 		"border": Color("#852EE6"), "badge_bg": Color("#380F6B"),
 		"badge_text": Color("#B366FF"), "btn": Color("#521A7A"),
 		"card_bg": Color("#120D26"), "name": Color("#F2C2FF"),
 		"icon_bg": Color("#140533"),
+	},
+	"legend": {
+		"border": Color("#E6A817"), "badge_bg": Color("#6B380F"),
+		"badge_text": Color("#FFD700"), "btn": Color("#7A521A"),
+		"card_bg": Color("#261A0D"), "name": Color("#FFE55C"),
+		"icon_bg": Color("#331405"),
 	},
 }
 

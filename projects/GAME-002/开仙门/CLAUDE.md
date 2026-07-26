@@ -47,17 +47,20 @@
 ## 数据流
 
 所有游戏配置从 CSV 加载 → DataManager（Autoload）统一入口：
-- `data/main_peak_config.csv` — 器灵
+- `data/main_peak_config.csv` — 器灵（HP=2000）
 - `data/form_config.csv` — 功法（6 个：御剑诀/金刚咒/炼魂诀/灵狐契/御器诀/雷霆诀）
 - `data/form_level_config.csv` — 功法逐级数值（102 行，17 级/功法）
-- `data/enemy_config.csv` — 敌人（9 种）
+- `data/enemy_config.csv` — 敌人（9 种，含 flying 类型）
 - `data/card_config.csv` — 卡牌（28 张（分布4/5/5/5/5/4））
 - `data/peak_config.csv` — 山峰（6 座）
-- `data/wave_config.csv` — 波次（15 波）
-- `data/spirit_profile_config.csv` — 器灵档案（1 种）
+- `data/wave_config.csv` — 波次（15 波，51 行数据）
+- `data/spirit_profile_config.csv` — 器灵档案（当前 1 种：百世书）
 - `data/spirit_growth.csv` — 器灵成长（7 级）
 - `data/enemy_sprite_config.csv` — 敌人精灵表
 - `data/mountain_sprite_map.csv` — 山峰 PSD 图层映射
+- `data/disciple_config.csv` — ⬜ V0.1 弟子（6 种，代码就位待接入）
+- `data/blessing_config.csv` — ⬜ V0.1 赐福（18 条，3 类×4 稀有度）
+- `data/artifact_config.csv` — ⬜ V0.1 法宝（6 件，3 槽位）
 
 ## 关键约束
 
@@ -75,7 +78,7 @@
 ../策划文档/
 ├── 01-愿景/          ← GDD（1 份）
 ├── 02-系统设计/      ← 战斗体系/数值定位表（2 份）
-├── 03-功能规格/      ← 每个功能一份 spec（12 份）
+├── 03-功能规格/      ← 每个功能一份 spec（15 份，含 V0.1 弟子/赐福/法宝）
 ├── 04-数据/          ← 数值总览 + 名词表 + 功法范例（3 份）
 ├── 05-元文档/        ← 模板/路线图/审计/规范（16 份）
 ├── 06-归档/          ← 已过时/已合并（30 份）
