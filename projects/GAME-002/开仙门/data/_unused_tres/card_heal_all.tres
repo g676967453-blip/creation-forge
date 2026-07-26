@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=1 format=3]
-
-[resource]
-card_id = "card_heal_all"
-card_name = "甘霖普降"
-description = "立刻恢复所有山峰30%生命值"
-target_peak_id = "global"
-effect_type = "heal_all"
-effect_value = 0.3

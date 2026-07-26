@@ -136,14 +136,14 @@ export function listSkills(skillsDir: string): SkillInfo[] {
           if (stat.isDirectory()) {
             if (fs.existsSync(path.join(full, "SKILL.md"))) {
               const meta = parseSkillMetadata(path.join(full, "SKILL.md"));
-              skills.push({ name: f, type: "标准", path: rel + "/", description: meta.description, difficulty: meta.difficulty });
+              skills.push({ name: f, type: "标准", path: rel + "/", description: translateDescription(f, meta.description), difficulty: meta.difficulty });
             } else {
               walk(full, rel);
             }
           } else if (f.endsWith(".md") && !f.startsWith("_") && f !== "README.md") {
             const name = f.replace(/\.md$/, "");
             const meta = parseSkillMetadata(full);
-            skills.push({ name, type: "扁平", path: rel, description: meta.description, difficulty: meta.difficulty });
+            skills.push({ name, type: "扁平", path: rel, description: translateDescription(name, meta.description), difficulty: meta.difficulty });
           }
         } catch {}
       }
@@ -164,6 +164,74 @@ export function linkSkillToWorkflow(skillName: string): string | undefined {
   return map[skillName];
 }
 
+/** SKILL 用途中文翻译（仪表盘展示用，不修改原始 SKILL.md） */
+const SKILL_DESC_ZH: Record<string, string> = {
+  // godot/ — Godot 引擎
+  "godot-2d-movement": "2D 角色移动：CharacterBody2D、move_and_slide、平台跳跃、俯视角八向移动、斜坡处理",
+  "godot-3d-essentials": "3D 基础入门：场景搭建、摄像机、光照、网格导入、基础 3D 物理",
+  "godot-animation": "动画系统：AnimationPlayer、AnimationTree、骨骼动画、混合空间、Tween 补间",
+  "godot-audio": "音频系统：AudioStreamPlayer、总线路由、分贝控制、音效变体、节拍同步",
+  "godot-csharp": "C# 脚本：.NET 集成、Signal 绑定、GodotObject 派生、与 GDScript 互调",
+  "godot-export": "导出发布：Windows/macOS/Linux/Web/Android/iOS 平台打包、图标、签名",
+  "godot-gdscript": "GDScript 语言：类型注解、Signal、await 协程、lambda、数组操作、2.0 迁移",
+  "godot-multiplayer": "多人联机：RPC、权威服务器、网络同步、ENet/WebSocket、延迟补偿",
+  "godot-nodes-scenes": "节点与场景：Node 生命周期、场景树、实例化、PackedScene、owner 关系",
+  "godot-physics": "物理系统：RigidBody、CharacterBody、碰撞层/掩码、射线检测、Area 检测",
+  "godot-resources": "资源管理：Resource 类型、preload/load、.tres/.res 文件、资源引用、保存加载",
+  "godot-shaders": "着色器：ShaderMaterial、canvas_item/spatial/particles 着色器、uniform、顶点/片元",
+  "godot-signals-groups": "信号与分组：自定义 Signal、Callable、Group 调用、场景通信模式",
+  "godot-tilemap": "瓦片地图：TileMapLayer、TileSet、自动瓦片、图案编辑、层级管理",
+  "godot-ui-control": "UI 控件：Control 节点、容器布局、主题/样式、响应式、Control 与 2D 世界混合",
+  // web-engines/ — Web 游戏引擎
+  "phaser-arcade-physics": "Phaser 街机物理：启用世界、给精灵加物理体、速度/加速度、碰撞回调、Arcade 限制",
+  "phaser-core": "Phaser 3 核心：Game 配置、Scene 生命周期、资源加载、跨场景数据传递、摄像机跟随",
+  "pixijs-rendering": "PixiJS 渲染：Application 初始化、容器/精灵/图形、DisplayObject 层级、批处理优化",
+  "threejs-gltf-loading": "Three.js GLTF 加载：GLTFLoader、模型导入、材质映射、动画剪辑、Draco 压缩",
+  "threejs-materials-lighting": "Three.js 材质与光照：PBR 材质、环境光/方向光/点光源、阴影映射、HDR 环境贴图",
+  "threejs-scene-setup": "Three.js 场景搭建：importmap 配置、Scene+Camera+Renderer 三板斧、动画循环、响应式、OrbitControls",
+  // disciplines/ — 游戏开发学科（引擎无关）
+  "audio-design": "游戏音频设计：总线/混音器架构、分贝增益、侧链闪避、音效变体、节拍同步、自适应音乐",
+  "camera-systems": "摄像机系统：跟随目标、视差滚动、震屏效果、边界限制、多摄像机切换",
+  "dialogue-systems": "对话系统：对话树、分支选项、条件判断、本地化、对话历史、角色头像",
+  "game-ai": "游戏 AI：有限状态机(FSM)、行为树(BT)、寻路(A*)、转向行为(seek/arrive/避障)",
+  "game-feel": "游戏手感：屏幕震动、暂停/缓冲帧、音效/粒子反馈、变速、缓慢时间、Coyote 时间",
+  "game-ui-ux": "游戏 UI/UX：HUD 布局、菜单流程、响应式设计、手柄适配、字体/色彩/缩放",
+  "input-systems": "输入系统：键盘/鼠标/手柄映射、Input Map、动作缓冲、输入重映射、死区处理",
+  "level-design": "关卡设计：灰盒搭建、引导线、节奏曲线、安全区/挑战区、流程测试、迭代反馈",
+  "performance-optimization": "性能优化：Draw Call 合批、LOD、对象池、纹理压缩、Profiler 定位瓶颈、帧预算",
+  "physics-tuning": "物理调优：碰撞形状选择、物理层/掩码、刚体插值、Continuous CD、物理步长、接触点读写",
+  "procedural-gen": "程序化生成：噪声函数、柏林噪声、分形叠加、Marching Squares、Wave Function Collapse",
+  "save-systems": "存档系统：JSON/Resource 序列化、自动存档、多槽位、版本迁移、云存档接口",
+  "shader-programming": "着色器编程：顶点/片元着色器、噪声、描边、溶解、全屏后处理、性能预算",
+  // genres/ — 游戏类型（引擎无关）
+  "card-game": "卡牌游戏：卡牌数据模型、手牌/牌库/弃牌堆区域、抽牌/洗牌、回合结构、效果结算",
+  "fps-shooter": "FPS 射击：第一人称控制、射击线检测、弹道散布、后坐力、换弹、伤害计算",
+  "platformer": "平台跳跃：跑/跳物理、Coyote 时间/跳跃缓冲、可变跳高、单面平台、墙角修正",
+  "puzzle": "解谜游戏：规则定义、线索系统、难度曲线、重置机制、成就判定",
+  "roguelike": "Roguelike：程序化地图、永久死亡、回合制/即时行动、道具协同(Build)、meta 升级",
+  "rpg": "RPG 角色扮演：属性/等级/装备系统、对话树、任务日志、背包、商店、技能树",
+  "survival-crafting": "生存建造：资源收集、合成配方、建筑系统、饥饿/耐久消耗、昼夜循环",
+  "tower-defense": "塔防：路径/路线系统、塔位/升级、敌人波次、经济平衡、范围/射速/伤害三要素",
+  "visual-novel": "视觉小说：对话脚本、角色立绘、背景切换、分支选择、CG 画廊、存档/读档",
+  // workflows/ — 开发流程
+  "game-jam": "Game Jam 流程：按倒计时锁范围、48h/72h/1周预算表、特征筛选决策树、提交前检查清单",
+  "itch-publish": "itch.io 发布：页面设置、截图/GIF、定价/免费、标签、devlog、更新推送",
+  "prototype-fast": "快速原型：原型简报模板、终止判断规则、隔离策略（prototypes/ 目录）、1 小时内验证核心假设",
+  "steam-publish": "Steam 发布：Steamworks 配置、商店页面、成就/统计 API、测试分支、Early Access 策略",
+  // 项目自定义扁平 SKILL
+  "git-commit": "Git 提交推送：检查变更 → 生成约定式提交 → 确认 → commit → push 到远程仓库",
+  "new-post": "小红书帖子制作：works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布",
+  "sync-report": "汇报说明书同步：检查数据源 → 更新脚本 → 生成 HTML 仪表盘",
+  "item-icon": "游戏道具图标生产：道具清单 → Lovart AI 生成 → Photoshop 抠图 → 切片输出",
+  "libtv": "LibTV 媒体生产集成：视频/音频/AI 内容生成，含命令、示例、模型 schema、节点类型",
+  "router": "SKILL 路由引擎：根据用户请求匹配并路由到正确的游戏开发 SKILL",
+};
+
+function translateDescription(name: string, fallback: string): string {
+  if (SKILL_DESC_ZH[name]) return SKILL_DESC_ZH[name];
+  return fallback;
+}
+
 export function collectData() {
   const today = new Date().toLocaleDateString("zh-CN");
   const worksFiles = listWorks();
@@ -176,7 +244,7 @@ export function collectData() {
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
   const projects = [
-    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 11%", output: "UI 原型 ×4 + 美术需求", blocker: "19 个待定设计决策" },
+    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~30%", output: "Phase 0-3 完成：7新模块+集成+数据", blocker: "待旧代码清理+UI适配+完整测试" },
     { name: "小红书自媒体", engine: "HTML/CSS + Pixso", status: "active", statusText: "活跃", progress: "14 期帖子", output: "post-13/14 + 目录扁平化", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
     { name: "tutorial/01-hello-canvas", engine: "Phaser 3.80+", status: "idle", statusText: "待机", progress: "仅骨架", output: "—", blocker: "优先级低" },
@@ -193,6 +261,7 @@ export function collectData() {
     { name: "GAME002-UI制作", version: "v2", skill: "待建", project: "GAME-002", status: "mature", category: "业务工作流" },
     { name: "GAME002-UI层命名规范", version: "v2", skill: "—", project: "GAME-002", status: "mature", category: "业务工作流" },
     { name: "GAME002-功能开发", version: "v1", skill: "待建", project: "GAME-002", status: "testing", category: "业务工作流" },
+    { name: "游戏制作流水线", version: "v1", skill: "待建", project: "全局", status: "ongoing", category: "业务工作流" },
   ];
 
   // 采集 SKILL 数据
@@ -207,23 +276,25 @@ export function collectData() {
     { id: "4", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "工具知识库（7 文档）", note: "docs/tool-guides/" },
     { id: "5", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "汇报体系 + HTML 仪表盘上线", note: "仪表盘服务器 + 动态交互" },
     { id: "6", status: "done", statusText: "✅ 已完成", cat: "自媒体", task: "小红书素材库 14 期 + /new-post SKILL", note: "07-15 → 07-23" },
-    { id: "7", status: "active", statusText: "🟢 进行中", cat: "项目", task: "GAME-002「开仙门」开发（Godot 4.7）", note: "V0.1 11%，19 待定决策阻塞" },
+    { id: "12", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 V0.1 8项设计决策确认", note: "X19混合策略+X5胜负+X7祝福池+X9挂件+X12精英+X13/X14/X18（07-26）" },
+    { id: "13", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 Phase 0-3：代码清理+架构+集成+数据", note: "删除22废弃文件+7新模块+6弟子18祝福6法宝+MCP验证通过（07-26）" },
+    { id: "7", status: "active", statusText: "🟢 进行中", cat: "项目", task: "GAME-002 Phase 3：旧代码删除+UI适配+完整测试", note: "Phase 0-2 已完成，待删除旧card/summons/upgrades模块" },
     { id: "8", status: "active", statusText: "🟢 进行中", cat: "项目", task: "asset-pipeline 资产管线运行", note: "3 风格已验证" },
     { id: "9", status: "planned", statusText: "📋 计划中", cat: "自媒体", task: "持续发布小红书内容", note: "基于 works/ 素材生产" },
-    { id: "10", status: "planned", statusText: "📋 计划中", cat: "项目", task: "GAME-002 经营系统决策 (X1~X4)", note: "阻塞 3 周，需用户拍板" },
     { id: "11", status: "planned", statusText: "📋 计划中", cat: "基础设施", task: "SKILL 扩展（/开发功能 /道具图标）", note: "待流程成熟" },
   ];
 
   const goalsUser = [
     { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏", priority: "🟡 持续" },
-    { id: "U2", task: "GAME-002 经营系统决策 (X1~X4)", detail: "招募消耗、升级曲线、修复顺序、修炼速度 —— 阻塞 3 周", priority: "🔴 紧急" },
-    { id: "U3", task: "GAME-002 战斗+结算系统决策 (X5~X19)", detail: "祝福池、挂件槽、Boss 阶段、胜利/失败条件等 15 项", priority: "🟡 本周" },
-    { id: "U4", task: "asset-pipeline 产出 GAME-002 实际素材", detail: "道具图标管线已验证，需对接到 GAME-002 的具体需求", priority: "🟡 本周" },
+    { id: "U5", task: "GAME-002 设计决策确认（8/19）✅", detail: "07-26 集中确认 Tier 1-2 共 8 项：混合策略/胜负条件/祝福池/挂件槽/精英波次/弟子数/休息波/防御链", priority: "✅ 已完成" },
+    { id: "U6", task: "GAME-002 V0.1 核心架构搭建 ✅", detail: "7 新模块（SpiritSeat/Disciple/BlessingManager+3 Data类）+ GameManager 集成 + MCP 编译验证通过", priority: "✅ 已完成" },
+    { id: "U2", task: "GAME-002 Phase 3：旧代码清理 + UI适配 + 完整测试", detail: "删除旧 card_manager/summons/upgrades；祝福选择独立面板；Godot 手动跑通闭环", priority: "🟡 本周" },
+    { id: "U4", task: "asset-pipeline 产出 GAME-002 实际素材", detail: "道具图标管线已验证，需对接到 GAME-002 的具体需求", priority: "🟢 远期" },
   ];
 
   const goalsIssues = [
-    { id: "I1", issue: "GAME-002 V0.1 进度仅 11%，19 项设计决策待定", source: "项目扫描 07-17，至今未推进", severity: "🔴 阻塞" },
-    { id: "I2", issue: "GAME-002 技术债堆积：main_peak.gd 963 行 God Class", source: "07-09 全局评估，P1 架构合规仅 50%", severity: "🟡 累积" },
+    { id: "I1", issue: "GAME-002 V0.1 旧代码模块待删除（card_manager/summons/upgrades）", source: "Phase 2 集成完成，旧模块仍并行运行", severity: "🟡 累积" },
+    { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
     { id: "I3", issue: "tutorial 教程线 0% —— hello-canvas 仅骨架无代码", source: "项目扫描，5% 完成度", severity: "🟢 远期" },
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
@@ -231,9 +302,9 @@ export function collectData() {
   ];
 
   const goalsAI = [
-    { id: "A1", suggestion: "本周焦点：解锁 GAME-002", detail: "经营系统 X1~X4 是最小决策集，拍板后开发可启动。建议一次会话集中拍完 4 项。", priority: "🔴 优先" },
-    { id: "A2", suggestion: "小红书保持节奏，不追求完美", detail: "14 期存量足够，按 /new-post 流程持续产出即可。重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
-    { id: "A3", suggestion: "资产管线对接到实际需求", detail: "asset-pipeline 已验证可行，下一步：确定 GAME-002 需要哪些道具图标，批量产出第一版。", priority: "🟡 建议" },
+    { id: "A1", suggestion: "Phase 3：清理旧代码 + UI 适配", detail: "删除 card_manager/summons/upgrades 等旧模块；创建独立祝福选择面板。完成后 V0.1 架构干净可测试。", priority: "🔴 优先" },
+    { id: "A2", suggestion: "手动跑通完整一局", detail: "在 Godot 编辑器中测试 经营→战斗→结算 闭环。7 个新模块已通过 MCP 编译验证，需 gameplay 级验证。", priority: "🔴 优先" },
+    { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "14 期存量足够，按 /new-post 流程持续产出即可。重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
     { id: "A4", suggestion: "教程线推迟到主线稳定后", detail: "当前重心是 GAME-002 + 小红书 + asset-pipeline 三条线。教程线等至少一条主线进入稳定期再启动。", priority: "🟢 远期" },
   ];
 

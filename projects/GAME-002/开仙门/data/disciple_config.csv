@@ -1,0 +1,7 @@
+id,name,peak_id,hp,attack,defense,attack_speed,move_speed,attack_range,skill_id,cost
+sword_disciple,剑侍,peak_sword,200,30,5,0.8,180,120,,100
+vajra_disciple,金刚卫,peak_vajra,350,15,15,1.2,140,100,,100
+soul_disciple,炼魂使,peak_soul,180,22,3,1.0,160,140,,100
+fox_disciple,灵狐使,peak_fox,160,25,2,0.7,220,110,,100
+artifact_disciple,御器师,peak_artifact,190,28,4,0.9,150,180,,100
+thunder_disciple,雷霆使,peak_thunder,170,20,3,1.1,170,130,,100

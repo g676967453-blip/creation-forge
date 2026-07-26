@@ -45,22 +45,22 @@ func _show_countdown(text: String, duration: float) -> void:
 func start_battle() -> void:
 	if ui_state_coordinator.current_state != GameManager.GameState.PREPARATION:
 		return
-	var form_ids: Array = []
-	var levels: Dictionary = {}
-	if economy_manager.mountain_manager and economy_manager.mountain_manager.has_method("debug_dump_mountain_forms"):
-		economy_manager.mountain_manager.debug_dump_mountain_forms()
-	if economy_manager.mountain_manager and economy_manager.mountain_manager.has_method("get_all_activated_form_ids"):
-		form_ids = economy_manager.mountain_manager.get_all_activated_form_ids()
-		for form_id in form_ids:
-			var form_cfg = DataManager.get_form_config(form_id)
-			if form_cfg and economy_manager.mountain_manager.has_method("get_peak_level"):
-				levels[form_id] = economy_manager.mountain_manager.get_peak_level(form_cfg.peak_id)
-	print("[BattleFlowController] start_battle form_ids=%s levels=%s" % [str(form_ids), str(levels)])
-	if main_peak and main_peak.has_method("set_attack_channels"):
-		main_peak.set_attack_channels(form_ids, levels)
-	var dmg_bonus: float = economy_manager.get_damage_bonus()
-	if dmg_bonus > 0.0 and main_peak and main_peak.has_method("apply_damage_bonus"):
-		main_peak.apply_damage_bonus(dmg_bonus)
+	# V0.1: 根据已修复山峰自动生成弟子
+	var disciple_squad: DiscipleSquad = null
+	if economy_manager and economy_manager.get("disciple_squad") != null:
+		disciple_squad = economy_manager.disciple_squad as DiscipleSquad
+	if disciple_squad:
+		var all_disciples := DataManager.get_all_disciples()
+		var active_peaks: Array[String] = []
+		if economy_manager.mountain_manager and economy_manager.mountain_manager.has_method("get_all_activated_form_ids"):
+			active_peaks = economy_manager.mountain_manager.get_all_activated_form_ids()
+		# 为每个已激活的山峰招募对应弟子
+		for peak_id in active_peaks:
+			for d in all_disciples:
+				if d.peak_id == peak_id:
+					disciple_squad.recruit(peak_id, d)
+					break
+		print("[BattleFlowController] V0.1: spawned %d disciples" % disciple_squad.get_disciples().size())
 	_battle_time = 0.0
 	ui_state_coordinator.set_state(GameManager.GameState.BATTLE)
 	if main_peak:
@@ -110,12 +110,6 @@ func _process(_delta: float) -> void:
 				battle_hud.update_hp(main_peak.current_hp, main_peak.max_hp)
 			if battle_hud.has_method("update_battle_timer"):
 				battle_hud.update_battle_timer(_battle_time)
-			if main_peak and main_peak.has_method("get_ultimate_info") and battle_hud.has_method("update_energy"):
-				var info = main_peak.get_ultimate_info()
-				if info.get("cd", 0) > 0 or info.get("max_cd", 0) > 0:
-					battle_hud.update_energy(info["cd"], info["max_cd"], info["ultimate_name"])
-				else:
-					battle_hud.update_energy(info["energy"], info["max_energy"], info["ultimate_name"])
 
 
 func _on_wave_changed(wave_idx: int, total: int) -> void:

@@ -6,6 +6,7 @@ const CLICK_AREA_SCENE: PackedScene = preload("res://scenes/peaks/mountain_click
 
 signal mountain_selected(peak_id: String)
 signal mountain_state_changed(peak_id: String)
+signal mountain_repaired(peak_id: String)
 signal repair_prompt_requested(peak_id: String, can_repair: bool)
 signal mountain_deselected
 signal mountain_visual_changed(sprite: Sprite2D, color: Color)
@@ -224,6 +225,7 @@ func repair_selected() -> bool:
 	_mountains[_selected_peak_id]["level"] = 1
 	_set_visual_state(_selected_peak_id)
 	repair_prompt_requested.emit(_selected_peak_id, false)
+	mountain_repaired.emit(_selected_peak_id)
 	_mountain_state_broadcast(_selected_peak_id)
 	return true
 

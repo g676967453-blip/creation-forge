@@ -3,6 +3,10 @@
     "pixso": {
       "type": "sse",
       "url": "http://127.0.0.1:3667/mcp"
+    },
+    "godot-mcp-native": {
+      "type": "http",
+      "url": "http://127.0.0.1:9080/mcp"
     }
   },
   "permissions": {

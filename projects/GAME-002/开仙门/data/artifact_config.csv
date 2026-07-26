@@ -1,0 +1,7 @@
+id,name,slot,rarity,description,effect_type,effect_value
+art_sharp_sword,锐锋剑,weapon,common,弟子攻击+8,atk_up,8
+art_thunder_glove,雷霆手套,weapon,rare,弟子攻击有15%概率触发连锁,chain_chance,0.15
+art_iron_plate,玄铁甲,armor,common,弟子防御+8,def_up,8
+art_reflect_shield,反射盾,armor,rare,弟子受击反弹20%伤害,reflect,0.2
+art_speed_boots,疾风靴,accessory,common,弟子移动速度+40,speed_up,40
+art_heal_ring,回春戒,accessory,rare,弟子每秒回复2点HP,regen,2

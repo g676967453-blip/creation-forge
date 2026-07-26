@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=1 format=3]
-
-[resource]
-card_id = "card_vajra_quake"
-card_name = "撼地震击"
-description = "击退变为范围击退"
-target_peak_id = "peak_vajra"
-effect_type = "modify_knockback"
-effect_value = 1.0

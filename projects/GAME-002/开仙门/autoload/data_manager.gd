@@ -3,7 +3,7 @@ extends Node
 
 var peak_config_database: Dictionary = {}
 var enemy_database: Dictionary = {}
-var card_database: Dictionary = {}
+## V0.0 card_database — 已废弃（V0.1 用 blessing_database 替代）
 var form_database: Dictionary = {}
 var spirit_profile_database: Dictionary = {}
 var main_peak_config
@@ -11,6 +11,10 @@ var wave_database: Array = []
 var enemy_sprite_database: Dictionary = {}
 var form_level_database: Dictionary = {}
 var spirit_growth_database: Dictionary = {}
+## V0.1 新数据库
+var disciple_database: Dictionary = {}
+var blessing_database: Dictionary = {}
+var artifact_database: Dictionary = {}
 
 
 func _ready() -> void:
@@ -18,14 +22,16 @@ func _ready() -> void:
 	_load_peak_configs()
 	_load_enemies()
 	_load_forms()
-	_load_cards()
 	_load_spirit_profiles()
 	_load_spirit_growth()
 	_load_enemy_sprites()
 	_load_form_levels()
 	_init_waves()
-	print("[DataManager] loaded: peaks=%d enemies=%d cards=%d forms=%d profiles=%d sprites=%d levels=%d waves=%d" % [
-		peak_config_database.size(), enemy_database.size(), card_database.size(), form_database.size(), spirit_profile_database.size(), enemy_sprite_database.size(), form_level_database.size(), wave_database.size()
+	_load_disciples()
+	_load_blessings()
+	_load_artifacts()
+	print("[DataManager] loaded: peaks=%d enemies=%d forms=%d profiles=%d sprites=%d levels=%d waves=%d disciples=%d blessings=%d artifacts=%d" % [
+		peak_config_database.size(), enemy_database.size(), form_database.size(), spirit_profile_database.size(), enemy_sprite_database.size(), form_level_database.size(), wave_database.size(), disciple_database.size(), blessing_database.size(), artifact_database.size()
 	])
 
 
@@ -132,22 +138,6 @@ func _load_forms() -> void:
 		f.spirit_regen = float(r.get("spirit_regen", "0"))
 		f.spirit_armor = int(r.get("spirit_armor", "0"))
 		form_database[f.form_id] = f
-
-
-func _load_cards() -> void:
-	card_database.clear()
-	var rows := CsvLoader.load_csv("res://data/card_config.csv")
-	for r in rows:
-		var c = CardData.new()
-		c.card_id = str(r.get("card_id", ""))
-		c.card_name = str(r.get("card_name", ""))
-		c.description = str(r.get("description", ""))
-		c.form_id = str(r.get("form_id", ""))
-		c.rarity = str(r.get("rarity", "普通"))
-		c.effect_type = str(r.get("effect_type", ""))
-		c.effect_value = float(r.get("effect_value", "0"))
-		c.stackable = bool(int(r.get("stackable", "1")))
-		card_database[c.card_id] = c
 
 
 func _load_spirit_profiles() -> void:
@@ -272,10 +262,6 @@ func get_enemy_data(id: String):
 	return enemy_database.get(id)
 
 
-func get_card_data(id: String):
-	return card_database.get(id)
-
-
 func get_form_config(form_id: String):
 	return form_database.get(form_id)
 
@@ -287,12 +273,6 @@ func get_form_config_by_peak(peak_id: String):
 	return null
 
 
-func get_all_cards() -> Array:
-	var cards: Array = []
-	cards.assign(card_database.values())
-	return cards
-
-
 func get_all_forms() -> Array:
 	var forms: Array = []
 	forms.assign(form_database.values())
@@ -301,3 +281,92 @@ func get_all_forms() -> Array:
 
 func get_waves() -> Array:
 	return wave_database
+
+
+# ── V0.1 新数据加载 ──
+
+func _load_disciples() -> void:
+	disciple_database.clear()
+	var rows := CsvLoader.load_csv("res://data/disciple_config.csv")
+	for r in rows:
+		var d := DiscipleData.new()
+		d.disciple_id = str(r.get("id", ""))
+		if d.disciple_id.is_empty() or d.disciple_id.begins_with("#"):
+			continue
+		d.disciple_name = str(r.get("name", ""))
+		d.peak_id = str(r.get("peak_id", ""))
+		d.hp = float(r.get("hp", "100"))
+		d.attack = float(r.get("attack", "10"))
+		d.defense = float(r.get("defense", "0"))
+		d.attack_speed = float(r.get("attack_speed", "1.0"))
+		d.move_speed = float(r.get("move_speed", "200"))
+		d.attack_range = float(r.get("attack_range", "150"))
+		d.skill_id = str(r.get("skill_id", ""))
+		d.cost = int(r.get("cost", "100"))
+		disciple_database[d.disciple_id] = d
+
+
+func _load_blessings() -> void:
+	blessing_database.clear()
+	var rows := CsvLoader.load_csv("res://data/blessing_config.csv")
+	for r in rows:
+		var b := BlessingData.new()
+		b.blessing_id = str(r.get("id", ""))
+		if b.blessing_id.is_empty() or b.blessing_id.begins_with("#"):
+			continue
+		b.blessing_name = str(r.get("name", ""))
+		b.category = str(r.get("category", ""))
+		b.tier = str(r.get("tier", "common"))
+		b.description = str(r.get("description", ""))
+		b.effect_type = str(r.get("effect_type", ""))
+		b.effect_value = float(r.get("effect_value", "0"))
+		b.disciple_filter = str(r.get("disciple_filter", ""))
+		b.peak_filter = str(r.get("peak_filter", ""))
+		blessing_database[b.blessing_id] = b
+
+
+func _load_artifacts() -> void:
+	artifact_database.clear()
+	var rows := CsvLoader.load_csv("res://data/artifact_config.csv")
+	for r in rows:
+		var a := ArtifactData.new()
+		a.artifact_id = str(r.get("id", ""))
+		if a.artifact_id.is_empty() or a.artifact_id.begins_with("#"):
+			continue
+		a.artifact_name = str(r.get("name", ""))
+		a.slot = str(r.get("slot", ""))
+		a.rarity = str(r.get("rarity", "common"))
+		a.description = str(r.get("description", ""))
+		a.effect_type = str(r.get("effect_type", ""))
+		a.effect_value = float(r.get("effect_value", "0"))
+		artifact_database[a.artifact_id] = a
+
+
+func get_disciple(id: String) -> DiscipleData:
+	return disciple_database.get(id)
+
+
+func get_all_disciples() -> Array[DiscipleData]:
+	var arr: Array[DiscipleData] = []
+	arr.assign(disciple_database.values())
+	return arr
+
+
+func get_blessing(id: String) -> BlessingData:
+	return blessing_database.get(id)
+
+
+func get_all_blessings() -> Array[BlessingData]:
+	var arr: Array[BlessingData] = []
+	arr.assign(blessing_database.values())
+	return arr
+
+
+func get_artifact(id: String) -> ArtifactData:
+	return artifact_database.get(id)
+
+
+func get_all_artifacts() -> Array[ArtifactData]:
+	var arr: Array[ArtifactData] = []
+	arr.assign(artifact_database.values())
+	return arr
