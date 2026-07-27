@@ -1,7 +1,14 @@
 extends Control
-## 开场黑幕 — 世界观简介界面（按 Pixso 设计稿「开场黑幕」frame 2:2 实现）
-## 设计: 1280×720, 纯黑背景, 居中 840px 宽白色叙事文本, 20px/行高 28px
-## 交互: 逐段淡入（策划文档 4.1）; 点击/按键第一次快进动画, 第二次结束 → intro_finished
+## 开场黑幕 — 逐段自动播放世界观叙事文字
+## v2 (2026-07-27): 改为逐段播放模式（淡入 → 停留 → 淡出 → 下一段）
+##   旧版是一次性显示全部文字；新版每次只显示一段，4s 自动推进
+## 设计: 1280×720, 纯黑背景, 居中 840px 宽白色叙事文本, 20px / 行高 28px
+## 基准: 策划文档 2026-07-27-开场黑幕-功能需求.md
+##
+## 流程:
+##   段N 淡入(1s) → 停留(2s) → 淡出(1s) → 段N+1 自动播放
+##   点击/按键 → 跳过当前段，立即进入下一段（0.3s 冷却防连点）
+##   最后一段点击/按键 → 0.5s 黑屏 → 发射 intro_finished 信号
 
 signal intro_finished
 
@@ -13,29 +20,34 @@ const FONT_SIZE := 20
 const LINE_HEIGHT := 28
 const COLOR_BG := Color(0, 0, 0, 1)
 const COLOR_TEXT := Color.WHITE
-const COLOR_TIPS := Color("#4D4D61")
-const PARA_FADE_DURATION := 0.9
 
-## 世界观文案（Pixso 原稿逐字, 段落间空行）
-const INTRO_PARAGRAPHS: Array[String] = [
-	"上古时代，仙界与凡间有仙门相连，仙人往来，灵气互通。",
-	"仙门一夜崩塌，仙人陨落消散。至强法宝护住最后根基，耗尽灵力，化为凡间荒山，陷入沉睡。",
-	"万年后，器灵苏醒，发出跨越轮回的呼唤。",
-	"你听到呼唤，承担修复神器、重开仙门的使命。",
+## 时序参数（per 2026-07-27 功能需求 §4 / §6）
+const FADE_IN_DURATION := 1.0
+const STAY_DURATION := 2.0
+const FADE_OUT_DURATION := 1.0
+const SKIP_COOLDOWN := 0.3
+const FINISH_BLACK_DURATION := 0.5
+
+## 世界观文案（per 2026-07-27 功能规划 §2, 与 HTML 原型一致）
+const PARAGRAPHS: Array[String] = [
+	"上古时代，仙界与凡间有仙门相连。\n仙人行走人间，凡人亦可登仙。",
+	"仙门一夜崩塌，仙人陨落消散。\n至强法宝在崩碎之际护住最后根基，耗尽灵力，化为凡间荒山，陷入沉睡。",
+	"六座阵眼山峰环绕，各自代表不同神通法则。\n器灵残破半隐于云海之中，等待转世者的呼唤。",
+	"无数年后，器灵苏醒。\n你听到了那跨越轮回的呼唤。",
 ]
 
-var _para_labels: Array[Label] = []
-var _tips_label: Label
-var _fade_tween: Tween
-var _revealed := false
-var _finished := false
+var _label: Label = null
+var _current_index: int = 0
+var _tween: Tween = null
+var _skip_cooldown: bool = false
+var _finished: bool = false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build()
 	visibility_changed.connect(_on_visibility_changed)
-	_play_fade_in()
+	_show_paragraph(0)
 
 
 func _build() -> void:
@@ -49,107 +61,109 @@ func _build() -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
 
-	# 居中叙事文本列（宽 840, 段落间空一行 = 28px）
-	var vbox := VBoxContainer.new()
-	vbox.anchor_left = 0.5
-	vbox.anchor_right = 0.5
-	vbox.anchor_top = 0.0
-	vbox.anchor_bottom = 1.0
-	vbox.offset_left = -TEXT_WIDTH / 2.0
-	vbox.offset_right = TEXT_WIDTH / 2.0
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_theme_constant_override("separation", LINE_HEIGHT)
-	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(vbox)
+	# 单段叙事文本 —— 一次只显示一段
+	_label = Label.new()
+	_label.anchor_left = 0.5
+	_label.anchor_right = 0.5
+	_label.anchor_top = 0.0
+	_label.anchor_bottom = 1.0
+	_label.offset_left = -TEXT_WIDTH / 2.0
+	_label.offset_right = TEXT_WIDTH / 2.0
+	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_label.modulate.a = 0.0
 
-	_para_labels.clear()
-	for paragraph in INTRO_PARAGRAPHS:
-		var lbl := _build_paragraph_label(paragraph)
-		vbox.add_child(lbl)
-		_para_labels.append(lbl)
-
-	# 底部提示（Pixso 未画, 交互需要; 样式沿用卡牌面板 tips）
-	_tips_label = _build_tips()
-	add_child(_tips_label)
-
-
-func _build_paragraph_label(text: String) -> Label:
-	var lbl := Label.new()
-	lbl.text = text
-	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_FILL
-	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl.modulate.a = 0.0
 	var font := load(FONT_PATH) as FontFile
 	if font:
-		lbl.add_theme_font_override("font", font)
-	lbl.add_theme_font_size_override("font_size", FONT_SIZE)
-	lbl.add_theme_color_override("font_color", COLOR_TEXT)
-	# Godot 行高 = 字体行高 + line_spacing, 用固定值逼近设计的 28px
-	lbl.add_theme_constant_override("line_spacing", LINE_HEIGHT - FONT_SIZE)
-	return lbl
+		_label.add_theme_font_override("font", font)
+	_label.add_theme_font_size_override("font_size", FONT_SIZE)
+	_label.add_theme_color_override("font_color", COLOR_TEXT)
+	_label.add_theme_constant_override("line_spacing", LINE_HEIGHT - FONT_SIZE)
+	add_child(_label)
 
 
-func _build_tips() -> Label:
-	var lbl := Label.new()
-	lbl.text = "点击任意处继续"
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.anchor_left = 0.0
-	lbl.anchor_right = 1.0
-	lbl.anchor_top = 1.0
-	lbl.anchor_bottom = 1.0
-	lbl.offset_top = -96
-	lbl.offset_bottom = -79
-	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl.modulate.a = 0.0
-	var font := load(FONT_PATH) as FontFile
-	if font:
-		lbl.add_theme_font_override("font", font)
-	lbl.add_theme_font_size_override("font_size", 12)
-	lbl.add_theme_color_override("font_color", COLOR_TIPS)
-	return lbl
+## ——————————————————————— 播放逻辑 ———————————————————————
 
 
-func _play_fade_in() -> void:
-	_revealed = false
-	if _fade_tween:
-		_fade_tween.kill()
-	for lbl in _para_labels:
-		lbl.modulate.a = 0.0
-	_tips_label.modulate.a = 0.0
-	_fade_tween = create_tween()
-	for lbl in _para_labels:
-		_fade_tween.tween_property(lbl, "modulate:a", 1.0, PARA_FADE_DURATION)
-	_fade_tween.tween_property(_tips_label, "modulate:a", 1.0, 0.6)
-	_fade_tween.finished.connect(func(): _revealed = true)
-
-
-## 点击/按键: 动画中 → 快进显示全部; 已显示 → 结束进入器灵选择
-func _advance() -> void:
-	if _finished or not visible:
+func _show_paragraph(idx: int) -> void:
+	if idx >= PARAGRAPHS.size():
+		_finish()
 		return
-	if not _revealed:
-		if _fade_tween:
-			_fade_tween.kill()
-		for lbl in _para_labels:
-			lbl.modulate.a = 1.0
-		_tips_label.modulate.a = 1.0
-		_revealed = true
+
+	_current_index = idx
+	_kill_tween()
+
+	_label.text = PARAGRAPHS[idx]
+	_label.modulate.a = 0.0
+
+	_tween = create_tween()
+	_tween.set_trans(Tween.TRANS_LINEAR)
+	# 淡入 → 停留 → 淡出
+	_tween.tween_property(_label, "modulate:a", 1.0, FADE_IN_DURATION)
+	_tween.tween_interval(STAY_DURATION)
+	_tween.tween_property(_label, "modulate:a", 0.0, FADE_OUT_DURATION)
+	_tween.finished.connect(_on_cycle_done)
+
+
+func _on_cycle_done() -> void:
+	if _finished:
+		return
+	_show_paragraph(_current_index + 1)
+
+
+func _finish() -> void:
+	if _finished:
 		return
 	_finished = true
+	_kill_tween()
+	_label.modulate.a = 0.0
+	await get_tree().create_timer(FINISH_BLACK_DURATION).timeout
 	intro_finished.emit()
+
+
+## ——————————————————————— 快进 ———————————————————————
+
+
+func _skip() -> void:
+	if _finished or _skip_cooldown:
+		return
+	_skip_cooldown = true
+
+	# 最后一段 → 直接结束
+	if _current_index >= PARAGRAPHS.size() - 1:
+		_finish()
+		_skip_cooldown = false
+		return
+
+	# 跳到下一段
+	_kill_tween()
+	_label.modulate.a = 0.0
+	_show_paragraph(_current_index + 1)
+
+	# 防连点冷却
+	await get_tree().create_timer(SKIP_COOLDOWN).timeout
+	_skip_cooldown = false
+
+
+## ——————————————————————— 输入 ———————————————————————
 
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
-		_advance()
+		_skip()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
-		_advance()
+		_skip()
+
+
+## ——————————————————————— 可见性 ———————————————————————
 
 
 func _on_visibility_changed() -> void:
 	if visible and not _finished:
-		_play_fade_in()
+		_current_index = 0
+		_show_paragraph(0)
