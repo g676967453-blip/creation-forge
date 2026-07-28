@@ -170,32 +170,32 @@ AI 不是替代人类创造力，而是放大它。它同时扮演两个底层�
 ```
 creation-forge/
 ├── docs/
-│   ├── zh-CN/        ← 📚 项目文档（哲学/技术栈/工作流/规范）
+│   ├── zh-CN/          ← 📚 核心文档（哲学/技术栈/工作流/规范）
 │   │   └── manifesto.md ← 🔥 AI时代的新学习思想宣言
-│   ├── workflows/    ← 🔄 标准化协作流程（双层：知识层+SKILL执行层）
-│   └── tool-guides/  ← 📖 工具知识库（Git/GitHub/Pixso 操作与人机协作）
-├── shared/           ← 📦 共享库（跨项目复用的代码和资源）
-├── templates/        ← 🔧 项目模板（快速创建新项目）
-├── projects/         ← 🚀 所有项目
-│   ├── GAME-002/     ← 🎮 开仙门（Godot 4.7 独立游戏）
-│   ├── xiaohongshu/  ← 📱 小红书自媒体内容创作
-
-│   ├── originals/    ← 原创游戏
-│   └── sandbox/      ← 实验沙盒
-└── tools/            ← 🛠️ 开发工具脚本
+│   ├── workflows/      ← 🔄 标准化协作流程（21 个工作流文档 + 模板）
+│   ├── tool-guides/    ← 📖 工具知识库（Git/GitHub/Pixso 操作与人机协作）
+│   └── en/             ← 🌐 英文文档
+├── shared/             ← 📦 共享库（跨项目复用的 types/utils/assets）
+├── templates/          ← 🔧 项目模板（Phaser / Godot 快速启动）
+├── projects/           ← 🚀 所有项目
+│   ├── GAME-002/       ← 🎮 开仙门（Godot 4.7 独立游戏）
+│   ├── xiaohongshu/    ← 📱 小红书自媒体内容创作
+│   └── asset-pipeline/ ← 🔧 资产生产管线（游戏道具图标批量生产）
+├── works/              ← 📝 每日工作记录（一事一记 + 视频草案）
+├── reports/            ← 📊 报告与仪表盘
+├── tools/              ← 🛠️ 开发工具脚本（数据采集/仪表盘生成/Pixso导入等）
+├── .claude/            ← ⚙️ Claude Code 配置（SKILL/记忆/settings）
+└── .workbuddy/         ← 🔗 工作伙伴集成
 ```
-
----
 
 ## 开发工作流
 
 ### 创建新游戏项目
 
-1. 确定项目类型（original/sandbox）
-2. 在 `projects/<type>/` 下创建目录
-3. 复制 `templates/game-phaser/` 作为起点
-4. 修改 package.json 中的项目名称
-5. 创建项目的 README.md
+1. 确定项目类型（在 `projects/` 下新建子目录）
+2. 复制 `templates/game-godot/` 或 `templates/game-phaser/` 作为起点
+3. 修改 package.json / project.godot 中的项目名称
+4. 创建项目的 README.md
 
 ### Git 分支策略
 

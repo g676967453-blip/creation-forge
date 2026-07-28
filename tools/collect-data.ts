@@ -435,25 +435,19 @@ export function collectData() {
       desc: "重新生成造化坊 HTML 仪表盘（8 页签）", steps: "检查 collect-data.ts → 更新过时数据 → 生成 HTML → 用户验证", trigger: "/update-dashboard 或「更新仪表盘」" },
     { name: "个人待办管理", version: "v1", skill: "/todo", project: "全局", status: "mature", category: "造化坊",
       desc: "管理 5 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
-    { name: "功能开发-流水线", version: "v1", skill: "待建", project: "全局", status: "ongoing", category: "游戏开发",
-      desc: "4 阶段自上而下：策划 → 需求 → UI交互 → 美术资产", steps: "功能策划(01) → 功能需求(02) → 界面交互UI(03) → 美术资产(04)", trigger: "待建" },
+    { name: "功能开发-流水线", version: "v2", skill: "待建", project: "全局", status: "mature", category: "游戏开发",
+      desc: "通用 4 阶段 + 数据原则 + 实现后步骤：策划→需求→UI交互→美术资产→(实现：代码+测试+文档同步)", steps: "功能策划(01) → 功能需求(02) → 界面交互UI(03) → 美术资产(04) → 进入实现", trigger: "待建" },
     { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
       desc: "从 works/ 日志选题，制作 6 卡图文帖子发布到小红书", steps: "works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布", trigger: "/new-post 或「制作帖子」" },
     { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "自媒体",
       desc: "将 HTML 帖子逐张卡片导入 Pixso 进行设计精调", steps: "打开 Pixso → code_to_design 导入 HTML → 逐卡调整 → 导出截图", trigger: "纯人工操作，无 SKILL" },
     { name: "道具图标-生产", version: "v1", skill: "/item-icon", project: "asset-pipeline", status: "mature", category: "游戏开发",
       desc: "游戏道具图标批量生产：Lovart AI 生成 → Photoshop 抠图 → 256px 切片", steps: "道具清单 → Lovart 生成(多模型可选) → PS 抠图 → 切片输出", trigger: "/item-icon 或「生成图标」" },
-    { name: "GAME002-UI制作", version: "v2", skill: "待建", project: "GAME-002", status: "mature", category: "游戏开发",
-      desc: "GAME-002「开仙门」游戏 UI 制作全流程", steps: "策划文档 → 场景清单 → 交互设计 → 视觉方向 → 资产拆解 → 制作", trigger: "待建" },
-    { name: "GAME002-UI层命名规范", version: "v2", skill: "—", project: "GAME-002", status: "mature", category: "游戏开发",
-      desc: "Godot UI 节点命名标准：5 固定名 + 5 后缀体系", steps: "参考文档 → 按规范命名 → 代码审查校验", trigger: "纯规范文档，无 SKILL" },
     { name: "工作日志记录", version: "v1", skill: "/write-log", project: "全局", status: "mature", category: "造化坊",
       desc: "回顾当日工作 → 按 works/_template.md 生成日志 → 写入 works/ 目录", steps: "回顾会话 → 确认标题 → 生成(问题日志+视频草案) → 写入文件", trigger: "/write-log 或「记录日志」「总结今天」" },
-    { name: "GAME002-功能开发", version: "v1", skill: "待建", project: "GAME-002", status: "testing", category: "游戏开发",
-      desc: "GAME-002 6 层自上而下功能开发流程", steps: "愿景 → 系统设计 → 需求 → 数值 → 逻辑实现 → 体验", trigger: "待建" },
+    { name: "文件梳理", version: "v1", skill: "/organize-files", project: "全局", status: "mature", category: "造化坊",
+      desc: "全项目目录扫描 → 诊断三级问题 → 用户确认 → 执行整理 → 同步仪表盘", steps: "扫描分析 → 诊断报告 → 方案确认 → 执行修改 → 同步仪表盘", trigger: "/organize-files 或「梳理文件」「整理文件夹」" },
   ];
-
-  // 采集 SKILL 数据
   const skillsDir = path.join(ROOT, ".claude/skills");
   const skillsRaw = listSkills(skillsDir);
   const skills = skillsRaw.map(s => ({ ...s, linkedWorkflow: linkSkillToWorkflow(s.name) }));
@@ -470,24 +464,24 @@ export function collectData() {
   ];
 
   const goalsIssues = [
-    { id: "I1", issue: "GAME-002 V0.1 旧代码模块待删除（card_manager/summons/upgrades）", source: "Phase 2 集成完成，旧模块仍并行运行", severity: "🟡 累积" },
+    { id: "I1", issue: "GAME-002 V0.1 旧代码模块已删除 ✅", source: "07-28 文件梳理：card_manager/summons/upgrades 已于 Phase 3 清理", severity: "✅ 已解决" },
     { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
     { id: "I7", issue: "CODE_WIKI.md 已更新 V0.0→V0.1 过渡状态，数值总览已同步 CSV", source: "07-26 文档修复完成（1/3轮），第三轮归档标注待补充", severity: "🟢 跟踪" },
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
-    { id: "I6", issue: "Git push 不稳定 —— 依赖 HTTPS，偶发 timeout/reset", source: "07-23 复盘，#5 SSH 未配置", severity: "🟡 便利性" },
+    { id: "I6", issue: "Git push 已稳定 ✅", source: "07-28：SSH Key 已配置并验证通过", severity: "✅ 已解决" },
   ];
 
   const goalsAI = [
-    { id: "A1", suggestion: "Phase 3：清理旧代码 + UI 适配", detail: "删除 card_manager/summons/upgrades 等旧模块；创建独立祝福选择面板。完成后 V0.1 架构干净可测试。", priority: "🔴 优先" },
-    { id: "A2", suggestion: "手动跑通完整一局", detail: "在 Godot 编辑器中测试 经营→战斗→结算 闭环。7 个新模块已通过 MCP 编译验证，需 gameplay 级验证。", priority: "🔴 优先" },
+    { id: "A1", suggestion: "Phase 3：祝福3选1 UI 面板制作 + 接入升级流程", detail: "旧代码已清理。下一步：创建独立祝福选择面板，DiscipleSquad 接入战斗循环。", priority: "🔴 优先" },
+    { id: "A2", suggestion: "手动跑通完整一局 ✅", detail: "已在 Godot 编辑器中测试 经营→战斗→结算 闭环，gameplay 级验证通过。", priority: "✅ 已完成" },
     { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "14 期存量足够，按 /new-post 流程持续产出即可。重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
   ];
 
   const toolGuides = [
     { tool: "Git", intro: "01-git-intro.md", ops: "02-git-operations.md", collab: "03-git-human-ai-collab.md", desc: "分布式版本控制系统", docs: 3 },
     { tool: "GitHub", intro: "01-github-intro.md", ops: "02-github-operations.md", collab: "03-github-human-ai-collab.md", desc: "代码托管与协作平台", docs: 3 },
-    { tool: "Pixso", intro: "—", ops: "—", collab: "—", desc: "UI 设计工具（待补充）", docs: 0 },
+    { tool: "Pixso", intro: "pixso-human-ai-collaboration.md", ops: "pixso-workflow-add-post.md", collab: "—", desc: "UI 设计工具，人机协作 + 导入流程", docs: 2 },
     { tool: "Claude Code Skills", intro: "game-dev-skills.md", ops: "—", collab: "—", desc: `标准 ${skillsCount.standard} + 扁平 ${skillsCount.flat} = ${skillsCount.total} 个技能（Godot/Phaser/Three.js 等）`, docs: skillsCount.total },
     { tool: "Claude Code 配置", intro: "—", ops: ".claude/settings.json", collab: "CLAUDE.md", desc: "权限/hooks/MCP/记忆", docs: 4 },
   ];
