@@ -425,7 +425,6 @@ export function collectData() {
     { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~40%", output: "闭环完整+MCP在线+5层防御+15波+6功法+35/93任务✅+文档审计修复", blocker: "待祝福3选1UI+弟子接入主循环+旧模块删除" },
     { name: "小红书自媒体", engine: "HTML/CSS + Pixso", status: "active", statusText: "活跃", progress: "14 期帖子", output: "post-13/14 + 目录扁平化", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
-    { name: "tutorial/01-hello-canvas", engine: "Phaser 3.80+", status: "idle", statusText: "待机", progress: "仅骨架", output: "—", blocker: "优先级低" },
     { name: "originals / sandbox", engine: "待定", status: "empty", statusText: "空白", progress: "—", output: "—", blocker: "—" },
   ];
 
@@ -474,7 +473,6 @@ export function collectData() {
     { id: "I1", issue: "GAME-002 V0.1 旧代码模块待删除（card_manager/summons/upgrades）", source: "Phase 2 集成完成，旧模块仍并行运行", severity: "🟡 累积" },
     { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
     { id: "I7", issue: "CODE_WIKI.md 已更新 V0.0→V0.1 过渡状态，数值总览已同步 CSV", source: "07-26 文档修复完成（1/3轮），第三轮归档标注待补充", severity: "🟢 跟踪" },
-    { id: "I3", issue: "tutorial 教程线 0% —— hello-canvas 仅骨架无代码", source: "项目扫描，5% 完成度", severity: "🟢 远期" },
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
     { id: "I6", issue: "Git push 不稳定 —— 依赖 HTTPS，偶发 timeout/reset", source: "07-23 复盘，#5 SSH 未配置", severity: "🟡 便利性" },
@@ -484,7 +482,6 @@ export function collectData() {
     { id: "A1", suggestion: "Phase 3：清理旧代码 + UI 适配", detail: "删除 card_manager/summons/upgrades 等旧模块；创建独立祝福选择面板。完成后 V0.1 架构干净可测试。", priority: "🔴 优先" },
     { id: "A2", suggestion: "手动跑通完整一局", detail: "在 Godot 编辑器中测试 经营→战斗→结算 闭环。7 个新模块已通过 MCP 编译验证，需 gameplay 级验证。", priority: "🔴 优先" },
     { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "14 期存量足够，按 /new-post 流程持续产出即可。重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
-    { id: "A4", suggestion: "教程线推迟到主线稳定后", detail: "当前重心是 GAME-002 + 小红书 + asset-pipeline 三条线。教程线等至少一条主线进入稳定期再启动。", priority: "🟢 远期" },
   ];
 
   const toolGuides = [
@@ -505,7 +502,6 @@ export function collectData() {
     { layer: "项目层", name: "GAME-002「开仙门」", path: "projects/GAME-002/", desc: "Godot 修仙 Roguelike 塔防" },
     { layer: "项目层", name: "小红书自媒体", path: "projects/xiaohongshu/", desc: "AI 协作内容创作" },
     { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标资产管线" },
-    { layer: "项目层", name: "tutorial/", path: "projects/tutorial/", desc: "教程项目" },
     { layer: "—", name: "GitHub", path: "https://github.com/g676967453-blip/creation-forge", desc: "远程仓库" },
   ];
 

@@ -102,7 +102,7 @@ creation-forge/
 ├── projects/            ← 🚀 所有项目
 │   ├── GAME-002/        ← 🎮 开仙门（Godot 4.7）
 │   ├── xiaohongshu/     ← 📱 小红书自媒体
-│   ├── tutorial/        ← 教程项目（按需创建）
+
 │   ├── originals/       ← 原创游戏
 │   └── sandbox/         ← 实验沙盒
 └── tools/               ← 🛠️ 开发工具脚本

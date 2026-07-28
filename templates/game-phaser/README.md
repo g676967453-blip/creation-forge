@@ -15,10 +15,10 @@
 
 ```bash
 # 复制模板
-cp -r templates/game-phaser projects/tutorial/01-my-game
+cp -r templates/game-phaser projects/originals/01-my-game
 
 # 安装依赖
-cd projects/tutorial/01-my-game
+cd projects/originals/01-my-game
 npm install
 
 # 启动开发
