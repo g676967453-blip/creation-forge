@@ -181,5 +181,5 @@ A: 可以，直接说"用 godot-gdscript 技能帮我检查这段代码"。
 **Q: 技能文件在哪里？**
 A: `.claude/skills/skills/` 目录下，按类别分文件夹。
 
-**Q: 能和项目自带的技能（git-commit、new-post、sync-report）一起用吗？**
+**Q: 能和项目自带的技能（git-commit、new-post、update-dashboard）一起用吗？**
 A: 可以，互不冲突。游戏技能以子目录形式存在，项目技能是单文件 `.md`。

@@ -158,7 +158,7 @@ export function linkSkillToWorkflow(skillName: string): string | undefined {
   const map: Record<string, string> = {
     "git-commit": "Git-提交推送",
     "new-post": "小红书-制作帖子",
-    "sync-report": "汇报说明书同步",
+    "update-dashboard": "仪表盘更新",
     "item-icon": "道具图标-生产",
   };
   return map[skillName];
@@ -221,7 +221,7 @@ const SKILL_DESC_ZH: Record<string, string> = {
   // 项目自定义扁平 SKILL
   "git-commit": "Git 提交推送：检查变更 → 生成约定式提交 → 确认 → commit → push 到远程仓库",
   "new-post": "小红书帖子制作：works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布",
-  "sync-report": "汇报说明书同步：检查数据源 → 更新脚本 → 生成 HTML 仪表盘",
+  "update-dashboard": "仪表盘更新：检查数据源 → 更新脚本 → 生成 HTML 仪表盘（8 页签：系统总览/项目状态/工作流清单/近期动态/任务看板/目标计划/知识库/资产地址）",
   "item-icon": "游戏道具图标生产：道具清单 → Lovart AI 生成 → Photoshop 抠图 → 切片输出",
   "libtv": "LibTV 媒体生产集成：视频/音频/AI 内容生成，含命令、示例、模型 schema、节点类型",
   "router": "SKILL 路由引擎：根据用户请求匹配并路由到正确的游戏开发 SKILL",
@@ -230,6 +230,184 @@ const SKILL_DESC_ZH: Record<string, string> = {
 function translateDescription(name: string, fallback: string): string {
   if (SKILL_DESC_ZH[name]) return SKILL_DESC_ZH[name];
   return fallback;
+}
+
+/** 个人待办任务项 */
+export interface PersonalTask {
+  id: string;
+  task: string;
+  status: string;
+  statusText: string;
+  priority: string;
+  deadline: string;
+  note: string;
+}
+
+/** 归档条目 */
+export interface ArchivedEntry {
+  source: string;
+  id: string;
+  task: string;
+  completedDate: string;
+  hours: string;
+}
+
+/** 周度归档块 */
+export interface WeeklyArchive {
+  week: string;
+  entries: ArchivedEntry[];
+}
+
+/** 个人待办完整数据 */
+export interface PersonalTasksData {
+  categories: { key: string; label: string; emoji: string; color: string; tasks: PersonalTask[] }[];
+  archives: WeeklyArchive[];
+  stats: { total: number; pending: number; active: number; done: number; cancelled: number; byCategory: Record<string, { pending: number; active: number; done: number }> };
+}
+
+/** 解析 docs/个人待办.md，返回结构化任务数据 */
+export function loadPersonalTasks(): PersonalTasksData {
+  const filePath = path.join(ROOT, "docs", "个人待办.md");
+  const CATEGORY_MAP: Record<string, { key: string; label: string; emoji: string; color: string }> = {
+    "🏢": { key: "D", label: "主美工作", emoji: "🏢", color: "#4caf50" },
+    "📱": { key: "X", label: "小红书", emoji: "📱", color: "#ff9800" },
+    "🎮": { key: "G", label: "游戏开发", emoji: "🎮", color: "#42a5f5" },
+    "🔧": { key: "F", label: "造化坊", emoji: "🔧", color: "#ce93d8" },
+    "🏠": { key: "L", label: "日常管理", emoji: "🏠", color: "#78909c" },
+  };
+
+  const categories: PersonalTasksData["categories"] = [];
+  const archives: WeeklyArchive[] = [];
+  let currentCategory: PersonalTasksData["categories"][0] | null = null;
+  let currentArchive: WeeklyArchive | null = null;
+  let inArchive = false;
+  let inTable = false;
+  let tableColumns: string[] = [];
+  let lineCount = 0;
+
+  try {
+    const content = fs.readFileSync(filePath, "utf-8");
+    const lines = content.split("\n");
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      lineCount++;
+
+      // 检测 ## 分类标题（emoji 可能是多字节字符，用 (.+?) 捕获）
+      const h2Match = trimmed.match(/^## (.+?) (.+)/);
+      if (h2Match) {
+        inArchive = false;
+        inTable = false;
+        currentCategory = null;
+        currentArchive = null;
+
+        const emoji = h2Match[1];
+        const catDef = CATEGORY_MAP[emoji];
+        if (catDef) {
+          currentCategory = { ...catDef, tasks: [] };
+          categories.push(currentCategory);
+        } else if (emoji === "📦") {
+          inArchive = true;
+        }
+        continue;
+      }
+
+      // 检测 ### 周度子标题
+      if (inArchive && trimmed.startsWith("### ")) {
+        inTable = false;
+        currentArchive = { week: trimmed.replace(/^### /, "").trim(), entries: [] };
+        archives.push(currentArchive);
+        continue;
+      }
+
+      // 检测表格分隔行（|---|---|）
+      if (trimmed.match(/^\|[-|\s]+\|$/)) {
+        inTable = true;
+        continue;
+      }
+
+      // 跳过非表格行
+      if (!trimmed.startsWith("|")) {
+        inTable = false;
+        continue;
+      }
+
+      // 解析表格行
+      if (inTable) {
+        const cells = trimmed
+          .replace(/^\|/, "")
+          .replace(/\|$/, "")
+          .split("|")
+          .map((c) => c.trim());
+
+        if (inArchive && currentArchive) {
+          // 归档表头或数据行（来源 | ID | 任务 | 完成日 | 耗时评估）
+          if (cells.length >= 3 && cells[1] && cells[1] !== "ID") {
+            currentArchive.entries.push({
+              source: cells[0] || "",
+              id: cells[1] || "",
+              task: cells[2] || "",
+              completedDate: cells[3] || "",
+              hours: cells[4] || "",
+            });
+          }
+        } else if (currentCategory) {
+          // 分类表头：ID | 任务 | 状态 | 优先级 | 截止日 | 备注
+          if (cells[0] === "ID") {
+            tableColumns = cells;
+            continue;
+          }
+          // 数据行
+          if (cells.length >= 3 && cells[0] && cells[0] !== "ID") {
+            const statusRaw = cells[2] || "";
+            const statusText = statusRaw;
+            let status: string;
+            if (statusRaw.includes("待办")) status = "pending";
+            else if (statusRaw.includes("进行中")) status = "active";
+            else if (statusRaw.includes("完成")) status = "done";
+            else if (statusRaw.includes("取消")) status = "cancelled";
+            else status = "pending";
+
+            currentCategory.tasks.push({
+              id: cells[0],
+              task: cells[1] || "",
+              status,
+              statusText: statusText || "📋 待办",
+              priority: cells[3] || "🟡 中",
+              deadline: cells[4] || "—",
+              note: cells[5] || "—",
+            });
+          }
+        }
+      }
+    }
+  } catch {
+    // 文件不存在时返回空结构
+    for (const emoji of ["🏢", "📱", "🎮", "🔧", "🏠"]) {
+      const catDef = CATEGORY_MAP[emoji];
+      if (catDef) categories.push({ ...catDef, tasks: [] });
+    }
+  }
+
+  // 统计
+  const allTasks = categories.flatMap((c) => c.tasks);
+  const stats = {
+    total: allTasks.length,
+    pending: allTasks.filter((t) => t.status === "pending").length,
+    active: allTasks.filter((t) => t.status === "active").length,
+    done: allTasks.filter((t) => t.status === "done").length,
+    cancelled: allTasks.filter((t) => t.status === "cancelled").length,
+    byCategory: {} as Record<string, { pending: number; active: number; done: number }>,
+  };
+  for (const cat of categories) {
+    stats.byCategory[cat.key] = {
+      pending: cat.tasks.filter((t) => t.status === "pending").length,
+      active: cat.tasks.filter((t) => t.status === "active").length,
+      done: cat.tasks.filter((t) => t.status === "done").length,
+    };
+  }
+
+  return { categories, archives, stats };
 }
 
 export function collectData() {
@@ -252,16 +430,28 @@ export function collectData() {
   ];
 
   const workflows = [
-    { name: "Git-提交推送", version: "v1", skill: "/git-commit", project: "全局", status: "mature", category: "日常" },
-    { name: "汇报说明书同步", version: "v1", skill: "/sync-report", project: "全局", status: "mature", category: "日常" },
-    { name: "改进追踪", version: "v1", skill: "—", project: "全局", status: "ongoing", category: "日常" },
-    { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature", category: "业务工作流" },
-    { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "业务工作流" },
-    { name: "道具图标-生产", version: "v1", skill: "待建", project: "asset-pipeline", status: "mature", category: "业务工作流" },
-    { name: "GAME002-UI制作", version: "v2", skill: "待建", project: "GAME-002", status: "mature", category: "业务工作流" },
-    { name: "GAME002-UI层命名规范", version: "v2", skill: "—", project: "GAME-002", status: "mature", category: "业务工作流" },
-    { name: "GAME002-功能开发", version: "v1", skill: "待建", project: "GAME-002", status: "testing", category: "业务工作流" },
-    { name: "游戏制作流水线", version: "v1", skill: "待建", project: "全局", status: "ongoing", category: "业务工作流" },
+    { name: "Git-提交推送", version: "v1", skill: "/git-commit", project: "全局", status: "mature", category: "造化坊",
+      desc: "将本地代码变更提交并推送到 GitHub 远程仓库", steps: "检查变更 → 生成约定式提交 → 用户确认 → commit → push", trigger: "/git-commit 或「提交代码」" },
+    { name: "仪表盘更新", version: "v2", skill: "/update-dashboard", project: "全局", status: "mature", category: "造化坊",
+      desc: "重新生成造化坊 HTML 仪表盘（8 页签）", steps: "检查 collect-data.ts → 更新过时数据 → 生成 HTML → 用户验证", trigger: "/update-dashboard 或「更新仪表盘」" },
+    { name: "个人待办管理", version: "v1", skill: "/todo", project: "全局", status: "mature", category: "造化坊",
+      desc: "管理 5 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
+    { name: "功能开发-流水线", version: "v1", skill: "待建", project: "全局", status: "ongoing", category: "游戏开发",
+      desc: "4 阶段自上而下：策划 → 需求 → UI交互 → 美术资产", steps: "功能策划(01) → 功能需求(02) → 界面交互UI(03) → 美术资产(04)", trigger: "待建" },
+    { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
+      desc: "从 works/ 日志选题，制作 6 卡图文帖子发布到小红书", steps: "works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布", trigger: "/new-post 或「制作帖子」" },
+    { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "自媒体",
+      desc: "将 HTML 帖子逐张卡片导入 Pixso 进行设计精调", steps: "打开 Pixso → code_to_design 导入 HTML → 逐卡调整 → 导出截图", trigger: "纯人工操作，无 SKILL" },
+    { name: "道具图标-生产", version: "v1", skill: "/item-icon", project: "asset-pipeline", status: "mature", category: "游戏开发",
+      desc: "游戏道具图标批量生产：Lovart AI 生成 → Photoshop 抠图 → 256px 切片", steps: "道具清单 → Lovart 生成(多模型可选) → PS 抠图 → 切片输出", trigger: "/item-icon 或「生成图标」" },
+    { name: "GAME002-UI制作", version: "v2", skill: "待建", project: "GAME-002", status: "mature", category: "游戏开发",
+      desc: "GAME-002「开仙门」游戏 UI 制作全流程", steps: "策划文档 → 场景清单 → 交互设计 → 视觉方向 → 资产拆解 → 制作", trigger: "待建" },
+    { name: "GAME002-UI层命名规范", version: "v2", skill: "—", project: "GAME-002", status: "mature", category: "游戏开发",
+      desc: "Godot UI 节点命名标准：5 固定名 + 5 后缀体系", steps: "参考文档 → 按规范命名 → 代码审查校验", trigger: "纯规范文档，无 SKILL" },
+    { name: "工作日志记录", version: "v1", skill: "/write-log", project: "全局", status: "mature", category: "造化坊",
+      desc: "回顾当日工作 → 按 works/_template.md 生成日志 → 写入 works/ 目录", steps: "回顾会话 → 确认标题 → 生成(问题日志+视频草案) → 写入文件", trigger: "/write-log 或「记录日志」「总结今天」" },
+    { name: "GAME002-功能开发", version: "v1", skill: "待建", project: "GAME-002", status: "testing", category: "游戏开发",
+      desc: "GAME-002 6 层自上而下功能开发流程", steps: "愿景 → 系统设计 → 需求 → 数值 → 逻辑实现 → 体验", trigger: "待建" },
   ];
 
   // 采集 SKILL 数据
@@ -269,23 +459,7 @@ export function collectData() {
   const skillsRaw = listSkills(skillsDir);
   const skills = skillsRaw.map(s => ({ ...s, linkedWorkflow: linkSkillToWorkflow(s.name) }));
 
-  const tasks = [
-    { id: "1", status: "done", statusText: "✅ 已完成", cat: "核心理念", task: "创建宣言文档 (manifesto.md)", note: "2026-07-15" },
-    { id: "2", status: "done", statusText: "✅ 已完成", cat: "核心理念", task: "重构 README + CLAUDE.md + 三层管理体系", note: "2026-07-23" },
-    { id: "3", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "工作流管理体系（双层 10 文档 + 3 SKILL）", note: "docs/workflows/ + .claude/skills/" },
-    { id: "4", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "工具知识库（7 文档）", note: "docs/tool-guides/" },
-    { id: "5", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "汇报体系 + HTML 仪表盘上线", note: "仪表盘服务器 + 动态交互" },
-    { id: "6", status: "done", statusText: "✅ 已完成", cat: "自媒体", task: "小红书素材库 14 期 + /new-post SKILL", note: "07-15 → 07-23" },
-    { id: "12", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 V0.1 8项设计决策确认", note: "X19混合策略+X5胜负+X7祝福池+X9挂件+X12精英+X13/X14/X18（07-26）" },
-    { id: "13", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 Phase 0-3：代码清理+架构+集成+数据", note: "删除22废弃文件+7新模块+6弟子18祝福6法宝+MCP验证通过（07-26）" },
-    { id: "14", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 全面诊断（架构/代码/性能/MCP）", note: "godot-master框架+源码静态分析+CSV交叉验证（07-26）" },
-    { id: "15", status: "done", statusText: "✅ 已完成", cat: "项目", task: "GAME-002 118份文档审计+6矛盾修复", note: "数值总览+CODE_WIKI+GDD+协作规则修复+3新V0.1规格（07-26）" },
-    { id: "16", status: "done", statusText: "✅ 已完成", cat: "基础设施", task: "仪表盘数据同步+路线图/任务表清理", note: "35/93任务✅+30归档标记+统计刷新+V0.1决策进度标注（07-26）" },
-    { id: "7", status: "active", statusText: "🟢 进行中", cat: "项目", task: "GAME-002 Phase 3：旧代码删除+UI适配+完整测试", note: "Phase 0-2 已完成。祝福3选1UI+弟子接入主循环+删除旧card/summons" },
-    { id: "8", status: "active", statusText: "🟢 进行中", cat: "项目", task: "asset-pipeline 资产管线运行", note: "3 风格已验证" },
-    { id: "9", status: "planned", statusText: "📋 计划中", cat: "自媒体", task: "持续发布小红书内容", note: "基于 works/ 素材生产" },
-    { id: "11", status: "planned", statusText: "📋 计划中", cat: "基础设施", task: "SKILL 扩展（/开发功能 /道具图标）", note: "待流程成熟" },
-  ];
+  // 旧任务看板已合并入个人待办系统（docs/个人待办.md），此处不再维护
 
   const goalsUser = [
     { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏", priority: "🟡 持续" },
@@ -341,11 +515,15 @@ export function collectData() {
     { cat: "自媒体", name: "小红书", addr: "projects/xiaohongshu/", desc: "14 期帖子，/new-post SKILL" },
   ];
 
+  // 个人待办数据
+  const personalTasks = loadPersonalTasks();
+
   return {
     today, worksData, gitCommits, commitCount,
     skillCount, skillStandard: skillsCount.standard, skillFlat: skillsCount.flat,
     workflowCount, guideCount, worksCount: worksFiles.length,
-    projects, workflows, skills, tasks, goalsUser, goalsIssues, goalsAI,
+    projects, workflows, skills, goalsUser, goalsIssues, goalsAI,
     toolGuides, assets, external,
+    personalTasks,
   };
 }
