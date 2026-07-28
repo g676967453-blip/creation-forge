@@ -14,10 +14,9 @@ const ROOT = path.resolve(import.meta.dirname!, '..');
 const TEMPLATE = path.join(ROOT, 'templates', 'game-phaser');
 const PROJECTS = path.join(ROOT, 'projects');
 
-type ProjectType = 'tutorial' | 'original' | 'sandbox';
+type ProjectType = 'original' | 'sandbox';
 
 const PROJECT_TYPE_DIRS: Record<ProjectType, string> = {
-  tutorial: path.join(PROJECTS, 'tutorial'),
   original: path.join(PROJECTS, 'originals'),
   sandbox: path.join(PROJECTS, 'sandbox'),
 };
@@ -40,12 +39,11 @@ async function main(): Promise<void> {
 
   // 选择项目类型
   console.log('项目类型:');
-  console.log('  1. tutorial  — 教程项目（跟随学习路线）');
-  console.log('  2. original  — 原创游戏（自由创作）');
-  console.log('  3. sandbox   — 实验沙盒（快速验证想法）');
+  console.log('  1. original  — 原创游戏（自由创作）');
+  console.log('  2. sandbox   — 实验沙盒（快速验证想法）');
 
-  const typeAnswer = await ask(rl, '\n选择项目类型 (1/2/3): ');
-  const typeMap: Record<string, ProjectType> = { '1': 'tutorial', '2': 'original', '3': 'sandbox' };
+  const typeAnswer = await ask(rl, '\n选择项目类型 (1/2): ');
+  const typeMap: Record<string, ProjectType> = { '1': 'original', '2': 'sandbox' };
   const projectType = typeMap[typeAnswer] ?? 'sandbox';
 
   // 项目名称

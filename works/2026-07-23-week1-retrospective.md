@@ -10,7 +10,7 @@
 | Git 提交 | 3 次（d4a599c → e7c3fb2 → 876f119） |
 | works/ 日志 | 16 篇 |
 | 仓库文件 | 1,336 个 |
-| 活跃项目 | 4 个（小红书、GAME-002、asset-pipeline、tutorial） |
+| 活跃项目 | 3 个（小红书、GAME-002、asset-pipeline） |
 
 ### 从零搭建了什么
 

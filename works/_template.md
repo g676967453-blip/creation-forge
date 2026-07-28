@@ -18,7 +18,7 @@
 
 ### 关联项目
 
-[这个产出属于哪个游戏项目：tutorial / originals / sandbox + 项目名称]
+[这个产出属于哪个游戏项目：originals / sandbox + 项目名称]
 
 ---
 

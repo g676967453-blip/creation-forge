@@ -20,7 +20,7 @@
 
 ### 关联项目
 
-`projects/GAME-002/` — 不属于现有的 `tutorial/originals/sandbox` 分类，自成一体。
+`projects/GAME-002/` — 不属于现有的 `originals/sandbox` 分类，自成一体。
 
 ---
 
@@ -111,7 +111,7 @@
 
 | 维度 | 造化坊标准 | GAME-002 现状 |
 |------|-----------|---------------|
-| 项目命名 | `projects/tutorial/`、`originals/`、`sandbox/` | `projects/GAME-002/`（自有编号体系） |
+| 项目命名 | `projects/originals/`、`sandbox/` | `projects/GAME-002/`（自有编号体系） |
 | 技术栈 | TypeScript + Phaser 3.80+ | Godot 4.6 + GDScript |
 | 包管理 | npm 11.x | 无（Godot 原生） |
 | README | 每个项目根目录 README.md | 无根目录 README（由 CLAUDE.md 充当入口） |
@@ -125,7 +125,7 @@
 ### 第一幕：遇到了什么问题
 
 - 核心问题：一个已有 20 天开发历史的 Godot 游戏项目，如何接入造化坊体系？
-- 为什么这是个问题：技术栈不同（Godot vs Phaser）、文档体系不同（全中文 vs 中英混合）、项目命名不同（GAME-002 vs tutorial/originals/sandbox）
+- 为什么这是个问题：技术栈不同（Godot vs Phaser）、文档体系不同（全中文 vs 中英混合）、项目命名不同（GAME-002 vs originals/sandbox）
 - 如果没有 AI 会怎样：需要手动梳理 60+ 份文档、35 个脚本、10 张 CSV，理解项目全貌至少半天
 
 ### 第二幕：AI 怎么协作解决的

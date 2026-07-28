@@ -60,7 +60,7 @@ creation-forge/                     # 项目根目录
 ├── 📁 projects/                    # 🚀 所有项目
 │   ├── GAME-002/                   # 开仙门（Godot 4.7 独立游戏）
 │   ├── xiaohongshu/                # 小红书自媒体内容创作
-│   ├── tutorial/                   # 教程项目（按需创建）
+
 │   ├── originals/                  # 原创游戏
 │   └── sandbox/                    # 实验沙盒
 │
@@ -108,7 +108,7 @@ import { clamp } from '../../../shared/utils/src/math';
 
 | 目录         | 用途                   | AI 模式偏向 |
 | ------------ | ---------------------- | ----------- |
-| `tutorial/`  | 结构化学习，有明确目标 | 导师模式    |
+
 | `originals/` | 独立创作，综合运用     | 协作者模式  |
 | `sandbox/`   | 快速实验，随时可丢弃   | 加速器模式  |
 

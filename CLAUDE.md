@@ -179,7 +179,7 @@ creation-forge/
 ├── projects/         ← 🚀 所有项目
 │   ├── GAME-002/     ← 🎮 开仙门（Godot 4.7 独立游戏）
 │   ├── xiaohongshu/  ← 📱 小红书自媒体内容创作
-│   ├── tutorial/     ← 教程项目（按难度编号）
+
 │   ├── originals/    ← 原创游戏
 │   └── sandbox/      ← 实验沙盒
 └── tools/            ← 🛠️ 开发工具脚本
@@ -191,7 +191,7 @@ creation-forge/
 
 ### 创建新游戏项目
 
-1. 确定项目类型（tutorial/original/sandbox）
+1. 确定项目类型（original/sandbox）
 2. 在 `projects/<type>/` 下创建目录
 3. 复制 `templates/game-phaser/` 作为起点
 4. 修改 package.json 中的项目名称
