@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>[功能名称]</title>
+<!--
+  开仙门 HTML 交互原型模板
+  用途：新功能 UI 原型的起始文件
+  规范：开仙门-UI设计规范 v1 + UI组件库
+  用法：复制此文件 → 重命名 → 改 [占位符] → 替换组件
+-->
+<style>
+/* ======== 设计 Token（从 开仙门-UI设计规范.md 复制） ======== */
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e;
+  --bg-elevated: #222228; --bg-overlay: rgba(0,0,0,0.55);
+  --surface-default: #1e1e24; --surface-hover: #2a2a32;
+  --surface-pressed: #16161c; --surface-disabled: #121218; --surface-input: #1a1a20;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0;
+  --text-disabled: #555568; --text-inverse: #1a1a1e;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --border-dashed: #2a2a36; --border-disabled: #1e1e28;
+  --quality-common: #8888a0; --quality-rare: #6699bb;
+  --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-hp-full: #4ecca3; --status-hp-mid: #ccaa44; --status-hp-low: #cc4444;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px;
+  --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400; --fw-light: 300;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px;
+  --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px; --sp-3xl: 64px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --glow-selected: 0 0 16px rgba(208,208,216,0.15);
+  --glow-legendary: 0 0 12px rgba(187,153,102,0.25);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-popup: 0 4px 24px rgba(0,0,0,0.6);
+  --shadow-inner: inset 0 1px 3px rgba(0,0,0,0.3);
+  --font-cn: 'Noto Sans SC', 'Alibaba PuHuiTi 55R', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+</style>
+</head>
+<body style="margin:0; padding:0; background:#1a1a1a; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+
+<!--
+  ======== Pixso 图层结构规则 ========
+  DOM 顺序 = Pixso 图层树顺序（前面的 DOM → 底层，后面的 DOM → 顶层）
+  但 z-index 反向：
+    - Bg 层：z-index:1（视觉底层）
+    - Mask 层：z-index:2（可选遮罩）
+    - Root 层：z-index:3（视觉顶层 = 界面内容）
+  因此 HTML 顺序：Bg → Mask → Root（全部 absolute 定位）
+-->
+
+<!-- @pixso [ScreenName]Ui -->
+<section style="width:1280px; height:720px; position:relative; overflow:hidden; flex-shrink:0;">
+
+  <!-- @pixso Bg — 背景层，DOM第一 = Pixso底层 = 视觉底层 -->
+  <div style="position:absolute; inset:0; z-index:1; background:var(--bg-primary);"></div>
+
+  <!-- @pixso Mask — 可选遮罩层 -->
+  <!-- <div style="position:absolute; inset:0; z-index:2; background:var(--bg-overlay);"></div> -->
+
+  <!-- @pixso Root — 内容层，DOM最后 = Pixso顶层 = 视觉顶层 -->
+  <main style="position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:var(--sp-3xl) var(--sp-3xl);">
+
+    <!-- @pixso TitleText -->
+    <p style="margin:0 0 var(--sp-2xs) 0; font-family:var(--font-cn); font-size:var(--fs-h1); font-weight:var(--fw-bold); color:var(--text-primary); letter-spacing:6px; text-align:center;">[界面标题]</p>
+
+    <!-- @pixso Divider -->
+    <div style="width:48px; height:2px; background:var(--border-subtle); margin-bottom:var(--sp-lg);"></div>
+
+    <!-- @pixso HintText -->
+    <p style="margin:0 0 var(--sp-2xl) 0; font-family:var(--font-cn); font-size:var(--fs-body); color:var(--text-secondary); text-align:center; max-width:600px; line-height:1.6;">[提示/描述文字]</p>
+
+    <!--
+      ======== 从组件库复制组件 ========
+      打开 开仙门-UI组件库.html → 找到需要的组件 → 复制 HTML + CSS class → 粘贴到此处
+      可用 class（需在 <style> 中引入组件库的 CSS）：
+        .btn .btn-primary .btn-secondary .btn-small
+        .card .card-select .card-thumb
+        .slot .slot-item .slot-skill
+        .hp-bar .hp-bar-fill .exp-bar .exp-bar-fill
+        .panel .panel-popup .panel-side
+        .text-display .text-h1 .text-h2 .text-body .text-label .text-caption .text-small .text-section-label
+        .placeholder-illus .placeholder-icon
+        .divider
+        .quality-legendary .quality-epic .quality-rare .quality-common
+        .selected .locked .empty
+    -->
+
+    <!-- ===== [在此粘贴组件] ===== -->
+
+  </main>
+
+</section>
+
+</body>
+</html>

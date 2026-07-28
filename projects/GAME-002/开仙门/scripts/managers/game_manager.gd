@@ -1,3 +1,27 @@
+##
+## [功能简报] 器灵选择 — GameManager 侧改动
+## 简报：2026-07-27-器灵选择-功能简报.md
+##
+## 本功能在 GameManager 中的改动：
+##   1. INTRO 状态结束后 → 切换到 MAIN_PEAK_SELECT
+##   2. 接收 start_game_requested 信号 → 绑定器灵 → 切换到 PREPARATION
+##
+## 涉及信号（本功能相关）：
+##   接收 — intro_finished (from IntroScreen) → _on_intro_finished()
+##   接收 — start_game_requested(profile_id) (from MainPeakSelectPanel) → _on_start_game_requested()
+##
+## 数据：
+##   读 — DataManager.get_spirit_profile(id)
+##   写 — main_peak.set_form(icon_path) / main_peak.set_meta("spirit_profile", id)
+##
+## 流程：
+##   INTRO 状态 → intro_finished 信号 → _on_intro_finished()
+##   → set_state(MAIN_PEAK_SELECT)
+##   → 玩家在面板中确认 → start_game_requested 信号
+##   → _on_start_game_requested(profile_id)
+##     → 查 spirit_profile_config → set_form 加载图标
+##     → set_meta 记录绑定 → set_state(PREPARATION)
+##
 extends Node
 class_name GameManager
 
