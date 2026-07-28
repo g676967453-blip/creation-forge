@@ -1,7 +1,13 @@
 // Stitch MCP — 横屏器灵选择界面（匹配开仙门实际设计）
 import { spawn } from 'child_process';
 
-const API_KEY = 'GOOGLE_API_KEY_REDACTED';
+// 从环境变量读取 API Key，不再硬编码
+// 使用前请设置：export GOOGLE_API_KEY="your-key-here"
+const API_KEY = process.env.GOOGLE_API_KEY;
+if (!API_KEY) {
+  console.error('错误: 请设置 GOOGLE_API_KEY 环境变量');
+  process.exit(1);
+}
 const childEnv = { ...process.env, GOOGLE_API_KEY: API_KEY };
 
 const proc = spawn('cmd.exe', ['/c', 'npx.cmd', '-y', 'mcp-stitch'], { env: childEnv, stdio: ['pipe', 'pipe', 'pipe'] });
