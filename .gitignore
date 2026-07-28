@@ -13,6 +13,10 @@ coverage/
 .godot/
 export/
 
+# AI 工具集成
+.libtv/
+_*_output/
+
 # IDE
 .idea/
 *.swp
