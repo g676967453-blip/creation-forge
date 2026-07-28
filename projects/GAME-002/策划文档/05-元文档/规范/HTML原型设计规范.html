@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>HTML 原型图设计规范 — 视觉指南</title>
+<style>
+/* ======== 本文档自身的样式（仅用于展示布局，不是规范的一部分） ======== */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#0a0a0f; color:#c0c0cc;
+  font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+  font-size:14px; font-weight:400;
+  line-height:1.6;
+}
+.container { max-width:1100px; margin:0 auto; padding:48px 40px 80px; }
+
+/* 文档标题区 */
+.doc-header { text-align:center; padding:60px 0 48px; border-bottom:1px solid #2a2a36; margin-bottom:56px; }
+.doc-header h1 { font-size:32px; font-weight:700; color:#e8e8f0; letter-spacing:6px; margin-bottom:12px; }
+.doc-header p  { font-size:13px; color:#8888a0; letter-spacing:2px; }
+.doc-header .meta { margin-top:16px; font-size:11px; color:#555568; }
+.doc-header .meta a { color:#6699bb; }
+
+/* 分区标题 */
+.section-title { font-size:20px; font-weight:600; color:#e8e8f0; letter-spacing:2px; margin:56px 0 8px; padding-bottom:12px; border-bottom:1px solid #2a2a36; }
+.section-desc  { font-size:13px; color:#8888a0; margin-bottom:28px; }
+
+/* 子标题 */
+.sub-title { font-size:14px; font-weight:600; color:#c0c0cc; margin:32px 0 12px; text-transform:uppercase; letter-spacing:2px; }
+
+/* 色板 */
+.swatch-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+.swatch-item { width:100px; }
+.swatch-box { width:100px; height:48px; border-radius:2px; border:1px solid #2a2a36; margin-bottom:4px; }
+.swatch-name { font-size:10px; color:#8888a0; display:block; }
+.swatch-hex  { font-size:10px; color:#555568; display:block; font-family:'SF Mono','Consolas',monospace; }
+
+/* 组件展示行 */
+.comp-row { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-end; margin-bottom:16px; }
+.comp-row-center { align-items:center; }
+
+/* 代码块 */
+.code-block { background:#141416; border:1px solid #2a2a36; border-radius:4px; padding:14px 18px; margin:8px 0 24px; font-family:'SF Mono','Consolas',monospace; font-size:10px; color:#8888a0; white-space:pre; overflow-x:auto; line-height:1.7; max-height:360px; overflow-y:auto; }
+.code-block span.tag { color:#6699bb; }
+.code-block span.attr { color:#ccaa44; }
+.code-block span.val  { color:#4ecca3; }
+.code-block span.com { color:#555568; font-style:italic; }
+
+/* 标签 */
+.badge { display:inline-block; padding:2px 8px; border-radius:2px; font-size:9px; font-weight:600; letter-spacing:1px; }
+.badge-state { background:#1e1e28; color:#8888a0; border:1px solid #2a2a36; }
+.badge-code  { background:#141416; color:#6699bb; border:1px solid #2a2a36; margin-left:6px; }
+
+/* 分类标签行 */
+.tag-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+
+/* 示例区背景（模拟画布中的样子） */
+.demo-canvas { background:linear-gradient(180deg, #1a1a1c 0%, #141416 50%, #1a1a1c 100%); border:1px solid #2a2a36; border-radius:4px; padding:32px; margin-bottom:12px; }
+
+/* 布局示例 */
+.layout-demo { width:100%; height:360px; background:linear-gradient(180deg, #1a1a1c 0%, #141416 50%, #1a1a1c 100%); border:1px solid #2a2a36; border-radius:4px; position:relative; overflow:hidden; margin-bottom:12px; }
+
+/* 分隔组件 */
+.comp-divider { width:48px; height:2px; background:#555568; margin:0 0 8px 0; }
+
+/* 响应式折叠 */
+@media (max-width:800px) {
+  .container { padding:24px 16px 48px; }
+  .comp-row { gap:12px; }
+  .swatch-item { width:72px; }
+  .swatch-box { width:72px; height:36px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ======== 文档头部 ======== -->
+<header class="doc-header">
+  <h1>HTML 原型图设计规范</h1>
+  <p>GAME-002 开仙门 · 策划案专用 · 视觉指南 v1.0</p>
+  <p class="meta">
+    2026-07-28 ·
+    <a href="./HTML原型设计规范.md">📄 MD 规范文档</a> ·
+    设计基准：<a href="../../../ui-prototypes/器灵选择.html">器灵选择.html</a>
+  </p>
+</header>
+
+<!-- ======== 使用说明 ======== -->
+<p style="font-size:13px; color:#8888a0; margin-bottom:40px; line-height:1.8;">
+  👇 本页面展示策划案中所有可用组件的<strong style="color:#c0c0cc;">渲染效果</strong>。
+  每个组件下方附有<strong style="color:#c0c0cc;">内联样式代码</strong>，可直接复制粘贴到你的原型 HTML 中。
+  所有代码均为自包含，不依赖外部 CSS。
+</p>
+
+<!-- ================================================================================== -->
+<!-- 1. 色彩系统 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">1. 色彩系统</h2>
+<p class="section-desc">策划案原型中直接使用 hex 值。以下是完整的色值参考。</p>
+
+<h3 class="sub-title">背景色阶</h3>
+<div class="swatch-grid">
+  <div class="swatch-item"><div class="swatch-box" style="background:#0a0a0f;"></div><span class="swatch-name">最暗底</span><span class="swatch-hex">#0a0a0f</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#141416;"></div><span class="swatch-name">主背景</span><span class="swatch-hex">#141416</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a;"></div><span class="swatch-name">内容表面</span><span class="swatch-hex">#1a1a1a</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1e1e1e;"></div><span class="swatch-name">高亮表面</span><span class="swatch-hex">#1e1e1e</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#222222;"></div><span class="swatch-name">更高亮</span><span class="swatch-hex">#222222</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#252525;"></div><span class="swatch-name">输入区</span><span class="swatch-hex">#252525</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#121212;"></div><span class="swatch-name">锁定区</span><span class="swatch-hex">#121212</span></div>
+</div>
+
+<h3 class="sub-title">文字色阶</h3>
+<div class="swatch-grid">
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:#e0e0e0;">标题</div><span class="swatch-name">主标题</span><span class="swatch-hex">#e0e0e0</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:13px; color:#aaaaaa;">正文</div><span class="swatch-name">正文</span><span class="swatch-hex">#aaaaaa</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:12px; color:#888888;">标签</div><span class="swatch-name">辅助</span><span class="swatch-hex">#888888</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:11px; color:#777777;">次级</div><span class="swatch-name">次级</span><span class="swatch-hex">#777777</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:11px; color:#666666;">说明</div><span class="swatch-name">说明</span><span class="swatch-hex">#666666</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#555555;">禁用</div><span class="swatch-name">禁用</span><span class="swatch-hex">#555555</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#1a1a1a; display:flex; align-items:center; justify-content:center; font-size:10px; color:#444444;">占位</div><span class="swatch-name">占位</span><span class="swatch-hex">#444444</span></div>
+</div>
+
+<h3 class="sub-title">边框色阶</h3>
+<div class="swatch-grid">
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #cccccc; background:#1a1a1a;"></div><span class="swatch-name">激活/选中</span><span class="swatch-hex">#cccccc</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #3a3a3a; background:#1a1a1a;"></div><span class="swatch-name">默认边框</span><span class="swatch-hex">#3a3a3a</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #444444; background:#1a1a1a;"></div><span class="swatch-name">一般边框</span><span class="swatch-hex">#444444</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="border:3px dashed #2a2a2a; background:#1a1a1a;"></div><span class="swatch-name">虚线边框</span><span class="swatch-hex">#2a2a2a</span></div>
+</div>
+
+<h3 class="sub-title">品质色</h3>
+<div class="swatch-grid">
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #bb9966; background:#1a1a1a;"></div><span class="swatch-name">传说</span><span class="swatch-hex">#bb9966</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #9977bb; background:#1a1a1a;"></div><span class="swatch-name">史诗</span><span class="swatch-hex">#9977bb</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #6699bb; background:#1a1a1a;"></div><span class="swatch-name">稀有</span><span class="swatch-hex">#6699bb</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="border:3px solid #777777; background:#1a1a1a;"></div><span class="swatch-name">普通</span><span class="swatch-hex">#777777</span></div>
+</div>
+
+<h3 class="sub-title">状态色</h3>
+<div class="swatch-grid">
+  <div class="swatch-item"><div class="swatch-box" style="background:#4ecca3;"></div><span class="swatch-name">成功/满血</span><span class="swatch-hex">#4ecca3</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#ccaa44;"></div><span class="swatch-name">警告/半血</span><span class="swatch-hex">#ccaa44</span></div>
+  <div class="swatch-item"><div class="swatch-box" style="background:#cc4444;"></div><span class="swatch-name">危险/残血</span><span class="swatch-hex">#cc4444</span></div>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 2. 字体系统 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">2. 字体系统</h2>
+<p class="section-desc">字体栈：<code style="color:#6699bb;">'Noto Sans SC', 'Alibaba PuHuiTi 55R', sans-serif</code></p>
+
+<div style="background:#141416; border:1px solid #2a2a36; border-radius:4px; padding:32px;">
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:28px; font-weight:700; color:#e0e0e0; letter-spacing:6px; margin-bottom:4px;">选择器灵</p>
+  <p style="font-size:10px; color:#555568; margin-bottom:20px;">28px / 700 / letter-spacing:6px → 页面大标题</p>
+
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:16px; font-weight:700; color:#1a1a1a; letter-spacing:6px; background:#cccccc; display:inline-block; padding:4px 12px; border-radius:2px; margin-bottom:4px;">开 始 游 戏</p>
+  <p style="font-size:10px; color:#555568; margin-bottom:20px;">16px / 700 / letter-spacing:6px → 主按钮文字</p>
+
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:13px; font-weight:400; color:#c0c0cc; margin-bottom:2px;">蕴藏万界知识的古书器灵。修复神器，重开仙门。</p>
+  <p style="font-size:10px; color:#555568; margin-bottom:20px;">13px / 400 → 描述正文</p>
+
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; font-weight:400; color:#888888; letter-spacing:2px; margin-bottom:2px;">携带道具</p>
+  <p style="font-size:10px; color:#555568; margin-bottom:20px;">12px / 400 / letter-spacing:2px → 区域标签</p>
+
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; font-weight:400; color:#aaaaaa; margin-bottom:2px;">轮回庇护</p>
+  <p style="font-size:10px; color:#555568; margin-bottom:20px;">11px / 400 → 技能名称</p>
+
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; font-weight:400; color:#999999; margin-bottom:2px;">古卷残页</p>
+  <p style="font-size:10px; color:#555568; margin-bottom:20px;">10px / 400 → 道具名称</p>
+
+  <p style="font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:9px; font-weight:400; color:#777777; margin-bottom:2px;">已觉醒</p>
+  <p style="font-size:10px; color:#555568;">9px / 400 → 卡片状态标注</p>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 3. 按钮 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">3. 按钮</h2>
+
+<h3 class="sub-title">主按钮 <span class="badge badge-state">200×48</span></h3>
+<div class="demo-canvas">
+<div class="comp-row comp-row-center">
+  <!-- 可用态 -->
+  <div>
+    <div style="width:200px; height:48px; display:flex; align-items:center; justify-content:center; background:#cccccc; border-radius:3px; cursor:pointer;">
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:16px; font-weight:700; color:#1a1a1a; letter-spacing:6px;">开 始 游 戏</p>
+    </div>
+    <p style="margin:6px 0 0; font-size:10px; color:#555568; text-align:center;">可用态</p>
+  </div>
+  <!-- 禁用态 -->
+  <div>
+    <div style="width:200px; height:48px; display:flex; align-items:center; justify-content:center; background:#333333; border-radius:3px; cursor:not-allowed; opacity:0.5;">
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:16px; font-weight:700; color:#666666; letter-spacing:6px;">开 始 游 戏</p>
+    </div>
+    <p style="margin:6px 0 0; font-size:10px; color:#555568; text-align:center;">禁用态</p>
+  </div>
+</div>
+</div>
+<div class="code-block">&lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"width:200px; height:48px; display:flex; align-items:center; justify-content:center;
+  background:#cccccc; border-radius:3px; cursor:pointer;"</span>&gt;
+  &lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+    font-size:16px; font-weight:700; color:#1a1a1a; letter-spacing:6px;"</span>&gt;开 始 游 戏&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;</div>
+
+<h3 class="sub-title">次要按钮 <span class="badge badge-state">160×40</span></h3>
+<div class="demo-canvas">
+<div class="comp-row comp-row-center">
+  <div style="width:160px; height:40px; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #3a3a3a; border-radius:3px; cursor:pointer;">
+    <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; font-weight:600; color:#c0c0cc; letter-spacing:4px;">返回</p>
+  </div>
+</div>
+</div>
+<div class="code-block">&lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"width:160px; height:40px; display:flex; align-items:center; justify-content:center;
+  background:transparent; border:1px solid #3a3a3a; border-radius:3px; cursor:pointer;"</span>&gt;
+  &lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"margin:0; font-family:'...'; font-size:12px; font-weight:600;
+    color:#c0c0cc; letter-spacing:4px;"</span>&gt;返回&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;</div>
+
+<h3 class="sub-title">小按钮 <span class="badge badge-state">120×32</span></h3>
+<div class="demo-canvas">
+<div class="comp-row comp-row-center">
+  <div style="width:120px; height:32px; display:flex; align-items:center; justify-content:center; background:#1e1e1e; border:1px solid #3a3a3a; border-radius:2px; cursor:pointer;">
+    <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; font-weight:600; color:#c0c0cc; letter-spacing:2px;">确认</p>
+  </div>
+</div>
+</div>
+<div class="code-block">&lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"width:120px; height:32px; display:flex; align-items:center; justify-content:center;
+  background:#1e1e1e; border:1px solid #3a3a3a; border-radius:2px; cursor:pointer;"</span>&gt;
+  &lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"margin:0; font-family:'...'; font-size:11px; font-weight:600;
+    color:#c0c0cc; letter-spacing:2px;"</span>&gt;确认&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;</div>
+
+<!-- ================================================================================== -->
+<!-- 4. 道具槽位 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">4. 道具槽位 <span class="badge badge-state">72×72</span></h2>
+
+<div class="demo-canvas">
+<div class="comp-row" style="align-items:flex-start;">
+  <!-- 传说 -->
+  <div>
+    <div style="width:72px; height:72px; background:#222222; border:2px solid #bb9966; border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;">
+      <svg width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="#999999" stroke-width="1.5"><rect x="3" y="5" width="12" height="10" rx="1"/><path d="M6 5V3h6v2"/></svg>
+      <div style="position:absolute; top:4px; right:4px; width:6px; height:6px; background:#bb9966; border-radius:50%;"></div>
+    </div>
+    <p style="width:72px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#999999;">古卷残页</p>
+    <p style="margin:2px 0 0; font-size:9px; color:#555568; text-align:center;">传说</p>
+  </div>
+  <!-- 史诗 -->
+  <div>
+    <div style="width:72px; height:72px; background:#222222; border:2px solid #9977bb; border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;">
+      <svg width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="#999999" stroke-width="1.5"><polygon points="9,1 12,6 17,7 13,11 14,17 9,14 4,17 5,11 1,7 6,6"/></svg>
+      <div style="position:absolute; top:4px; right:4px; width:6px; height:6px; background:#9977bb; border-radius:50%;"></div>
+    </div>
+    <p style="width:72px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#999999;">星辰之核</p>
+    <p style="margin:2px 0 0; font-size:9px; color:#555568; text-align:center;">史诗</p>
+  </div>
+  <!-- 稀有 -->
+  <div>
+    <div style="width:72px; height:72px; background:#222222; border:2px solid #6699bb; border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;">
+      <svg width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="#999999" stroke-width="1.5"><circle cx="9" cy="9" r="5"/><path d="M9 6v3l2 2"/></svg>
+      <div style="position:absolute; top:4px; right:4px; width:6px; height:6px; background:#6699bb; border-radius:50%;"></div>
+    </div>
+    <p style="width:72px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#888888;">时之沙漏</p>
+    <p style="margin:2px 0 0; font-size:9px; color:#555568; text-align:center;">稀有</p>
+  </div>
+  <!-- 普通 -->
+  <div>
+    <div style="width:72px; height:72px; background:#222222; border:2px solid #777777; border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;">
+      <svg width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="#999999" stroke-width="1.5"><rect x="2" y="2" width="14" height="14" rx="2"/></svg>
+      <div style="position:absolute; top:4px; right:4px; width:6px; height:6px; background:#777777; border-radius:50%;"></div>
+    </div>
+    <p style="width:72px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#888888;">灵石碎片</p>
+    <p style="margin:2px 0 0; font-size:9px; color:#555568; text-align:center;">普通</p>
+  </div>
+  <!-- 空槽 -->
+  <div>
+    <div style="width:72px; height:72px; background:#1a1a1a; border:1px dashed #2a2a2a; border-radius:3px; display:flex; align-items:center; justify-content:center;">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#333333" stroke-width="1.5"><line x1="9" y1="3" x2="9" y2="15"/><line x1="3" y1="9" x2="15" y2="9"/></svg>
+    </div>
+    <p style="width:72px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#444444;">空槽位</p>
+    <p style="margin:2px 0 0; font-size:9px; color:#555568; text-align:center;">空槽</p>
+  </div>
+  <!-- 锁定 -->
+  <div>
+    <div style="width:72px; height:72px; background:#121212; border:1px dashed #2a2a2a; border-radius:3px; display:flex; align-items:center; justify-content:center; opacity:0.4;">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#333333" stroke-width="1.5"><rect x="5" y="7" width="8" height="7" rx="1"/><path d="M7 7V5a2 2 0 0 1 4 0v2"/></svg>
+    </div>
+    <p style="width:72px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#444444;">???</p>
+    <p style="margin:2px 0 0; font-size:9px; color:#555568; text-align:center;">锁定</p>
+  </div>
+</div>
+</div>
+<div class="code-block"><span class="com">&lt;!-- 传说品质道具槽 — 复制下面代码，修改 SVG 图标和文字即可 --&gt;</span>
+&lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"width:72px; height:72px; background:#222222; border:2px solid #bb9966;
+  border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;"</span>&gt;
+  <span class="com">&lt;!-- 道具图标 SVG --&gt;</span>
+  &lt;<span class="tag">svg</span> <span class="attr">width</span>=<span class="val">"22"</span> <span class="attr">height</span>=<span class="val">"22"</span> <span class="attr">viewBox</span>=<span class="val">"0 0 18 18"</span> <span class="attr">fill</span>=<span class="val">"none"</span> <span class="attr">stroke</span>=<span class="val">"#999999"</span> <span class="attr">stroke-width</span>=<span class="val">"1.5"</span>&gt;...&lt;/<span class="tag">svg</span>&gt;
+  <span class="com">&lt;!-- 品质圆点 --&gt;</span>
+  &lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"position:absolute; top:4px; right:4px; width:6px; height:6px;
+    background:#bb9966; border-radius:50%;"</span>&gt;&lt;/<span class="tag">div</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+<span class="com">&lt;!-- 名称在槽位外部 --&gt;</span>
+&lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"width:72px; margin:4px 0 0; text-align:center;
+  font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+  font-size:10px; color:#999999;"</span>&gt;古卷残页&lt;/<span class="tag">p</span>&gt;
+
+<span class="com">&lt;!-- 品质色速查：传说=#bb9966  史诗=#9977bb  稀有=#6699bb  普通=#777777 --&gt;
+&lt;!-- 空槽：background:#1a1a1a; border:1px dashed #2a2a2a;  + 号 SVG --&gt;
+&lt;!-- 锁定：background:#121212; opacity:0.4; 锁 SVG --&gt;</span></div>
+
+<!-- ================================================================================== -->
+<!-- 5. 技能槽位 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">5. 技能槽位 <span class="badge badge-state">200×56</span></h2>
+
+<div class="demo-canvas">
+<div class="comp-row" style="align-items:flex-start;">
+  <div>
+    <div style="width:200px; height:56px; background:#1e1e1e; border:1px solid #3a3a3a; border-radius:3px; display:flex; align-items:center; padding:0 14px; gap:10px;">
+      <div style="width:30px; height:30px; background:#252525; border:1px solid #444444; border-radius:3px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#888888" stroke-width="1.5"><polygon points="7,1 13,13 1,13"/><circle cx="7" cy="9" r="2"/></svg>
+      </div>
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#666666; line-height:1.5;">战斗失败免死<br>回经营，V0.1无惩罚</p>
+    </div>
+    <p style="width:200px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#aaaaaa;">轮回庇护</p>
+  </div>
+  <div>
+    <div style="width:200px; height:56px; background:#1e1e1e; border:1px solid #3a3a3a; border-radius:3px; display:flex; align-items:center; padding:0 14px; gap:10px;">
+      <div style="width:30px; height:30px; background:#252525; border:1px solid #444444; border-radius:3px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#888888" stroke-width="1.5"><rect x="2" y="2" width="10" height="10" rx="2"/><path d="M5 7l2 2 3-4"/></svg>
+      </div>
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#666666; line-height:1.5;">经验加成 +20%<br>灵气加成 +20%</p>
+    </div>
+    <p style="width:200px; margin:4px 0 0; text-align:center; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#aaaaaa;">万界知识</p>
+  </div>
+</div>
+</div>
+<div class="code-block">&lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"width:200px; height:56px; background:#1e1e1e; border:1px solid #3a3a3a;
+  border-radius:3px; display:flex; align-items:center; padding:0 14px; gap:10px;"</span>&gt;
+  <span class="com">&lt;!-- 技能图标 30×30 --&gt;</span>
+  &lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"width:30px; height:30px; background:#252525; border:1px solid #444444;
+    border-radius:3px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"</span>&gt;
+    &lt;<span class="tag">svg</span> <span class="attr">...</span>&gt;...&lt;/<span class="tag">svg</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+  &lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"margin:0; font-family:'...'; font-size:11px; color:#666666; line-height:1.5;"</span>&gt;描述&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+<span class="com">&lt;!-- 名称在槽位外部 --&gt;</span>
+&lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"width:200px; margin:4px 0 0; text-align:center;
+  font-family:'...'; font-size:11px; color:#aaaaaa;"</span>&gt;技能名称&lt;/<span class="tag">p</span>&gt;</div>
+
+<!-- ================================================================================== -->
+<!-- 6. 缩略卡片 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">6. 缩略卡片 <span class="badge badge-state">120×72</span></h2>
+
+<div class="demo-canvas">
+<div class="comp-row">
+  <!-- 选中态 -->
+  <div>
+    <figure style="width:120px; height:72px; display:flex; align-items:center; justify-content:center; margin:0; border:2px solid #cccccc; border-radius:3px; background:#1e1e1e; cursor:pointer;">
+      <div style="text-align:center;">
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:13px; font-weight:600; color:#e0e0e0;">百世书</p>
+        <p style="margin:1px 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:9px; color:#777777;">已觉醒</p>
+      </div>
+    </figure>
+    <p style="margin:6px 0 0; font-size:10px; color:#555568; text-align:center;">选中态</p>
+  </div>
+  <!-- 锁定态 -->
+  <div>
+    <figure style="width:120px; height:72px; display:flex; align-items:center; justify-content:center; margin:0; border:1px dashed #2a2a2a; border-radius:3px; background:#121212; opacity:0.5; cursor:not-allowed;">
+      <div style="text-align:center;">
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:13px; font-weight:600; color:#555555;">???</p>
+        <p style="margin:1px 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:9px; color:#333333;">未解锁</p>
+      </div>
+    </figure>
+    <p style="margin:6px 0 0; font-size:10px; color:#555568; text-align:center;">锁定态</p>
+  </div>
+</div>
+</div>
+<div class="code-block"><span class="com">&lt;!-- 选中态 — 亮边框 --&gt;</span>
+&lt;<span class="tag">figure</span> <span class="attr">style</span>=<span class="val">"width:120px; height:72px; display:flex; align-items:center; justify-content:center;
+  margin:0; border:2px solid #cccccc; border-radius:3px; background:#1e1e1e; cursor:pointer;"</span>&gt;
+  &lt;<span class="tag">div</span> <span class="attr">style</span>=<span class="val">"text-align:center;"</span>&gt;
+    &lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"...font-size:13px; font-weight:600; color:#e0e0e0;"</span>&gt;百世书&lt;/<span class="tag">p</span>&gt;
+    &lt;<span class="tag">p</span> <span class="attr">style</span>=<span class="val">"...font-size:9px; color:#777777;"</span>&gt;已觉醒&lt;/<span class="tag">p</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+&lt;/<span class="tag">figure</span>&gt;
+
+<span class="com">&lt;!-- 锁定态 — 虚线 + 半透明 + 禁用光标 --&gt;</span>
+&lt;<span class="tag">figure</span> <span class="attr">style</span>=<span class="val">"...border:1px dashed #2a2a2a; background:#121212; opacity:0.5; cursor:not-allowed;"</span>&gt;
+  ... ??? / 未解锁
+&lt;/<span class="tag">figure</span>&gt;</div>
+
+<!-- ================================================================================== -->
+<!-- 7. 大卡片 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">7. 大卡片 <span class="badge badge-state">240×320</span></h2>
+
+<div class="demo-canvas">
+<div class="comp-row">
+  <figure style="width:240px; height:320px; display:flex; align-items:center; justify-content:center; margin:0; border:2px solid #d0d0d8; border-radius:8px; background:#1a1a1e; box-shadow:0 0 16px rgba(208,208,216,0.15); cursor:pointer;">
+    <div style="text-align:center;">
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:28px; font-weight:700; color:#e0e0e0; letter-spacing:4px;">百 世 书</p>
+      <p style="margin:4px 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; color:#888888;">古书器灵</p>
+    </div>
+  </figure>
+</div>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 8. 插图占位 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">8. 插图占位 <span class="badge badge-state">320×400</span></h2>
+
+<div class="demo-canvas">
+<div style="width:320px; height:400px; border:1px dashed #3a3a3a; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative;">
+  <div style="width:48px; height:48px; border:1px solid #444444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#555555" stroke-width="1.5"><circle cx="10" cy="7" r="4"/><path d="M2 18c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+  </div>
+  <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:13px; color:#555555; text-align:center; letter-spacing:2px;">器灵插图</p>
+  <p style="margin:4px 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:11px; color:#3a3a3a; text-align:center;">128×160 像素艺术</p>
+</div>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 9. 辅助元素 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">9. 辅助元素</h2>
+
+<h3 class="sub-title">分割线</h3>
+<div class="demo-canvas">
+<div style="display:flex; gap:40px; align-items:center;">
+  <div>
+    <div style="width:48px; height:2px; background:#555555;"></div>
+    <p style="margin:4px 0 0; font-size:10px; color:#555568;">48×2</p>
+  </div>
+  <div>
+    <div style="width:60px; height:2px; background:#3a3a3a;"></div>
+    <p style="margin:4px 0 0; font-size:10px; color:#555568;">60×2</p>
+  </div>
+</div>
+</div>
+
+<h3 class="sub-title">区域标签</h3>
+<div class="demo-canvas">
+  <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; color:#888888; letter-spacing:2px;">携带道具</p>
+  <p style="margin:4px 0 0; font-size:10px; color:#555568;">12px / #888888 / letter-spacing:2px</p>
+</div>
+
+<h3 class="sub-title">品质圆点 <span class="badge badge-state">6×6</span></h3>
+<div class="demo-canvas">
+<div style="display:flex; gap:16px; align-items:center;">
+  <div style="display:flex; align-items:center; gap:4px;"><div style="width:6px; height:6px; background:#bb9966; border-radius:50%;"></div><span style="font-size:10px; color:#888888;">传说</span></div>
+  <div style="display:flex; align-items:center; gap:4px;"><div style="width:6px; height:6px; background:#9977bb; border-radius:50%;"></div><span style="font-size:10px; color:#888888;">史诗</span></div>
+  <div style="display:flex; align-items:center; gap:4px;"><div style="width:6px; height:6px; background:#6699bb; border-radius:50%;"></div><span style="font-size:10px; color:#888888;">稀有</span></div>
+  <div style="display:flex; align-items:center; gap:4px;"><div style="width:6px; height:6px; background:#777777; border-radius:50%;"></div><span style="font-size:10px; color:#888888;">普通</span></div>
+</div>
+</div>
+
+<h3 class="sub-title">箭头 <span class="badge badge-state">28×28</span></h3>
+<div class="demo-canvas">
+<div style="display:flex; gap:12px; align-items:center;">
+  <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#555555" stroke-width="1.5"><polyline points="8,2 3,6 8,10"/></svg>
+  </div>
+  <div style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#555555" stroke-width="1.5"><polyline points="4,2 9,6 4,10"/></svg>
+  </div>
+  <span style="font-size:10px; color:#888888;">← 左 / 右 →</span>
+</div>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 10. 进度条 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">10. 进度条</h2>
+
+<div class="demo-canvas">
+<h3 class="sub-title" style="margin-top:0;">HP 条 — 面板版 <span class="badge badge-state">200×12</span></h3>
+<div style="display:flex; gap:16px; flex-wrap:wrap;">
+  <div>
+    <div style="width:200px; height:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:2px; overflow:hidden;">
+      <div style="width:85%; height:100%; background:#4ecca3; border-radius:1px;"></div>
+    </div>
+    <p style="margin:4px 0 0; font-size:10px; color:#555568; text-align:center;">满血 85%</p>
+  </div>
+  <div>
+    <div style="width:200px; height:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:2px; overflow:hidden;">
+      <div style="width:45%; height:100%; background:#ccaa44; border-radius:1px;"></div>
+    </div>
+    <p style="margin:4px 0 0; font-size:10px; color:#555568; text-align:center;">半血 45%</p>
+  </div>
+  <div>
+    <div style="width:200px; height:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:2px; overflow:hidden;">
+      <div style="width:18%; height:100%; background:#cc4444; border-radius:1px;"></div>
+    </div>
+    <p style="margin:4px 0 0; font-size:10px; color:#555568; text-align:center;">残血 18%</p>
+  </div>
+</div>
+
+<h3 class="sub-title">HP 条 — 头顶版 <span class="badge badge-state">120×8</span></h3>
+<div style="width:120px; height:8px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:1px; overflow:hidden;">
+  <div style="width:60%; height:100%; background:#4ecca3; border-radius:1px;"></div>
+</div>
+
+<h3 class="sub-title">EXP 条 <span class="badge badge-state">200×8</span></h3>
+<div style="width:200px; height:8px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:2px; overflow:hidden;">
+  <div style="width:60%; height:100%; background:#4ecca3; border-radius:1px;"></div>
+</div>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 11. 完整示例 — 器灵选择界面 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">11. 完整示例：左右分栏布局</h2>
+<p class="section-desc">以下是按本规范组装的一个完整界面，展示所有组件在真实场景中的组合效果。</p>
+
+<div class="layout-demo" style="height:480px;">
+
+  <div style="position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, #1a1a1c 0%, #141416 50%, #1a1a1c 100%);"></div>
+
+  <main style="position:absolute; inset:0; z-index:3; display:flex;">
+
+    <!-- 左侧 -->
+    <aside style="width:460px; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 30px;">
+      <div style="width:280px; height:320px; border:1px dashed #3a3a3a; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:20px;">
+        <div style="width:40px; height:40px; border:1px solid #444444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#555555" stroke-width="1.5"><circle cx="10" cy="7" r="4"/><path d="M2 18c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </div>
+        <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:13px; color:#555555; letter-spacing:2px;">器灵插图</p>
+      </div>
+      <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:28px; font-weight:700; color:#e0e0e0; letter-spacing:4px;">百 世 书</p>
+      <p style="margin:4px 0 0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; color:#666666; letter-spacing:2px;">ANCIENT TOME SPIRIT</p>
+    </aside>
+
+    <!-- 右侧 -->
+    <section style="flex:1; height:100%; display:flex; flex-direction:column; justify-content:center; padding:40px 50px 40px 0;">
+      <p style="margin:0 0 4px; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:28px; font-weight:700; color:#e0e0e0; letter-spacing:6px;">选择器灵</p>
+      <div style="width:48px; height:2px; background:#555555; margin-bottom:16px;"></div>
+      <p style="margin:0 0 24px; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:13px; color:#777777; line-height:1.8;">蕴藏万界知识的古书器灵。<br>修复神器，重开仙门。</p>
+
+      <p style="margin:0 0 10px; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; color:#888888; letter-spacing:2px;">携带道具</p>
+      <div style="display:flex; gap:10px; margin-bottom:20px;">
+        <div style="width:60px; height:60px; background:#222222; border:2px solid #bb9966; border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;">
+          <div style="position:absolute; top:3px; right:3px; width:5px; height:5px; background:#bb9966; border-radius:50%;"></div>
+        </div>
+        <div style="width:60px; height:60px; background:#222222; border:2px solid #6699bb; border-radius:3px; display:flex; align-items:center; justify-content:center; position:relative;">
+          <div style="position:absolute; top:3px; right:3px; width:5px; height:5px; background:#6699bb; border-radius:50%;"></div>
+        </div>
+        <div style="width:60px; height:60px; background:#1a1a1a; border:1px dashed #2a2a2a; border-radius:3px; display:flex; align-items:center; justify-content:center;"></div>
+      </div>
+
+      <p style="margin:0 0 10px; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; color:#888888; letter-spacing:2px;">器灵特性</p>
+      <div style="display:flex; gap:10px; margin-bottom:24px;">
+        <div style="width:180px; height:48px; background:#1e1e1e; border:1px solid #3a3a3a; border-radius:3px; display:flex; align-items:center; padding:0 10px; gap:8px;">
+          <div style="width:26px; height:26px; background:#252525; border:1px solid #444444; border-radius:3px; flex-shrink:0;"></div>
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#666666; line-height:1.4;">战斗失败免死<br>回经营无惩罚</p>
+        </div>
+        <div style="width:180px; height:48px; background:#1e1e1e; border:1px solid #3a3a3a; border-radius:3px; display:flex; align-items:center; padding:0 10px; gap:8px;">
+          <div style="width:26px; height:26px; background:#252525; border:1px solid #444444; border-radius:3px; flex-shrink:0;"></div>
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:10px; color:#666666; line-height:1.4;">经验加成 +20%<br>灵气加成 +20%</p>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:20px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#555555" stroke-width="1.5"><polyline points="8,2 3,6 8,10"/></svg>
+          </div>
+          <figure style="width:100px; height:60px; display:flex; align-items:center; justify-content:center; margin:0; border:2px solid #cccccc; border-radius:3px; background:#1e1e1e; cursor:pointer;">
+            <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; font-weight:600; color:#e0e0e0;">百世书</p>
+          </figure>
+          <figure style="width:100px; height:60px; display:flex; align-items:center; justify-content:center; margin:0; border:1px dashed #2a2a2a; border-radius:3px; background:#121212; opacity:0.5; cursor:not-allowed;">
+            <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:12px; font-weight:600; color:#555555;">???</p>
+          </figure>
+          <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#555555" stroke-width="1.5"><polyline points="4,2 9,6 4,10"/></svg>
+          </div>
+        </div>
+        <div style="width:180px; height:44px; display:flex; align-items:center; justify-content:center; background:#cccccc; border-radius:3px; cursor:pointer;">
+          <p style="margin:0; font-family:'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif; font-size:15px; font-weight:700; color:#1a1a1a; letter-spacing:6px;">开 始 游 戏</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div style="position:absolute; top:0; left:0; right:0; height:50px; z-index:4; background:linear-gradient(180deg, rgba(20,20,22,0.9) 0%, transparent 100%); pointer-events:none;"></div>
+</div>
+
+<!-- ================================================================================== -->
+<!-- 12. 快速参考摘要 -->
+<!-- ================================================================================== -->
+
+<h2 class="section-title">12. 快速参考摘要</h2>
+
+<div style="background:#141416; border:1px solid #2a2a36; border-radius:4px; padding:28px 32px; display:flex; gap:48px; flex-wrap:wrap;">
+
+<div style="min-width:200px;">
+  <p style="font-size:12px; font-weight:600; color:#e0e0e0; letter-spacing:2px; margin-bottom:12px;">🎨 色值速查</p>
+  <p style="font-size:11px; color:#8888a0; line-height:2; margin:0;">
+    选中边框 → <code style="color:#cccccc;">#cccccc</code><br>
+    默认边框 → <code style="color:#3a3a3a;">#3a3a3a</code><br>
+    虚线边框 → <code style="color:#2a2a2a;">#2a2a2a</code><br>
+    传说品质 → <code style="color:#bb9966;">#bb9966</code><br>
+    史诗品质 → <code style="color:#9977bb;">#9977bb</code><br>
+    稀有品质 → <code style="color:#6699bb;">#6699bb</code><br>
+    普通品质 → <code style="color:#777777;">#777777</code><br>
+    按钮可用 → <code style="color:#cccccc;">#cccccc</code> 底 + <code style="color:#1a1a1a;">#1a1a1a</code> 字
+  </p>
+</div>
+
+<div style="min-width:200px;">
+  <p style="font-size:12px; font-weight:600; color:#e0e0e0; letter-spacing:2px; margin-bottom:12px;">📐 尺寸速查</p>
+  <p style="font-size:11px; color:#8888a0; line-height:2; margin:0;">
+    主按钮 → 200×48<br>
+    次按钮 → 160×40<br>
+    小按钮 → 120×32<br>
+    道具槽 → 72×72<br>
+    技能槽 → 200×56<br>
+    缩略卡 → 120×72<br>
+    大卡片 → 240×320<br>
+    插图占位 → 320×400<br>
+    HP 面板 → 200×12<br>
+    EXP 条 → 200×8
+  </p>
+</div>
+
+<div style="min-width:200px;">
+  <p style="font-size:12px; font-weight:600; color:#e0e0e0; letter-spacing:2px; margin-bottom:12px;">🔤 字号速查</p>
+  <p style="font-size:11px; color:#8888a0; line-height:2; margin:0;">
+    28px → 页面大标题<br>
+    16px → 按钮文字<br>
+    13px → 描述正文<br>
+    12px → 区域标签<br>
+    11px → 技能描述<br>
+    10px → 道具名称<br>
+    9px → 状态标注
+  </p>
+</div>
+
+</div>
+
+<!-- ================================================================================== -->
+<!-- 页脚 -->
+<!-- ================================================================================== -->
+
+<div style="margin-top:64px; padding-top:24px; border-top:1px solid #2a2a36; text-align:center;">
+  <p style="font-size:11px; color:#555568; margin:0;">
+    GAME-002 开仙门 · HTML 原型图设计规范 v1.0 · 2026-07-28 ·
+    <a href="./HTML原型设计规范.md" style="color:#6699bb;">MD 规范文档</a> ·
+    <a href="../../../ui-prototypes/开仙门-UI组件库.html" style="color:#6699bb;">完整组件库 (class版)</a></p>
+</div>
+
+</div><!-- /container -->
+
+</body>
+</html>
