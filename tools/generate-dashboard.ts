@@ -58,6 +58,10 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 .badge-mature{background:rgba(76,175,80,.15);color:#4caf50}
 .badge-testing{background:rgba(255,193,7,.15);color:#ffc107}
 .badge-ongoing{background:rgba(33,150,243,.15);color:#42a5f5}
+.badge-cancelled{background:rgba(255,255,255,.06);color:rgba(255,255,255,.35)}
+.badge-prio-high{background:rgba(244,67,54,.15);color:#ef5350}
+.badge-prio-mid{background:rgba(255,193,7,.15);color:#ffc107}
+.badge-prio-low{background:rgba(76,175,80,.15);color:#4caf50}
 
 .log-item{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:14px;align-items:flex-start}
 .log-item .log-date{font-size:12px;color:rgba(255,255,255,.35);min-width:80px}
@@ -124,9 +128,9 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 <div class="tabs">
   <button class="tab active" onclick="switchTab('overview',this)">系统总览</button>
   <button class="tab" onclick="switchTab('projects',this)">项目状态</button>
-  <button class="tab" onclick="switchTab('workflows',this)">工作流清单</button>
+  <button class="tab" onclick="switchTab('workflows',this)">工作流</button>
   <button class="tab" onclick="switchTab('activity',this)">近期动态</button>
-  <button class="tab" onclick="switchTab('tasks',this)">任务看板</button>
+  <button class="tab" onclick="switchTab('personal-tasks',this)">个人待办</button>
   <button class="tab" onclick="switchTab('goals',this)">目标计划</button>
   <button class="tab" onclick="switchTab('guides',this)">知识库</button>
   <button class="tab" onclick="switchTab('assets',this)">资产地址</button>
@@ -138,9 +142,9 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
   <div class="tbl" id="tbl-overview-info"></div>
 </div>
 <div id="tab-projects" class="panel"><div id="tbl-projects"></div></div>
-<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('daily',this)">日常<span class="sub-count" id="wf-count-daily"></span></button><button class="sub-tab" onclick="switchWfSub('business',this)">业务工作流<span class="sub-count" id="wf-count-business"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
+<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('造化坊',this)">造化坊<span class="sub-count" id="wf-count-zaohuafang"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-activity" class="panel"><div class="section-title">works/ 工作日志</div><div id="list-works"></div><div class="section-title">Git 提交历史</div><div id="list-commits"></div></div>
-<div id="tab-tasks" class="panel"><div id="tbl-tasks"></div></div>
+<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 5 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button></div><div id="cards-personal-tasks" class="cards"></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">📌 用户需求（你提出的任务）</div><div id="tbl-goals-user"></div><div class="section-title">🔍 系统问题（AI 诊断）</div><div id="tbl-goals-issues"></div><div class="section-title">💡 AI 大方向建议</div><div id="tbl-goals-ai"></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
@@ -166,6 +170,41 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
   <div class="btn-row">
     <button class="btn" onclick="closeLogModal()">取消</button>
     <button class="btn btn-primary" onclick="submitLog()">💾 写入 works/</button>
+  </div>
+</div>
+</div>
+
+<div id="guide-overlay" class="modal-overlay" onclick="if(event.target===this)closeGuideModal()">
+<div class="modal">
+  <h2>📖 个人待办 · 操作说明</h2>
+  <div style="color:rgba(255,255,255,.7);font-size:13px;line-height:2">
+    <p>在 Claude Code 对话中，用自然语言管理待办：</p>
+    <table class="tbl" style="margin:12px 0"><thead><tr><th>操作</th><th>示例</th></tr></thead><tbody>
+      <tr><td><strong>手动添加</strong></td><td style="color:#ff6b6b">「添加任务：外包审核，周五前完成，高优先级」</td></tr>
+      <tr><td><strong>查看待办</strong></td><td style="color:#ff6b6b">「我的待办」或「今天做什么」</td></tr>
+      <tr><td><strong>完成任务</strong></td><td style="color:#ff6b6b">「完成 F-001」或「F-001做完了」</td></tr>
+      <tr><td><strong>取消任务</strong></td><td style="color:#ff6b6b">「取消 F-001」</td></tr>
+      <tr><td><strong>扫描提取</strong></td><td style="color:#ff6b6b">「扫描待办」或「提取任务」</td></tr>
+      <tr><td><strong>确认导入</strong></td><td style="color:#ff6b6b">「导入 1,3,5」或「全部导入」</td></tr>
+      <tr><td><strong>周度归档</strong></td><td style="color:#ff6b6b">「归档」</td></tr>
+      <tr><td><strong>刷新仪表盘</strong></td><td style="color:#ff6b6b">/update-dashboard</td></tr>
+    </tbody></table>
+    <p style="margin-top:12px;color:rgba(255,255,255,.4);font-size:12px">💡 分类前缀：<span style="color:#4caf50">D</span>=主美 · <span style="color:#ff9800">X</span>=小红书 · <span style="color:#42a5f5">G</span>=游戏 · <span style="color:#ce93d8">F</span>=造化坊 · <span style="color:#78909c">L</span>=日常</p>
+    <p style="margin-top:4px;color:rgba(255,255,255,.4);font-size:12px">⚠️ 扫描提取流程：AI 绝不主动提取，需你发起 → AI 列候选 → 你确认 → 导入</p>
+    <p style="margin-top:4px;color:rgba(255,255,255,.4);font-size:12px">📄 完整文档：<code style="color:rgba(255,255,255,.5)">docs/workflows/个人待办管理.md</code></p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="closeGuideModal()">知道了</button>
+  </div>
+</div>
+</div>
+
+<div id="wf-detail-overlay" class="modal-overlay" onclick="if(event.target===this)closeWfDetail()">
+<div class="modal">
+  <h2 id="wf-detail-name"></h2>
+  <div style="color:rgba(255,255,255,.7);font-size:13px;line-height:2.2" id="wf-detail-body"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="closeWfDetail()">关闭</button>
   </div>
 </div>
 </div>
@@ -198,6 +237,25 @@ function openLogModal() {
   document.getElementById('log-date').value = new Date().toISOString().slice(0,10);
 }
 function closeLogModal() { document.getElementById('log-overlay').classList.remove('show'); }
+
+function openGuideModal() { document.getElementById('guide-overlay').classList.add('show'); }
+function closeGuideModal() { document.getElementById('guide-overlay').classList.remove('show'); }
+
+function openWfDetail(idx) {
+  var w = D.workflows[idx];
+  if (!w) return;
+  document.getElementById('wf-detail-name').textContent = w.name;
+  var body = '';
+  body += '<p><strong>版本：</strong><span class="badge badge-mature">'+w.version+'</span></p>';
+  body += '<p><strong>产出简介：</strong>'+w.desc+'</p>';
+  body += '<p><strong>流程环节：</strong>'+w.steps+'</p>';
+  body += '<p><strong>激活规则：</strong><span style="color:#ff6b6b">'+w.trigger+'</span></p>';
+  body += '<p><strong>关联 SKILL：</strong>'+w.skill+'</p>';
+  body += '<p><strong>关联项目：</strong>'+w.project+'</p>';
+  document.getElementById('wf-detail-body').innerHTML = body;
+  document.getElementById('wf-detail-overlay').classList.add('show');
+}
+function closeWfDetail() { document.getElementById('wf-detail-overlay').classList.remove('show'); }
 
 async function submitLog() {
   const body = {
@@ -246,7 +304,7 @@ function switchTab(name, el) {
   document.getElementById('tbl-overview-info').innerHTML =
     '<table class="tbl"><thead><tr><th>板块</th><th>内容</th></tr></thead><tbody>'+
     '<tr><td>AI 模式</td><td>协作者 · 导师 · 加速器</td></tr>'+
-    '<tr><td>SKILL 调用</td><td>/new-post · /git-commit · /sync-report</td></tr>'+
+    '<tr><td>SKILL 调用</td><td>/new-post · /git-commit · /update-dashboard</td></tr>'+
     '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>';
 })();
 (function(){
@@ -258,7 +316,7 @@ function switchTab(name, el) {
   const sm={mature:'badge-mature',testing:'badge-testing',ongoing:'badge-ongoing'};
   const st={mature:'✅ 成熟',testing:'🟡 待验证',ongoing:'🔄 持续'};
   const sk = (s) => s === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : (s === '待建' ? '<span class="badge badge-idle">待建</span>' : '<span class="badge badge-active">'+s+'</span>');
-  const catBadge = {'日常':'badge-ongoing','业务工作流':'badge-mature'};
+  const catBadge = {'造化坊':'badge-ongoing','自媒体':'badge-mature','游戏开发':'badge-active-task'};
 
   function renderWfTable(data, mode) {
     if (mode === 'skill') {
@@ -274,9 +332,12 @@ function switchTab(name, el) {
       return '<table class="tbl"><thead><tr><th>SKILL 名称</th><th>类型</th><th>难度</th><th>用途</th><th>路径</th><th>关联工作流</th></tr></thead><tbody>'+
         data.map(function(s){return '<tr><td><strong>'+s.name+'</strong></td><td>'+stype(s.type)+'</td><td>'+sdiff(s.difficulty)+'</td><td>'+sdesc(s.description)+'</td><td><code style="font-size:11px">'+s.path+'</code></td><td>'+swf(s.linkedWorkflow)+'</td></tr>';}).join('')+'</tbody></table>';
     }
-    // mode === 'all' 时显示分类列
+    // 工作流模式：点击行弹出详情弹窗
     return '<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL 覆盖</th><th>关联项目</th><th>成熟度</th><th>分类</th></tr></thead><tbody>'+
-      data.map(function(w){return '<tr><td>'+w.name+'</td><td>'+w.version+'</td><td>'+sk(w.skill)+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td><td><span class="badge '+(catBadge[w.category]||'')+'">'+w.category+'</span></td></tr>';}).join('')+'</tbody></table>';
+      data.map(function(w){
+        var idx = D.workflows.indexOf(w);
+        return '<tr onclick="openWfDetail('+idx+')" style="cursor:pointer" title="点击查看详情"><td><strong>'+w.name+'</strong></td><td>'+w.version+'</td><td>'+sk(w.skill)+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td><td><span class="badge '+(catBadge[w.category]||'')+'">'+w.category+'</span></td></tr>';
+      }).join('')+'</tbody></table>';
   }
 
   window.switchWfSub = function(cat, el) {
@@ -285,25 +346,112 @@ function switchTab(name, el) {
     var data;
     if (cat === 'all') data = D.workflows;
     else if (cat === 'skill') data = D.skills;
-    else data = D.workflows.filter(function(w){return w.category === (cat === 'daily' ? '日常' : '业务工作流');});
+    else data = D.workflows.filter(function(w){return w.category === cat;});
     document.getElementById('tbl-workflows').innerHTML = renderWfTable(data, cat);
   };
 
   // 初始渲染全部 + 设置计数
   document.getElementById('tbl-workflows').innerHTML = renderWfTable(D.workflows, 'all');
   document.getElementById('wf-count-all').textContent = '('+D.workflows.length+')';
-  document.getElementById('wf-count-daily').textContent = '('+D.workflows.filter(function(w){return w.category==='日常';}).length+')';
-  document.getElementById('wf-count-business').textContent = '('+D.workflows.filter(function(w){return w.category==='业务工作流';}).length+')';
+  document.getElementById('wf-count-zaohuafang').textContent = '('+D.workflows.filter(function(w){return w.category==='造化坊';}).length+')';
+  document.getElementById('wf-count-zimeiti').textContent = '('+D.workflows.filter(function(w){return w.category==='自媒体';}).length+')';
+  document.getElementById('wf-count-gamedev').textContent = '('+D.workflows.filter(function(w){return w.category==='游戏开发';}).length+')';
   document.getElementById('wf-count-skill').textContent = '('+D.skills.length+')';
 })();
 (function(){
   document.getElementById('list-works').innerHTML=D.worksData.map(w=>'<div class="log-item"><span class="log-date">'+w.date+'</span><span class="log-file">'+w.file+'</span><span class="log-desc">'+w.desc+'</span></div>').join('');
   document.getElementById('list-commits').innerHTML=D.gitCommits.map(c=>'<div class="commit-item"><span class="log-date">'+c.date+'</span><span>'+c.msg+'</span><span class="hash">'+c.hash+'</span></div>').join('');
 })();
+// 个人待办面板
 (function(){
-  const sm={done:'badge-done',active:'badge-active-task',planned:'badge-planned'};
-  document.getElementById('tbl-tasks').innerHTML='<table class="tbl"><thead><tr><th>#</th><th>状态</th><th>类别</th><th>任务</th><th>备注</th></tr></thead><tbody>'+
-    D.tasks.map(t=>'<tr><td>'+t.id+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td>'+t.cat+'</td><td>'+t.task+'</td><td>'+t.note+'</td></tr>').join('')+'</tbody></table>';
+  const PT = D.personalTasks;
+  const sm = {pending:'badge-planned',active:'badge-active-task',done:'badge-done',cancelled:'badge-cancelled'};
+  const pm = {'🔴 高':'badge-prio-high','🔴高':'badge-prio-high','🟡 中':'badge-prio-mid','🟡中':'badge-prio-mid','🟢 低':'badge-prio-low','🟢低':'badge-prio-low'};
+  const pmap = function(p){for(var k in pm){if(p.indexOf(k.replace(/ .+/,''))===0)return pm[k];}return '';};
+
+  // 汇总卡片
+  const cards = document.getElementById('cards-personal-tasks');
+  const cats = PT.categories;
+  let allActive = 0, allTotal = 0;
+  cats.forEach(function(c){
+    const s = PT.stats.byCategory[c.key];
+    allActive += s.pending + s.active;
+    allTotal += c.tasks.length;
+  });
+  cards.innerHTML = [
+    {label:'全部活跃',value:allActive,detail:'共 '+allTotal+' 条任务',color:'#ff6b6b'},
+    {label:'🏢 主美工作',value:(PT.stats.byCategory.D||{pending:0,active:0}).pending+(PT.stats.byCategory.D||{pending:0,active:0}).active,detail:'工作主业',color:'#4caf50'},
+    {label:'📱 小红书',value:(PT.stats.byCategory.X||{pending:0,active:0}).pending+(PT.stats.byCategory.X||{pending:0,active:0}).active,detail:'自媒体内容',color:'#ff9800'},
+    {label:'🎮 游戏开发',value:(PT.stats.byCategory.G||{pending:0,active:0}).pending+(PT.stats.byCategory.G||{pending:0,active:0}).active,detail:'独立游戏',color:'#42a5f5'},
+    {label:'🔧 造化坊',value:(PT.stats.byCategory.F||{pending:0,active:0}).pending+(PT.stats.byCategory.F||{pending:0,active:0}).active,detail:'迭代优化',color:'#ce93d8'},
+    {label:'🏠 日常管理',value:(PT.stats.byCategory.L||{pending:0,active:0}).pending+(PT.stats.byCategory.L||{pending:0,active:0}).active,detail:'生活杂项',color:'#78909c'},
+  ].map(function(c){return '<div class="card"><div class="label" style="color:'+c.color+'">'+c.label+'</div><div class="value" style="color:'+c.color+'">'+c.value+'</div><div class="detail">'+c.detail+'</div></div>';}).join('');
+
+  // 筛选渲染
+  function renderPtTable(filterKey) {
+    var allRows = [];
+    cats.forEach(function(c){
+      var tasks = filterKey === 'all' ? c.tasks : (c.key === filterKey ? c.tasks : []);
+      tasks.forEach(function(t){
+        allRows.push({cat:c, task:t});
+      });
+    });
+    if (allRows.length === 0) {
+      return '<div style="padding:40px;text-align:center;color:rgba(255,255,255,.25);font-size:14px">暂无任务。说「添加任务」开始记录，或「扫描待办」从项目提取。</div>';
+    }
+    return '<table class="tbl"><thead><tr><th>ID</th><th>任务</th><th>状态</th><th>优先级</th><th>截止日</th><th>备注</th></tr></thead><tbody>'+
+      allRows.map(function(r){
+        var t = r.task;
+        var dline = t.deadline === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : '<span style="color:#ff6b6b">'+t.deadline+'</span>';
+        return '<tr><td style="color:rgba(255,255,255,.4);font-size:12px">'+t.id+'</td><td>'+t.task+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td><span class="badge '+pmap(t.priority)+'">'+t.priority+'</span></td><td>'+dline+'</td><td style="color:rgba(255,255,255,.35);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+t.note.replace(/"/g,'&quot;')+'">'+t.note+'</td></tr>';
+      }).join('')+'</tbody></table>';
+  }
+
+  document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable('all');
+
+  // 更新子页签计数
+  var ptu = function(k){return (PT.stats.byCategory[k]||{pending:0,active:0,done:0});};
+  var allPend = 0; cats.forEach(function(c){var s=PT.stats.byCategory[c.key];allPend+=s.pending+s.active;});
+  document.getElementById('pt-count-all').textContent = '('+allPend+')';
+  document.getElementById('pt-count-D').textContent = '('+(ptu('D').pending+ptu('D').active)+')';
+  document.getElementById('pt-count-X').textContent = '('+(ptu('X').pending+ptu('X').active)+')';
+  document.getElementById('pt-count-G').textContent = '('+(ptu('G').pending+ptu('G').active)+')';
+  document.getElementById('pt-count-F').textContent = '('+(ptu('F').pending+ptu('F').active)+')';
+  document.getElementById('pt-count-L').textContent = '('+(ptu('L').pending+ptu('L').active)+')';
+
+  window.switchPtSub = function(key, el) {
+    document.querySelectorAll('#pt-sub-tabs .sub-tab').forEach(function(t){t.classList.remove('active');});
+    el.classList.add('active');
+    document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable(key);
+  };
+
+  // 归档折叠
+  window.toggleArchive = function() {
+    var sec = document.getElementById('archive-section');
+    var tog = document.getElementById('archive-toggle');
+    if (sec.style.display === 'none') {
+      // 首次展开时渲染
+      if (!sec.dataset.rendered) {
+        var html = '';
+        PT.archives.forEach(function(a){
+          html += '<div class="section-title" style="margin-bottom:4px">'+a.week+'</div>';
+          if (a.entries.length === 0) {
+            html += '<div style="padding:12px 14px;color:rgba(255,255,255,.2);font-size:13px">暂无归档</div>';
+          } else {
+            html += '<table class="tbl"><thead><tr><th>来源</th><th>ID</th><th>任务</th><th>完成日</th><th>耗时</th></tr></thead><tbody>'+
+              a.entries.map(function(e){return '<tr><td>'+e.source+'</td><td style="color:rgba(255,255,255,.4);font-size:12px">'+e.id+'</td><td>'+e.task+'</td><td>'+e.completedDate+'</td><td>'+e.hours+'</td></tr>';}).join('')+'</tbody></table>';
+          }
+        });
+        sec.innerHTML = html;
+        sec.dataset.rendered = '1';
+      }
+      sec.style.display = 'block';
+      tog.textContent = '▼ 收起';
+    } else {
+      sec.style.display = 'none';
+      tog.textContent = '▶ 展开';
+    }
+  };
 })();
 (function(){
   const pm={"🔴 紧急":"badge-active-task","🔴 阻塞":"badge-active-task","🔴 优先":"badge-active-task","🟡 本周":"badge-idle","🟡 持续":"badge-idle","🟡 累积":"badge-idle","🟡 便利性":"badge-idle","🟡 建议":"badge-idle","🟢 远期":"badge-empty"};
