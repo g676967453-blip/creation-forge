@@ -1,5 +1,34 @@
+##
+## [功能简报] 器灵选择
+## 简报：2026-07-27-器灵选择-功能简报.md
+## 所属系统：器灵系统
+##
+## 模块定位：
+##   表现层 — 开局器灵选择 UI 面板。纯 UI，不涉及业务逻辑。
+##
+## 信号：
+##   start_game_requested(profile_id: String) — 玩家确认选择后发射
+##     接收者：GameManager._on_start_game_requested()
+##
+## 数据：
+##   读 — DataManager.get_all_spirit_profiles() → spirit_profile_config.csv
+##   不写数据 — 仅通过信号传递选中的 profile_id
+##
+## 流程：
+##   _build_ui() → 渲染卡片+按钮(初始禁用)
+##   → 玩家点击卡片 → _update_selection(id) → 高亮+启用按钮
+##   → 玩家点击开始 → _on_start_pressed() → 空选中检查 → 发射信号
+##   → GameManager 接收 → 绑定器灵 → 切换到 PREPARATION
+##
+## 验收对照（简报 §5）：
+##   1. 开场后看到面板+卡片居中+按钮置灰  ✅
+##   2. 点击卡片→高亮+按钮亮起              ✅
+##   3. 再次点击→取消高亮+按钮置灰          ✅
+##   4. 已选中点开始→进入经营              ✅
+##   5. 无选中点开始→无响应(不崩溃)         ✅
+##   6. 绑定后无法返回                      ✅
+##
 extends Control
-## 开局器灵选择面板
 
 signal start_game_requested(profile_id: String)
 
