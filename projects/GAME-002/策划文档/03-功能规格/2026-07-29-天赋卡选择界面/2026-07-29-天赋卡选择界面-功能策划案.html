@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>天赋卡选择界面 — 功能策划案</title>
+<meta name="feat-name" content="天赋卡选择界面"><meta name="feat-version" content="v1"><meta name="feat-date" content="2026-07-29"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.tag-disciple { background: rgba(78,204,163,0.12); color: var(--status-success); }
+.tag-technique { background: rgba(204,170,68,0.12); color: var(--status-warning); }
+.tag-buff { background: rgba(102,153,187,0.12); color: var(--quality-rare); }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; gap: var(--sp-sm); }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: var(--text-inverse); font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.pcards { display: flex; gap: var(--sp-lg); align-items: center; }
+.pcard { width: 150px; padding: var(--sp-md); border-radius: var(--radius-lg); background: var(--bg-surface); border: 2px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: var(--sp-2xs); text-align: center; }
+.pcard .pc-icon { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.pcard .pc-name { font-size: var(--fs-small); color: var(--text-primary); font-weight: var(--fw-bold); }
+.pcard .pc-desc { font-size: 10px; color: var(--text-secondary); }
+.pcard .pc-btn { width: 90px; height: 24px; border-radius: var(--radius-full); border: none; color: #fff; font-size: 10px; margin-top: var(--sp-2xs); }
+.pc-btn.c1 { background: var(--quality-common); } .pc-btn.c2 { background: var(--quality-rare); } .pc-btn.c3 { background: var(--quality-epic); }
+.pcard.qc { border-color: var(--quality-common); } .pcard.qr { border-color: var(--quality-rare); } .pcard.qe { border-color: var(--quality-epic); }
+.pbadge { display: inline-block; padding: 1px 10px; border-radius: var(--radius-full); font-size: 9px; font-weight: var(--fw-bold); letter-spacing: 1px; }
+.pbadge.c1 { background: rgba(136,136,160,0.15); color: var(--quality-common); }
+.pbadge.c2 { background: rgba(102,153,187,0.15); color: var(--quality-rare); }
+.pbadge.c3 { background: rgba(153,119,187,0.15); color: var(--quality-epic); }
+
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 450px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-start-btn { width: 180px; height: 42px; border-radius: var(--radius-md); border: none; background: var(--text-body); color: var(--text-inverse); font-family: var(--font-cn); font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: 4px; cursor: pointer; transition: all 0.15s; }
+.interact-start-btn:hover { background: var(--text-primary); }
+.interact-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 5; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.interact-overlay.on { opacity: 1; }
+.interact-cards-wrap { display: flex; gap: var(--sp-xl); align-items: center; position: relative; z-index: 6; }
+.interact-card { width: 180px; padding: var(--sp-md); border-radius: var(--radius-lg); background: var(--bg-surface); border: 2px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: var(--sp-2xs); text-align: center; cursor: pointer; transition: all 0.3s ease; user-select: none; position: relative; opacity: 0; transform: translateY(30px) scale(0.9); }
+.interact-card.show { opacity: 1; transform: translateY(0) scale(1); }
+.interact-card:hover { transform: scale(1.08) !important; border-color: var(--quality-rare); box-shadow: 0 0 20px rgba(102,153,187,0.4); }
+.interact-card.picked { border-color: var(--quality-legendary); box-shadow: 0 0 16px rgba(187,153,102,0.5); transform: scale(1.05) !important; }
+.interact-card.picked::after { content: '✓'; position: absolute; top: 8px; right: 12px; color: var(--quality-legendary); font-size: 18px; font-weight: bold; }
+.interact-card.dimmed { opacity: 0.4; pointer-events: none; }
+.interact-card.fade-out { opacity: 0; transform: translateY(-20px) scale(0.95); transition: all 0.4s ease-in; }
+.interact-card .ic-icon { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.interact-card .ic-name { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.interact-card .ic-desc { font-size: var(--fs-small); color: var(--text-secondary); }
+.interact-card .ic-btn { width: 110px; height: 28px; border-radius: var(--radius-full); border: none; color: #fff; font-size: var(--fs-small); margin-top: var(--sp-xs); pointer-events: none; }
+.ic-btn.c1 { background: var(--quality-common); } .ic-btn.c2 { background: var(--quality-rare); } .ic-btn.c3 { background: var(--quality-epic); }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; position: relative; z-index: 6; opacity: 0; transition: all 0.3s; }
+.interact-msg.show { opacity: 1; animation: msgPop 0.4s ease-out; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; transition: all 0.15s; }
+.interact-reset:hover { border-color: var(--border-active); color: var(--text-primary); }
+@keyframes msgPop { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="page-header"><h1>天赋卡选择界面</h1><p class="subtitle">功能策划案</p></div>
+
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+
+<!-- Tab 1 -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">天赋卡选择界面</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">2026-07-29</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">AI协作</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div><hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>AI协作</td><td>2026.7.29</td><td>创建文档</td></tr></table>
+    <hr><h4>关联CSV</h4><span class="tag tag-csv">📄 blessing_config.csv — 读（18条）</span>
+  </div>
+  <div class="section-card"><h3>功能定位</h3><p>战斗开场前弹出3张天赋祝福卡，玩家选1张获得本局永久增益。位于PREPARATION→BATTLE之间，每局触发1次。面板独立于战斗中升级卡牌系统，数据复用blessing_config.csv。</p></div>
+  <div class="section-card"><h3>不在范围内</h3><ul><li><span class="text-red">不改变</span>现有CardSelectionPanel</li><li><span class="text-red">不新增</span>CSV配置表</li><li><span class="text-red">不涉及</span>弟子/法宝/山峰的效果写入</li><li><span class="text-red">不做</span>天赋卡堆叠/升阶</li><li><span class="text-red">不做</span>放弃祝福的跳过按钮</li></ul></div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示 <span class="text-red">红色</span>=强调</p>
+</div>
+
+<!-- Tab 2 -->
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">天赋卡选择</div>
+  <div class="rule-l0">目的：战斗前引入一次祝福选择，每局不同起始增益，增加策略多样性和重玩价值。</div>
+  <div class="rule-l1">1.功能概述：点击「开始历练」后弹出3选1天赋祝福面板。选择后祝福立即生效持续整局，回经营阶段清除。</div>
+  <div class="rule-l1">2.功能开放：无额外条件，进战斗即触发。<span class="mark-yellow">未激活功法的玩家是否做降级处理？</span></div>
+  <div class="sec-header">功能说明</div>
+  <div class="rule-l0">一.祝福数据</div>
+  <div class="rule-l1">1.来源：<span class="mono">blessing_config.csv</span>，共18条，<span class="text-blue">支持配置</span>。</div>
+  <div class="rule-l2">1）字段：id,name,category,tier,description,effect_type,effect_value,disciple_filter,peak_filter</div>
+  <div class="rule-l2">2）分类：<span class="tag-disciple">弟子</span>disciple6条·<span class="tag-technique">技法</span>technique6条·<span class="tag-buff">增益</span>buff6条</div>
+  <div class="rule-l2">3）稀有度：common/rare/epic/legend，<span class="text-blue">出现权重支持配置</span></div>
+  <div class="rule-ex">disciple6条:淬体决(common,atk+5)/铁骨诀(common,hp+50)/疾风步(common,speed+30)/连击诀(rare,cd-0.15s)/远击诀(rare,range+30)/噬血诀(epic,lifesteal10%)</div>
+  <div class="rule-l0">二.抽卡算法</div>
+  <div class="rule-l1">1.数据池：DataManager.get_all_blessings()→18条全量</div>
+  <div class="rule-l1">2.分组随机：按category分3组，组内按tier权重抽，<span class="text-blue">weight支持配置</span></div>
+  <div class="rule-l1">3.多样性：至少1张disciple+1张非disciple；3张id不重复</div>
+  <div class="rule-l1">4.降级：可用卡<3张时重置已抽池</div>
+  <div class="rule-l1">5.刷新：每局仅抽一次，不可重抽</div>
+  <div class="rule-l0">三.交互操作</div>
+  <div class="rule-l1">1.面板弹出：点击「开始历练」→BLESSING_SELECTION→抽3张→paused=true→卡片依次入场(stagger0.1s)</div>
+  <div class="rule-l1">2.悬停：scale1.05+品质色光晕，过渡0.2s ease</div>
+  <div class="rule-l2">1）普通#8888a0 glow0 0 20px·稀有#6699bb glow0 0 20px·史诗#9977bb glow0 0 24px·传说#bb9966 glow0 0 28px</div>
+  <div class="rule-l2">2）传说卡额外：金色呼吸脉冲(2.2s周期)，hover暂停</div>
+  <div class="rule-l1">3.选择：点击「选择此卡」→白闪0.15s→面板fade_out0.35s→blessing_selected信号→GameManager应用效果</div>
+  <div class="rule-l1">4.ESC：随机选一张，不设放弃</div>
+  <div class="rule-ex">选中「杀意诀」(rare,dmg+15%)→面板关闭→3-2-1倒计时→W1开战，效果持续整局</div>
+  <div class="rule-l0">四.涉及数据</div>
+  <table><tr><th>数据源</th><th>操作</th><th>说明</th></tr><tr><td class="mono">blessing_config.csv</td><td>读</td><td>id/name/category/tier/description/effect_type/effect_value/disciple_filter/peak_filter（18条）</td></tr></table>
+  <div class="rule-l1" style="margin-top:var(--sp-sm);">新信号：<span class="mono">blessing_selected(blessing_data:Dictionary)</span> — BlessingSelectionPanel→GameManager</div>
+  <div class="rule-l1">新状态：<span class="text-red">BLESSING_SELECTION</span>在PREPARATION→BATTLE之间</div>
+  <div class="rule-l0">五.红点</div><div class="rule-l1">强制弹出，<span class="text-red">不设红点</span>。</div>
+</div></div>
+
+<!-- Tab 3 -->
+<div class="tab-panel" id="tab-ui-desc"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">界面说明</h3>
+  <div class="ui-desc">
+    <div class="ui-desc-left"><div class="ui-frame" style="flex-direction:column;gap:var(--sp-sm);padding:var(--sp-lg);position:relative;">
+      <span style="font-size:var(--fs-h2);color:var(--text-primary);letter-spacing:6px;">天赐机缘</span>
+      <div style="width:48px;height:2px;background:var(--border-subtle);"></div>
+      <span style="font-size:var(--fs-caption);color:var(--text-secondary);letter-spacing:2px;">选择一项祝福，本局生效</span>
+      <div class="pcards" style="margin-top:var(--sp-sm);">
+        <div class="pcard qc"><span class="pbadge c1">普通</span><div class="pc-icon">⚔️</div><span class="pc-name">淬体决</span><span class="pc-desc">弟子攻击力+5</span><button class="pc-btn c1">选择此卡</button></div>
+        <div class="pcard qr"><span class="pbadge c2">稀有</span><div class="pc-icon">🎯</div><span class="pc-name">杀意诀</span><span class="pc-desc">所有伤害+15%</span><button class="pc-btn c2">选择此卡</button></div>
+        <div class="pcard qe"><span class="pbadge c3">史诗</span><div class="pc-icon">🛡️</div><span class="pc-name">幻影步</span><span class="pc-desc">器灵闪避+10%</span><button class="pc-btn c3">选择此卡</button></div>
+      </div>
+      <span style="font-size:10px;color:var(--text-disabled);margin-top:var(--sp-sm);">按 ESC 键随机选择</span>
+      <!-- 编号标注点 -->
+      <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">1</div>
+      <div style="position:absolute;top:46%;left:16px;width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">2</div>
+      <div style="position:absolute;top:46%;left:34%;width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">3</div>
+      <div style="position:absolute;top:46%;left:63%;width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">4</div>
+      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">5</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">面板标题</span><div class="ud">显示「天赐机缘」+副标题。纯信息展示，无交互。<span class="text-blue">内容为固定文字，不支持配置</span>。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">天赋卡 — 默认态</span><div class="ud">3张卡水平排列，各有独立稀有度边框和角标。<span class="text-red">每局从18条祝福中随机抽3张</span>，card_id不重复。卡片显示：角标→图标→卡名→效果描述→选择按钮。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">天赋卡 — 悬停态</span><div class="ud">鼠标进入卡片→scale放大至1.05+品质色光晕扩展（普通灰/稀有蓝/史诗紫/传说金）。过渡0.2s ease。<span class="text-blue">传说卡默认就有呼吸脉冲，hover时暂停脉冲切换为光晕</span>。</div></div>
+      <div class="ui-note"><span class="un">4</span><span class="ut">选择按钮 — 点击</span><div class="ud">点击「选择此卡」→选中卡白闪0.15s→其余卡虚化→面板整体fade_out 0.35s→发射blessing_selected信号→GameManager应用祝福效果→进入战场倒计时。选卡后<span class="text-red">不可撤销</span>。</div></div>
+      <div class="ui-note"><span class="un">5</span><span class="ut">ESC 随机选择</span><div class="ud">按ESC键从当前3张中随机选1张，效果等同点击选择。<span class="text-red">不设放弃/跳过选项</span>——面板弹出后必须选一张。面板外区域不可操作（paused=true）。</div></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- Tab 4：动态交互 -->
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">动态交互 — 点击模拟完整流程</h3>
+  <div class="interact-area" id="interact-area">
+    <div class="interact-overlay" id="interact-overlay"></div>
+    <button class="interact-start-btn" id="interact-start" onclick="startInteract()">开 始 历 练</button>
+    <div class="interact-cards-wrap" id="interact-cards-wrap" style="display:none;">
+      <div class="interact-card qc" data-name="淬体决·弟子攻击力+5"><span class="pbadge c1">普通</span><div class="ic-icon">⚔️</div><span class="ic-name">淬体决</span><span class="ic-desc">弟子攻击力 +5</span><button class="ic-btn c1">选择此卡</button></div>
+      <div class="interact-card qr" data-name="杀意诀·所有伤害+15%"><span class="pbadge c2">稀有</span><div class="ic-icon">🎯</div><span class="ic-name">杀意诀</span><span class="ic-desc">所有伤害 +15%</span><button class="ic-btn c2">选择此卡</button></div>
+      <div class="interact-card qe" data-name="幻影步·器灵闪避+10%"><span class="pbadge c3">史诗</span><div class="ic-icon">🛡️</div><span class="ic-name">幻影步</span><span class="ic-desc">器灵闪避 +10%</span><button class="ic-btn c3">选择此卡</button></div>
+    </div>
+    <span class="interact-msg" id="interact-msg"></span>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);">
+    <button class="interact-reset" onclick="resetInteract()">⟳ 重新开始</button>
+  </div>
+</div></div>
+
+<!-- Tab 5 -->
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-3d')">3D资产</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+    <tr><td class="mono">U1</td><td>卡片底板-普通</td><td>底板</td><td>260×380</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Dark fantasy card frame, common tier, gray steel border(#8888a0), subtle corner ornaments</td></tr>
+    <tr><td class="mono">U2</td><td>卡片底板-稀有</td><td>底板</td><td>260×380</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Dark fantasy card frame, rare tier, blue-tinted steel border(#6699bb), subtle glow</td></tr>
+    <tr><td class="mono">U3</td><td>卡片底板-史诗</td><td>底板</td><td>260×380</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Dark fantasy card frame, epic tier, purple-tinted border(#9977bb), inner glow</td></tr>
+    <tr><td class="mono">U4</td><td>卡片底板-传说</td><td>底板</td><td>260×380</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Dark fantasy card frame, legendary tier, gold ornate border(#bb9966), warm glow</td></tr>
+    <tr><td class="mono">U5</td><td>面板遮罩</td><td>遮罩</td><td>1280×720</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Semi-transparent dark overlay rgba(0,0,0,0.55)</td></tr>
+    <tr><td class="mono">U6-U9</td><td>稀有度角标×4</td><td>角标</td><td>80×28</td><td>PNG</td><td>4</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Rounded pill:普通(gray)/稀有(blue)/史诗(purple)/传说(gold)</td></tr>
+    <tr><td class="mono">U10-U13</td><td>选择按钮×4</td><td>按钮</td><td>180×40</td><td>PNG</td><td>4</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Rounded pill, quality-color fill, white bold"选择此卡"</td></tr>
+    <tr><td class="mono">U14</td><td>天赋图标占位</td><td>图标</td><td>72×72</td><td>PNG</td><td>1</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">Chinese talisman icon placeholder, dark circular bg</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+    <tr><td class="mono">C1</td><td>场景概念图</td><td>概念</td><td>1280×720</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Chinese xianxia heavenly revelation, golden rays, ancient scrolls in dark void</td></tr>
+    <tr><td class="mono">C2</td><td>祝福卡面插画</td><td>图标</td><td>72×72</td><td>PNG</td><td>18</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">18 Chinese talisman icons, 2-3 colors, pixel art</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th><th>触发/说明</th></tr>
+    <tr><td class="mono">M1</td><td>卡片入场动画</td><td>入场</td><td>stagger0.1s×3</td><td>—</td><td>—</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">面板打开:opacity0→1,translateY+40→0,scale0.9→1.Godot Tween</td></tr>
+    <tr><td class="mono">M2</td><td>粒子飘散</td><td>粒子</td><td>~15/卡,1.5s</td><td>—</td><td>—</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">光点/符文上浮.Godot CPUParticles2D</td></tr>
+    <tr><td class="mono">M3</td><td>传说爆发光效</td><td>全屏</td><td>0.15s</td><td>—</td><td>—</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">选中传说卡全屏金色闪光.Godot ColorRect+Tween</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>触发</th><th>表现</th><th>时长</th><th>优先级</th><th>实现方式</th></tr>
+    <tr><td class="mono">V1</td><td>悬停光晕</td><td>边框</td><td>mouse_entered</td><td>品质色glow+scale1.05</td><td>持续</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Tween scale+modulate</td></tr>
+    <tr><td class="mono">V2</td><td>选中闪烁</td><td>闪光</td><td>点击选择</td><td>白闪→fade_out</td><td>~0.5s</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Parallel Tween modulate</td></tr>
+    <tr><td class="mono">V3</td><td>遮罩淡入淡出</td><td>遮罩</td><td>面板开/关</td><td>alpha0↔0.55</td><td>in0.25s/out0.35s</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">ColorRect modulate Tween</td></tr>
+    <tr><td class="mono">V4</td><td>传说脉冲</td><td>边框</td><td>传说卡出现</td><td>金边呼吸,hover暂停</td><td>循环2.2s</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Shader sin-wave:12↔24px</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-3d"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>面数</th><th>格式</th><th>贴图</th><th>优先级</th><th>用途/说明</th></tr><tr><td colspan="8" class="dim">2D UI面板，暂无3D资产需求。</td></tr></table></div>
+</div></div>
+
+<script>
+function switchMainTab(event, tabId) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+function switchSubTab(event, tabId) {
+  var bar = event.target.parentElement;
+  bar.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  bar.parentElement.querySelector('#' + tabId).classList.add('active');
+}
+
+// ── 动态交互：完整状态机 ──
+var IA_STATE = 'idle'; // idle | showing | selecting | done
+
+function startInteract() {
+  if (IA_STATE !== 'idle') return;
+  IA_STATE = 'showing';
+
+  var overlay = document.getElementById('interact-overlay');
+  var startBtn = document.getElementById('interact-start');
+  var wrap = document.getElementById('interact-cards-wrap');
+  var msg = document.getElementById('interact-msg');
+  var cards = wrap.querySelectorAll('.interact-card');
+
+  // 隐藏按钮，显示遮罩
+  startBtn.style.display = 'none';
+  overlay.classList.add('on');
+  wrap.style.display = 'flex';
+  msg.classList.remove('show');
+  msg.textContent = '';
+
+  // 卡片依次入场 (stagger)
+  cards.forEach(function(card, i) {
+    card.classList.remove('show', 'picked', 'dimmed', 'fade-out');
+    setTimeout(function() {
+      card.classList.add('show');
+    }, 100 + i * 150);
+  });
+
+  // 入场完成后可点击
+  setTimeout(function() {
+    IA_STATE = 'selecting';
+    cards.forEach(function(card) {
+      card.onclick = function() { pickCard(card); };
+    });
+  }, 100 + cards.length * 150 + 200);
+}
+
+function pickCard(el) {
+  if (IA_STATE !== 'selecting') return;
+  IA_STATE = 'done';
+
+  var wrap = document.getElementById('interact-cards-wrap');
+  var overlay = document.getElementById('interact-overlay');
+  var msg = document.getElementById('interact-msg');
+  var cards = wrap.querySelectorAll('.interact-card');
+  var name = el.getAttribute('data-name');
+
+  // 选中 + 其余虚化
+  cards.forEach(function(card) {
+    card.onclick = null;
+    if (card === el) { card.classList.add('picked'); }
+    else { card.classList.add('dimmed'); }
+  });
+
+  // 0.6s 后全部消失
+  setTimeout(function() {
+    cards.forEach(function(card) { card.classList.add('fade-out'); });
+    overlay.classList.remove('on');
+
+    // 消失动画后显示结果
+    setTimeout(function() {
+      wrap.style.display = 'none';
+      msg.textContent = '✓ ' + name + ' — 祝福生效';
+      msg.classList.add('show');
+    }, 400);
+  }, 600);
+}
+
+function resetInteract() {
+  IA_STATE = 'idle';
+  var overlay = document.getElementById('interact-overlay');
+  var startBtn = document.getElementById('interact-start');
+  var wrap = document.getElementById('interact-cards-wrap');
+  var msg = document.getElementById('interact-msg');
+  var cards = wrap.querySelectorAll('.interact-card');
+
+  overlay.classList.remove('on');
+  startBtn.style.display = '';
+  wrap.style.display = 'none';
+  msg.classList.remove('show');
+  msg.textContent = '';
+  cards.forEach(function(card) {
+    card.classList.remove('show', 'picked', 'dimmed', 'fade-out');
+    card.onclick = null;
+  });
+}
+</script>
+</body>
+</html>

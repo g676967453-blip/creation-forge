@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>卡牌背包 — 功能策划案</title>
+<meta name="feat-name" content="卡牌背包"><meta name="feat-version" content="v1"><meta name="feat-date" content="2026-07-29"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.tag-disciple { background: rgba(78,204,163,0.12); color: var(--status-success); }
+.tag-technique { background: rgba(204,170,68,0.12); color: var(--status-warning); }
+.tag-buff { background: rgba(102,153,187,0.12); color: var(--quality-rare); }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: var(--text-inverse); font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+
+/* 背包原型 */
+.bp-layout { display: flex; width: 100%; height: 100%; }
+.bp-sidebar { width: 140px; background: var(--bg-surface); border-right: 1px solid var(--border-subtle); padding: var(--sp-md); display: flex; flex-direction: column; gap: var(--sp-xs); flex-shrink: 0; }
+.bp-sidebar .bp-filter-btn { padding: var(--sp-xs) var(--sp-sm); background: none; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 10px; cursor: pointer; text-align: left; transition: all 0.15s; }
+.bp-sidebar .bp-filter-btn:hover, .bp-sidebar .bp-filter-btn.on { border-color: var(--quality-rare); color: var(--text-primary); }
+.bp-main { flex: 1; padding: var(--sp-md); display: flex; flex-direction: column; gap: var(--sp-sm); }
+.bp-topbar { display: flex; gap: var(--sp-xs); align-items: center; }
+.bp-tab { padding: var(--sp-2xs) var(--sp-sm); background: none; border: none; color: var(--text-secondary); font-size: 10px; cursor: pointer; border-bottom: 2px solid transparent; }
+.bp-tab:hover, .bp-tab.on { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.bp-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--sp-xs); flex: 1; align-content: start; }
+.bp-cell { aspect-ratio: 3/4; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; transition: all 0.2s; font-size: 9px; color: var(--text-secondary); text-align: center; position: relative; }
+.bp-cell:hover { border-color: var(--border-active); }
+.bp-cell.selected { border-color: var(--quality-legendary); box-shadow: 0 0 8px rgba(187,153,102,0.3); }
+.bp-cell .bp-icon { font-size: 16px; }
+.bp-cell .bp-name { font-size: 8px; color: var(--text-body); }
+.bp-cell.locked { opacity: 0.3; border-style: dashed; }
+.bp-cell .bp-tier-dot { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; }
+.bp-tier-dot.c1 { background: var(--quality-common); } .bp-tier-dot.c2 { background: var(--quality-rare); } .bp-tier-dot.c3 { background: var(--quality-epic); } .bp-tier-dot.c4 { background: var(--quality-legendary); }
+.bp-detail { width: 200px; background: var(--bg-surface); border-left: 1px solid var(--border-subtle); padding: var(--sp-md); display: flex; flex-direction: column; gap: var(--sp-sm); align-items: center; flex-shrink: 0; }
+.bp-detail .bp-d-icon { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--border-default); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.bp-detail .bp-d-name { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.bp-detail .bp-d-desc { font-size: var(--fs-small); color: var(--text-secondary); text-align: center; }
+.bp-detail .bp-d-stat { font-size: var(--fs-small); color: var(--text-body); }
+.bp-progress { font-size: 9px; color: var(--text-disabled); }
+
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 450px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-start-btn { width: 180px; height: 42px; border-radius: var(--radius-md); border: none; background: var(--text-body); color: var(--text-inverse); font-family: var(--font-cn); font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: 4px; cursor: pointer; transition: all 0.15s; }
+.interact-start-btn:hover { background: var(--text-primary); }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; transition: all 0.15s; }
+.interact-reset:hover { border-color: var(--border-active); color: var(--text-primary); }
+.interact-msg { font-size: var(--fs-caption); color: var(--status-success); min-height: 20px; letter-spacing: 1px; }
+
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="page-header"><h1>卡牌背包</h1><p class="subtitle">功能策划案</p></div>
+
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+
+<!-- Tab 1 -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">卡牌背包</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">2026-07-29</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">AI协作</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div><hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>AI协作</td><td>2026.7.29</td><td>创建文档</td></tr></table>
+    <hr><h4>关联CSV</h4>
+    <span class="tag tag-csv">📄 blessing_config.csv — 读（18条卡牌数据）</span>
+    <span class="tag tag-csv" style="margin-left:var(--sp-xs);">📄 card_config.csv — 读（28条战斗中卡牌数据，可选）</span>
+  </div>
+  <div class="section-card"><h3>功能定位</h3><p>玩家在经营阶段可打开卡牌背包，查看已收集/未收集的天赋祝福卡牌。展示收集进度、卡牌详情，支持分类筛选。纯展示功能，不涉及卡牌养成操作。</p></div>
+  <div class="section-card"><h3>不在范围内</h3><ul>
+    <li><span class="text-red">不做</span>卡牌升级/合成/分解等养成操作</li>
+    <li><span class="text-red">不做</span>卡牌装备/卸下——仅为图鉴查看</li>
+    <li><span class="text-red">不新增</span>CSV——数据复用blessing_config.csv</li>
+    <li><span class="text-red">不影响</span>战斗中的抽卡逻辑</li>
+  </ul></div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示 <span class="text-red">红色</span>=强调</p>
+</div>
+
+<!-- Tab 2 -->
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">卡牌背包</div>
+  <div class="rule-l0">目的：提供卡牌收集图鉴，展示玩家已获得的天赋祝福，增加收集成就感。经营阶段随时可打开查看。</div>
+  <div class="rule-l1">1.功能概述：经营阶段新增「卡牌背包」入口，打开后展示全部18张天赋祝福卡牌的收集状态。已收集卡牌显示完整信息，未收集卡牌显示为锁定态。</div>
+  <div class="rule-l1">2.功能开放：玩家完成首次战斗后解锁卡牌背包入口。<span class="text-blue">解锁条件支持配置</span>。</div>
+  <div class="sec-header">功能说明</div>
+  <div class="rule-l0">一.数据来源</div>
+  <div class="rule-l1">1.卡牌数据：<span class="mono">blessing_config.csv</span>，18条，<span class="text-blue">支持配置增删</span>。</div>
+  <div class="rule-l2">1）字段：id/name/category/tier/description/effect_type/effect_value</div>
+  <div class="rule-l2">2）分类：<span class="tag-disciple">弟子</span>6·<span class="tag-technique">技法</span>6·<span class="tag-buff">增益</span>6</div>
+  <div class="rule-l2">3）稀有度：common(普通)/rare(稀有)/epic(史诗)/legend(传说)</div>
+  <div class="rule-l1">2.收集状态：玩家在战斗中选中某张祝福卡后，该卡记录为「已收集」。<span class="text-blue">收集数据存储于玩家存档</span>。</div>
+  <div class="rule-ex">玩家第1局选了「淬体决」→背包中淬体决解锁；第3局选了「杀意诀」→杀意诀解锁。已解锁永久保留。</div>
+  <div class="rule-l0">二.界面布局</div>
+  <div class="rule-l1">1.左侧分类栏：按category筛选——全部/弟子/技法/增益；按tier筛选——全部/普通/稀有/史诗/传说</div>
+  <div class="rule-l1">2.中央网格区：6列网格展示卡牌缩略图。已收集=品质色边框+完整信息；未收集=灰色虚线边框+???+锁定图标</div>
+  <div class="rule-l1">3.右侧详情区：点击卡牌后展示大图标+名称+描述+效果类型+效果数值+稀有度标签</div>
+  <div class="rule-l1">4.顶部进度：「已收集 X/18」文字+进度条</div>
+  <div class="rule-l0">三.交互操作</div>
+  <div class="rule-l1">1.打开背包：经营阶段点击「卡牌背包」按钮→弹出面板（<span class="text-blue">不暂停游戏</span>，灵气产出继续）</div>
+  <div class="rule-l1">2.筛选：点击左侧分类→网格即时过滤刷新</div>
+  <div class="rule-l1">3.查看详情：点击网格中的卡牌→右侧详情区更新</div>
+  <div class="rule-l1">4.关闭：点击面板外区域或关闭按钮→面板关闭</div>
+  <div class="rule-l0">四.涉及数据</div>
+  <table><tr><th>数据源</th><th>操作</th><th>说明</th></tr>
+    <tr><td class="mono">blessing_config.csv</td><td>读</td><td>18条卡牌静态数据</td></tr>
+    <tr><td class="mono">player_save</td><td>读写</td><td>已收集卡牌ID列表，<span class="text-blue">存档字段支持扩展</span></td></tr>
+  </table>
+  <div class="rule-l0">五.红点</div>
+  <div class="rule-l1">有新卡牌解锁时，背包按钮显示红点。打开背包后红点消除。</div>
+</div></div>
+
+<!-- Tab 3 -->
+<div class="tab-panel" id="tab-ui-desc"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">界面说明</h3>
+  <div class="ui-desc">
+    <div class="ui-desc-left"><div class="ui-frame" style="position:relative;">
+      <div class="bp-layout">
+        <div class="bp-sidebar">
+          <span style="font-size:9px;color:var(--text-disabled);letter-spacing:1px;">分类筛选</span>
+          <button class="bp-filter-btn on">全部 (18)</button>
+          <button class="bp-filter-btn">弟子 (6)</button>
+          <button class="bp-filter-btn">技法 (6)</button>
+          <button class="bp-filter-btn">增益 (6)</button>
+          <span style="font-size:9px;color:var(--text-disabled);letter-spacing:1px;margin-top:var(--sp-sm);">稀有度</span>
+          <button class="bp-filter-btn">全部</button>
+          <button class="bp-filter-btn">普通</button>
+          <button class="bp-filter-btn">稀有</button>
+          <button class="bp-filter-btn">史诗</button>
+          <button class="bp-filter-btn">传说</button>
+        </div>
+        <div class="bp-main">
+          <div class="bp-topbar">
+            <span class="bp-tab on">全部</span>
+            <span style="flex:1;"></span>
+            <span class="bp-progress">已收集 12/18</span>
+            <div style="width:60px;height:4px;background:var(--bg-surface);border-radius:2px;overflow:hidden;"><div style="width:66%;height:100%;background:var(--status-success);border-radius:2px;"></div></div>
+          </div>
+          <div class="bp-grid">
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">⚔️</span><span class="bp-name">淬体决</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">🛡️</span><span class="bp-name">铁骨诀</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">💨</span><span class="bp-name">疾风步</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c2"></span><span class="bp-icon">⚡</span><span class="bp-name">连击诀</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c2"></span><span class="bp-icon">👁️</span><span class="bp-name">远击诀</span></div>
+            <div class="bp-cell locked"><span class="bp-icon">🔒</span><span class="bp-name">???</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">🗡️</span><span class="bp-name">破甲击</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c2"></span><span class="bp-icon">🎯</span><span class="bp-name">杀意诀</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">💚</span><span class="bp-name">回春术</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c2"></span><span class="bp-icon">🔄</span><span class="bp-name">护体罡气</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c3"></span><span class="bp-icon">🛡️</span><span class="bp-name">幻影步</span></div>
+            <div class="bp-cell locked"><span class="bp-icon">🔒</span><span class="bp-name">???</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">⭐</span><span class="bp-name">会心诀</span></div>
+            <div class="bp-cell locked"><span class="bp-icon">🔒</span><span class="bp-name">???</span></div>
+            <div class="bp-cell selected"><span class="bp-tier-dot c2"></span><span class="bp-icon">💥</span><span class="bp-name">震退击</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c3"></span><span class="bp-icon">⛓️</span><span class="bp-name">连锁诀</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c1"></span><span class="bp-icon">📖</span><span class="bp-name">悟道丹</span></div>
+            <div class="bp-cell"><span class="bp-tier-dot c3"></span><span class="bp-icon">💀</span><span class="bp-name">噬血诀</span></div>
+          </div>
+        </div>
+        <div class="bp-detail">
+          <div class="bp-d-icon" style="border-color:var(--quality-rare);">💥</div>
+          <span class="bp-d-name">震退击</span>
+          <span style="font-size:9px;color:var(--quality-rare);">稀有 · 技法</span>
+          <span class="bp-d-desc">攻击附带击退效果</span>
+          <span class="bp-d-stat">击退距离 <span style="color:var(--text-primary);">+80</span></span>
+        </div>
+      </div>
+      <!-- 标注 -->
+      <div style="position:absolute;top:14px;left:14px;width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">1</div>
+      <div style="position:absolute;top:14px;left:50%;width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">2</div>
+      <div style="position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">3</div>
+      <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">4</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">左侧分类筛选</span><div class="ud">两个维度独立筛选：category（全部/弟子/技法/增益）和tier（全部/普通/稀有/史诗/传说）。选中态高亮，同时只能各选一项。<span class="text-blue">两个维度取交集</span>。括号内数字为当前筛选项下卡牌数量。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">中央网格区</span><div class="ud">6列网格，3行=18格。每格一张卡：已收集=品质色边框+图标+名字+品质圆点；未收集=灰色虚线边框+🔒+???。<span class="text-red">点击选中后金色高亮</span>，右侧刷新详情。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">右侧详情区</span><div class="ud">展示选中卡牌的完整信息：大图标（品质色边框）+卡名+稀有度+category标签+效果描述+具体数值。未选中时显示占位提示「点击卡牌查看详情」。</div></div>
+      <div class="ui-note"><span class="un">4</span><span class="ut">收集进度条</span><div class="ud">顶部「已收集X/18」+进度条（已收集比例绿色填充）。每解锁一张新卡，进度条即时更新。<span class="text-blue">18为当前blessing_config.csv总条目数，增删卡牌时进度上限同步更新。</span></div></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- Tab 4 -->
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">动态交互 — 背包浏览模拟</h3>
+  <div class="interact-area" id="interact-area" style="padding:var(--sp-lg);">
+    <div style="display:flex;width:100%;height:100%;min-height:400px;gap:0;">
+      <!-- 左侧筛选 -->
+      <div style="width:120px;background:var(--bg-surface);padding:var(--sp-sm);display:flex;flex-direction:column;gap:var(--sp-2xs);border-radius:var(--radius-md);">
+        <span style="font-size:9px;color:var(--text-disabled);">分类</span>
+        <button class="bp-filter-btn on" onclick="filterCards('all',this)" style="font-size:10px;padding:4px 8px;">全部</button>
+        <button class="bp-filter-btn" onclick="filterCards('disciple',this)" style="font-size:10px;padding:4px 8px;">弟子</button>
+        <button class="bp-filter-btn" onclick="filterCards('technique',this)" style="font-size:10px;padding:4px 8px;">技法</button>
+        <button class="bp-filter-btn" onclick="filterCards('buff',this)" style="font-size:10px;padding:4px 8px;">增益</button>
+      </div>
+      <!-- 网格+详情 -->
+      <div style="flex:1;display:flex;flex-direction:column;padding:0 var(--sp-sm);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-sm);">
+          <span style="font-size:10px;color:var(--text-secondary);">已收集 <span id="bp-count" style="color:var(--text-primary);">12</span>/18</span>
+          <div style="width:80px;height:4px;background:var(--bg-surface);border-radius:2px;overflow:hidden;"><div id="bp-bar" style="width:66%;height:100%;background:var(--status-success);border-radius:2px;transition:width 0.3s;"></div></div>
+        </div>
+        <div class="bp-grid" id="bp-grid" style="grid-template-columns:repeat(6,1fr);"></div>
+      </div>
+      <!-- 详情 -->
+      <div id="bp-detail" style="width:160px;background:var(--bg-surface);padding:var(--sp-sm);display:flex;flex-direction:column;align-items:center;gap:var(--sp-sm);border-radius:var(--radius-md);text-align:center;">
+        <span style="font-size:10px;color:var(--text-disabled);">点击卡牌<br>查看详情</span>
+      </div>
+    </div>
+    <span class="interact-msg" id="bp-msg"></span>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);">
+    <button class="interact-reset" onclick="resetBP()">⟳ 重置背包</button>
+  </div>
+</div></div>
+
+<!-- Tab 5 -->
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-3d')">3D资产</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+    <tr><td class="mono">U1</td><td>背包面板底板</td><td>面板</td><td>全屏弹窗</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Dark fantasy panel frame, Chinese xianxia UI, semi-transparent dark bg</td></tr>
+    <tr><td class="mono">U2</td><td>卡牌缩略图边框×4</td><td>边框</td><td>约80×106</td><td>PNG</td><td>4</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Small card frame per tier: common(gray)/rare(blue)/epic(purple)/legend(gold)</td></tr>
+    <tr><td class="mono">U3</td><td>锁定卡牌占位</td><td>占位</td><td>约80×106</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Dashed border locked card placeholder, gray tone, lock icon</td></tr>
+    <tr><td class="mono">U4</td><td>分类筛选按钮</td><td>按钮</td><td>宽120高32</td><td>PNG</td><td>2</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Filter tab button: default/selected states, subtle border</td></tr>
+    <tr><td class="mono">U5</td><td>进度条组件</td><td>进度条</td><td>宽200高6</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Collection progress bar, green fill on dark track</td></tr>
+    <tr><td class="mono">U6</td><td>卡牌详情大图标底</td><td>图标</td><td>64×64</td><td>PNG</td><td>1</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">Circular icon frame for detail view, quality-color border</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+    <tr><td class="mono">C1</td><td>卡牌插画×18</td><td>图标</td><td>64×64</td><td>PNG</td><td>18</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">18 Chinese talisman/technique icons per blessing_config.csv. 2-3 colors, pixel art style</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th><th>触发/说明</th></tr>
+    <tr><td class="mono">M1</td><td>面板弹出动画</td><td>入场</td><td>scale+fade</td><td>—</td><td>—</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Panel scale 0.95→1 + opacity 0→1, 0.25s ease_out. Godot Tween</td></tr>
+    <tr><td class="mono">M2</td><td>新卡解锁闪烁</td><td>高亮</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">Newly unlocked card brief glow pulse. Godot Tween modulate</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>触发</th><th>表现</th><th>时长</th><th>优先级</th><th>实现方式</th></tr>
+    <tr><td class="mono">V1</td><td>卡牌hover放大</td><td>缩放</td><td>鼠标悬停</td><td>scale 1.1 + 品质色呼吸光晕</td><td>持续</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Godot Tween scale + modulate</td></tr>
+    <tr><td class="mono">V2</td><td>筛选切换过渡</td><td>过渡</td><td>点击筛选</td><td>卡片网格crossfade刷新</td><td>0.2s</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Tween modulate fade_out/in</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-3d"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>面数</th><th>格式</th><th>贴图</th><th>优先级</th><th>用途/说明</th></tr><tr><td colspan="8" class="dim">2D UI面板，暂无3D资产需求。</td></tr></table></div>
+</div></div>
+
+<script>
+function switchMainTab(event, tabId) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+function switchSubTab(event, tabId) {
+  var bar = event.target.parentElement;
+  bar.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  bar.parentElement.querySelector('#' + tabId).classList.add('active');
+}
+
+// ── 动态交互：卡牌背包 ──
+var ALL_CARDS = [
+  {id:'bless_atk_1',name:'淬体决',cat:'disciple',tier:'common',icon:'⚔️',desc:'弟子攻击力+5',val:'atk+5',unlocked:true},
+  {id:'bless_hp_1',name:'铁骨诀',cat:'disciple',tier:'common',icon:'🛡️',desc:'弟子生命上限+50',val:'hp+50',unlocked:true},
+  {id:'bless_speed_1',name:'疾风步',cat:'disciple',tier:'common',icon:'💨',desc:'弟子移动速度+30',val:'speed+30',unlocked:true},
+  {id:'bless_cd_1',name:'连击诀',cat:'disciple',tier:'rare',icon:'⚡',desc:'弟子攻击间隔-0.15s',val:'cd-0.15s',unlocked:true},
+  {id:'bless_range_1',name:'远击诀',cat:'disciple',tier:'rare',icon:'👁️',desc:'弟子攻击范围+30',val:'range+30',unlocked:true},
+  {id:'bless_lifesteal',name:'噬血诀',cat:'disciple',tier:'epic',icon:'💀',desc:'弟子获得10%吸血',val:'lifesteal10%',unlocked:false},
+  {id:'bless_pierce',name:'破甲击',cat:'technique',tier:'common',icon:'🗡️',desc:'攻击无视5点护甲',val:'pierce+5',unlocked:true},
+  {id:'bless_crit',name:'会心诀',cat:'technique',tier:'common',icon:'⭐',desc:'暴击率+8%',val:'crit+8%',unlocked:true},
+  {id:'bless_knockback',name:'震退击',cat:'technique',tier:'rare',icon:'💥',desc:'攻击附带击退效果',val:'knockback+80',unlocked:true},
+  {id:'bless_dmg_amp',name:'杀意诀',cat:'technique',tier:'rare',icon:'🎯',desc:'所有伤害+15%',val:'dmg+15%',unlocked:true},
+  {id:'bless_multishot',name:'分化诀',cat:'technique',tier:'epic',icon:'🌟',desc:'30%额外投射物',val:'multishot30%',unlocked:false},
+  {id:'bless_chain',name:'连锁诀',cat:'technique',tier:'epic',icon:'⛓️',desc:'攻击弹射+1',val:'chain+1',unlocked:true},
+  {id:'bless_regen',name:'回春术',cat:'buff',tier:'common',icon:'💚',desc:'器灵每3秒回复2%HP',val:'regen2%/3s',unlocked:true},
+  {id:'bless_exp',name:'悟道丹',cat:'buff',tier:'common',icon:'📖',desc:'经验获取+20%',val:'exp+20%',unlocked:true},
+  {id:'bless_heal_wave',name:'甘霖术',cat:'buff',tier:'rare',icon:'💧',desc:'每5波回复30%HP',val:'heal30%/5w',unlocked:false},
+  {id:'bless_armor',name:'护体罡气',cat:'buff',tier:'rare',icon:'🔄',desc:'器灵护甲+10',val:'armor+10',unlocked:true},
+  {id:'bless_evasion',name:'幻影步',cat:'buff',tier:'epic',icon:'🛡️',desc:'器灵闪避+10%',val:'evasion10%',unlocked:true},
+  {id:'bless_block',name:'不灭金身',cat:'buff',tier:'legend',icon:'👑',desc:'器灵格挡+50',val:'block+50',unlocked:false}
+];
+var currentFilter = 'all';
+var selectedCard = null;
+
+function tierClass(t) { return t==='common'?'c1':t==='rare'?'c2':t==='epic'?'c3':'c4'; }
+
+function buildGrid() {
+  var grid = document.getElementById('bp-grid');
+  var filtered = currentFilter === 'all' ? ALL_CARDS : ALL_CARDS.filter(function(c){return c.cat===currentFilter;});
+  var unlocked = ALL_CARDS.filter(function(c){return c.unlocked;}).length;
+  document.getElementById('bp-count').textContent = unlocked;
+  document.getElementById('bp-bar').style.width = (unlocked/ALL_CARDS.length*100)+'%';
+
+  grid.innerHTML = filtered.map(function(c){
+    var cls = c.unlocked ? 'bp-cell' : 'bp-cell locked';
+    if (selectedCard && selectedCard.id === c.id) cls += ' selected';
+    var dot = c.unlocked ? '<span class="bp-tier-dot '+tierClass(c.tier)+'"></span>' : '';
+    var icon = c.unlocked ? c.icon : '🔒';
+    var name = c.unlocked ? c.name : '???';
+    return '<div class="'+cls+'" data-id="'+c.id+'" onclick="selectCard(\''+c.id+'\')">'+dot+'<span class="bp-icon">'+icon+'</span><span class="bp-name">'+name+'</span></div>';
+  }).join('');
+
+  // rebind click
+  grid.querySelectorAll('.bp-cell').forEach(function(el){
+    el.addEventListener('click', function(){ selectCard(el.getAttribute('data-id')); });
+  });
+}
+
+function selectCard(id) {
+  var card = ALL_CARDS.find(function(c){return c.id===id;});
+  if (!card) return;
+  selectedCard = card;
+  buildGrid();
+  var detail = document.getElementById('bp-detail');
+  if (card.unlocked) {
+    detail.innerHTML = '<div class="bp-d-icon" style="border-color:var(--quality-'+card.tier+');">'+card.icon+'</div><span class="bp-d-name">'+card.name+'</span><span style="font-size:9px;color:var(--quality-'+card.tier+');">'+card.tier+' · '+card.cat+'</span><span class="bp-d-desc">'+card.desc+'</span><span class="bp-d-stat" style="font-size:10px;">'+card.val+'</span>';
+  } else {
+    detail.innerHTML = '<div class="bp-d-icon" style="border-style:dashed;">🔒</div><span class="bp-d-name" style="color:var(--text-disabled);">???</span><span style="font-size:9px;color:var(--text-disabled);">未收集</span><span class="bp-d-desc">在战斗中选择此卡后解锁</span>';
+  }
+  document.getElementById('bp-msg').textContent = card.unlocked ? '已收集' : '尚未获得';
+}
+
+function filterCards(cat, btn) {
+  currentFilter = cat;
+  btn.parentElement.querySelectorAll('.bp-filter-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  buildGrid();
+}
+
+function resetBP() {
+  var orig = [true,true,true,true,true,false,true,true,true,true,false,true,true,true,false,true,true,false];
+  ALL_CARDS.forEach(function(c,i){c.unlocked=orig[i];});
+  selectedCard = null; currentFilter = 'all';
+  document.querySelectorAll('#interact-area .bp-filter-btn').forEach(function(b,i){b.classList.toggle('on',i===0);});
+  document.getElementById('bp-detail').innerHTML = '<span style="font-size:10px;color:var(--text-disabled);">点击卡牌<br>查看详情</span>';
+  document.getElementById('bp-msg').textContent = '';
+  buildGrid();
+}
+
+// init
+buildGrid();
+</script>
+</body>
+</html>
