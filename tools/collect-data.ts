@@ -440,7 +440,7 @@ export function collectData() {
     { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
       desc: "从 works/ 日志选题，制作 6 卡图文帖子发布到小红书", steps: "works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布", trigger: "/new-post 或「制作帖子」" },
     { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "自媒体",
-      desc: "将 HTML 帖子逐张卡片导入 Pixso 进行设计精调", steps: "打开 Pixso → code_to_design 导入 HTML → 逐卡调整 → 导出截图", trigger: "纯人工操作，无 SKILL" },
+      desc: "将 HTML 帖子逐张卡片导入 Pixso 进行设计精调", steps: "打开 Pixso → code_to_design 导入 HTML → 逐卡调整 → 导出截图", trigger: "纯人工操作，无对应 SKILL" },
     { name: "道具图标-生产", version: "v1", skill: "/item-icon", project: "asset-pipeline", status: "mature", category: "游戏开发",
       desc: "游戏道具图标批量生产：Lovart AI 生成 → Photoshop 抠图 → 256px 切片", steps: "道具清单 → Lovart 生成(多模型可选) → PS 抠图 → 切片输出", trigger: "/item-icon 或「生成图标」" },
     { name: "工作日志记录", version: "v1", skill: "/write-log", project: "全局", status: "mature", category: "造化坊",
@@ -449,6 +449,8 @@ export function collectData() {
       desc: "全项目目录扫描 → 诊断三级问题 → 用户确认 → 执行整理 → 同步仪表盘", steps: "扫描分析 → 诊断报告 → 方案确认 → 执行修改 → 同步仪表盘", trigger: "/organize-files 或「梳理文件」「整理文件夹」" },
     { name: "美术任务表审查", version: "v1", skill: "/art-review", project: "主美工作", status: "active", category: "主美工作",
       desc: "连接飞书美术排期表 → 4目标分析（基础状况/风险逾期/信息规范/综合建议）→ 输出审查报告", steps: "选定审查范围 → 飞书读取数据 → 4目标分析 → 生成报告 → 存档", trigger: "/art-review 或「审查美术」「美术review」" },
+    { name: "写策划案-HTML-v0.1", version: "v0.1", skill: "待建", project: "全局", status: "active", category: "游戏开发",
+      desc: "🆕 轻量级策划案工作流。一份 HTML = 完整策划案，5 页签（简介/规则/界面说明/动态交互/资产需求），中小功能适用", steps: "复制模板 → AI 读上下文 → 逐 tab 协作填充 → 浏览器验证 → 定稿", trigger: "待建" },
   ];
   const skillsDir = path.join(ROOT, ".claude/skills");
   const skillsRaw = listSkills(skillsDir);
@@ -492,7 +494,7 @@ export function collectData() {
     { layer: "系统层", name: "CLAUDE.md", path: "CLAUDE.md", desc: "AI 行为规范（项目入口）" },
     { layer: "系统层", name: "docs/workflows/", path: "docs/workflows/", desc: "标准化工作流（10 文档）" },
     { layer: "系统层", name: "docs/tool-guides/", path: "docs/tool-guides/", desc: "工具知识库" },
-    { layer: "系统层", name: ".claude/skills/", path: ".claude/skills/", desc: "可执行 SKILL 命令" },
+    { layer: "系统层", name: ".claude/skills/", path: ".claude/skills/", desc: "SKILL 定义文件（/xxx CLI 命令的底层实现）" },
     { layer: "系统层", name: "works/", path: "works/", desc: "工作日志（一事一记）" },
     { layer: "系统层", name: "reports/", path: "reports/", desc: "汇报仪表盘" },
     { layer: "项目层", name: "GAME-002「开仙门」", path: "projects/GAME-002/", desc: "Godot 修仙 Roguelike 塔防" },
