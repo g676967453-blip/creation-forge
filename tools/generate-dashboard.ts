@@ -250,7 +250,7 @@ function openWfDetail(idx) {
   body += '<p><strong>产出简介：</strong>'+w.desc+'</p>';
   body += '<p><strong>流程环节：</strong>'+w.steps+'</p>';
   body += '<p><strong>激活规则：</strong><span style="color:#ff6b6b">'+w.trigger+'</span></p>';
-  body += '<p><strong>关联 SKILL：</strong>'+w.skill+'</p>';
+  body += '<p><strong>SKILL：</strong>'+w.skill+'</p>';
   body += '<p><strong>关联项目：</strong>'+w.project+'</p>';
   document.getElementById('wf-detail-body').innerHTML = body;
   document.getElementById('wf-detail-overlay').classList.add('show');
@@ -293,7 +293,7 @@ function switchTab(name, el) {
 }
 (function(){
   document.getElementById('cards-overview').innerHTML = [
-    {label:'SKILL 总数',value:D.skillCount,detail:'标准 '+D.skillStandard+' · 扁平 '+D.skillFlat+' · <a href=\"../docs/workflows/变更日志.md\" style=\"color:#ff6b6b\">变更日志</a>'},
+    {label:'SKILL 文件',value:D.skillCount,detail:'标准 '+D.skillStandard+' · 扁平 '+D.skillFlat+' · <a href=\"../docs/workflows/变更日志.md\" style=\"color:#ff6b6b\">变更日志</a>'},
     {label:'工作流数量',value:D.workflowCount,detail:'标准化流程'},
     {label:'工具知识库',value:D.guideCount,detail:'操作指南'},
     {label:'works 日志',value:D.worksCount,detail:'一事一记'},
@@ -304,7 +304,7 @@ function switchTab(name, el) {
   document.getElementById('tbl-overview-info').innerHTML =
     '<table class="tbl"><thead><tr><th>板块</th><th>内容</th></tr></thead><tbody>'+
     '<tr><td>AI 模式</td><td>协作者 · 导师 · 加速器</td></tr>'+
-    '<tr><td>SKILL 调用</td><td>/new-post · /git-commit · /update-dashboard</td></tr>'+
+    '<tr><td>SKILL</td><td>/new-post · /git-commit · /update-dashboard</td></tr>'+
     '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>';
 })();
 (function(){
@@ -333,7 +333,7 @@ function switchTab(name, el) {
         data.map(function(s){return '<tr><td><strong>'+s.name+'</strong></td><td>'+stype(s.type)+'</td><td>'+sdiff(s.difficulty)+'</td><td>'+sdesc(s.description)+'</td><td><code style="font-size:11px">'+s.path+'</code></td><td>'+swf(s.linkedWorkflow)+'</td></tr>';}).join('')+'</tbody></table>';
     }
     // 工作流模式：点击行弹出详情弹窗
-    return '<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL 覆盖</th><th>关联项目</th><th>成熟度</th><th>分类</th></tr></thead><tbody>'+
+    return '<table class="tbl"><thead><tr><th>工作流</th><th>版本</th><th>SKILL</th><th>关联项目</th><th>成熟度</th><th>分类</th></tr></thead><tbody>'+
       data.map(function(w){
         var idx = D.workflows.indexOf(w);
         return '<tr onclick="openWfDetail('+idx+')" style="cursor:pointer" title="点击查看详情"><td><strong>'+w.name+'</strong></td><td>'+w.version+'</td><td>'+sk(w.skill)+'</td><td>'+w.project+'</td><td><span class="badge '+sm[w.status]+'">'+st[w.status]+'</span></td><td><span class="badge '+(catBadge[w.category]||'')+'">'+w.category+'</span></td></tr>';
