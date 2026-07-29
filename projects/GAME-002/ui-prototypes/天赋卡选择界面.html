@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>天赋卡选择界面</title>
+<!--
+  开仙门 — 天赋卡选择界面 HTML 交互原型
+  功能简报：2026-07-29
+  用途：战斗开场前 3 选 1 天赋祝福选择面板
+  下游：人类预览 / Lovart 概念图参考 / Godot UI 实现规格
+  规范：开仙门-UI设计规范 v1 + 开仙门-UI组件库
+-->
+<style>
+/* ============================================================
+   1. 设计 Token（开仙门-UI设计规范.md §7 CSS变量速查表）
+   ============================================================ */
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e;
+  --bg-elevated: #222228; --bg-overlay: rgba(0,0,0,0.55);
+  --surface-default: #1e1e24; --surface-hover: #2a2a32;
+  --surface-pressed: #16161c; --surface-disabled: #121218; --surface-input: #1a1a20;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0;
+  --text-disabled: #555568; --text-inverse: #1a1a1e;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --border-dashed: #2a2a36; --border-disabled: #1e1e28;
+  --quality-common: #8888a0; --quality-rare: #6699bb;
+  --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-hp-full: #4ecca3; --status-hp-mid: #ccaa44; --status-hp-low: #cc4444;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px;
+  --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400; --fw-light: 300;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px;
+  --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px; --sp-3xl: 64px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --glow-selected: 0 0 16px rgba(208,208,216,0.15);
+  --glow-legendary: 0 0 12px rgba(187,153,102,0.25);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-popup: 0 4px 24px rgba(0,0,0,0.6);
+  --shadow-inner: inset 0 1px 3px rgba(0,0,0,0.3);
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+
+/* ============================================================
+   2. 组件库 CSS（开仙门-UI组件库.html 全部组件 class）
+   ============================================================ */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+/* 按钮 */
+.btn { display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-cn); letter-spacing:4px; cursor:pointer; transition:all 0.15s; border:none; }
+.btn-primary { width:200px; height:48px; background:var(--text-body); color:var(--text-inverse); font-size:var(--fs-label); font-weight:var(--fw-bold); border-radius:var(--radius-md); }
+.btn-primary:hover { background:var(--text-primary); }
+.btn-primary:active { background:var(--text-secondary); }
+.btn-primary:disabled { background:var(--surface-disabled); color:var(--text-disabled); cursor:not-allowed; }
+.btn-secondary { width:160px; height:40px; background:transparent; color:var(--text-body); font-size:var(--fs-label); font-weight:var(--fw-semibold); border-radius:var(--radius-md); border:1px solid var(--border-default); }
+.btn-secondary:hover { border-color:var(--border-active); color:var(--text-primary); }
+.btn-secondary:disabled { border-color:var(--border-disabled); color:var(--text-disabled); cursor:not-allowed; }
+
+/* 卡片 */
+.card { border-radius:var(--radius-md); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.card-select { width:240px; height:320px; background:var(--bg-surface); border:2px solid var(--border-default); border-radius:var(--radius-lg); }
+.card-select.selected { border-color:var(--border-active); box-shadow:var(--glow-selected); }
+.card-select.locked { border:2px dashed var(--border-dashed); opacity:0.45; background:var(--bg-primary); }
+
+/* 槽位 */
+.slot { display:flex; align-items:center; justify-content:center; position:relative; border-radius:var(--radius-sm); }
+.slot-item { width:72px; height:72px; background:var(--surface-input); border:2px solid var(--border-default); }
+.slot-item.quality-legendary { border-color:var(--quality-legendary); box-shadow:var(--glow-legendary); }
+.slot-item.quality-epic { border-color:var(--quality-epic); }
+.slot-item.quality-rare { border-color:var(--quality-rare); }
+.slot-item.quality-common { border-color:var(--quality-common); }
+.slot-item.empty { border:1px dashed var(--border-dashed); background:var(--bg-surface); }
+.slot-item.locked { border:1px solid var(--border-disabled); background:var(--surface-disabled); opacity:0.4; }
+.slot-quality-dot { position:absolute; top:4px; right:4px; width:6px; height:6px; border-radius:50%; }
+.dot-legendary { background:var(--quality-legendary); }
+.dot-epic { background:var(--quality-epic); }
+.dot-rare { background:var(--quality-rare); }
+.dot-common { background:var(--quality-common); }
+
+/* 面板 */
+.panel { background:var(--bg-surface); border:1px solid var(--border-subtle); }
+.panel-popup { width:520px; padding:var(--sp-lg); border-radius:var(--radius-lg); box-shadow:var(--shadow-popup); }
+.panel-header { font-size:var(--fs-h1); color:var(--text-primary); font-weight:var(--fw-bold); letter-spacing:4px; margin-bottom:var(--sp-2xs); }
+
+/* 文本 */
+.text-display { font-size:var(--fs-display); color:var(--text-primary); font-weight:var(--fw-bold); letter-spacing:6px; }
+.text-h1 { font-size:var(--fs-h1); color:var(--text-primary); font-weight:var(--fw-bold); letter-spacing:4px; }
+.text-h2 { font-size:var(--fs-h2); color:var(--text-primary); font-weight:var(--fw-semibold); letter-spacing:2px; }
+.text-body { font-size:var(--fs-body); color:var(--text-body); line-height:1.6; }
+.text-label { font-size:var(--fs-label); color:var(--text-body); }
+.text-caption { font-size:var(--fs-caption); color:var(--text-secondary); }
+.text-small { font-size:var(--fs-small); color:var(--text-disabled); }
+.text-section-label { font-size:var(--fs-label); color:var(--text-secondary); text-transform:uppercase; letter-spacing:2px; }
+.divider { height:2px; background:var(--border-subtle); width:48px; margin-bottom:var(--sp-md); }
+
+/* 占位 */
+.placeholder-illus { width:320px; height:400px; border:1px dashed var(--border-dashed); border-radius:var(--radius-md); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.placeholder-icon { width:48px; height:48px; border:1px solid var(--border-default); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:var(--sp-sm); }
+
+/* ============================================================
+   3. 本界面扩展（组件库没有的，仅此界面需要的交互和品质样式）
+   ============================================================ */
+
+/* --- 品质边框 — 叠加在 .card-select 上 --- */
+.card-select.q-common    { border-color: var(--quality-common); }
+.card-select.q-rare      { border-color: var(--quality-rare); }
+.card-select.q-epic      { border-color: var(--quality-epic); }
+.card-select.q-legendary { border-color: var(--quality-legendary); }
+
+/* --- 交互：hover 放大 + 品质色光晕 --- */
+.card-select.interactive { transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+.card-select.interactive:hover { transform: scale(1.05); }
+.card-select.q-common.interactive:hover    { box-shadow: 0 0 20px rgba(136,136,160,0.25); }
+.card-select.q-rare.interactive:hover      { box-shadow: 0 0 20px rgba(102,153,187,0.25); }
+.card-select.q-epic.interactive:hover      { box-shadow: 0 0 24px rgba(153,119,187,0.30); }
+.card-select.q-legendary.interactive:hover { box-shadow: 0 0 28px rgba(187,153,102,0.35); }
+
+/* --- 稀有度角标 --- */
+.badge-tier {
+  display:inline-flex; align-items:center; justify-content:center;
+  padding: 3px var(--sp-md); border-radius: var(--radius-full);
+  font-size: var(--fs-caption); font-weight: var(--fw-semibold); letter-spacing: 2px;
+}
+.badge-tier.common    { background: rgba(136,136,160,0.15); color: var(--quality-common); }
+.badge-tier.rare      { background: rgba(102,153,187,0.15); color: var(--quality-rare); }
+.badge-tier.epic      { background: rgba(153,119,187,0.15); color: var(--quality-epic); }
+.badge-tier.legendary { background: rgba(187,153,102,0.15); color: var(--quality-legendary); }
+
+/* --- 分类标签 --- */
+.tag-category { display:inline-flex; align-items:center; gap:var(--sp-2xs); font-size:var(--fs-small); color:var(--text-secondary); letter-spacing:1px; }
+.tag-category::before { content:''; width:6px; height:6px; border-radius:50%; }
+.tag-category.disciple::before  { background:var(--status-success); }
+.tag-category.technique::before { background:var(--status-warning); }
+.tag-category.buff::before      { background:var(--quality-rare); }
+
+/* --- 选择按钮（品质色填充胶囊） --- */
+.btn-pick {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:180px; height:40px; border-radius:var(--radius-full); border:none;
+  font-family:var(--font-cn); font-size:var(--fs-label);
+  font-weight:var(--fw-bold); letter-spacing:4px;
+  cursor:pointer; transition:filter 0.15s, transform 0.1s;
+}
+.btn-pick:hover  { filter:brightness(1.2); }
+.btn-pick:active { filter:brightness(0.9); transform:scale(0.97); }
+.btn-pick.common    { background:var(--quality-common);    color:var(--text-inverse); }
+.btn-pick.rare      { background:var(--quality-rare);      color:var(--text-inverse); }
+.btn-pick.epic      { background:var(--quality-epic);      color:var(--text-inverse); }
+.btn-pick.legendary { background:var(--quality-legendary); color:var(--text-inverse); }
+
+/* --- 入场动画 --- */
+@keyframes cardEntry {
+  from { opacity:0; transform:translateY(40px) scale(0.9); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.card-anim-0 { animation: cardEntry 0.35s ease-out 0.05s both; }
+.card-anim-1 { animation: cardEntry 0.35s ease-out 0.15s both; }
+.card-anim-2 { animation: cardEntry 0.35s ease-out 0.25s both; }
+
+/* --- 传说卡呼吸脉冲 --- */
+@keyframes legendPulse {
+  0%,100% { box-shadow: 0 0 12px rgba(187,153,102,0.20); }
+  50%     { box-shadow: 0 0 24px rgba(187,153,102,0.45); }
+}
+.card-select.q-legendary { animation: legendPulse 2.2s ease-in-out infinite; }
+.card-select.q-legendary.interactive:hover { animation: none; }
+</style>
+</head>
+<body style="margin:0; padding:0; background:#1a1a1a; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+
+<!-- @pixso BlessingSelectionUi -->
+<section style="width:1280px; height:720px; position:relative; overflow:hidden; flex-shrink:0;">
+
+  <!-- @pixso Bg -->
+  <div style="position:absolute; inset:0; z-index:1; background:var(--bg-primary);"></div>
+
+  <!-- @pixso Mask -->
+  <div style="position:absolute; inset:0; z-index:2; background:var(--bg-overlay);"></div>
+
+  <!-- @pixso Root -->
+  <main style="position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+
+    <!-- @pixso TitleText -->
+    <h1 class="text-display" style="margin:0 0 var(--sp-2xs) 0;">天赐机缘</h1>
+
+    <!-- @pixso Divider -->
+    <div class="divider" style="width:60px; margin-bottom:var(--sp-sm);"></div>
+
+    <!-- @pixso Subtitle -->
+    <p class="text-caption" style="margin:0 0 var(--sp-2xl) 0; letter-spacing:2px;">选择一项祝福，本局生效</p>
+
+    <!-- @pixso CardRow -->
+    <div style="display:flex; gap:var(--sp-2xl); align-items:stretch;">
+
+      <!-- ============================================================
+      @pixso BlessingCard0 — tier: common / category: disciple
+      数据：blessing_config.csv → bless_atk_1 (淬体决)
+      ============================================================ -->
+      <div class="card card-select q-common interactive card-anim-0"
+           style="width:260px; height:380px; padding:var(--sp-lg) var(--sp-md); gap:var(--sp-sm); justify-content:flex-start;">
+        <!-- @pixso Badge -->
+        <span class="badge-tier common">普通</span>
+        <!-- @pixso IconArea — 72×72 图标占位 -->
+        <div class="placeholder-icon" style="width:72px; height:72px; margin:var(--sp-xs) 0 var(--sp-2xs) 0;">
+          <span style="font-size:26px; opacity:0.6;">⚔️</span>
+        </div>
+        <!-- @pixso CardName -->
+        <span class="text-h2">淬体决</span>
+        <!-- @pixso CategoryTag -->
+        <span class="tag-category disciple">弟子</span>
+        <!-- @pixso CardDesc -->
+        <p class="text-body" style="text-align:center; padding:0 var(--sp-xs); line-height:1.5; min-height:42px; flex:1; display:flex; align-items:center;">弟子攻击力 +5</p>
+        <!-- @pixso PickBtn -->
+        <button class="btn-pick common" style="margin-top:auto;">选 择 此 卡</button>
+      </div>
+
+      <!-- ============================================================
+      @pixso BlessingCard1 — tier: rare / category: technique
+      数据：blessing_config.csv → bless_dmg_amp (杀意诀)
+      ============================================================ -->
+      <div class="card card-select q-rare interactive card-anim-1"
+           style="width:260px; height:380px; padding:var(--sp-lg) var(--sp-md); gap:var(--sp-sm); justify-content:flex-start;">
+        <!-- @pixso Badge -->
+        <span class="badge-tier rare">稀有</span>
+        <!-- @pixso IconArea -->
+        <div class="placeholder-icon" style="width:72px; height:72px; margin:var(--sp-xs) 0 var(--sp-2xs) 0;">
+          <span style="font-size:26px; opacity:0.6;">🎯</span>
+        </div>
+        <!-- @pixso CardName -->
+        <span class="text-h2">杀意诀</span>
+        <!-- @pixso CategoryTag -->
+        <span class="tag-category technique">技法</span>
+        <!-- @pixso CardDesc -->
+        <p class="text-body" style="text-align:center; padding:0 var(--sp-xs); line-height:1.5; min-height:42px; flex:1; display:flex; align-items:center;">所有伤害 +15%</p>
+        <!-- @pixso PickBtn -->
+        <button class="btn-pick rare" style="margin-top:auto;">选 择 此 卡</button>
+      </div>
+
+      <!-- ============================================================
+      @pixso BlessingCard2 — tier: epic / category: buff
+      数据：blessing_config.csv → bless_evasion (幻影步)
+      ============================================================ -->
+      <div class="card card-select q-epic interactive card-anim-2"
+           style="width:260px; height:380px; padding:var(--sp-lg) var(--sp-md); gap:var(--sp-sm); justify-content:flex-start;">
+        <!-- @pixso Badge -->
+        <span class="badge-tier epic">史诗</span>
+        <!-- @pixso IconArea -->
+        <div class="placeholder-icon" style="width:72px; height:72px; margin:var(--sp-xs) 0 var(--sp-2xs) 0;">
+          <span style="font-size:26px; opacity:0.6;">🛡️</span>
+        </div>
+        <!-- @pixso CardName -->
+        <span class="text-h2">幻影步</span>
+        <!-- @pixso CategoryTag -->
+        <span class="tag-category buff">增益</span>
+        <!-- @pixso CardDesc -->
+        <p class="text-body" style="text-align:center; padding:0 var(--sp-xs); line-height:1.5; min-height:42px; flex:1; display:flex; align-items:center;">器灵获得 10% 闪避</p>
+        <!-- @pixso PickBtn -->
+        <button class="btn-pick epic" style="margin-top:auto;">选 择 此 卡</button>
+      </div>
+
+    </div>
+
+    <!-- @pixso SkipHint -->
+    <p class="text-small" style="margin-top:var(--sp-2xl); letter-spacing:1px;">按 ESC 键随机选择</p>
+
+  </main>
+
+</section>
+
+</body>
+</html>
