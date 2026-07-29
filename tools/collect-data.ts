@@ -447,6 +447,8 @@ export function collectData() {
       desc: "回顾当日工作 → 按 works/_template.md 生成日志 → 写入 works/ 目录", steps: "回顾会话 → 确认标题 → 生成(问题日志+视频草案) → 写入文件", trigger: "/write-log 或「记录日志」「总结今天」" },
     { name: "文件梳理", version: "v1", skill: "/organize-files", project: "全局", status: "mature", category: "造化坊",
       desc: "全项目目录扫描 → 诊断三级问题 → 用户确认 → 执行整理 → 同步仪表盘", steps: "扫描分析 → 诊断报告 → 方案确认 → 执行修改 → 同步仪表盘", trigger: "/organize-files 或「梳理文件」「整理文件夹」" },
+    { name: "美术任务表审查", version: "v1", skill: "/art-review", project: "主美工作", status: "active", category: "主美工作",
+      desc: "连接飞书美术排期表 → 4目标分析（基础状况/风险逾期/信息规范/综合建议）→ 输出审查报告", steps: "选定审查范围 → 飞书读取数据 → 4目标分析 → 生成报告 → 存档", trigger: "/art-review 或「审查美术」「美术review」" },
   ];
   const skillsDir = path.join(ROOT, ".claude/skills");
   const skillsRaw = listSkills(skillsDir);
@@ -488,7 +490,7 @@ export function collectData() {
 
   const assets = [
     { layer: "系统层", name: "CLAUDE.md", path: "CLAUDE.md", desc: "AI 行为规范（项目入口）" },
-    { layer: "系统层", name: "docs/workflows/", path: "docs/workflows/", desc: "标准化工作流（9 文档）" },
+    { layer: "系统层", name: "docs/workflows/", path: "docs/workflows/", desc: "标准化工作流（10 文档）" },
     { layer: "系统层", name: "docs/tool-guides/", path: "docs/tool-guides/", desc: "工具知识库" },
     { layer: "系统层", name: ".claude/skills/", path: ".claude/skills/", desc: "可执行 SKILL 命令" },
     { layer: "系统层", name: "works/", path: "works/", desc: "工作日志（一事一记）" },
