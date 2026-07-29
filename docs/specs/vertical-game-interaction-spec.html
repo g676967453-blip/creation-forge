@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>竖版手游交互原型图规范 v1.0</title>
+<style>
+  :root {
+    --bg:#fafafc; --card:#fff; --border:#e4e6eb; --text:#3a3d48; --head:#1a1d28; --muted:#8b8f9a;
+    --accent:#c8964a; --accent2:#4a8bc8; --success:#3ca374; --warning:#c8963c; --danger:#c84848;
+    --q-common:#7a7d8a; --q-rare:#5a8db8; --q-epic:#8a5ab8; --q-legendary:#b89648;
+    --pw:375px; --ph:667px; --ps:0.52;
+    --pdw:calc(var(--pw)*var(--ps)); --pdh:calc(var(--ph)*var(--ps));
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',-apple-system,sans-serif;font-size:14px;line-height:1.7;max-width:1060px;margin:0 auto;padding:40px 20px 100px}
+
+  /* ═══════ HEADER ═══════ */
+  .header{text-align:center;padding:48px 0 36px;border-bottom:2px solid var(--border);margin-bottom:36px}
+  .header .tags{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .header .tags span{font-size:10px;color:var(--muted);background:var(--card);padding:2px 10px;border-radius:99px;border:1px solid var(--border);letter-spacing:1px}
+  .header h1{font-size:28px;font-weight:700;color:var(--head);letter-spacing:3px;margin-bottom:4px}
+  .header .sub{font-size:14px;color:var(--accent);font-weight:500;letter-spacing:2px}
+  .header .ref{margin-top:12px;font-size:11px;color:var(--muted);line-height:1.6}
+  .header .ref b{color:var(--accent);font-weight:600}
+
+  /* ═══════ PRINCIPLE ROW ═══════ */
+  .pr-row{display:flex;gap:14px;margin:20px 0 28px;flex-wrap:wrap}
+  .pr-card{flex:1;min-width:160px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+  .pr-card .pc{font-size:26px;font-weight:700;color:var(--accent);margin-bottom:2px}
+  .pr-card .pt{font-size:12px;font-weight:600;color:var(--head)}
+  .pr-card .pd{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.5}
+
+  /* ═══════ TOC ═══════ */
+  .toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin:24px 0}
+  .toc h3{font-size:14px;color:var(--head);margin-bottom:10px}
+  .toc ol{columns:2;column-gap:28px;margin-left:18px}
+  .toc li{margin:4px 0;font-size:12px}
+  .toc a{color:var(--text);text-decoration:none}
+  .toc a:hover{color:var(--accent)}
+
+  /* ═══════ TWO-COLUMN SECTION ═══════ */
+  h2{font-size:18px;font-weight:700;color:var(--head);margin:44px 0 16px;padding-bottom:6px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+  h2 .num{font-size:11px;color:var(--accent);background:rgba(200,150,74,0.08);padding:2px 7px;border-radius:4px;font-weight:600}
+  .spec-row{display:flex;gap:24px;margin:14px 0;align-items:flex-start}
+  .spec-visual{flex:0 0 48%;min-width:0;display:flex;justify-content:center;align-items:flex-start}
+  .spec-text{flex:1;min-width:0}
+  .spec-text h3{font-size:15px;font-weight:600;color:var(--head);margin:0 0 8px}
+  .spec-text h3:first-child{margin-top:0}
+  .spec-text p{margin:4px 0;font-size:13px}
+  .spec-text ul,.spec-text ol{margin:6px 0 6px 18px;font-size:13px}
+  .spec-text li{margin:2px 0}
+  @media(max-width:780px){.spec-row{flex-direction:column}.spec-visual{flex:auto;width:100%}}
+
+  /* ═══════ TABLES ═══════ */
+  .tbl{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0 12px}
+  .tbl th,.tbl td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  .tbl th{background:#f5f6f8;color:var(--head);font-weight:600;font-size:10px;letter-spacing:0.5px;white-space:nowrap}
+  .tbl tr:hover td{background:rgba(0,0,0,0.01)}
+  .tbl td:first-child{white-space:nowrap;font-weight:500}
+  .tbl.wide td:first-child{white-space:normal}
+
+  pre{background:#f4f5f7;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-size:11px;line-height:1.55;margin:8px 0;color:#555;font-family:'SF Mono','Fira Code',monospace;white-space:pre;overflow-x:auto}
+
+  .swatch{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:middle;margin-right:4px;border:1px solid rgba(0,0,0,0.08)}
+  blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;background:rgba(200,150,74,0.04);border-radius:0 4px 4px 0;font-size:12px;color:var(--muted)}
+  .note{font-size:11px;color:var(--muted);margin-top:4px}
+
+  /* ═══════ PHONE ═══════ */
+  .proto-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .proto-label{font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px}
+  .phone{width:var(--pdw);height:var(--pdh);background:#12121e;border:2.5px solid #3a3a4a;border-radius:16px;position:relative;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+  .phone .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:14px;background:#12121e;border-radius:0 0 9px 9px;z-index:20}
+  .ph-lbl{font-size:6px;font-weight:600;letter-spacing:0.5px;display:flex;align-items:center;justify-content:center;text-align:center}
+
+  /* ═══ PHONE: safe area ═══ */
+  .ph-sa .ps-st{position:absolute;top:0;left:0;right:0;height:23px;background:rgba(200,60,60,0.16);z-index:3;display:flex;align-items:flex-end;justify-content:center;font-size:6px;color:rgba(200,60,60,0.7);padding-bottom:2px}
+  .ph-sa .ps-ct{position:absolute;top:23px;left:0;right:0;bottom:18px;background:rgba(60,163,116,0.07);z-index:2;display:flex;align-items:center;justify-content:center;font-size:7px;color:rgba(60,163,116,0.55)}
+  .ph-sa .ps-nv{position:absolute;bottom:0;left:0;right:0;height:18px;background:rgba(200,160,40,0.16);z-index:3;display:flex;align-items:flex-start;justify-content:center;font-size:6px;color:rgba(200,160,40,0.7);padding-top:1px}
+
+  /* ═══ PHONE: thumb zone ═══ */
+  .ph-tz .z-h{position:absolute;left:0;right:0;top:0;height:37.5%;background:rgba(200,60,60,0.08);z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(180,40,40,0.55);font-weight:600}
+  .ph-tz .z-s{position:absolute;left:0;right:0;top:37.5%;height:22.5%;background:rgba(200,160,40,0.08);z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(170,130,30,0.55);font-weight:600}
+  .ph-tz .z-n{position:absolute;left:0;right:0;top:60%;height:22.5%;background:rgba(60,163,116,0.10);z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(40,140,100,0.55);font-weight:600}
+  .ph-tz .z-e{position:absolute;left:0;right:0;top:82.5%;height:17.5%;background:rgba(60,140,220,0.11);z-index:2;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(40,120,200,0.55);font-weight:600}
+  .ph-tz .thumb{position:absolute;right:14px;top:57%;z-index:5;font-size:18px;opacity:0.5}
+
+  /* ═══ PHONE LAYOUTS ═══ */
+  /* A: Lobby */
+  .l-top{position:absolute;top:0;left:0;right:0;height:13%;z-index:4;background:rgba(14,14,24,0.95);display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .l-top .rd{width:6px;height:6px;border-radius:50%}
+  .l-hero{position:absolute;top:13%;left:0;right:0;height:38%;background:linear-gradient(180deg,rgba(25,20,40,0.7),rgba(18,16,28,0.8));display:flex;align-items:center;justify-content:center;z-index:1}
+  .l-hero .hs{width:44px;height:80px;background:rgba(255,255,255,0.03);border-radius:22px 22px 0 0}
+  .l-grid{position:absolute;top:51%;left:0;right:0;height:30%;z-index:2;background:rgba(16,16,26,0.8);display:flex;flex-wrap:wrap;padding:5px 12px;gap:4px 5px;justify-content:center;align-content:center}
+  .l-grid .gi{width:22px;height:22px;background:rgba(255,255,255,0.03);border-radius:4px;border:1px solid rgba(255,255,255,0.03)}
+  .l-nav{position:absolute;bottom:0;left:0;right:0;height:11%;z-index:4;background:rgba(12,12,22,0.97);display:flex;align-items:center;justify-content:space-around;padding-bottom:7px;border-top:1px solid rgba(255,255,255,0.04)}
+  .l-nav .ni{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:6px;color:rgba(255,255,255,0.25)}
+  .l-nav .ni.on{color:var(--accent)}
+  .l-nav .nd{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.12)}
+  .l-nav .ni.on .nd{background:var(--accent)}
+
+  /* B: Battle */
+  .b-hud{position:absolute;top:0;left:0;right:0;height:9%;z-index:4;background:rgba(8,8,16,0.9);display:flex;align-items:center;justify-content:space-between;padding:3px 7px;font-size:6px;color:rgba(255,255,255,0.45)}
+  .b-field{position:absolute;top:9%;left:0;right:0;bottom:16%;background:linear-gradient(180deg,#0a0a16,#0e0e24 40%,#161630);z-index:1;overflow:hidden}
+  .b-field .en{position:absolute;width:13px;height:13px;background:rgba(200,50,50,0.4);border-radius:2px}
+  .b-field .e1{top:8%;left:50%}.b-field .e2{top:18%;left:28%}.b-field .e3{top:12%;left:68%}
+  .b-field .pz{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);display:flex;align-items:flex-end;gap:4px}
+  .b-field .pu{width:14px;height:20px;background:rgba(60,163,116,0.3);border-radius:2px 2px 0 0}
+  .b-field .pm{width:22px;height:30px;background:rgba(200,150,74,0.4);border-radius:4px 4px 0 0;margin:0 2px}
+  .b-sk{position:absolute;bottom:5%;left:0;right:0;height:11%;z-index:4;background:rgba(12,12,20,0.9);display:flex;align-items:center;justify-content:center;gap:6px}
+  .b-sk .sk{width:22px;height:22px;background:rgba(255,255,255,0.05);border-radius:6px;border:1px solid rgba(255,255,255,0.06)}
+
+  /* C: List */
+  .ls-tb{position:absolute;top:0;left:0;right:0;height:11%;z-index:4;background:rgba(18,18,28,0.95);display:flex;align-items:flex-end;padding:3px 7px 3px}
+  .ls-tb .bk{font-size:10px;color:rgba(255,255,255,0.35);margin-right:6px}
+  .ls-tb .tt{font-size:8px;color:#fff;font-weight:600}
+  .ls-tr{position:absolute;top:11%;left:0;right:0;height:6%;z-index:3;background:rgba(16,16,26,0.9);display:flex;align-items:center}
+  .ls-tr .tb{flex:1;text-align:center;font-size:6px;color:rgba(255,255,255,0.3);padding:2px 0;border-bottom:2px solid transparent}
+  .ls-tr .tb.on{color:var(--accent);border-bottom-color:var(--accent)}
+  .ls-bd{position:absolute;top:17%;left:0;right:0;bottom:11%;z-index:1;background:rgba(12,12,20,0.5);padding:2px 5px;display:flex;flex-direction:column;gap:1px}
+  .ls-bd .lr{display:flex;align-items:center;gap:5px;padding:3px 4px;background:rgba(255,255,255,0.01);border-radius:2px}
+  .ls-bd .li{width:15px;height:15px;background:rgba(255,255,255,0.03);border-radius:2px;flex-shrink:0}
+  .ls-bd .ln{font-size:6px;color:rgba(255,255,255,0.55)}
+  .ls-bd .ls{font-size:5px;color:rgba(255,255,255,0.2)}
+  .ls-bb{position:absolute;bottom:0;left:0;right:0;height:11%;z-index:4;background:rgba(14,14,24,0.95);display:flex;align-items:center;justify-content:space-around;font-size:6px;color:rgba(255,255,255,0.3)}
+
+  /* D: Dialog */
+  .dlg-bg{position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:flex;align-items:center;justify-content:center}
+  .dlg-card{width:70%;background:#1c1c2c;border-radius:8px;border:1px solid rgba(255,255,255,0.05);overflow:hidden}
+  .dlg-card .dt{text-align:center;font-size:8px;font-weight:600;color:#fff;padding:10px 0 5px}
+  .dlg-card .dd{height:1px;background:rgba(255,255,255,0.04);margin:0 12px}
+  .dlg-card .db{padding:8px 12px;font-size:6px;color:rgba(255,255,255,0.35);text-align:center;min-height:28px;display:flex;align-items:center;justify-content:center}
+  .dlg-card .dbt{display:flex;border-top:1px solid rgba(255,255,255,0.04)}
+  .dlg-card .dbtn{flex:1;text-align:center;padding:7px 0;font-size:7px;color:rgba(255,255,255,0.35)}
+  .dlg-card .dbtn:first-child{border-right:1px solid rgba(255,255,255,0.04)}
+  .dlg-card .dbtn.ok{color:var(--accent);font-weight:600}
+
+  /* E: Card 3-choose-1 */
+  .cs-ov{position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 0}
+  .cs-ov .cst{font-size:9px;font-weight:700;color:var(--accent);letter-spacing:1px}
+  .cs-ov .css{font-size:6px;color:rgba(255,255,255,0.3);margin-bottom:2px}
+  .cs-ov .csc{display:flex;flex-direction:column;gap:4px}
+  .cs-ov .cd{width:115px;padding:7px 9px;background:rgba(16,16,30,0.95);border:1.3px solid rgba(255,255,255,0.08);border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .cs-ov .cd.ra{border-color:rgba(90,141,184,0.3)}
+  .cs-ov .cd.ep{border-color:rgba(138,90,184,0.3)}
+  .cs-ov .cd .cbd{font-size:5px;padding:0 6px;border-radius:99px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.35);letter-spacing:0.5px}
+  .cs-ov .cd.ra .cbd{background:rgba(90,141,184,0.12);color:#6a9cc8}
+  .cs-ov .cd.ep .cbd{background:rgba(138,90,184,0.12);color:#9a6cc8}
+  .cs-ov .cd .ci{width:20px;height:20px;background:rgba(255,255,255,0.03);border-radius:3px}
+  .cs-ov .cd .cn{font-size:7px;color:rgba(255,255,255,0.65);font-weight:600}
+  .cs-ov .cd .cdesc{font-size:5px;color:rgba(255,255,255,0.25);text-align:center;line-height:1.3}
+  .cs-ov .cd .cbtn{font-size:6px;padding:1px 12px;border-radius:99px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.35)}
+
+  /* ═══════ GRID DEMO ═══════ */
+  .gd-wrap{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px;position:relative}
+  .gd-canvas{position:relative;background:rgba(0,0,0,0.015);border:1px dashed rgba(0,0,0,0.08);overflow:hidden}
+  .gd-canvas .gcol{position:absolute;top:0;bottom:0;background:rgba(74,139,200,0.05)}
+  .gd-canvas .ggut{position:absolute;top:0;bottom:0;background:rgba(200,150,74,0.03)}
+  .gd-canvas .gm{position:absolute;top:0;bottom:0;background:rgba(200,60,60,0.03)}
+  .gd-canvas .glbl{position:absolute;font-size:7px;color:var(--muted);white-space:nowrap;transform:translateX(-50%)}
+  .gd-canvas .gblock{position:absolute;background:rgba(200,150,74,0.10);border:1px solid rgba(200,150,74,0.2);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:7px;color:var(--accent);font-weight:600}
+  .sp-demo{display:flex;flex-direction:column;gap:0}
+  .sp-demo .sr{display:flex;align-items:center;gap:8px;padding:2px 0}
+  .sp-demo .sl{font-size:10px;color:var(--muted);width:55px;text-align:right;flex-shrink:0}
+  .sp-demo .sb{height:7px;background:rgba(200,150,74,0.22);border-radius:2px;flex-shrink:0}
+  .sp-demo .sv{font-size:9px;color:var(--text);flex-shrink:0}
+
+  /* ═══════ COMPONENT DEMOS ═══════ */
+  .comp-cell{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .comp-cell .clbl{font-size:9px;color:var(--muted)}
+  .comp-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin:6px 0}
+  .comp-row.ctr{align-items:center}
+
+  /* Buttons */
+  .cbtn{display:inline-flex;align-items:center;justify-content:center;font-family:inherit;border:none;cursor:default;font-weight:600;border-radius:4px}
+  .cbtn-pri{width:120px;height:26px;background:var(--accent);color:#fff;font-size:11px;letter-spacing:2px}
+  .cbtn-pri.dis{opacity:0.4;filter:grayscale(0.4)}
+  .cbtn-sec{width:96px;height:22px;background:var(--card);color:var(--text);font-size:10px;border:1.2px solid var(--border);letter-spacing:1px}
+  .cbtn-sm{width:72px;height:18px;background:#f4f5f7;color:var(--text);font-size:9px;border:1px solid var(--border);letter-spacing:1px}
+  .cbtn-ic{width:24px;height:24px;background:#f4f5f7;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .cbtn-dg{width:86px;height:22px;background:rgba(200,72,72,0.06);color:var(--danger);border:1px solid rgba(200,72,72,0.18);font-size:10px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-weight:600}
+
+  /* Cards */
+  .cc{width:90px;padding:8px 10px;border-radius:6px;border:1.8px solid;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .cc.q-co{border-color:var(--q-common);background:rgba(122,125,138,0.03)}
+  .cc.q-ra{border-color:var(--q-rare);background:rgba(90,141,184,0.03)}
+  .cc.q-ep{border-color:var(--q-epic);background:rgba(138,90,184,0.03)}
+  .cc.q-le{border-color:var(--q-legendary);background:rgba(184,150,72,0.03)}
+  .cc .cci{width:24px;height:24px;background:rgba(0,0,0,0.03);border-radius:3px}
+  .cc .ccb{padding:1px 6px;border-radius:99px;font-size:6px;letter-spacing:0.5px}
+  .cc.q-co .ccb{background:rgba(122,125,138,0.10);color:var(--q-common)}
+  .cc.q-ra .ccb{background:rgba(90,141,184,0.10);color:var(--q-rare)}
+  .cc.q-ep .ccb{background:rgba(138,90,184,0.10);color:var(--q-epic)}
+  .cc.q-le .ccb{background:rgba(184,150,72,0.10);color:var(--q-legendary)}
+  .cc .ccn{font-size:9px;font-weight:600;color:var(--head)}
+  .cc .ccd{font-size:6px;color:var(--muted);text-align:center;line-height:1.2}
+  .cc.sel{border-color:var(--accent);box-shadow:0 0 8px rgba(200,150,74,0.18)}
+  .cc.lock{opacity:0.35;border-style:dashed;filter:grayscale(0.4)}
+
+  /* Bars */
+  .bar-r{display:flex;align-items:center;gap:6px;margin:3px 0}
+  .bar-r .blbl{font-size:9px;color:var(--muted);width:26px;text-align:right;flex-shrink:0}
+  .bar-r .btrack{flex:1;height:8px;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden}
+  .bar-r .bfill{height:100%;border-radius:4px}
+  .bf-hf{width:85%;background:var(--success)}.bf-hm{width:45%;background:var(--warning)}.bf-hl{width:18%;background:var(--danger)}.bf-ex{width:60%;background:var(--accent2)}.bf-en{width:72%;background:linear-gradient(90deg,var(--success),var(--accent))}
+
+  /* Slots */
+  .csl{width:34px;height:34px;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;font-size:8px}
+  .csl.q-co{border:1.8px solid var(--q-common);background:rgba(122,125,138,0.04)}
+  .csl.q-ra{border:1.8px solid var(--q-rare);background:rgba(90,141,184,0.04)}
+  .csl.q-ep{border:1.8px solid var(--q-epic);background:rgba(138,90,184,0.04)}
+  .csl.q-le{border:1.8px solid var(--q-legendary);background:rgba(184,150,72,0.04);box-shadow:0 0 5px rgba(184,150,72,0.15)}
+  .csl.emp{border:1.3px dashed rgba(0,0,0,0.1);background:rgba(0,0,0,0.005)}
+  .csl.lkd{border:1.3px solid rgba(0,0,0,0.05);opacity:0.3}
+  .csl .sld{position:absolute;top:2px;right:2px;width:4px;height:4px;border-radius:50%}
+  .csl.q-co .sld{background:var(--q-common)}.csl.q-ra .sld{background:var(--q-rare)}.csl.q-ep .sld{background:var(--q-epic)}.csl.q-le .sld{background:var(--q-legendary)}
+
+  /* Tabs */
+  .ctabs{display:flex;background:#f4f5f7;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+  .ctab{padding:4px 12px;font-size:9px;color:var(--muted);border-bottom:2px solid transparent;cursor:default}
+  .ctab.on{color:var(--accent);border-bottom-color:var(--accent);background:rgba(200,150,74,0.03)}
+
+  /* Badges */
+  .cbadge{display:inline-flex;padding:1px 7px;border-radius:99px;font-size:8px;font-weight:600;letter-spacing:0.3px}
+  .cbadge.co{background:rgba(122,125,138,0.08);color:var(--q-common)}
+  .cbadge.ra{background:rgba(90,141,184,0.08);color:var(--q-rare)}
+  .cbadge.ep{background:rgba(138,90,184,0.08);color:var(--q-epic)}
+  .cbadge.le{background:rgba(184,150,72,0.08);color:var(--q-legendary)}
+  .cbadge.al{background:rgba(200,72,72,0.08);color:var(--danger)}
+  .cbadge.dot{width:7px;height:7px;padding:0;border-radius:50%;background:var(--danger)}
+
+  /* Toggle */
+  .ctg{width:30px;height:16px;border-radius:8px;background:rgba(0,0,0,0.1);position:relative;cursor:default;transition:background 0.2s}
+  .ctg.on{background:var(--success)}
+  .ctg::after{content:'';position:absolute;top:1.5px;left:1.5px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left 0.2s;box-shadow:0 1px 2px rgba(0,0,0,0.08)}
+  .ctg.on::after{left:15.5px}
+
+  /* Input */
+  .cinp{width:130px;height:24px;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:0 6px;font-family:inherit;font-size:10px;color:var(--text);outline:none;display:flex;align-items:center}
+  .cinp.ph{color:var(--muted)}
+
+  /* Text */
+  .ts-d{font-size:20px;font-weight:700;color:var(--head)}.ts-h1{font-size:17px;font-weight:700;color:var(--head)}.ts-h2{font-size:14px;font-weight:600;color:var(--head)}.ts-b{font-size:12px;color:var(--text);line-height:1.5}.ts-l{font-size:11px;color:var(--text);font-weight:500}.ts-c{font-size:10px;color:var(--muted)}.ts-s{font-size:9px;color:var(--muted)}
+
+  /* Gesture */
+  .gest-row{display:flex;gap:14px;flex-wrap:wrap;margin:4px 0}
+  .gest-it{display:flex;flex-direction:column;align-items:center;gap:3px;width:56px;text-align:center}
+  .gest-it .gico{width:32px;height:32px;border-radius:50%;background:var(--card);border:1.3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .gest-it .gn{font-size:8px;color:var(--text);font-weight:500}
+  .gest-it .gc{font-size:6px;color:var(--muted)}
+
+  /* Timing */
+  .tmr{display:flex;align-items:center;gap:6px;margin:2px 0}
+  .tmr .tl{font-size:9px;color:var(--text);width:75px;text-align:right;flex-shrink:0}
+  .tmr .tt{flex:1;height:5px;background:rgba(0,0,0,0.04);border-radius:3px;position:relative}
+  .tmr .tf{height:100%;border-radius:3px;position:absolute;left:0;top:0}
+  .tmr .tv{font-size:8px;color:var(--muted);width:60px;flex-shrink:0}
+
+  /* ═══════ CHECKLIST ═══════ */
+  .chk{list-style:none;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}
+  .chk li{font-size:12px;padding:1px 0}.chk li::before{content:'☐ ';color:var(--muted);margin-right:4px}
+  .chk.single{grid-template-columns:1fr}
+
+  .footer{margin-top:56px;padding-top:20px;border-top:2px solid var(--border);text-align:center;color:var(--muted);font-size:11px}
+  @media print{body{background:#fff;max-width:100%}.phone{box-shadow:none;border-color:#ccc}.spec-row{flex-direction:row}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div class="header">
+  <div class="tags"><span>📐 750×1334</span><span>📱 竖版手游</span><span>🏭 生产线标准</span><span>v1.0</span></div>
+  <h1>竖版手游交互原型图规范</h1>
+  <p class="sub">Portrait Mobile Game Interaction Prototype Specification</p>
+  <p class="ref">方法论参考：网易游戏<b>「信·达·雅」</b>交互设计体系<br>标杆产品：阴阳师 · 梦幻西游 · 倩女幽魂 · 逆水寒 · 哈利波特：魔法觉醒</p>
+</div>
+
+<div class="pr-row">
+  <div class="pr-card"><div class="pc">信</div><div class="pt">信息准确 · 易学易用</div><div class="pd">层级清晰，反馈即时<br>用户无需思考即可完成操作</div></div>
+  <div class="pr-card"><div class="pc">达</div><div class="pt">生动细致 · 流畅高效</div><div class="pd">过渡自然，路径最短<br>高频操作 ≤2 步触达</div></div>
+  <div class="pr-card"><div class="pc">雅</div><div class="pt">氛围营造 · 品牌识别</div><div class="pd">界面叙事融入世界观<br>独特视觉语言建立品牌认知</div></div>
+</div>
+
+<div class="toc">
+  <h3>目录</h3>
+  <ol>
+    <li><a href="#s1">画布与安全区</a></li><li><a href="#s2">拇指热区与操作布局</a></li><li><a href="#s3">手势系统</a></li><li><a href="#s4">触控规格</a></li><li><a href="#s5">屏幕布局系统</a></li><li><a href="#s6">网格系统</a></li><li><a href="#s7">基础组件规范</a></li><li><a href="#s8">导航系统</a></li><li><a href="#s9">状态与反馈</a></li><li><a href="#s10">弹窗体系</a></li><li><a href="#s11">动效规范</a></li><li><a href="#s12">字体与排版</a></li><li><a href="#s13">色彩与对比度</a></li><li><a href="#s14">音效规范</a></li><li><a href="#s15">横竖屏切换</a></li><li><a href="#s16">可访问性清单</a></li><li><a href="#s17">交付检查清单</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════ 01 画布 ═══════════ -->
+<h2 id="s1"><span class="num">01</span> 画布与安全区</h2>
+
+<div class="spec-row">
+  <div class="spec-visual">
+    <div class="proto-col">
+      <div class="phone ph-sa"><div class="notch"></div><div class="ps-st">状态栏 ≥44px(iOS) / ≥24px(Android)</div><div class="ps-ct">内容安全区 · 核心UI元素在此区域内</div><div class="ps-nv">Home Indicator ≥34px / 导航栏</div></div>
+      <span class="proto-label">▲ 安全区示意（等比缩放）</span>
+    </div>
+  </div>
+  <div class="spec-text">
+    <h3>基准分辨率</h3>
+    <table class="tbl"><tr><th>版本</th><th>分辨率</th><th>宽高比</th><th>用途</th></tr><tr><td>基准版</td><td>750×1334</td><td>9:16</td><td>主设计稿</td></tr><tr><td>适配版</td><td>750×1624</td><td>≈9:19.5</td><td>全面屏适配</td></tr></table>
+    <p class="note">原则：优先最小分辨率设计，宽度统一750，纵向中心锚点拓展。参照网易系手游适配方案。</p>
+    <h3 style="margin-top:10px;">平台安全区</h3>
+    <table class="tbl"><tr><th>平台</th><th>顶部</th><th>底部</th><th>左右</th></tr><tr><td>iOS 刘海/灵动岛</td><td>≥44px</td><td>≥34px</td><td>≥16px</td></tr><tr><td>iOS 非全面屏</td><td>≥20px</td><td>≥0</td><td>≥16px</td></tr><tr><td>Android 全面屏</td><td>≥24px</td><td>导航栏高度</td><td>≥16px</td></tr></table>
+    <p><strong>全屏背景图：</strong>输出 1334×1750，中心锚点，核心内容区 1334×750。</p>
+  </div>
+</div>
+
+<!-- ═══════════ 02 拇指热区 ═══════════ -->
+<h2 id="s2"><span class="num">02</span> 拇指热区与操作布局</h2>
+<p style="font-size:13px;color:var(--muted);margin-bottom:8px;">参照网易「左手开火」操作区域理论——将屏幕按拇指可达性划分为四区。</p>
+
+<div class="spec-row">
+  <div class="spec-visual">
+    <div class="proto-col">
+      <div class="phone ph-tz" style="position:relative;"><div class="notch"></div><div class="z-h">❌ 难以触及 y:0~500</div><div class="z-s">⚡ 伸展区 y:500~800</div><div class="z-n">✅ 自然热区 y:800~1100</div><div class="z-e">🔥 极易触达 y:1100~1334</div><div class="thumb">👍</div></div>
+      <span class="proto-label">▲ 四区热力分布</span>
+    </div>
+  </div>
+  <div class="spec-text">
+    <h3>分区策略</h3>
+    <table class="tbl"><tr><th>区域</th><th>Y范围</th><th>放置内容</th></tr><tr><td>顶部信息栏</td><td>0~120</td><td>HUD数值、标题、返回按钮</td></tr><tr><td>中部展示区</td><td>120~800</td><td>角色/场景/列表、卡片浏览</td></tr><tr><td>下部操作区</td><td>800~1100</td><td>高频按钮、Tab切换</td></tr><tr><td>底部固定区</td><td>1100~1334</td><td>主CTA、底部导航</td></tr></table>
+    <h3 style="margin-top:10px;">按钮位置铁律</h3>
+    <ul>
+      <li><strong>主CTA：</strong>y&gt;1100，宽≥280px，高≥52px</li>
+      <li><strong>次要操作：</strong>y:900~1100</li>
+      <li><strong>返回/关闭：</strong>左上/右上，热区≥44×44px</li>
+      <li><strong>危险操作：</strong>非热区+二次确认</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ 03 手势 ═══════════ -->
+<h2 id="s3"><span class="num">03</span> 手势系统</h2>
+<p style="font-size:13px;color:var(--muted);margin-bottom:8px;">参照网易《逆水寒》手游手势体系——手势驱动交互，减少屏幕上常驻按钮。</p>
+
+<div class="spec-row">
+  <div class="spec-visual">
+    <div class="gest-row">
+      <div class="gest-it"><div class="gico">👆</div><div class="gn">单击 Tap</div><div class="gc">&lt;200ms</div></div>
+      <div class="gest-it"><div class="gico">✊</div><div class="gn">长按 Press</div><div class="gc">≥500ms</div></div>
+      <div class="gest-it"><div class="gico">↕️</div><div class="gn">上下滑动</div><div class="gc">≥10px</div></div>
+      <div class="gest-it"><div class="gico">↔️</div><div class="gn">左右滑动</div><div class="gc">≥10px</div></div>
+      <div class="gest-it"><div class="gico">🤏</div><div class="gn">双指缩放</div><div class="gc">Pinch</div></div>
+      <div class="gest-it"><div class="gico">✋</div><div class="gn">拖拽 Drag</div><div class="gc">长按+移动</div></div>
+    </div>
+  </div>
+  <div class="spec-text">
+    <table class="tbl wide"><tr><th>手势</th><th>触发</th><th>标准用途</th><th>网易标杆参考</th></tr>
+    <tr><td><strong>单击</strong></td><td>&lt;200ms</td><td>确认/选择/触发</td><td>全场景通用</td></tr>
+    <tr><td><strong>长按</strong></td><td>≥500ms</td><td>详情Tooltip/快捷菜单</td><td>阴阳师式神详情、梦幻装备比较</td></tr>
+    <tr><td><strong>上下滑动</strong></td><td>≥10px</td><td>列表滚动/页面浏览</td><td>式神录、背包列表（网易全系）</td></tr>
+    <tr><td><strong>左右滑动</strong></td><td>≥10px</td><td>Tab切换/卡片翻页/删除</td><td>哈利波特卡牌切页、梦幻商会</td></tr>
+    <tr><td><strong>双指缩放</strong></td><td>双指</td><td>地图/图片查看</td><td>逆水寒地图缩放</td></tr>
+    <tr><td><strong>拖拽</strong></td><td>长按+移动</td><td>物品拖放/排序</td><td>梦幻背包整理</td></tr></table>
+    <p style="margin-top:8px;"><strong>冲突规则：</strong>弹窗层 &gt; 滚动层 &gt; 可点击元素 &gt; 背景层。纵向滑动优先于横向。面板打开时下层穿透禁用。</p>
+    <p class="note">滑动参数：识别阈值≥10px | 惯性减速率0.95 | 回弹0.3s ease-out | 翻页吸附30%</p>
+  </div>
+</div>
+
+<!-- ═══════════ 04 触控 ═══════════ -->
+<h2 id="s4"><span class="num">04</span> 触控规格</h2>
+<div class="spec-row">
+  <div class="spec-visual">
+    <div style="background:var(--card);border:2px dashed var(--danger);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--danger);font-weight:600;">44×44</div>
+    <div style="margin-left:16px;display:flex;flex-direction:column;gap:6px;align-items:center;">
+      <div style="background:var(--card);border:2px solid var(--border);border-radius:6px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:18px;">⚙</div>
+      <span class="proto-label">48×48 图标按钮</span>
+    </div>
+  </div>
+  <div class="spec-text">
+    <table class="tbl"><tr><th>元素</th><th>最小</th><th>建议</th></tr><tr><td>按钮</td><td>44×44</td><td>52~56高，200~300宽</td></tr><tr><td>图标按钮</td><td>44×44</td><td>48×48</td></tr><tr><td>列表项</td><td>44高</td><td>56~72高</td></tr><tr><td>卡片</td><td>44×44</td><td>≥120×160</td></tr><tr><td>Tab</td><td>44×44</td><td>≥60×44</td></tr></table>
+    <blockquote>参照 iOS HIG(44pt) 与 Android Material(48dp)。<strong>网易系产品统一以44pt为下限。</strong></blockquote>
+    <p><strong>触控容差：</strong>命中区域=视觉边界<strong>+4px</strong> | 相邻间距≥8px | 分割线不属于触控区</p>
+    <p><strong>防误触：</strong>弹窗遮罩阻断下层 | 按钮300ms冷却 | 滑动中禁用点击 | 加载中全屏遮罩</p>
+  </div>
+</div>
+
+<!-- ═══════════ 05 布局 ═══════════ -->
+<h2 id="s5"><span class="num">05</span> 屏幕布局系统</h2>
+<p style="font-size:13px;color:var(--muted);margin-bottom:8px;">参照网易界面三大类型（全屏/窗口/伪窗口），提炼为五套竖版标准模板。</p>
+
+<div class="spec-row">
+  <div class="spec-visual" style="flex-wrap:wrap;gap:10px;display:flex;justify-content:center;">
+    <div class="proto-col"><div class="phone"><div class="l-top"><span class="ph-lbl" style="color:rgba(255,255,255,0.5);">⚜️</span><div style="display:flex;gap:4px;"><span class="rd" style="background:var(--accent);"></span><span class="rd" style="background:var(--success);"></span><span class="rd" style="background:var(--accent2);"></span></div></div><div class="l-hero"><div class="hs"></div></div><div class="l-grid"><div class="gi"></div><div class="gi"></div><div class="gi"></div><div class="gi"></div><div class="gi"></div><div class="gi"></div><div class="gi"></div><div class="gi"></div></div><div class="l-nav"><div class="ni on"><div class="nd"></div>首页</div><div class="ni"><div class="nd"></div>英雄</div><div class="ni"><div class="nd"></div>背包</div><div class="ni"><div class="nd"></div>设置</div></div></div><span class="proto-label">A：大厅（场景化主界面）</span></div>
+    <div class="proto-col"><div class="phone"><div class="b-hud"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div><div class="b-field"><div class="en e1"></div><div class="en e2"></div><div class="en e3"></div><div class="pz"><div class="pu"></div><div class="pu"></div><div class="pm"></div><div class="pu"></div><div class="pu"></div></div></div><div class="b-sk"><div class="sk"></div><div class="sk" style="width:28px;height:28px;border-color:rgba(200,150,74,0.25);"></div><div class="sk"></div></div></div><span class="proto-label">B：战斗（极简HUD+技能栏）</span></div>
+  </div>
+  <div class="spec-text">
+    <h3>网易三界面类型对应竖版模板</h3>
+    <table class="tbl wide"><tr><th>网易类型</th><th>竖版模板</th><th>特征</th><th>标杆案例</th></tr>
+    <tr><td><strong>全屏界面</strong></td><td>A 大厅 · B 战斗</td><td>无框体，控件散布场景中，沉浸感最强</td><td>阴阳师庭院、哈利波特城堡</td></tr>
+    <tr><td><strong>伪窗口</strong></td><td>E 卡片选择</td><td>有框体+半透明遮罩，不完全打断场景</td><td>梦幻西游弹窗、阴阳师抽卡</td></tr>
+    <tr><td><strong>窗口界面</strong></td><td>C 列表 · D 弹窗</td><td>标准底板+边框，信息扁平，一键关闭</td><td>梦幻背包、倩女幽魂商城</td></tr></table>
+    <p class="note"><strong>竖版五原则：</strong>①纵向优先 ②底部固定 ③层级递进（顶疏底密） ④一行≤4并列 ⑤单区单方向滚动</p>
+  </div>
+</div>
+
+<div class="spec-row" style="margin-top:8px;">
+  <div class="spec-visual" style="flex-wrap:wrap;gap:10px;display:flex;justify-content:center;">
+    <div class="proto-col"><div class="phone"><div class="ls-tb"><span class="bk">‹</span><span class="tt">背 包</span></div><div class="ls-tr"><span class="tb on">全部</span><span class="tb">武器</span><span class="tb">防具</span><span class="tb">道具</span></div><div class="ls-bd"><div class="lr"><div class="li"></div><div><div class="ln">破军剑</div><div class="ls">攻击+45·史诗</div></div></div><div class="lr"><div class="li"></div><div><div class="ln">玄武甲</div><div class="ls">防御+30·稀有</div></div></div><div class="lr"><div class="li"></div><div><div class="ln">回魂丹</div><div class="ls">恢复200HP</div></div></div><div class="lr"><div class="li"></div><div><div class="ln">凤羽扇</div><div class="ls">速度+12·传说</div></div></div></div><div class="ls-bb"><span>排序</span><span>筛选</span><span>分解</span></div></div><span class="proto-label">C：列表/背包</span></div>
+    <div class="proto-col"><div class="phone" style="position:relative;"><div class="l-top"><span class="ph-lbl" style="color:rgba(255,255,255,0.5);">⚜️</span></div><div class="l-hero"><div class="hs"></div></div><div class="dlg-bg"><div class="dlg-card"><div class="dt">确认删除</div><div class="dd"></div><div class="db">确定删除「破军剑」？<br>此操作不可撤销。</div><div class="dbt"><div class="dbtn">取消</div><div class="dbtn ok">确认</div></div></div></div></div><span class="proto-label">D：弹窗</span></div>
+    <div class="proto-col"><div class="phone" style="position:relative;"><div class="b-field"><div class="en e1"></div><div class="pz"><div class="pm"></div></div></div><div class="cs-ov"><div class="cst">选择一张卡牌</div><div class="css">立即生效·可叠3层</div><div class="csc"><div class="cd ra"><div class="cbd">稀有</div><div class="ci"></div><div class="cn">御剑诀+1</div><div class="cdesc">弹道数+1 伤害+15%</div><div class="cbtn">选择此卡</div></div><div class="cd"><div class="cbd">普通</div><div class="ci"></div><div class="cn">金刚咒+1</div><div class="cdesc">护盾值+20%</div><div class="cbtn">选择此卡</div></div><div class="cd ep"><div class="cbd">史诗</div><div class="ci"></div><div class="cn">灵狐契+1</div><div class="cdesc">召唤物伤害+30%</div><div class="cbtn">选择此卡</div></div></div></div></div><span class="proto-label">E：卡片3选1</span></div>
+  </div>
+  <div class="spec-text">
+    <h3>网易式场景化主界面（模板A）</h3>
+    <p>不同于传统扁平功能入口列表，网易游戏主界面使用<strong>有纵深感的场景</strong>承载功能：阴阳师的町中庭院、梦幻的长安城、哈利波特的霍格沃茨城堡。功能入口散布在场景中（NPC/建筑），而非纯图标网格。底部4~5个Tab导航为辅助。</p>
+    <h3 style="margin-top:8px;">网易式战斗HUD（模板B）</h3>
+    <p>极简原则——战斗时隐藏大部分UI。逆水寒探索时几乎完全无UI。仅保留：顶部状态条+底部技能/道具栏。参照「左手开火」理论：左侧移动，右侧动作。</p>
+  </div>
+</div>
+
+<!-- ═══════════ 06 网格 ═══════════ -->
+<h2 id="s6"><span class="num">06</span> 网格系统</h2>
+<div class="spec-row">
+  <div class="spec-visual">
+    <div class="gd-wrap" style="width:100%;">
+      <div class="gd-canvas" style="width:100%;height:64px;">
+        <div class="gm" style="left:0;width:2.13%;"></div><div class="gm" style="right:0;width:2.13%;left:auto;"></div>
+        <div class="gcol" style="left:2.13%;width:22.33%;"></div><div class="ggut" style="left:24.46%;width:2.13%;"></div>
+        <div class="gcol" style="left:26.59%;width:22.33%;"></div><div class="ggut" style="left:48.92%;width:2.13%;"></div>
+        <div class="gcol" style="left:51.05%;width:22.33%;"></div><div class="ggut" style="left:73.38%;width:2.13%;"></div>
+        <div class="gcol" style="left:75.51%;width:22.33%;"></div>
+        <div class="glbl" style="bottom:-12px;left:13%;">col1</div><div class="glbl" style="bottom:-12px;left:38%;">col2</div><div class="glbl" style="bottom:-12px;left:62%;">col3</div><div class="glbl" style="bottom:-12px;left:87%;">col4</div>
+        <div class="gblock" style="left:2.13%;top:10px;width:22.33%;height:44px;">1列</div>
+        <div class="gblock" style="left:2.13%;top:10px;width:46.79%;height:22px;opacity:0.4;">2列</div>
+      </div>
+    </div>
+    <div class="sp-demo" style="margin-top:12px;">
+      <div class="sr"><span class="sl">4px</span><div class="sb" style="width:4px;"></div><span class="sv">图标间距</span></div>
+      <div class="sr"><span class="sl">8px</span><div class="sb" style="width:8px;"></div><span class="sv">元素间距</span></div>
+      <div class="sr"><span class="sl">16px</span><div class="sb" style="width:16px;"></div><span class="sv">标准间距</span></div>
+      <div class="sr"><span class="sl">24px</span><div class="sb" style="width:24px;"></div><span class="sv">区块内边距</span></div>
+      <div class="sr"><span class="sl">32px</span><div class="sb" style="width:32px;"></div><span class="sv">大区间距</span></div>
+    </div>
+  </div>
+  <div class="spec-text">
+    <h3>4px 基础网格</h3>
+    <p>所有尺寸、间距必须为<strong>4的倍数</strong>。参照网易游戏UI标准——以4px为最小栅格单位。</p>
+    <h3 style="margin-top:8px;">4列栅格</h3>
+    <table class="tbl"><tr><th>参数</th><th>值</th></tr><tr><td>画布宽</td><td>750px</td></tr><tr><td>左右边距</td><td>16px×2</td></tr><tr><td>列数/沟槽</td><td>4列 / 16px×3</td></tr><tr><td>单列宽</td><td>167.5px</td></tr></table>
+    <p style="margin-top:8px;"><strong>铁律：</strong>尺寸为4的倍数 | 左右边距16px | 优先4列栅格 | 中心锚点适配</p>
+  </div>
+</div>
+
+<!-- ═══════════ 07 组件 ═══════════ -->
+<h2 id="s7"><span class="num">07</span> 基础组件规范</h2>
+
+<!-- 7.1 按钮 -->
+<div class="spec-row">
+  <div class="spec-visual"><div class="comp-row" style="flex-direction:column;gap:8px;">
+    <div class="comp-row"><div class="comp-cell"><span class="cbtn cbtn-pri">主 按 钮</span><span class="clbl">Primary 280×52</span></div><div class="comp-cell"><span class="cbtn cbtn-pri dis">主 按 钮</span><span class="clbl">Disabled</span></div></div>
+    <div class="comp-row ctr"><span class="cbtn cbtn-sec">次按钮</span><span class="cbtn cbtn-sm">小按钮</span><span class="cbtn cbtn-ic">⚙</span><span class="cbtn-dg">危险</span></div>
+  </div></div>
+  <div class="spec-text">
+    <h3>7.1 按钮 (Button)</h3>
+    <p>参照网易按钮四级体系：一级（核心CTA）→ 二级（次级交互）→ 三级（空间受限）→ 四级（最弱交互）。</p>
+    <table class="tbl"><tr><th>类型</th><th>推荐</th><th>最小</th><th>颜色</th><th>网易用法</th></tr>
+    <tr><td>主按钮</td><td>280×52</td><td>200×44</td><td>品牌色+白字</td><td>阴阳师"召唤"按钮</td></tr>
+    <tr><td>次按钮</td><td>200×44</td><td>160×40</td><td>白底+边框</td><td>梦幻返回/取消</td></tr>
+    <tr><td>小按钮</td><td>120×36</td><td>88×36</td><td>灰底+深字</td><td>逆水寒快捷操作</td></tr>
+    <tr><td>图标按钮</td><td>48×48</td><td>44×44</td><td>透明+图标</td><td>哈利波特魔杖</td></tr>
+    <tr><td>危险按钮</td><td>同次按钮</td><td>—</td><td>浅红底+红字</td><td>需二次确认</td></tr></table>
+    <p class="note">所有按钮覆盖4态：默认/按下/禁用/加载。颜色按行为分：正面行为高对比、负面行为偏红警示。</p>
+  </div>
+</div>
+
+<!-- 7.2 卡片 -->
+<div class="spec-row">
+  <div class="spec-visual"><div class="comp-row ctr">
+    <div class="comp-cell"><div class="cc q-co"><div class="ccb">普通</div><div class="cci"></div><div class="ccn">御剑诀</div><div class="ccd">基础攻击</div></div><span class="clbl">普通</span></div>
+    <div class="comp-cell"><div class="cc q-ra"><div class="ccb">稀有</div><div class="cci"></div><div class="ccn">金刚咒</div><div class="ccd">扇形护盾</div></div><span class="clbl">稀有</span></div>
+    <div class="comp-cell"><div class="cc q-ep"><div class="ccb">史诗</div><div class="cci"></div><div class="ccn">灵狐契</div><div class="ccd">召唤助战</div></div><span class="clbl">史诗</span></div>
+    <div class="comp-cell"><div class="cc q-le"><div class="ccb">传说</div><div class="cci"></div><div class="ccn">雷霆诀</div><div class="ccd">连锁闪电</div></div><span class="clbl">传说</span></div>
+    <div class="comp-cell"><div class="cc q-co sel"><div class="ccb">普通</div><div class="cci"></div><div class="ccn">选中</div><div class="ccd">金边+glow</div></div><span class="clbl">选中</span></div>
+    <div class="comp-cell"><div class="cc q-co lock"><div class="ccb">🔒</div><div class="cci"></div><div class="ccn">锁定</div><div class="ccd">未解锁</div></div><span class="clbl">锁定</span></div>
+  </div></div>
+  <div class="spec-text">
+    <h3>7.2 卡片 (Card)</h3>
+    <p>参照网易《阴阳师》式神录卡片、《哈利波特》魔咒卡体系。品质色=颜色+文字+边框，保障色觉障碍辨识。</p>
+    <table class="tbl"><tr><th>属性</th><th>值</th></tr><tr><td>宽度</td><td>200~240px（竖版单卡）/ 110~180px（横排）</td></tr><tr><td>边框</td><td>2px实线，按品质着色</td></tr><tr><td>选中态</td><td>金色边框+glow（同网易阴阳师选中反馈）</td></tr><tr><td>锁定态</td><td>虚线+40%透明度+灰度+🔒</td></tr></table>
+  </div>
+</div>
+
+<!-- 7.3 进度条 -->
+<div class="spec-row">
+  <div class="spec-visual"><div style="display:flex;flex-direction:column;gap:5px;width:100%;max-width:260px;">
+    <div class="bar-r"><span class="blbl">HP</span><div class="btrack"><div class="bfill bf-hf"></div></div><span style="font-size:9px;color:var(--success);">85%</span></div>
+    <div class="bar-r"><span class="blbl">HP</span><div class="btrack"><div class="bfill bf-hm"></div></div><span style="font-size:9px;color:var(--warning);">45%</span></div>
+    <div class="bar-r"><span class="blbl">HP</span><div class="btrack"><div class="bfill bf-hl"></div></div><span style="font-size:9px;color:var(--danger);">18%</span></div>
+    <div class="bar-r"><span class="blbl">EXP</span><div class="btrack"><div class="bfill bf-ex"></div></div><span style="font-size:9px;color:var(--accent2);">60%</span></div>
+    <div class="bar-r"><span class="blbl">能量</span><div class="btrack"><div class="bfill bf-en"></div></div><span style="font-size:9px;color:var(--accent);">72%</span></div>
+  </div></div>
+  <div class="spec-text">
+    <h3>7.3 进度条 (Progress Bar)</h3>
+    <table class="tbl"><tr><th>类型</th><th>高度</th><th>颜色</th><th>网易标杆</th></tr><tr><td>HP血条</td><td>10~12px</td><td>绿→黄→红</td><td>>50%绿/20-50%黄/<20%红（阴阳师/梦幻）</td></tr><tr><td>EXP经验</td><td>6~8px</td><td>#4a8bc8</td><td>梦幻西游经验条</td></tr><tr><td>能量/大招</td><td>8~10px</td><td>渐变绿→金</td><td>满值脉冲发光（哈利波特魔力条）</td></tr></table>
+  </div>
+</div>
+
+<!-- 7.4 槽位 -->
+<div class="spec-row">
+  <div class="spec-visual"><div class="comp-row ctr">
+    <div class="comp-cell"><div class="csl q-le"><div class="sld"></div>🔮</div><span class="clbl">传说</span></div>
+    <div class="comp-cell"><div class="csl q-ep"><div class="sld"></div>⚡</div><span class="clbl">史诗</span></div>
+    <div class="comp-cell"><div class="csl q-ra"><div class="sld"></div>🗡</div><span class="clbl">稀有</span></div>
+    <div class="comp-cell"><div class="csl q-co"><div class="sld"></div>🛡</div><span class="clbl">普通</span></div>
+    <div class="comp-cell"><div class="csl emp"></div><span class="clbl">空</span></div>
+    <div class="comp-cell"><div class="csl lkd">🔒</div><span class="clbl">锁定</span></div>
+  </div></div>
+  <div class="spec-text">
+    <h3>7.4 槽位 (Slot)</h3>
+    <p>参照网易《梦幻西游》装备槽体系——标准72×72px，品质色边框2px+右上角品质圆点6px。</p>
+    <table class="tbl"><tr><th>规格</th><th>尺寸</th><th>特征</th></tr><tr><td>标准槽</td><td>72×72</td><td>2px品质边框+品质圆点</td></tr><tr><td>小槽</td><td>48×48</td><td>挂件/快捷栏</td></tr><tr><td>空槽位</td><td>—</td><td>虚线+50%透明度</td></tr><tr><td>锁定</td><td>—</td><td>实线灰边+40%透明度+🔒</td></tr></table>
+  </div>
+</div>
+
+<!-- 7.5 Tab -->
+<div class="spec-row">
+  <div class="spec-visual" style="flex-direction:column;gap:10px;display:flex;align-items:center;">
+    <div class="ctabs"><div class="ctab on">全部</div><div class="ctab">武器</div><div class="ctab">防具</div><div class="ctab">道具</div></div>
+    <div style="display:flex;gap:0;background:#fff;border-radius:5px;border:1px solid var(--border);">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 12px;font-size:7px;color:var(--accent);"><div style="width:10px;height:10px;border-radius:50%;background:var(--accent);"></div>首页</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 12px;font-size:7px;color:rgba(0,0,0,0.25);"><div style="width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,0.08);"></div>英雄</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 12px;font-size:7px;color:rgba(0,0,0,0.25);"><div style="width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,0.08);"></div>背包</div>
+    </div>
+  </div>
+  <div class="spec-text">
+    <h3>7.5 页签 (Tab)</h3>
+    <table class="tbl"><tr><th>类型</th><th>高度</th><th>交互</th><th>选中态</th><th>标杆</th></tr><tr><td>顶部Tab</td><td>44px</td><td>点击+横滑切换</td><td>底部2px指示线+品牌色</td><td>梦幻背包/阴阳师商店</td></tr><tr><td>底部Tab</td><td>80~100px</td><td>点击切换</td><td>图标+文字品牌色</td><td>阴阳师庭院底部</td></tr></table>
+  </div>
+</div>
+
+<!-- 7.6 Badge + 7.7 Text + 7.8 Misc -->
+<div class="spec-row">
+  <div class="spec-visual" style="flex-direction:column;gap:12px;display:flex;align-items:center;">
+    <div class="comp-row ctr"><span class="cbadge co">普通</span><span class="cbadge ra">稀有</span><span class="cbadge ep">史诗</span><span class="cbadge le">传说</span><span class="cbadge al">新</span><span class="cbadge dot"></span></div>
+    <div style="display:flex;flex-direction:column;gap:3px;"><span class="ts-d">Display 28</span><span class="ts-h1">H1 24</span><span class="ts-h2">H2 18</span><span class="ts-b">Body 14 正文</span><span class="ts-l">Label 12</span><span class="ts-c">Caption 11</span><span class="ts-s">Small 10</span></div>
+    <div class="comp-row ctr"><div class="comp-cell"><div class="ctg on"></div></div><div class="comp-cell"><div class="ctg"></div></div><div class="comp-cell"><div class="cinp">输入框</div></div></div>
+  </div>
+  <div class="spec-text">
+    <h3>7.6 标签 (Badge)</h3><p>品质标签(2×10px padding, 9~10px字号) | 状态标签 | 红点通知(8×8px) | 数字角标(min 16px)。参照网易红点体系——层级化通知，非侵入式。</p>
+    <h3>7.7 文字阶梯</h3><p>Display 28~32 → H1 22~26 → H2 18~20 → Body 13~14 → Label 12 → Caption 11 → Small 10。行高1.2~1.6。中英文混排加1/4空格。参照网易《阴阳师》字体规范。</p>
+    <h3>7.8 其他控件</h3><p>开关(Toggle) 34×18 | 输入框 H28~36 | 单选框 20×20 | 复选框 20×20 | Tooltip W≤300</p>
+  </div>
+</div>
+
+<!-- ═══════════ 08~17 ═══════════ -->
+<h2 id="s8"><span class="num">08</span> 导航系统</h2>
+<div class="spec-row">
+  <div class="spec-visual"><pre>层级深度 ≤ 4 层：
+首页(L0)→一级(L1)→二级(L2)→详情(L3)
+L3以上不新开页面，用弹窗/BottomSheet
+每层必须有返回路径。网易全系遵循此规则。</pre></div>
+  <div class="spec-text">
+    <table class="tbl wide"><tr><th>模式</th><th>场景</th><th>交互</th><th>位置</th><th>标杆</th></tr><tr><td><strong>底部Tab</strong></td><td>3~5顶级入口</td><td>点击切换</td><td>底部 H80~100</td><td>阴阳师庭院</td></tr><tr><td><strong>顶部Tab</strong></td><td>二级筛选</td><td>点击+横滑</td><td>导航栏下 H44</td><td>梦幻商会</td></tr><tr><td><strong>汉堡菜单</strong></td><td>低频入口</td><td>点击展开</td><td>左上角</td><td>逆水寒设置</td></tr><tr><td><strong>返回按钮</strong></td><td>层级返回</td><td>点击返回</td><td>左上角‹</td><td>全系通用</td></tr><tr><td><strong>浮动按钮</strong></td><td>全局主操作</td><td>点击触发</td><td>右下悬浮</td><td>梦幻"+"</td></tr></table>
+    <p><strong>底部Tab：</strong>3~5个，高80~100px（含安全区），图标24~28px，文字10~11px，选中态图标+文字品牌色。</p>
+  </div>
+</div>
+
+<h2 id="s9"><span class="num">09</span> 状态与反馈</h2>
+<div class="spec-row">
+  <div class="spec-visual">
+    <div class="tmb" style="width:100%;max-width:280px;">
+      <div class="tmr"><span class="tl">按钮点击</span><div class="tt"><div class="tf" style="width:4%;background:var(--accent2);"></div></div><span class="tv">&lt;50ms</span></div>
+      <div class="tmr"><span class="tl">Toast</span><div class="tt"><div class="tf" style="width:27%;background:var(--success);"></div></div><span class="tv">2~3s</span></div>
+      <div class="tmr"><span class="tl">成功动画</span><div class="tt"><div class="tf" style="width:15%;background:var(--success);"></div></div><span class="tv">1~2s</span></div>
+      <div class="tmr"><span class="tl">错误抖动</span><div class="tt"><div class="tf" style="width:4%;background:var(--danger);"></div></div><span class="tv">0.3~0.5s</span></div>
+    </div>
+  </div>
+  <div class="spec-text">
+    <p><strong>组件六态：</strong>默认 | 悬停(lighten 10~15%) | 按下(darken 10~15%+scale 0.97) | 禁用(40~50%透明度) | 加载(旋转+…) | 选中(高亮边框)</p>
+    <p><strong>空状态：</strong>图标+"暂无数据"+操作引导（参照网易：空状态不是空白页，是引导页）</p>
+    <p><strong>加载：</strong>全屏(Logo+进度条) | 局部(骨架屏) | 按钮(内置转圈) | 后台(顶部微进度)</p>
+    <p><strong>反馈时序：</strong>按钮&lt;50ms即时 | Toast 2~3s | 加载200ms后显示 | 成功动画1~2s | 飘字1s淡出</p>
+  </div>
+</div>
+
+<h2 id="s10"><span class="num">10</span> 弹窗体系</h2>
+<div class="spec-row">
+  <div class="spec-visual"><pre>弹出规则：
+- 不嵌套弹窗（多步骤=分步表单）
+- 遮罩45~60%黑
+- BottomSheet下拉30%关闭
+- 居中弹窗 scale 0.9→1.0 + fade 0.2~0.3s
+- Android返回键关弹窗（非退出页面）
+参照网易《梦幻西游》弹窗规范</pre></div>
+  <div class="spec-text">
+    <table class="tbl wide"><tr><th>类型</th><th>尺寸</th><th>用途</th><th>标杆</th></tr><tr><td><strong>对话框Alert</strong></td><td>W560~600 H:auto</td><td>确认/二选一</td><td>阴阳师确认框</td></tr><tr><td><strong>BottomSheet</strong></td><td>W750 H≤600</td><td>选项/分享</td><td>梦幻操作菜单</td></tr><tr><td><strong>居中面板Modal</strong></td><td>W600~680 H≤800</td><td>表单/多操作</td><td>倩女幽魂详情</td></tr><tr><td><strong>全屏弹窗</strong></td><td>750×1334</td><td>编辑器</td><td>逆水寒捏脸</td></tr><tr><td><strong>Toast</strong></td><td>auto×40~48</td><td>轻量提示</td><td>全系通用</td></tr><tr><td><strong>Tooltip</strong></td><td>W≤300 auto</td><td>名词解释</td><td>哈利波特魔咒说明</td></tr></table>
+  </div>
+</div>
+
+<h2 id="s11"><span class="num">11</span> 动效规范</h2>
+<div class="spec-row">
+  <div class="spec-visual"><pre>转场方向（网易标准）：
+Push   ← 右→左 进入子页面
+Pop    → 左→右 返回父页面
+Present ↑ 下→上 模态弹出
+Dismiss ↓ 上→下 模态关闭</pre></div>
+  <div class="spec-text">
+    <table class="tbl"><tr><th>动画</th><th>时长</th><th>缓动</th><th>网易标杆</th></tr><tr><td>Push</td><td>0.3s</td><td>ease-out</td><td>阴阳师庭院→式神录</td></tr><tr><td>Pop</td><td>0.25s</td><td>ease-in</td><td>返回</td></tr><tr><td>弹窗弹出</td><td>0.25s</td><td>ease-out+spring</td><td>梦幻西游弹窗</td></tr><tr><td>列表入场</td><td>0.3~0.4s</td><td>stagger 0.05s</td><td>哈利波特卡牌入场</td></tr><tr><td>数值变化</td><td>0.4s</td><td>ease-out</td><td>伤害数字滚动</td></tr></table>
+    <p><strong>原则：</strong>①时长≤400ms ②反馈&lt;100ms ③统一缓动 ④可关闭动效 ⑤首屏不延迟。参照网易"生动细致"之「达」原则。</p>
+  </div>
+</div>
+
+<h2 id="s12"><span class="num">12</span> 字体与排版</h2>
+<div class="spec-row">
+  <div class="spec-visual" style="flex-direction:column;gap:3px;display:flex;"><span class="ts-d">Display 28~32 Bold</span><span class="ts-h1">H1 22~26 Bold</span><span class="ts-h2">H2 18~20 SemiBold</span><span class="ts-b">Body 13~14 Regular 行高1.5~1.6</span><span class="ts-l">Label 12 Medium</span><span class="ts-c">Caption 11 Regular</span><span class="ts-s">Small 10 Regular</span></div>
+  <div class="spec-text">
+    <p>参照网易《阴阳师》字体规范：中文优先Noto Sans SC / 阿里巴巴普惠体，数字使用等宽字体(tabular-nums)。最小字号≥10px，正文行宽≤屏幕80%(~600px)。中英文混排加1/4空格。</p>
+  </div>
+</div>
+
+<h2 id="s13"><span class="num">13</span> 色彩与对比度</h2>
+<div class="spec-row">
+  <div class="spec-visual" style="flex-direction:column;gap:6px;display:flex;">
+    <div><span class="swatch" style="background:var(--accent);"></span>主色 项目定制</div>
+    <div><span class="swatch" style="background:var(--success);"></span>成功 #3ca374</div>
+    <div><span class="swatch" style="background:var(--warning);"></span>警告 #c8963c</div>
+    <div><span class="swatch" style="background:var(--danger);"></span>危险 #c84848</div>
+    <div style="margin-top:6px;font-size:10px;color:var(--muted);">品质色（网易RPG标准）：</div>
+    <div><span class="swatch" style="background:var(--q-common);"></span>普通 #7a7d8a</div>
+    <div><span class="swatch" style="background:var(--q-rare);"></span>稀有 #5a8db8</div>
+    <div><span class="swatch" style="background:var(--q-epic);"></span>史诗 #8a5ab8</div>
+    <div><span class="swatch" style="background:var(--q-legendary);"></span>传说 #b89648</div>
+  </div>
+  <div class="spec-text">
+    <p><strong>功能色：</strong>品牌色(项目定制) | 成功 #3ca374 | 警告 #c8963c | 危险 #c84848 | 信息 #4a8bc8。参照网易色彩语义：绿=确认/安全，红=警告/取消，灰=禁用。</p>
+    <p><strong>品质色：</strong>网易RPG通用四级——普通/稀有/史诗/传说。<strong>区分=颜色+文字+边框</strong>，保障色觉障碍用户可辨识。</p>
+    <p><strong>对比度：</strong>正文&lt;18px ≥4.5:1 | 大文字≥18px ≥3:1 (WCAG AA)</p>
+  </div>
+</div>
+
+<h2 id="s14"><span class="num">14</span> 音效规范</h2>
+<div class="spec-row"><div class="spec-visual"><pre>UI音效原则：
+• ≤500ms，不拖尾
+• 连续操作防重叠（间隔≥100ms）
+• 关闭音效/关闭UI音效 两个独立开关
+• 参照网易：音效服务于氛围（雅）</pre></div><div class="spec-text"><table class="tbl"><tr><th>类别</th><th>特点</th></tr><tr><td>按钮点击</td><td>短促&lt;200ms 清脆</td></tr><tr><td>切换/选择</td><td>轻短 确认感</td></tr><tr><td>成功</td><td>明亮 上扬</td></tr><tr><td>失败</td><td>低沉 短促</td></tr><tr><td>获得物品</td><td>悦耳 叮咚感</td></tr></table></div></div>
+
+<h2 id="s15"><span class="num">15</span> 横竖屏切换</h2>
+<div class="spec-row"><div class="spec-visual"><pre>原则：
+• 不强制方向（核心玩法依赖除外）
+• 锁定则声明（App Store描述）
+• 切换≤0.5s，无闪烁
+• 网易逆水寒支持横竖切换，
+  布局以中心锚点重排</pre></div><div class="spec-text"><table class="tbl"><tr><th>竖版锁定类型</th><th>原因</th></tr><tr><td>三消/消除</td><td>单手核心体验</td></tr><tr><td>卡牌CCG</td><td>手持卡牌隐喻</td></tr><tr><td>放置/挂机</td><td>单手随时查看</td></tr><tr><td>跑酷</td><td>纵向卷轴核心</td></tr></table></div></div>
+
+<h2 id="s16"><span class="num">16</span> 可访问性清单</h2>
+<div class="spec-row"><div class="spec-visual"><ul style="font-size:12px;"><li>≥44×44px触控热区</li><li>≥10px最小字号</li><li>≥4.5:1正文对比度</li><li>颜色+文字+形状区分</li><li>动效可关闭</li><li>音效独立开关</li><li>剧情字幕</li><li>操作可撤销</li></ul></div><div class="spec-text"><p>参照网易《梦幻西游》无障碍实践——支持系统字体缩放(≥120%)、色觉障碍辅助(品质=颜色+文字+边框)、Tab键导航合理顺序。网易全系支持「减弱动态效果」选项。</p></div></div>
+
+<h2 id="s17"><span class="num">17</span> 交付检查清单</h2>
+<div class="spec-row">
+  <div class="spec-visual">
+    <ul class="chk single" style="font-size:11px;"><li>内容在安全区内</li><li>主CTA在底部 y&gt;1100</li><li>核心按钮在热区 y&gt;800</li><li>尺寸为4的倍数</li><li>4列栅格对齐</li><li>热区≥44×44px</li><li>按钮4态完整</li><li>卡片3态完整</li><li>品质=颜色+文字+边框</li><li>空状态有界面</li><li>加载态有界面</li><li>错误态+重试入口</li><li>转场≤300ms</li><li>弹窗有动画</li><li>对比度≥4.5:1</li><li>字体缩放120%支持</li></ul>
+  </div>
+  <div class="spec-text">
+    <h3>布局</h3><ul class="chk"><li>内容在安全区内</li><li>主CTA在底部</li><li>横竖版均检查</li></ul>
+    <h3>网格</h3><ul class="chk"><li>尺寸为4的倍数</li><li>4列栅格对齐</li><li>间距符合阶梯</li></ul>
+    <h3>组件</h3><ul class="chk"><li>热区≥44px</li><li>按钮4态</li><li>卡片3态</li><li>品质≠仅颜色</li></ul>
+    <h3>状态</h3><ul class="chk"><li>空/加载/错误态</li><li>数据为空不崩溃</li></ul>
+    <h3>动效+可访问性</h3><ul class="chk"><li>转场≤300ms</li><li>对比度≥4.5:1</li><li>字体缩放120%</li></ul>
+  </div>
+</div>
+
+<!-- ═══════════ 附录 ═══════════ -->
+<h2>附录 A：标准组件尺寸速查表</h2>
+<div class="spec-row"><div class="spec-visual"></div><div class="spec-text">
+<table class="tbl"><tr><th>组件</th><th>推荐</th><th>最小</th></tr><tr><td>主按钮</td><td>280×52</td><td>200×44</td></tr><tr><td>次按钮</td><td>200×44</td><td>160×40</td></tr><tr><td>小按钮</td><td>120×36</td><td>88×36</td></tr><tr><td>图标按钮</td><td>48×48</td><td>44×44</td></tr><tr><td>选择卡片</td><td>200~240×220~260</td><td>160×180</td></tr><tr><td>列表行</td><td>全宽×56~72</td><td>全宽×44</td></tr><tr><td>居中弹窗</td><td>600~680×auto</td><td>560×auto</td></tr><tr><td>槽位</td><td>72×72</td><td>48×48</td></tr><tr><td>开关</td><td>34×18</td><td>—</td></tr></table>
+</div></div>
+
+<h2>附录 B：修订记录</h2>
+<div class="spec-row"><div class="spec-visual"></div><div class="spec-text"><table class="tbl"><tr><th>版本</th><th>日期</th><th>变更</th></tr><tr><td>v1.0</td><td>2026-07-29</td><td>初版：基于网易信达雅体系+手游市场标杆的竖版交互原型图规范</td></tr></table></div></div>
+
+<div class="footer">
+  <p>竖版手游交互原型图规范 v1.0 · 生产线标准</p>
+  <p style="margin-top:4px;">方法论：网易游戏「信·达·雅」 · 标杆：阴阳师 · 梦幻西游 · 倩女幽魂 · 逆水寒 · 哈利波特：魔法觉醒</p>
+</div>
+
+</body>
+</html>

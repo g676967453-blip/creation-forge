@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>[功能名称] — 功能策划案</title>
+<meta name="feat-name" content="[功能名称]">
+<meta name="feat-version" content="v1">
+<meta name="feat-date" content="YYYY-MM-DD">
+<meta name="feat-author" content="[策划人]">
+<meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+
+/* 功能规则 */
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+
+/* 界面说明 */
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: var(--text-inverse); font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.pcards { display: flex; gap: var(--sp-lg); align-items: center; }
+.pcard { width: 150px; padding: var(--sp-md); border-radius: var(--radius-lg); background: var(--bg-surface); border: 2px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: var(--sp-2xs); text-align: center; }
+.pcard .pc-icon { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.pcard .pc-name { font-size: var(--fs-small); color: var(--text-primary); font-weight: var(--fw-bold); }
+.pcard .pc-desc { font-size: 10px; color: var(--text-secondary); }
+.pcard .pc-btn { width: 90px; height: 24px; border-radius: var(--radius-full); border: none; color: #fff; font-size: 10px; margin-top: var(--sp-2xs); }
+.pc-btn.c1 { background: var(--quality-common); } .pc-btn.c2 { background: var(--quality-rare); } .pc-btn.c3 { background: var(--quality-epic); }
+.pcard.qc { border-color: var(--quality-common); } .pcard.qr { border-color: var(--quality-rare); } .pcard.qe { border-color: var(--quality-epic); }
+.pbadge { display: inline-block; padding: 1px 10px; border-radius: var(--radius-full); font-size: 9px; font-weight: var(--fw-bold); letter-spacing: 1px; }
+.pbadge.c1 { background: rgba(136,136,160,0.15); color: var(--quality-common); }
+.pbadge.c2 { background: rgba(102,153,187,0.15); color: var(--quality-rare); }
+.pbadge.c3 { background: rgba(153,119,187,0.15); color: var(--quality-epic); }
+
+/* 动态交互 */
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 450px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-start-btn { width: 180px; height: 42px; border-radius: var(--radius-md); border: none; background: var(--text-body); color: var(--text-inverse); font-family: var(--font-cn); font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: 4px; cursor: pointer; transition: all 0.15s; }
+.interact-start-btn:hover { background: var(--text-primary); }
+.interact-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 5; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.interact-overlay.on { opacity: 1; }
+.interact-cards-wrap { display: flex; gap: var(--sp-xl); align-items: center; position: relative; z-index: 6; }
+.interact-card { width: 180px; padding: var(--sp-md); border-radius: var(--radius-lg); background: var(--bg-surface); border: 2px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: var(--sp-2xs); text-align: center; cursor: pointer; transition: all 0.3s ease; user-select: none; position: relative; opacity: 0; transform: translateY(30px) scale(0.9); }
+.interact-card.show { opacity: 1; transform: translateY(0) scale(1); }
+.interact-card:hover { transform: scale(1.08) !important; border-color: var(--quality-rare); box-shadow: 0 0 20px rgba(102,153,187,0.4); }
+.interact-card.picked { border-color: var(--quality-legendary); box-shadow: 0 0 16px rgba(187,153,102,0.5); transform: scale(1.05) !important; }
+.interact-card.picked::after { content: '✓'; position: absolute; top: 8px; right: 12px; color: var(--quality-legendary); font-size: 18px; font-weight: bold; }
+.interact-card.dimmed { opacity: 0.4; pointer-events: none; }
+.interact-card.fade-out { opacity: 0; transform: translateY(-20px) scale(0.95); transition: all 0.4s ease-in; }
+.interact-card .ic-icon { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.interact-card .ic-name { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.interact-card .ic-desc { font-size: var(--fs-small); color: var(--text-secondary); }
+.interact-card .ic-btn { width: 110px; height: 28px; border-radius: var(--radius-full); border: none; color: #fff; font-size: var(--fs-small); margin-top: var(--sp-xs); pointer-events: none; }
+.ic-btn.c1 { background: var(--quality-common); } .ic-btn.c2 { background: var(--quality-rare); } .ic-btn.c3 { background: var(--quality-epic); }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; position: relative; z-index: 6; opacity: 0; transition: all 0.3s; }
+.interact-msg.show { opacity: 1; animation: msgPop 0.4s ease-out; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; transition: all 0.15s; }
+.interact-reset:hover { border-color: var(--border-active); color: var(--text-primary); }
+@keyframes msgPop { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+
+/* 资产表格 */
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="page-header"><h1>[功能名称]</h1><p class="subtitle">功能策划案</p></div>
+
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+
+<!-- Tab 1 -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">[功能名称]</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">YYYY-MM-DD</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">[策划人]</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div><hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>[姓名]</td><td>YYYY.M.D</td><td>创建文档</td></tr></table>
+    <hr><h4>关联CSV</h4><span class="tag tag-csv">📄 [csv].csv — 读</span>
+  </div>
+  <div class="section-card"><h3>功能定位</h3><p>[描述]</p></div>
+  <div class="section-card"><h3>不在范围内</h3><ul><li>[排除项]</li></ul></div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示 <span class="text-red">红色</span>=强调</p>
+</div>
+
+<!-- Tab 2 -->
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">活动简述</div>
+  <div class="rule-l0">目的：[简述]</div>
+  <div class="rule-l1">1.功能概述：[描述]</div>
+  <div class="rule-l1">2.功能开放：[条件，<span class="text-blue">支持配置</span>]</div>
+  <div class="sec-header">功能说明</div>
+  <div class="rule-l0">一.[模块]</div>
+  <div class="rule-l1">1.[子项]：<span class="text-blue">[描述]</span></div>
+  <div class="rule-l2">1）[细项]：[描述]</div>
+  <div class="rule-ex">[举例]</div>
+</div></div>
+
+<!-- Tab 3 -->
+<div class="tab-panel" id="tab-ui-desc"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">界面说明</h3>
+  <div class="ui-desc">
+    <div class="ui-desc-left"><div class="ui-frame" style="position:relative;">
+      <span class="dim">[界面原型 — 16:9]</span>
+      <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:var(--text-inverse);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">[功能板块名称]</span><div class="ud">[功能效果、交互规则、多种状态描述。不写美术尺寸/颜色/字体规格。]</div></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- Tab 4：动态交互 -->
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">动态交互 — 功能模拟</h3>
+  <div class="interact-area" id="interact-area">
+    <div class="interact-overlay" id="interact-overlay"></div>
+    <button class="interact-start-btn" id="interact-start" onclick="startInteract()">开 始 历 练</button>
+    <div class="interact-cards-wrap" id="interact-cards-wrap" style="display:none;"></div>
+    <span class="interact-msg" id="interact-msg"></span>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);">
+    <button class="interact-reset" onclick="resetInteract()">⟳ 重新开始</button>
+  </div>
+</div></div>
+
+<!-- Tab 5 -->
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-3d')">3D资产</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr><tr><td class="mono">U1</td><td>[名称]</td><td>底板</td><td>W×H</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">[Prompt]</td></tr></table></div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr><tr><td class="mono">C1</td><td>[名称]</td><td>概念</td><td>W×H</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">[Prompt]</td></tr></table></div>
+  <div class="sub-tab-panel" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th><th>触发/说明</th></tr><tr><td class="mono">M1</td><td>[名称]</td><td>入场</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">[触发/方式]</td></tr></table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>触发</th><th>表现</th><th>时长</th><th>优先级</th><th>实现方式</th></tr><tr><td class="mono">V1</td><td>[名称]</td><td>光晕</td><td>hover</td><td>[描述]</td><td>持续</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Tween/Shader</td></tr></table></div>
+  <div class="sub-tab-panel" id="sub-3d"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>面数</th><th>格式</th><th>贴图</th><th>优先级</th><th>用途/说明</th></tr><tr><td class="mono">D1</td><td>[名称]</td><td>模型</td><td>[N]</td><td>glTF</td><td>[规格]</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">[用途]</td></tr></table></div>
+</div></div>
+
+<script>
+function switchMainTab(event, tabId) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+function switchSubTab(event, tabId) {
+  var bar = event.target.parentElement;
+  bar.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  bar.parentElement.querySelector('#' + tabId).classList.add('active');
+}
+function startInteract() { /* 覆盖 */ }
+function resetInteract() { /* 覆盖 */ }
+</script>
+</body>
+</html>
