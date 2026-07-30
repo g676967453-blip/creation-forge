@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>指尖三国 美术审查报告 — 2026-07-30（全量数据）</title>
+<style>
+:root {
+  --bg: #f8f9fa;
+  --card-bg: #fff;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --green: #059669;
+  --green-bg: #ecfdf5;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --slate: #475569;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+/* Header */
+.header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:32px 36px;border-radius:var(--radius);margin-bottom:24px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.header h1{font-size:1.75rem;font-weight:700;margin-bottom:8px}
+.header .meta{font-size:.875rem;color:#94a3b8;display:flex;flex-wrap:wrap;gap:16px}
+.header .meta span{display:flex;align-items:center;gap:4px}
+.header .warning{background:var(--amber-bg);color:var(--amber);padding:8px 14px;border-radius:6px;margin-top:12px;font-size:.8rem;display:inline-block}
+/* KPI Cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--card-bg);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border-left:4px solid var(--blue)}
+.kpi-card.risk{border-left-color:var(--red)}
+.kpi-card.good{border-left-color:var(--green)}
+.kpi-card.warn{border-left-color:var(--amber)}
+.kpi-card .label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-card .value{font-size:1.5rem;font-weight:700}
+.kpi-card .sub{font-size:.75rem;color:var(--text-muted);margin-top:2px}
+/* Sections */
+.section{background:var(--card-bg);border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;box-shadow:var(--shadow)}
+.section h2{font-size:1.25rem;font-weight:700;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.section h3{font-size:1rem;font-weight:600;margin:20px 0 12px;color:var(--slate)}
+.section h4{font-size:.9rem;font-weight:600;margin:16px 0 8px}
+/* Tables */
+.table-wrap{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{background:#f1f5f9;font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);white-space:nowrap;font-size:.8rem;color:var(--slate);text-transform:uppercase;letter-spacing:.3px}
+td{padding:8px 12px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8fafc}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+/* Badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.75rem;font-weight:600}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-slate{background:#f1f5f9;color:var(--slate)}
+/* Status indicators */
+.status-ok{color:var(--green);font-weight:600}
+.status-fail{color:var(--red);font-weight:600}
+/* Bar chart (mini) */
+.bar{display:flex;align-items:center;gap:8px;margin:4px 0}
+.bar-label{width:140px;font-size:.8rem;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:20px;background:#f1f5f9;border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px;transition:width .3s}
+.bar-fill.red{background:var(--red)}
+.bar-fill.amber{background:var(--amber)}
+.bar-fill.green{background:var(--green)}
+.bar-fill.blue{background:var(--blue)}
+.bar-val{font-size:.75rem;width:48px;text-align:right;font-weight:600;flex-shrink:0}
+/* Highlight boxes */
+.highlight{background:var(--blue-bg);border-left:3px solid var(--blue);padding:12px 16px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.875rem}
+.highlight.red{background:var(--red-bg);border-left-color:var(--red)}
+.highlight.amber{background:var(--amber-bg);border-left-color:var(--amber)}
+.highlight.green{background:var(--green-bg);border-left-color:var(--green)}
+/* Comparison table special */
+.vs-old td:first-child{font-weight:600}
+.vs-better{color:var(--green);font-weight:600}
+.vs-worse{color:var(--red);font-weight:600}
+/* Footer */
+.footer{text-align:center;color:var(--text-muted);font-size:.8rem;padding:20px}
+/* Tags */
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.7rem;font-weight:600;margin-right:4px}
+.tag-p0{background:#fecaca;color:#991b1b}
+.tag-p1{background:#fed7aa;color:#9a3412}
+.tag-p2{background:#fef08a;color:#854d0e}
+.tag-p3{background:#dbeafe;color:#1e40af}
+/* Split layout */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.split{grid-template-columns:1fr}}
+/* Tabs for navigation */
+.tabs{display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap}
+.tab-btn{padding:8px 16px;border:1px solid var(--border);background:var(--card-bg);border-radius:6px;cursor:pointer;font-size:.825rem;color:var(--slate);transition:all .15s}
+.tab-btn:hover{background:#f1f5f9}
+.tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* Risk summary bar */
+.risk-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;margin:12px 0}
+.risk-bar .seg{display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#fff}
+.risk-bar .seg.red{background:var(--red)}
+.risk-bar .seg.amber{background:var(--amber)}
+.risk-bar .seg.yellow{background:#ca8a04}
+.risk-bar .seg.green{background:var(--green)}
+/* Print */
+@media print{
+  body{background:#fff;padding:0}
+  .section{box-shadow:none;break-inside:avoid;border:1px solid #ddd}
+  .header{box-shadow:none}
+  .tabs{display:none}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>🎨 美术审查报告 — 指尖三国</h1>
+  <div class="meta">
+    <span>📅 2026-07-30</span>
+    <span>📊 全量数据 · 2,313 条</span>
+    <span>🔍 审查类型：标准（4目标）</span>
+    <span>👤 审查人：AI</span>
+  </div>
+  <div class="warning">⚠️ 11 个公式字段因 Base 旧 schema 不可读（制作风险/距交付日/组别等），风险基于日期字段自行判定</div>
+</div>
+
+<!-- ===== KPI CARDS ===== -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="label">总任务量</div>
+    <div class="value">2,313</div>
+    <div class="sub">时间跨度 2026-02 ~ 08（7个月）</div>
+  </div>
+  <div class="kpi-card good">
+    <div class="label">已完成率</div>
+    <div class="value">92.6%</div>
+    <div class="sub">2,141 / 2,313</div>
+  </div>
+  <div class="kpi-card risk">
+    <div class="label">风险率</div>
+    <div class="value">5.4%</div>
+    <div class="sub">🔴13 + ⚠️18 + 🟡94</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">投入人力</div>
+    <div class="value">51 人</div>
+    <div class="sub">执行人51 + 负责人12 · 人均45.4项</div>
+  </div>
+  <div class="kpi-card warn">
+    <div class="label">信息规范缺陷</div>
+    <div class="value">72.5%</div>
+    <div class="sub">1,676项已完成无实际截止</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">标准人日合计</div>
+    <div class="value">1,849.8</div>
+    <div class="sub">人均36.3人日 · 54项零人日</div>
+  </div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<div class="tabs" id="navTabs">
+  <button class="tab-btn active" onclick="scrollToSection('s1')">一 · 基础状况</button>
+  <button class="tab-btn" onclick="scrollToSection('s2')">二 · 风险逾期</button>
+  <button class="tab-btn" onclick="scrollToSection('s3')">三 · 信息规范</button>
+  <button class="tab-btn" onclick="scrollToSection('s4')">四 · 深度分析</button>
+  <button class="tab-btn" onclick="scrollToSection('s5')">五 · 综合建议</button>
+  <button class="tab-btn" onclick="scrollToSection('s6')">六 · 采样vs全量</button>
+</div>
+
+<!-- ===== 一、基础状况 ===== -->
+<div class="section" id="s1">
+<h2>📋 一、基础状况</h2>
+
+<h3>进度分布</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>状态</th><th class="num">数量</th><th class="num">占比</th><th>可视化</th></tr>
+  <tr><td>✅ 已完成</td><td class="num"><strong>2,141</strong></td><td class="num">92.6%</td><td><div style="display:flex;gap:2px;align-items:center"><div style="width:92.6%;height:16px;background:#059669;border-radius:4px 0 0 4px"></div><div style="width:5.5%;height:16px;background:#e5e7eb"></div><div style="width:1.9%;height:16px;background:#d1d5db;border-radius:0 4px 4px 0"></div></div></td></tr>
+  <tr><td>📋 未开始</td><td class="num">127</td><td class="num">5.5%</td><td></td></tr>
+  <tr><td>⏸️ 暂停</td><td class="num">17</td><td class="num">0.7%</td><td></td></tr>
+  <tr><td>❌ 作废</td><td class="num">15</td><td class="num">0.6%</td><td></td></tr>
+  <tr><td>🔄 进行中</td><td class="num">10</td><td class="num">0.4%</td><td></td></tr>
+  <tr><td>⬜ (空)</td><td class="num">3</td><td class="num">0.1%</td><td></td></tr>
+</table>
+</div>
+
+<h3>业务类型分布（15 类）</h3>
+<div class="highlight blue">🔍 指尖三国是典型的 <strong>UI 密集型项目</strong>——UI 界面设计独占 43.6%。对比：火影忍者 UI 仅 3.6%，苍穹诀是角色原画驱动型（52.5%）。</div>
+<div class="table-wrap">
+<table>
+  <tr><th>类型</th><th class="num">数量</th><th class="num">占比</th><th>比例条</th></tr>
+  <tr><td>UI界面设计</td><td class="num"><strong>1,009</strong></td><td class="num">43.6%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div></td></tr>
+  <tr><td>动作</td><td class="num">244</td><td class="num">10.5%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:24.2%"></div></div></td></tr>
+  <tr><td>角色原画</td><td class="num">238</td><td class="num">10.3%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:23.6%"></div></div></td></tr>
+  <tr><td>功能图标</td><td class="num">178</td><td class="num">7.7%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:17.6%"></div></div></td></tr>
+  <tr><td>战斗特效</td><td class="num">170</td><td class="num">7.3%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:16.8%"></div></div></td></tr>
+  <tr><td>拆图</td><td class="num">135</td><td class="num">5.8%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:13.4%"></div></div></td></tr>
+  <tr><td>场景原画-功能</td><td class="num">130</td><td class="num">5.6%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:12.9%"></div></div></td></tr>
+  <tr><td>UI动特效</td><td class="num">79</td><td class="num">3.4%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:7.8%"></div></div></td></tr>
+  <tr><td>道具图标</td><td class="num">45</td><td class="num">1.9%</td><td></td></tr>
+  <tr><td>场景原画-战斗</td><td class="num">34</td><td class="num">1.5%</td><td></td></tr>
+  <tr><td>技能图标</td><td class="num">21</td><td class="num">0.9%</td><td></td></tr>
+  <tr><td>场景特效</td><td class="num">11</td><td class="num">0.5%</td><td></td></tr>
+  <tr><td>团队管理</td><td class="num">10</td><td class="num">0.4%</td><td></td></tr>
+  <tr><td>(空)</td><td class="num">6</td><td class="num">0.3%</td><td></td></tr>
+  <tr><td>属性图标</td><td class="num">3</td><td class="num">0.1%</td><td></td></tr>
+</table>
+</div>
+
+<div class="split">
+<div>
+<h3>优先级分布</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>优先级</th><th class="num">数量</th><th class="num">占比</th></tr>
+  <tr><td><span class="tag tag-p0">P0</span></td><td class="num">356</td><td class="num">15.4%</td></tr>
+  <tr><td><span class="tag tag-p1">P1</span></td><td class="num">1,339</td><td class="num">57.9%</td></tr>
+  <tr><td><span class="tag tag-p2">P2</span></td><td class="num">163</td><td class="num">7.0%</td></tr>
+  <tr><td><span class="tag tag-p3">P3</span></td><td class="num">299</td><td class="num">12.9%</td></tr>
+  <tr><td><span class="badge badge-slate">P4</span></td><td class="num">89</td><td class="num">3.8%</td></tr>
+  <tr><td><span class="badge badge-slate">P5</span></td><td class="num">5</td><td class="num">0.2%</td></tr>
+  <tr><td>⬜ (空)</td><td class="num">62</td><td class="num">2.7%</td></tr>
+</table>
+</div>
+<div class="highlight amber">🔍 P0+P1 合计占 <strong>73.3%</strong>，高优任务占比偏大，需关注是否 P 值通胀。</div>
+</div>
+
+<div>
+<h3>人力负载 Top 10</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>执行人</th><th class="num">任务量</th><th class="num">占总量</th></tr>
+  <tr><td>魏东辉</td><td class="num"><strong>225</strong></td><td class="num">9.7%</td></tr>
+  <tr><td>张闻达</td><td class="num"><strong>222</strong></td><td class="num">9.6%</td></tr>
+  <tr><td>肆野</td><td class="num"><strong>220</strong></td><td class="num">9.5%</td></tr>
+  <tr><td>外包-墨风</td><td class="num">172</td><td class="num">7.4%</td></tr>
+  <tr><td>徐敏</td><td class="num">147</td><td class="num">6.4%</td></tr>
+  <tr><td>外包-月宅</td><td class="num">141</td><td class="num">6.1%</td></tr>
+  <tr><td>外包-墨风001</td><td class="num">124</td><td class="num">5.4%</td></tr>
+  <tr><td>周椿茗</td><td class="num">110</td><td class="num">4.8%</td></tr>
+  <tr><td>贾朝程</td><td class="num">93</td><td class="num">4.0%</td></tr>
+  <tr><td>张茜</td><td class="num">85</td><td class="num">3.7%</td></tr>
+</table>
+</div>
+<div class="highlight red">🔴 前三名合计占 <strong>28.8%</strong>，集中度偏高。</div>
+</div>
+</div>
+
+<h3>月度任务完成趋势</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>月份</th><th class="num">总任务</th><th class="num">已完成</th><th class="num">完成率</th><th>趋势条</th></tr>
+  <tr><td>2026-02</td><td class="num">24</td><td class="num">24</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:3.1%"></div></div></td></tr>
+  <tr><td>2026-03</td><td class="num">81</td><td class="num">81</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:10.6%"></div></div></td></tr>
+  <tr><td>2026-04</td><td class="num">291</td><td class="num">290</td><td class="num">99.7%</td><td><div class="bar-track"><div class="bar-fill green" style="width:38%"></div></div></td></tr>
+  <tr><td>2026-05</td><td class="num"><strong>767</strong></td><td class="num">767</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div></td></tr>
+  <tr><td>2026-06</td><td class="num"><strong>748</strong></td><td class="num">733</td><td class="num">98.0%</td><td><div class="bar-track"><div class="bar-fill green" style="width:97.5%"></div></div></td></tr>
+  <tr><td>2026-07</td><td class="num">273</td><td class="num">243</td><td class="num"><span style="color:#d97706">89.0%</span></td><td><div class="bar-track"><div class="bar-fill amber" style="width:35.6%"></div></div></td></tr>
+  <tr><td>2026-08</td><td class="num"><span style="color:#dc2626">35</span></td><td class="num">0</td><td class="num">0%</td><td><div class="bar-track"><div class="bar-fill red" style="width:4.6%"></div></div></td></tr>
+</table>
+</div>
+<div class="highlight amber">📈 5-6 月是产能高峰（月均 750+），7月骤降至 273，8月目前仅排 35 项——缺口预警。</div>
+</div>
+
+<!-- ===== 二、风险逾期 ===== -->
+<div class="section" id="s2">
+<h2>⚠️ 二、风险逾期</h2>
+<div class="highlight amber">⚠️ 制作风险/距交付日 公式字段不可读（Base 旧 schema），以下基于计划截止时间 + 进度自行判定</div>
+
+<h3>风险总览</h3>
+<div class="risk-bar">
+  <div class="seg red" style="width:0.6%">🔴13</div>
+  <div class="seg amber" style="width:0.8%">⚠️18</div>
+  <div class="seg yellow" style="width:4.1%">🟡94</div>
+  <div class="seg green" style="width:94.6%">🟢2,188</div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-top:4px">
+  <span>逾期 0.6%</span><span>即将逾期 0.8%</span><span>未排期 4.1%</span><span>正常 94.6%</span>
+</div>
+
+<div class="kpi-grid" style="margin-top:16px">
+  <div class="kpi-card risk"><div class="label">🔴 逾期</div><div class="value">13</div><div class="sub">0.6%</div></div>
+  <div class="kpi-card warn"><div class="label">⚠️ 即将逾期(3天)</div><div class="value">18</div><div class="sub">0.8%</div></div>
+  <div class="kpi-card warn"><div class="label">🟡 未排期</div><div class="value">94</div><div class="sub">4.1%</div></div>
+  <div class="kpi-card good"><div class="label">🟢 正常</div><div class="value">2,188</div><div class="sub">94.6%</div></div>
+</div>
+<div class="highlight amber">风险率 = 5.4%（🔴+⚠️+🟡），整体可控但存在聚焦热点。</div>
+
+<h3>🔴 逾期项清单（13 项）</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>任务</th><th>执行人</th><th>业务类型</th><th>截止日</th><th>进度</th><th>优先级</th></tr>
+  <tr><td>【特效】VIP等级特效</td><td>徐荦敏</td><td>UI动特效</td><td><span style="color:#dc2626;font-weight:600">06-15</span></td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr><td>【特效】胜利特效</td><td><strong>周椿茗</strong></td><td>战斗特效</td><td><span style="color:#dc2626;font-weight:600">06-17</span></td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【原画】英雄小人调整</td><td>张闻达</td><td>角色原画</td><td><span style="color:#dc2626;font-weight:600">07-24</span></td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】新英雄降临预热活动页面</td><td>徐敏</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr><td>【特效】城堡皮肤-画舫</td><td><strong>周椿茗</strong></td><td>场景特效</td><td><span style="color:#dc2626;font-weight:600">07-27</span></td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【特效】城堡皮肤-府邸</td><td><strong>周椿茗</strong></td><td>场景特效</td><td><span style="color:#dc2626;font-weight:600">07-27</span></td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【特效】城堡皮肤-诸葛茅庐</td><td><strong>周椿茗</strong></td><td>场景特效</td><td><span style="color:#dc2626;font-weight:600">07-28</span></td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【特效】联盟成就可领取特效</td><td><strong>周椿茗</strong></td><td>UI动特效</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【图标】新增南蛮入侵建筑图标</td><td>周彩霞</td><td>功能图标</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【图标】新增图标朱雀部位【序号3-6】</td><td>周彩霞</td><td>功能图标</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【图标】神器图标对应小图标</td><td style="color:#dc2626;font-weight:600">(空)❗</td><td>属性图标</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】洛阳寻宝-主界面</td><td>贾朝程</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【UI】洛阳寻宝-获取界面</td><td>魏东辉</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡今天</span></td><td><span class="badge badge-amber">进行中</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+</table>
+</div>
+<div class="highlight red">
+  <strong>🔴 逾期特征：</strong><br>
+  • 周椿茗 独占 <strong>5 项</strong>（场景特效3 + 战斗特效1 + UI动特效1），4项暂停1项未开始<br>
+  • <strong>8 项今天（7/30）到期仍未完成</strong>，今日过后将批量升级<br>
+  • 1 项<strong>无执行人</strong>（神器图标对应小图标）
+</div>
+
+<h3>⚠️ 即将逾期清单（18 项）</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>任务</th><th>执行人</th><th>业务类型</th><th>截止日</th><th>进度</th></tr>
+  <tr><td>【特效】神器解锁</td><td><strong>周椿茗</strong></td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【特效】神器升星</td><td><strong>周椿茗</strong></td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【特效】宝石传承</td><td><strong>周椿茗</strong></td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】新英雄降临-伙伴升星页面</td><td>徐敏</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】新英雄降临-英雄获取弹窗</td><td>魏东辉</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【原画】新英雄降临-背景原画</td><td>王伟</td><td>角色原画</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+  <tr><td>【动作】城堡皮肤-画舫（待机）</td><td>林家鑫</td><td>动作</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+  <tr><td>【动作】城堡皮肤-府邸（待机）</td><td>林家鑫</td><td>动作</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+  <tr><td>【动作】城堡皮肤-诸葛茅庐（待机）</td><td>林家鑫</td><td>动作</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+  <tr><td>【UI】洛阳寻宝-连充好礼</td><td>贾朝程</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】魔物入侵-预约时间界面</td><td>魏东辉</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】魔物入侵-建筑怪物详情</td><td>魏东辉</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【原画】司马懿卡面调整</td><td>张闻达</td><td>角色原画</td><td>07-31</td><td><span class="badge badge-slate">暂停</span></td></tr>
+  <tr><td>【原画】赵云卡面调整</td><td>张闻达</td><td>角色原画</td><td>07-31</td><td><span class="badge badge-slate">暂停</span></td></tr>
+  <tr><td>【原画】马超卡面调整</td><td>张闻达</td><td>角色原画</td><td>07-31</td><td><span class="badge badge-slate">暂停</span></td></tr>
+  <tr><td>【原画】新增大地图场景建筑-镇军粮台</td><td>张闻达</td><td>场景原画-功能</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+  <tr><td>【图标】行军装备-装备图标（4×6）</td><td>周彩霞</td><td>道具图标</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【动作】南蛮入侵 战斗小人 移动动作</td><td>陈柯毅</td><td>动作</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+</table>
+</div>
+
+<div class="split" style="margin-top:20px">
+<div>
+<h3>风险按业务类型</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>类型</th><th class="num">🔴逾期</th><th class="num">⚠️即将</th><th class="num">合计</th></tr>
+  <tr><td>UI界面设计</td><td class="num">3</td><td class="num">5</td><td class="num"><strong>8</strong></td></tr>
+  <tr><td>UI动特效</td><td class="num">2</td><td class="num">3</td><td class="num"><strong>5</strong></td></tr>
+  <tr><td>角色原画</td><td class="num">1</td><td class="num">4</td><td class="num"><strong>5</strong></td></tr>
+  <tr><td>动作</td><td class="num">0</td><td class="num">4</td><td class="num"><strong>4</strong></td></tr>
+  <tr><td>场景特效</td><td class="num">3</td><td class="num">0</td><td class="num"><strong>3</strong></td></tr>
+  <tr><td>功能图标</td><td class="num">2</td><td class="num">0</td><td class="num"><strong>2</strong></td></tr>
+</table>
+</div>
+</div>
+<div>
+<h3>风险按执行人 Top 5</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>执行人</th><th class="num">🔴</th><th class="num">⚠️</th><th class="num">合计</th><th class="num">总任务</th><th class="num">风险率</th></tr>
+  <tr style="background:#fef2f2"><td><strong>周椿茗</strong></td><td class="num">5</td><td class="num">3</td><td class="num"><strong>8</strong></td><td class="num">110</td><td class="num"><span class="badge badge-red">7.3%</span></td></tr>
+  <tr><td>张闻达</td><td class="num">1</td><td class="num">4</td><td class="num"><strong>5</strong></td><td class="num">222</td><td class="num">2.3%</td></tr>
+  <tr><td>魏东辉</td><td class="num">1</td><td class="num">3</td><td class="num"><strong>4</strong></td><td class="num">225</td><td class="num">1.8%</td></tr>
+  <tr><td>周彩霞</td><td class="num">2</td><td class="num">1</td><td class="num"><strong>3</strong></td><td class="num">62</td><td class="num"><span class="badge badge-amber">4.8%</span></td></tr>
+  <tr style="background:#fef2f2"><td>林家鑫</td><td class="num">0</td><td class="num">3</td><td class="num"><strong>3</strong></td><td class="num">24</td><td class="num"><span class="badge badge-red">12.5%</span></td></tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== 三、信息规范性 ===== -->
+<div class="section" id="s3">
+<h2>📝 三、信息规范性</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>检查项</th><th>状态</th><th class="num">异常数</th><th class="num">占比</th><th>严重度</th></tr>
+  <tr style="background:#fef2f2">
+    <td><strong>已完成无实际截止</strong></td>
+    <td><span class="status-fail">❌ FAIL</span></td>
+    <td class="num"><strong style="color:#dc2626">1,676</strong></td>
+    <td class="num"><strong style="color:#dc2626">72.5%</strong></td>
+    <td><span class="badge badge-red">🔴 高</span></td>
+  </tr>
+  <tr><td>主任务为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">192</td><td class="num">8.3%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr><td>计划截止为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">94</td><td class="num">4.1%</td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr><td>优先级为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">62</td><td class="num">2.7%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr><td>执行人为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">57</td><td class="num">2.5%</td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr><td>实际截止早于计划开始</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">25</td><td class="num">1.1%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr><td>暂停/作废无备注</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">20</td><td class="num">0.9%</td><td><span class="badge badge-green">🟢 低</span></td></tr>
+  <tr><td>业务类型为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">6</td><td class="num">0.3%</td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr><td>负责人为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">4</td><td class="num">0.2%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr><td>P0无排期</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">2</td><td class="num">0.1%</td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr><td>P0无执行人</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">1</td><td class="num">0.0%</td><td><span class="badge badge-red">🔴 高</span></td></tr>
+</table>
+</div>
+
+<h3>核心问题解析</h3>
+
+<h4>🔴 已完成无实际截止（1,676 项，72.5%）</h4>
+<div class="highlight red">
+  这是指尖三国<strong>最大的数据质量问题</strong>。2,141 项已完成任务中，仅 465 项填写了实际截止时间（21.7%），其余 <strong>1,676 项（78.3%）缺失</strong>。
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>业务类型</th><th class="num">缺失数</th><th class="num">该类型已完成</th><th class="num">缺失率</th></tr>
+  <tr><td>UI界面设计</td><td class="num"><strong>903</strong></td><td class="num">1,009</td><td class="num"><span style="color:#dc2626">89.5%</span></td></tr>
+  <tr><td>角色原画</td><td class="num">226</td><td class="num">238</td><td class="num"><span style="color:#dc2626">95.0%</span></td></tr>
+  <tr><td>功能图标</td><td class="num">169</td><td class="num">177</td><td class="num"><span style="color:#dc2626">95.5%</span></td></tr>
+  <tr><td>拆图</td><td class="num">135</td><td class="num">135</td><td class="num"><span style="color:#dc2626">100%</span></td></tr>
+  <tr><td>场景原画-功能</td><td class="num">128</td><td class="num">130</td><td class="num"><span style="color:#dc2626">98.5%</span></td></tr>
+</table>
+</div>
+<div class="highlight amber">💡 这意味着<strong>无法做工期准确度回溯</strong>——不知道任务实际花了多久、是否按时交付、排期估算偏差多大。</div>
+
+<h4>🟡 主任务为空（192 项，8.3%）</h4>
+<p style="color:var(--text-muted);font-size:.875rem">192 项任务仅有子任务名，缺少主任务归类，导致无法按功能模块聚合分析。</p>
+
+<h4>🔴 57 项无执行人</h4>
+<p style="color:var(--text-muted);font-size:.875rem">其中 1 项为 P0（吕蒙 SS+ 技能动作），其余 56 项分散在各优先级。</p>
+</div>
+
+<!-- ===== 四、深度分析 ===== -->
+<div class="section" id="s4">
+<h2>🔬 四、深度分析</h2>
+
+<div class="split">
+<div>
+<h3>开发阶段分布</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>阶段</th><th class="num">总量</th><th class="num">已完成</th><th class="num">未开始</th></tr>
+  <tr><td><strong>量产</strong></td><td class="num"><strong>1,787</strong></td><td class="num">1,642</td><td class="num">114</td></tr>
+  <tr><td>优化</td><td class="num">463</td><td class="num">449</td><td class="num">4</td></tr>
+  <tr><td>(空)</td><td class="num">51</td><td class="num">38</td><td class="num">9</td></tr>
+  <tr><td>发行</td><td class="num">8</td><td class="num">8</td><td class="num">0</td></tr>
+  <tr><td>研发</td><td class="num">4</td><td class="num">4</td><td class="num">0</td></tr>
+</table>
+</div>
+<div class="highlight blue">📊 <strong>量产阶段占 77.3%</strong>，典型的成熟运营期项目。优化阶段 463 项说明持续品质迭代。研发仅 4 项——新功能极少。</div>
+</div>
+
+<div>
+<h3>工作量统计</h3>
+<div class="kpi-grid" style="grid-template-columns:1fr 1fr">
+  <div class="kpi-card"><div class="label">标准人日合计</div><div class="value">1,849.8</div></div>
+  <div class="kpi-card"><div class="label">人均标准人日</div><div class="value">36.3</div></div>
+  <div class="kpi-card warn"><div class="label">零人日任务</div><div class="value">54</div><div class="sub">2.3%</div></div>
+  <div class="kpi-card"><div class="label">外包占比</div><div class="value">~33%</div><div class="sub">~15人 / ~770项</div></div>
+</div>
+</div>
+</div>
+
+<h3>按系统名称 Top 15</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>系统</th><th class="num">任务数</th><th>比例条</th></tr>
+  <tr><td><strong>英雄</strong></td><td class="num"><strong>395</strong></td><td><div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div></td></tr>
+  <tr><td>角色资源</td><td class="num">59</td><td><div class="bar-track"><div class="bar-fill blue" style="width:14.9%"></div></div></td></tr>
+  <tr><td>小兵</td><td class="num">52</td><td><div class="bar-track"><div class="bar-fill blue" style="width:13.2%"></div></div></td></tr>
+  <tr><td>塔防战斗</td><td class="num">46</td><td><div class="bar-track"><div class="bar-fill blue" style="width:11.6%"></div></div></td></tr>
+  <tr><td>怪物</td><td class="num">36</td><td></td></tr>
+  <tr><td>火龙巢穴</td><td class="num">28</td><td></td></tr>
+  <tr><td>军营界面</td><td class="num">26</td><td></td></tr>
+  <tr><td>联盟相关</td><td class="num">22</td><td></td></tr>
+  <tr><td>召唤物</td><td class="num">21</td><td></td></tr>
+  <tr><td>出征准备</td><td class="num">18</td><td></td></tr>
+  <tr><td>塔防战斗内</td><td class="num">14</td><td></td></tr>
+  <tr><td>角色资源-皮肤</td><td class="num">14</td><td></td></tr>
+  <tr><td>邮件-个人</td><td class="num">12</td><td></td></tr>
+  <tr><td>将领属性界面</td><td class="num">11</td><td></td></tr>
+  <tr><td>角色信息</td><td class="num">11</td><td></td></tr>
+</table>
+</div>
+<div class="highlight blue">英雄系统独占 395 项（17.1%），是绝对核心。塔防相关（塔防战斗+塔防战斗内）仅 60 项（2.6%）。命名规范中「t 塔防战斗」和「塔防战斗内」不一致需修复。</div>
+
+<h3>外包占比分析</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>类别</th><th class="num">人数</th><th class="num">任务量</th><th class="num">占比</th></tr>
+  <tr><td>外包人员</td><td class="num">~15 人</td><td class="num">~770</td><td class="num">33%</td></tr>
+  <tr><td>内部人员</td><td class="num">~36 人</td><td class="num">~1,543</td><td class="num">67%</td></tr>
+</table>
+</div>
+<div class="highlight amber">外包承担了三分之一任务量，且集中在外包-墨风（172）、外包-月宅（141）、外包-墨风001（124）三人。外包管理是风险管控的关键环节。</div>
+</div>
+
+<!-- ===== 五、综合建议 ===== -->
+<div class="section" id="s5">
+<h2>💡 五、综合建议</h2>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+
+<div style="background:var(--red-bg);border-left:4px solid var(--red);padding:16px 20px;border-radius:0 8px 8px 0">
+  <h3 style="margin:0 0 8px;color:var(--red)">1. 🔴【紧急】今天到期项立即跟进</h3>
+  <p style="margin:0;font-size:.875rem">
+    13 项逾期 + 18 项即将逾期中，有 <strong>8 项今天（7/30）截止且未完成</strong>。重点跟进：
+  </p>
+  <ul style="margin:8px 0 0;font-size:.85rem">
+    <li><strong>周椿茗</strong>：联盟成就可领取特效 + 3 项城堡皮肤特效（全部暂停）</li>
+    <li><strong>周彩霞</strong>：南蛮入侵建筑图标 + 朱雀部位图标</li>
+    <li><strong>贾朝程 / 魏东辉</strong>：洛阳寻宝 UI 界面（主界面 + 获取界面）</li>
+  </ul>
+</div>
+
+<div style="background:var(--red-bg);border-left:4px solid var(--red);padding:16px 20px;border-radius:0 8px 8px 0">
+  <h3 style="margin:0 0 8px;color:var(--red)">2. 🔴【重要】补齐 1,676 项实际截止时间</h3>
+  <p style="margin:0;font-size:.875rem">72.5% 已完成任务缺实际截止时间。建议：</p>
+  <ul style="margin:8px 0 0;font-size:.85rem">
+    <li><strong>短期</strong>：对近 3 个月（5-7 月）已完成任务补充实际截止</li>
+    <li><strong>长期</strong>：飞书表加校验规则——进度切为"已完成"时强制填写实际截止时间</li>
+  </ul>
+</div>
+
+<div style="background:var(--amber-bg);border-left:4px solid var(--amber);padding:16px 20px;border-radius:0 8px 8px 0">
+  <h3 style="margin:0 0 8px;color:var(--amber)">3. 🟡【重要】周椿茗特效负载专项审查</h3>
+  <p style="margin:0;font-size:.875rem">110 项任务中 8 项处于风险状态（逾期 5 + 即将 3），且 3 项城堡皮肤特效全部暂停。建议专项沟通确认阻塞原因和复工计划。</p>
+</div>
+
+<div style="background:var(--amber-bg);border-left:4px solid var(--amber);padding:16px 20px;border-radius:0 8px 8px 0">
+  <h3 style="margin:0 0 8px;color:var(--amber)">4. 🟡【建议】8 月排期缺口预警</h3>
+  <p style="margin:0;font-size:.875rem">当前 8 月仅排 35 项任务，对比量产期月均 750+ 严重偏低。需确认是数据未同步还是确实计划收缩。</p>
+</div>
+
+<div style="background:var(--green-bg);border-left:4px solid var(--green);padding:16px 20px;border-radius:0 8px 8px 0">
+  <h3 style="margin:0 0 8px;color:var(--green)">5. 🟢【建议】P 值通胀审查</h3>
+  <p style="margin:0;font-size:.875rem">P0+P1 合计占 73.3%。业界健康比例通常 P0+P1 ≤ 30%。建议审视优先级定义，避免所有任务都标"高优"导致真正紧急项被淹没。</p>
+</div>
+
+</div>
+</div>
+
+<!-- ===== 六、采样 vs 全量 ===== -->
+<div class="section" id="s6">
+<h2>⚖️ 六、与 200 条采样报告的关键差异</h2>
+
+<div class="table-wrap">
+<table class="vs-old">
+  <tr><th>维度</th><th>采样（7/29，200条）</th><th><strong>全量（7/30，2,313条）</strong></th><th>差异原因</th></tr>
+  <tr>
+    <td>总任务</td>
+    <td>200</td>
+    <td class="vs-worse"><strong>2,313</strong></td>
+    <td>仅首页截断</td>
+  </tr>
+  <tr>
+    <td>投入人力</td>
+    <td>20 人</td>
+    <td class="vs-worse"><strong>51 人</strong></td>
+    <td>采样未覆盖全团队</td>
+  </tr>
+  <tr>
+    <td>完成率</td>
+    <td>98.0%</td>
+    <td class="vs-worse"><strong>92.6%</strong></td>
+    <td>采样偏向近期已完成</td>
+  </tr>
+  <tr>
+    <td>主力类型</td>
+    <td>功能图标 21%</td>
+    <td class="vs-worse"><strong>UI界面设计 43.6%</strong></td>
+    <td>首页排序偏差</td>
+  </tr>
+  <tr>
+    <td>🔴逾期</td>
+    <td class="vs-better">0</td>
+    <td class="vs-worse"><strong>13</strong></td>
+    <td>首页均为历史任务</td>
+  </tr>
+  <tr>
+    <td>🟡未排期</td>
+    <td class="vs-better">0</td>
+    <td class="vs-worse"><strong>94</strong></td>
+    <td>同上</td>
+  </tr>
+  <tr>
+    <td>Top 执行人</td>
+    <td>外包-墨风001 (54)</td>
+    <td class="vs-worse"><strong>魏东辉 (225)</strong></td>
+    <td>采样严重失真</td>
+  </tr>
+</table>
+</div>
+
+<div class="highlight red" style="margin-top:16px">
+  ⚠️ <strong>教训</strong>：200 条首页采样给出的画面严重失真——看起来「零风险、高完成率、图标驱动」，实际情况是 5.4% 风险率、UI 密集型、51 人团队。<strong>后续审查必须拉全量数据。</strong>
+</div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <p>报告生成时间：2026-07-30 · 数据来源：飞书 base_token=<code>AsFHbvuI4aastjsKZ82cwzYrnfg</code> table=<code>tblBWWt9nGH5MtCJ</code> · 全量 2,313 条</p>
+  <p style="margin-top:4px">审查工具链：lark-cli → Node.js 全量分页拉取 → 4目标交叉分析 → HTML 报告</p>
+</div>
+
+</div>
+
+<script>
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+}
+// Highlight active tab on scroll
+const sections = ['s1','s2','s3','s4','s5','s6'];
+const tabs = document.querySelectorAll('.tab-btn');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= 100) current = id;
+  });
+  tabs.forEach((btn, i) => {
+    btn.classList.toggle('active', sections[i] === current);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何检查AI写的策划案？ · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; text-align: right; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #f0a040; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  .punch { font-size: 24px; font-weight: 700; line-height: 1.5; text-align: center; }
+
+  /* === Card 1: Cover === */
+  .card-1 .emoji { font-size: 56px; margin-bottom: 25px; text-align: center; }
+  .card-1 h1 { font-size: 46px; font-weight: 900; line-height: 1.25; margin-bottom: 30px; letter-spacing: 2px; text-align: center; }
+  .card-1 h1 .highlight { color: var(--accent); }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 1.8; text-align: center; }
+  .card-1 .subtitle .divider { color: rgba(255,255,255,0.18); margin: 0 10px; }
+
+  /* === Card 2: Pain/Root Causes === */
+  .card-2 h2 { font-size: 42px; font-weight: 800; margin-bottom: 45px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-2 h2 .highlight { color: var(--accent); }
+  .card-2 .story-box { width: 100%; display: flex; flex-direction: column; gap: 22px; margin-bottom: 40px; }
+  .card-2 .story-item { display: flex; align-items: flex-start; gap: 20px; padding: 22px 30px; border-radius: 10px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-2 .story-item .s-icon { font-size: 28px; flex-shrink: 0; text-align: center; width: 40px; }
+  .card-2 .story-item .s-text { font-size: 22px; color: rgba(255,255,255,0.55); line-height: 1.6; text-align: left; }
+  .card-2 .story-item .s-text b { color: rgba(255,255,255,0.80); }
+  .card-2 .punch { color: var(--accent); }
+
+  /* === Card 3: Method — 5 Dimensions Grid === */
+  .card-3 h2 { font-size: 40px; font-weight: 800; margin-bottom: 40px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-3 h2 .highlight { color: var(--accent); }
+  .card-3 .dim-grid { width: 100%; display: flex; flex-direction: column; gap: 18px; margin-bottom: 30px; }
+  .card-3 .dim-row { display: flex; gap: 18px; justify-content: center; }
+  .card-3 .dim-box { flex: 1; max-width: 280px; border-radius: 12px; padding: 22px 20px; text-align: left; background: rgba(255,255,255,0.02); border: 1px solid rgba(240,160,64,0.12); }
+  .card-3 .dim-box .d-icon { font-size: 26px; margin-bottom: 10px; text-align: left; }
+  .card-3 .dim-box .d-name { font-size: 19px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-align: left; }
+  .card-3 .dim-box .d-desc { font-size: 15px; color: rgba(255,255,255,0.50); line-height: 1.6; text-align: left; }
+  .card-3 .insight-box { width: 100%; background: rgba(240,160,64,0.05); border: 1px solid rgba(240,160,64,0.10); border-radius: 14px; padding: 28px 35px; text-align: left; }
+  .card-3 .insight-box .i-title { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; text-align: left; }
+  .card-3 .insight-box .i-body { font-size: 21px; color: rgba(255,255,255,0.65); line-height: 1.8; text-align: left; }
+
+  /* === Card 4: Flow / Pipeline === */
+  .card-4 h2 { font-size: 40px; font-weight: 800; margin-bottom: 40px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-4 h2 .highlight { color: var(--accent); }
+  .card-4 .pipe { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 38px; flex-wrap: wrap; }
+  .card-4 .pipe-node { flex: 0 0 auto; text-align: center; }
+  .card-4 .pipe-node .pn-icon { font-size: 28px; margin-bottom: 8px; text-align: center; }
+  .card-4 .pipe-node .pn-label { font-size: 15px; color: rgba(255,255,255,0.40); letter-spacing: 1px; margin-bottom: 6px; text-align: center; }
+  .card-4 .pipe-node .pn-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 13px 18px; font-size: 17px; font-weight: 700; color: #f0f0f0;
+    text-align: center; white-space: nowrap;
+  }
+  .card-4 .pipe-arrow { font-size: 20px; color: var(--accent); margin: 0 8px; flex-shrink: 0; text-align: center; }
+  .card-4 .insight-box { width: 100%; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 28px 35px; text-align: left; }
+  .card-4 .insight-box .i-title { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px; text-align: left; }
+  .card-4 .insight-box .i-body { font-size: 21px; color: rgba(255,255,255,0.65); line-height: 1.8; text-align: left; }
+
+  /* === Card 5: Capability vs Limitation === */
+  .card-5 h2 { font-size: 40px; font-weight: 800; margin-bottom: 40px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-5 h2 .highlight { color: var(--accent); }
+  .card-5 .cap-block { width: 100%; display: flex; gap: 24px; margin-bottom: 30px; }
+  .card-5 .cap-col { flex: 1; border-radius: 14px; padding: 28px; text-align: left; }
+  .card-5 .cap-col.can { background: rgba(240,160,64,0.05); border: 1px solid rgba(240,160,64,0.15); }
+  .card-5 .cap-col.cant { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); }
+  .card-5 .cap-col .c-header { font-size: 28px; margin-bottom: 16px; text-align: left; }
+  .card-5 .cap-col .c-item { font-size: 19px; color: rgba(255,255,255,0.60); line-height: 1.8; margin-bottom: 10px; text-align: left; }
+  .card-5 .cap-col .c-item b { color: rgba(255,255,255,0.85); }
+  .card-5 .punch { color: var(--accent); }
+
+  /* === Card 6: CTA === */
+  .card-6 h2 { font-size: 46px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; }
+  .card-6 h2 .highlight { color: var(--accent); }
+  .card-6 .cta-body { font-size: 24px; line-height: 2.4; color: rgba(255,255,255,0.55); margin-bottom: 50px; text-align: center; }
+  .card-6 .cta-body .search-hint { display: inline-block; background: rgba(240,160,64,0.08); border: 1px solid rgba(240,160,64,0.15); border-radius: 8px; padding: 6px 18px; color: var(--accent); font-weight: 700; font-size: 22px; margin: 4px 8px; vertical-align: middle; text-align: center; white-space: nowrap; }
+  .card-6 .cta-body .search-line { display: block; margin-bottom: 14px; text-align: center; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🔍</div>
+  <h1>如何检查<br><span class="highlight">AI写的策划案</span>？</h1>
+  <p class="subtitle">
+    AI写的策划基本都是MD文本形式<br>
+    <span class="divider">↓</span><br>
+    直接交给引擎生成 → 看似有功能，玩起来一言难尽
+  </p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 根本原因 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">根本原因</div>
+  <h2>为什么AI写的策划案<br><span class="highlight">很难一眼看出问题？</span></h2>
+  <div class="story-box">
+    <div class="story-item">
+      <span class="s-icon">🎓</span>
+      <span class="s-text">我是<b>第一次做游戏策划</b>，认知储备不够——很多边界情况根本想不到，很难写得周全。</span>
+    </div>
+    <div class="story-item">
+      <span class="s-icon">📄</span>
+      <span class="s-text"><b>文字天生的局限</b>——弹窗怎么弹？按钮点了什么反馈？动画过渡什么节奏？纯文字描述，脑子里根本跑不出来。</span>
+    </div>
+  </div>
+  <p class="punch">不是AI写得不好——是「文字策划案」这个格式本身，藏了太多信息差</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 5维度拆解 + 可视化HTML -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">🧩 解法</div>
+  <h2>把一份策划案<br><span class="highlight">拆成5个维度，转成可视化HTML</span></h2>
+  <div class="dim-grid">
+    <div class="dim-row">
+      <div class="dim-box">
+        <div class="d-icon">📋</div>
+        <div class="d-name">文档信息</div>
+        <div class="d-desc">版本 / 关联 / 范围——谁都别甩锅</div>
+      </div>
+      <div class="dim-box">
+        <div class="d-icon">📐</div>
+        <div class="d-name">功能说明</div>
+        <div class="d-desc">规则 + 数据 + 边界，Excel 层级写法</div>
+      </div>
+      <div class="dim-box">
+        <div class="d-icon">🖼️</div>
+        <div class="d-name">界面说明</div>
+        <div class="d-desc">左图右文 + 编号锚点，所见即所得</div>
+      </div>
+    </div>
+    <div class="dim-row">
+      <div class="dim-box">
+        <div class="d-icon">🎬</div>
+        <div class="d-name">交互动效</div>
+        <div class="d-desc">可点击状态机模拟——入场 → 交互 → 退场</div>
+      </div>
+      <div class="dim-box">
+        <div class="d-icon">🎨</div>
+        <div class="d-name">资产需求</div>
+        <div class="d-desc">UI / 原画 / 动作 / 特效 / 3D，一张表清点</div>
+      </div>
+    </div>
+  </div>
+  <div class="insight-box">
+    <div class="i-title">💡 核心理念</div>
+    <div class="i-body">一份 HTML = 一份策划案——<b>人看得懂，机器读得动</b></div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 工作流 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">🔄 流程</div>
+  <h2>固化成工作流<br><span class="highlight">「写策划案」v0.5</span></h2>
+  <div class="pipe">
+    <div class="pipe-node">
+      <div class="pn-icon">📋</div>
+      <div class="pn-label">复制</div>
+      <div class="pn-box">HTML 模板</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node">
+      <div class="pn-icon">🤖</div>
+      <div class="pn-label">协作</div>
+      <div class="pn-box">人定方向 AI填细节</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node">
+      <div class="pn-icon">👁️</div>
+      <div class="pn-label">检查</div>
+      <div class="pn-box">浏览器可视化审查</div>
+    </div>
+    <span class="pipe-arrow">→</span>
+    <div class="pipe-node">
+      <div class="pn-icon">🔧</div>
+      <div class="pn-label">修改</div>
+      <div class="pn-box">发现盲区 → 迭代</div>
+    </div>
+  </div>
+  <div class="insight-box">
+    <div class="i-title">📦 产出</div>
+    <div class="i-body">单文件 HTML，5 个页签切换，零外部依赖。<br>当前状态：<b>半成品，可用，持续迭代中</b></div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 洞察 — 能做什么 vs 不能做什么 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">💡 洞察</div>
+  <h2>v0.5 <span class="highlight">能做什么</span><br>还不能做什么</h2>
+  <div class="cap-block">
+    <div class="cap-col can">
+      <div class="c-header">✅ 能做到</div>
+      <div class="c-item">把文字策划案变成<b>可视化</b>，盲区一目了然</div>
+      <div class="c-item">帮你检查<b>「策划是否周全」</b></div>
+    </div>
+    <div class="cap-col cant">
+      <div class="c-header">❌ 还做不到</div>
+      <div class="c-item">不能直接写出周全的策划案<br>→ 需要一个<b>策划案知识库</b>来补认知</div>
+      <div class="c-item">交互规范、视觉规范还不够完善<br>→ 原型图的<b>「设计语言」</b>还在建设中</div>
+    </div>
+  </div>
+  <p class="punch">v0.5 是一面镜子——让你看见漏了什么，但镜子不会替你思考</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>如果你也在<br><span class="highlight">做独立游戏</span>…</h2>
+  <div class="cta-body">
+    <span class="search-line">别让策划案停留在 MD 文本——可视化之后，你会发现原来漏了这么多</span>
+    <span class="search-line">后续持续迭代这个工作流：</span>
+    <span class="search-line"><span class="search-hint">策划案知识库</span> + <span class="search-hint">交互规范</span> + <span class="search-hint">视觉规范</span></span>
+    <br>
+    把「感觉不对劲」变成「一眼看出来」<br>
+    这就是可视化策划案的价值
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>
