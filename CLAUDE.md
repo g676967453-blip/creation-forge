@@ -221,14 +221,26 @@ journal: 添加2026-07-15学习日志
 assets: 添加玩家精灵素材
 ```
 
+### 创建交互规范文档
+
+使用 `docs/specs/_interaction-template.md` 模板创建新的游戏交互规范：
+
+1. 复制模板：`cp docs/specs/_interaction-template.md docs/specs/<平台>-game-interaction-spec.md`
+2. 编辑 YAML frontmatter（平台/画布/网格/色彩参数）
+3. 填写各章节内容（画布/热区/手势/触控/布局/组件/动效等）
+4. 生成 HTML：`npm run build-spec -- docs/specs/<平台>-game-interaction-spec.md`
+5. 在浏览器中打开 HTML 验证视觉效果
+
+MD 为 AI 可读的单一数据源，HTML 由生成器自动渲染（网格可视化 + 组件陈列 + 手机原型标注）。
+
+> 📖 详见 [方案文档](C:\Users\admin\.claude\plans\wiggly-bouncing-blanket.md)
+
 ---
 
 ---
 
 ## 当前任务上下文
 
-<!-- AI会在每次会话开始时在这里记录当前正在进行的任务 -->
-
-> 📌 **当前阶段：** 核心理念体系建设 — 完善 AI 时代新学习思想文档体系
-> 📌 **状态：** 进行中（2026-07-15）
-> 📌 **最新完成：** 创建宣言文档 + 小红书素材库 + 重构 README 和 CLAUDE.md
+> 📌 **当前阶段：** 游戏交互规范生成系统 v1.0 — MD 驱动 HTML 的交互规范生产线
+> 📌 **状态：** 已完成核心工具链（2026-07-30）
+> 📌 **最新完成：** 创建 spec-parser + spec-renderer + build-spec 工具链，重构竖版交互规范为 MD 驱动

@@ -16,7 +16,8 @@
     "scaffold": "npx tsx tools/scaffold-game.ts",
     "journal": "npx tsx tools/new-journal.ts",
     "stitch": "node stitch-test.mjs",
-    "stitch-ui": "node stitch-test.mjs"
+    "stitch-ui": "node stitch-test.mjs",
+    "build-spec": "npx tsx tools/build-interaction-spec.ts"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.0.0",

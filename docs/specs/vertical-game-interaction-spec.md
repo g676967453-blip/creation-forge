@@ -1,3 +1,38 @@
+---
+platform: vertical-mobile
+canvas_width: 750
+canvas_height: 1334
+grid_base: 4
+grid_columns: 4
+grid_gutter: 16
+grid_margin: 16
+safe_area_top: 44
+safe_area_bottom: 34
+color_primary: "#c8964a"
+color_success: "#3ca374"
+color_warning: "#c8963c"
+color_danger: "#c84848"
+color_info: "#4a8bc8"
+rarity_colors:
+  common: "#8888a0"
+  rare: "#6699bb"
+  epic: "#9977bb"
+  legendary: "#bb9966"
+principles:
+  - char: "信"
+    title: "信息准确 · 易学易用"
+    desc: "层级清晰，反馈即时，用户无需思考即可完成操作"
+  - char: "达"
+    title: "生动细致 · 流畅高效"
+    desc: "过渡自然，路径最短，高频操作 ≤2 步触达"
+  - char: "雅"
+    title: "氛围营造 · 品牌识别"
+    desc: "界面叙事融入世界观，独特视觉语言建立品牌认知"
+methodology: "网易游戏「信·达·雅」交互设计体系"
+benchmarks: "阴阳师 · 梦幻西游 · 倩女幽魂 · 逆水寒 · 哈利波特：魔法觉醒"
+version: "1.0"
+---
+
 # 竖版游戏交互规范（生产线标准）
 
 > 📂 分类：技术规范 / 交互设计
