@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>存档系统 — 功能策划案</title>
+<meta name="feat-name" content="存档系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-30"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+/* 离线收益弹窗专属样式 */
+.offline-frame { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%); position: relative; }
+.offline-card { width: 380px; padding: var(--sp-xl); background: var(--bg-elevated); border: 1px solid var(--border-default); border-radius: var(--radius-lg); text-align: center; }
+.offline-card .off-title { font-size: var(--fs-h2); color: var(--quality-legendary); letter-spacing: 4px; margin-bottom: var(--sp-md); }
+.offline-card .off-time { font-size: var(--fs-body); color: var(--text-secondary); margin-bottom: var(--sp-xs); }
+.offline-card .off-reward { font-size: 28px; color: var(--status-success); font-weight: var(--fw-bold); margin: var(--sp-md) 0; }
+.offline-card .off-btn { width: 160px; height: 40px; margin-top: var(--sp-md); border-radius: var(--radius-md); border: 1px solid var(--quality-legendary); background: rgba(187,153,102,0.1); color: var(--quality-legendary); font-family: var(--font-cn); font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: 4px; cursor: pointer; }
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; opacity: 0; transition: all 0.3s; white-space: pre-line; text-align: center; }
+.interact-msg.show { opacity: 1; animation: msgPop 0.4s ease-out; }
+@keyframes msgPop { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; }
+.interact-reset:hover { border-color: var(--border-active); color: var(--text-primary); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="page-header"><h1>存档系统</h1><p class="subtitle">功能策划案 — 自动存档 + 离线收益 + 容错</p></div>
+
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+
+<!-- Tab 1 -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">存档系统</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">2026-07-30</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">AI协作</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div>
+    <hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>AI协作</td><td>2026.7.30</td><td>创建文档，基于GDD v3.1</td></tr></table>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 游戏启动流程 — 存档检测决定分支路径</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 仓库系统 — 资源数量纳入存档</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 器灵系统 — 器灵绑定+等级纳入存档</span></p>
+  </div>
+  <div class="section-card">
+    <h3>功能定位</h3>
+    <p><strong>一句话：</strong>自动保存游戏进度，下次启动读档恢复；离线期间挂机收益自动累积。</p>
+    <p style="margin-top:var(--sp-sm);">存档的生命周期：</p>
+    <div style="margin-top:var(--sp-xs); padding:var(--sp-md); background:var(--bg-primary); border-radius:var(--radius-md); font-size:var(--fs-caption); line-height:2;">
+      首次进入桌面态 → <span style="color:var(--status-success);">创建存档</span><br>
+      &nbsp;&nbsp;├─ 战斗中 → <span style="color:var(--quality-legendary);">结算时自动保存</span><br>
+      &nbsp;&nbsp;├─ 桌面态 → <span style="color:var(--quality-legendary);">每 60s 定时保存</span><br>
+      &nbsp;&nbsp;├─ 退出时 → <span style="color:var(--quality-legendary);">自动保存 + 记录离线时间戳</span><br>
+      &nbsp;&nbsp;└─ 手动 → <span style="color:var(--text-secondary);">设置菜单可手动保存</span><br>
+      下次启动 → 检测存档 → 读档 → <span style="color:var(--status-success);">离线收益结算</span> → 桌面态
+    </div>
+  </div>
+  <div class="section-card">
+    <h3>不在范围内</h3>
+    <ul>
+      <li>多存档槽位（只有一个自动存档位）→ V0.2+</li>
+      <li>云存档 / Steam Cloud → V1.0+</li>
+      <li>存档加密 / 防作弊 → V0.2+</li>
+      <li>存档版本迁移（旧版本存档→新版本）→ V0.2+</li>
+      <li>崩溃恢复（crash 时紧急存档）→ V0.2+</li>
+    </ul>
+  </div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示/可配置项 <span class="text-red">红色</span>=强调</p>
+</div>
+
+<!-- Tab 2 -->
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">活动简述</div>
+  <div class="rule-l0">目的：自动管理游戏进度的持久化存储，支持存档/读档/离线收益，确保玩家进度不丢失。</div>
+
+  <div class="sec-header">一、存档数据结构</div>
+  <div class="rule-l0">一.存档内容（单一 JSON 文件，路径：<span class="text-blue">user://save_data.json</span>）</div>
+  <div class="rule-l1">1.元信息</div>
+  <div class="rule-l2">1）<span class="text-blue">version</span>（int）：存档格式版本号，V0.1 = 1</div>
+  <div class="rule-l2">2）<span class="text-blue">play_time</span>（float）：累计游玩秒数</div>
+  <div class="rule-l2">3）<span class="text-blue">save_timestamp</span>（int）：最后保存的 Unix 时间戳</div>
+  <div class="rule-l1">2.器灵数据</div>
+  <div class="rule-l2">1）<span class="text-blue">spirit_id</span>（string）：绑定器灵 ID（V0.1="baishishu"）</div>
+  <div class="rule-l2">2）<span class="text-blue">spirit_level</span>（int）：器灵等级（= 已修复山峰数，0-6）</div>
+  <div class="rule-l1">3.山峰数据</div>
+  <div class="rule-l2">1）<span class="text-blue">peaks</span>（object）：{ "jianfeng": true, "fofeng": false, ... } 每座峰已修复/未修复</div>
+  <div class="rule-l1">4.资源数据</div>
+  <div class="rule-l2">1）<span class="text-blue">spirit_energy</span>（int）：灵气数量</div>
+  <div class="rule-l2">2）<span class="text-blue">nuwa_stone</span>（int）：女娲石数量</div>
+  <div class="rule-l2">3）<span class="text-blue">secret_treasures</span>（object）：{ "jianfeng": 0, "fofeng": 0, ... } 各流派秘宝数量</div>
+  <div class="rule-l1">5.进度数据</div>
+  <div class="rule-l2">1）<span class="text-blue">clear_count</span>（int）：通关次数（解锁诛仙剑/神农鼎用）</div>
+  <div class="rule-l1">6.设置数据</div>
+  <div class="rule-l2">1）<span class="text-blue">master_volume</span>（float）：主音量 0-100</div>
+  <div class="rule-l2">2）<span class="text-blue">window_mode</span>（string）："windowed" | "fullscreen"</div>
+
+  <div class="sec-header">二、保存时机</div>
+  <div class="rule-l0">一.自动保存触发条件</div>
+  <div class="rule-l1">1.<span class="text-blue">战斗结算后</span>：胜利/失败结算完成 → 自动保存</div>
+  <div class="rule-l1">2.<span class="text-blue">退出游戏时</span>：窗口关闭/Alt+F4 → 捕获退出信号 → 保存 + 记录离线时间戳</div>
+  <div class="rule-l1">3.<span class="text-blue">定时保存</span>：桌面放置态下 <span class="text-blue">每 60 秒</span>自动保存一次</div>
+  <div class="rule-l0">二.手动保存</div>
+  <div class="rule-l1">1.设置菜单中提供「保存游戏」按钮</div>
+  <div class="rule-l1">2.点击 → 立即保存 → 提示「已保存」</div>
+  <div class="rule-l0">三.不触发保存的时机</div>
+  <div class="rule-l1">1.战斗中（W1-W15 进行中）— 等结算时保存</div>
+  <div class="rule-l1">2.开场黑幕播放中</div>
+  <div class="rule-l1">3.器灵选择界面（尚未绑定器灵）</div>
+
+  <div class="sec-header">三、读档</div>
+  <div class="rule-l0">一.读档流程</div>
+  <div class="rule-l1">1.启动时检测存档文件存在 → JSON 解析 → 字段完整性校验</div>
+  <div class="rule-l1">2.全部通过 → 加载游戏状态 → 计算离线收益 → 显示离线收益弹窗 → 进入桌面态</div>
+  <div class="rule-l1">3.读档期间：<span class="mark-yellow">显示主菜单 + 加载提示</span>（V0.1 不做 loading 进度条）</div>
+  <div class="rule-l0">二.读档失败处理</div>
+  <div class="rule-l1">1.文件不存在 → 正常，走首次启动流程</div>
+  <div class="rule-l1">2.JSON 解析失败 → 视为存档损坏 → <span class="mark-yellow">V0.1 静默走首次流程</span>，V0.2 弹提示</div>
+  <div class="rule-l1">3.必填字段缺失 → 视为存档损坏</div>
+  <div class="rule-l1">4.版本号不兼容 → 视为存档损坏（V0.2 做版本迁移）</div>
+
+  <div class="sec-header">四、离线收益</div>
+  <div class="rule-l0">一.计算公式</div>
+  <div class="rule-l1">1.离线灵气 = <span class="text-blue">离线时长（秒）× 基础灵气速率</span></div>
+  <div class="rule-l2">1）基础灵气速率：<span class="mark-yellow">待定（建议 1 灵气/秒）</span></div>
+  <div class="rule-l2">2）器灵加成：<span class="mark-yellow">待定</span>（随山峰修复提升速率？）</div>
+  <div class="rule-l0">二.上限</div>
+  <div class="rule-l1">1.离线收益上限：<span class="text-blue">24 小时</span>（86400 秒）</div>
+  <div class="rule-l1">2.离线超过 24 小时 → 按 24 小时计算，<span class="text-red">不累积超出部分</span></div>
+  <div class="rule-l1">3.目的：鼓励回来收菜，不无限挂机</div>
+  <div class="rule-l0">三.显示</div>
+  <div class="rule-l1">1.读档成功后弹出离线收益弹窗</div>
+  <div class="rule-l1">2.文案：「你离开了 X 小时 X 分，器灵修炼获得 💨 +N 灵气」</div>
+  <div class="rule-l1">3.玩家点击「确认」关闭，<span class="mark-yellow">或 3 秒后自动关闭</span></div>
+  <div class="rule-ex">离线 3 小时 20 分 → "你离开了 3 小时 20 分，器灵修炼获得 💨 +12,000 灵气"</div>
+
+  <div class="sec-header">五、存储实现</div>
+  <div class="rule-l0">一.文件格式</div>
+  <div class="rule-l1">1.JSON 文本文件，UTF-8 编码，格式化输出（缩进 2 空格）</div>
+  <div class="rule-l1">2.文件名：<span class="text-blue">save_data.json</span></div>
+  <div class="rule-l1">3.存储路径：<span class="text-blue">user://</span>（Godot 用户数据目录，跨平台自动映射）</div>
+  <div class="rule-l0">二.写入策略</div>
+  <div class="rule-l1">1.<span class="text-blue">原子写入</span>：先写临时文件 → 写入成功 → 替换原文件</div>
+  <div class="rule-l2">1）防止写入过程中崩溃导致存档损坏</div>
+  <div class="rule-l1">2.写入超时：<span class="text-blue">5 秒</span>。超时视为保存失败，不影响游戏运行</div>
+</div></div>
+
+<!-- Tab 3 -->
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card">
+    <h3 style="margin-bottom:var(--sp-md);">界面 1 — 离线收益弹窗</h3>
+    <div class="ui-desc">
+      <div class="ui-desc-left">
+        <div class="ui-frame">
+          <div class="offline-frame">
+            <div class="offline-card">
+              <div class="off-title">器灵修炼归来</div>
+              <div class="off-time">你离开了 3 小时 20 分</div>
+              <div class="off-reward">💨 +12,800 灵气</div>
+              <button class="off-btn">确 认</button>
+            </div>
+            <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+            <div style="position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+            <div style="position:absolute;top:68%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
+          </div>
+        </div>
+      </div>
+      <div class="ui-desc-right">
+        <div class="ui-note"><span class="un">1</span><span class="ut">离线时长</span><div class="ud">格式：X 小时 X 分（不足 1 小时只显示分钟，不足 1 分钟显示"不到 1 分钟"）。数值从存档时间戳和当前时间计算。</div></div>
+        <div class="ui-note"><span class="un">2</span><span class="ut">灵气收益数字</span><div class="ud">绿色大字显示灵气数量。计算：离线秒数 × 基础速率，上限 24h。有器灵加成时显示计算明细（V0.2）。</div></div>
+        <div class="ui-note"><span class="un">3</span><span class="ut">确认按钮</span><div class="ud">金色边框按钮。点击关闭弹窗并进入桌面态。<span class="mark-yellow">3s 后自动关闭</span>（玩家无需操作也可继续）。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <h3 style="margin-bottom:var(--sp-md);">界面 2 — 手动保存反馈</h3>
+    <div class="ui-desc">
+      <div class="ui-desc-left">
+        <div class="ui-frame" style="background:linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%);">
+          <div style="text-align:center;">
+            <div style="font-size:20px;color:var(--status-success);letter-spacing:4px;margin-bottom:12px;">✓ 已保存</div>
+            <div style="font-size:12px;color:var(--text-secondary);">2026-07-30 23:15</div>
+          </div>
+          <div style="position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+        </div>
+      </div>
+      <div class="ui-desc-right">
+        <div class="ui-note"><span class="un">1</span><span class="ut">保存成功提示</span><div class="ud">半透明 Toast 提示，居中显示 2 秒后自动消失。V0.1 样式：绿色文字「已保存」+ 保存时间戳。不打断游戏操作（Toast 不阻断输入）。</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab 4 -->
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">动态交互 — 存档/读档/离线收益模拟</h3>
+  <p style="margin-bottom:var(--sp-md); color:var(--text-secondary);">调整离线时长滑块，点击「模拟读档」查看离线收益弹窗效果。点击「模拟保存」查看保存反馈。</p>
+  <div class="interact-area" id="interact-area" style="background:linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%);">
+    <div style="z-index:6;text-align:center;">
+      <div style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">离线时长设定</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+        <span style="color:var(--text-secondary);font-size:12px;">0h</span>
+        <input type="range" id="offline-slider" min="0" max="1440" value="200" style="width:300px;accent-color:var(--quality-legendary);" oninput="updateOfflineLabel()">
+        <span style="color:var(--text-secondary);font-size:12px;">24h</span>
+      </div>
+      <div style="font-size:20px;color:var(--text-primary);margin-bottom:24px;" id="offline-label">3 小时 20 分</div>
+      <div style="display:flex;gap:16px;justify-content:center;">
+        <button style="width:140px;height:42px;border-radius:8px;border:1px solid var(--quality-legendary);background:rgba(187,153,102,0.1);color:var(--quality-legendary);font-family:var(--font-cn);font-size:14px;font-weight:600;letter-spacing:4px;cursor:pointer;" onclick="simLoad()">模拟读档</button>
+        <button style="width:140px;height:42px;border-radius:8px;border:1px solid var(--status-success);background:rgba(78,204,163,0.1);color:var(--status-success);font-family:var(--font-cn);font-size:14px;font-weight:600;letter-spacing:4px;cursor:pointer;" onclick="simSave()">模拟保存</button>
+      </div>
+    </div>
+    <span class="interact-msg" id="interact-msg"></span>
+    <!-- 离线收益弹窗层 -->
+    <div id="reward-overlay" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);z-index:20;"></div>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);">
+    <button class="interact-reset" onclick="resetInteract()">⟳ 重新开始</button>
+  </div>
+</div></div>
+
+<!-- Tab 5 -->
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <p style="margin-bottom:var(--sp-md); color:var(--text-secondary);">存档系统以逻辑为主，UI 资产极少。</p>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui">
+    <table class="asset-table">
+      <tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+      <tr><td class="mono">U1</td><td>离线收益弹窗底板</td><td>底板</td><td>380×260</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗色卡片背景，四周像素边框。金色/绿色点缀（灵气主题）。中国风像素。</td></tr>
+      <tr><td class="mono">U2</td><td>离线收益按钮</td><td>控件</td><td>160×40</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">金色边框按钮，像素风格。</td></tr>
+      <tr><td class="mono">U3</td><td>保存成功图标</td><td>图标</td><td>32×32</td><td>PNG</td><td>1</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">绿色勾号图标，用于 Toast 提示。</td></tr>
+    </table>
+  </div>
+  <div class="sub-tab-panel" id="sub-vfx">
+    <table class="asset-table">
+      <tr><th>编号</th><th>名称</th><th>类别</th><th>触发</th><th>表现</th><th>时长</th><th>优先级</th><th>实现方式</th></tr>
+      <tr><td class="mono">V1</td><td>Toast 淡入淡出</td><td>UI反馈</td><td>保存成功</td><td>「已保存」文字从透明淡入→停留 2s→淡出</td><td>2.5s</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">Tween modulate alpha</td></tr>
+      <tr><td class="mono">V2</td><td>灵气数字跳动</td><td>UI反馈</td><td>离线收益弹窗显示</td><td>灵气数字从 0 跳动到最终值</td><td>1.0s</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">Tween 插值 + 数字格式化</td></tr>
+    </table>
+  </div>
+</div></div>
+
+<script>
+function switchMainTab(event, tabId) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+function switchSubTab(event, tabId) {
+  var bar = event.target.parentElement;
+  bar.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  bar.parentElement.querySelector('#' + tabId).classList.add('active');
+}
+
+var rate = 1; // 灵气/秒
+var maxSeconds = 86400; // 24h
+
+function updateOfflineLabel() {
+  var mins = parseInt(document.getElementById('offline-slider').value);
+  var h = Math.floor(mins / 60);
+  var m = mins % 60;
+  var label = h > 0 ? h + ' 小时' : '';
+  label += m > 0 ? (h > 0 ? ' ' : '') + m + ' 分' : '';
+  if (mins === 0) label = '不到 1 分钟';
+  document.getElementById('offline-label').textContent = label;
+}
+
+function showMsg(text, duration) {
+  var msg = document.getElementById('interact-msg');
+  msg.textContent = text;
+  msg.classList.remove('show');
+  void msg.offsetWidth;
+  msg.classList.add('show');
+  setTimeout(function(){ msg.classList.remove('show'); }, duration || 2000);
+}
+
+function simLoad() {
+  var mins = parseInt(document.getElementById('offline-slider').value);
+  var actualSecs = Math.min(mins * 60, maxSeconds);
+  var energy = actualSecs * rate;
+  var overlay = document.getElementById('reward-overlay');
+  var h = Math.floor(actualSecs / 3600);
+  var m = Math.floor((actualSecs % 3600) / 60);
+  var timeStr = h > 0 ? h + ' 小时 ' + m + ' 分' : m + ' 分';
+  if (actualSecs < 60) timeStr = '不到 1 分钟';
+  var capped = mins * 60 > maxSeconds ? '（已达 24h 上限）' : '';
+
+  overlay.style.display = 'flex';
+  overlay.innerHTML = '<div class="offline-card" onclick="event.stopPropagation()">' +
+    '<div class="off-title">器灵修炼归来</div>' +
+    '<div class="off-time">你离开了 ' + timeStr + '</div>' +
+    '<div class="off-reward">💨 +' + energy.toLocaleString() + ' 灵气</div>' +
+    (capped ? '<div style="font-size:11px;color:var(--status-warning);margin-bottom:8px;">' + capped + '</div>' : '') +
+    '<button class="off-btn" onclick="closeReward()">确 认</button>' +
+    '</div>';
+
+  // 3s 自动关闭
+  setTimeout(function(){
+    if (overlay.style.display === 'flex') closeReward();
+  }, 3000);
+}
+
+function closeReward() {
+  document.getElementById('reward-overlay').style.display = 'none';
+  document.getElementById('reward-overlay').innerHTML = '';
+  showMsg('进入桌面放置态 ✓', 1500);
+}
+
+function simSave() {
+  var now = new Date();
+  var ts = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  showMsg('✓ 已保存  ' + ts, 2500);
+}
+
+function resetInteract() {
+  document.getElementById('offline-slider').value = 200;
+  updateOfflineLabel();
+  document.getElementById('reward-overlay').style.display = 'none';
+  document.getElementById('reward-overlay').innerHTML = '';
+  document.getElementById('interact-msg').classList.remove('show');
+  document.getElementById('interact-msg').textContent = '';
+}
+</script>
+</body>
+</html>

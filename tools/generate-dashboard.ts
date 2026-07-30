@@ -63,6 +63,25 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 .badge-prio-mid{background:rgba(255,193,7,.15);color:#ffc107}
 .badge-prio-low{background:rgba(76,175,80,.15);color:#4caf50}
 
+.goal-card{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px;margin-bottom:12px}
+.goal-card .goal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.goal-card .goal-name{font-size:15px;font-weight:600;color:#fff}
+.goal-card .goal-detail{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:12px;line-height:1.5}
+.goal-card .goal-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.goal-progress{flex:1;min-width:120px}
+.goal-progress .bar-track{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.goal-progress .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.goal-progress .bar-label{font-size:11px;color:rgba(255,255,255,.35)}
+.bar-fill.bar-green{background:#4caf50}
+.bar-fill.bar-orange{background:#ff9800}
+.bar-fill.bar-blue{background:#42a5f5}
+.bar-fill.bar-red{background:#ef5350}
+.todo-badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.todo-badge.has-todos{background:rgba(33,150,243,.12);color:#42a5f5}
+.todo-badge.no-todos{background:rgba(255,255,255,.04);color:rgba(255,255,255,.25)}
+.hidden{display:none}
+.section-title.collapsed{opacity:.5}
+
 .log-item{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:14px;align-items:flex-start}
 .log-item .log-date{font-size:12px;color:rgba(255,255,255,.35);min-width:80px}
 .log-item .log-file{font-size:13px;color:#fff;min-width:260px}
@@ -145,7 +164,7 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('造化坊',this)">造化坊<span class="sub-count" id="wf-count-zaohuafang"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-activity" class="panel"><div class="section-title">works/ 工作日志</div><div id="list-works"></div><div class="section-title">Git 提交历史</div><div id="list-commits"></div></div>
 <div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 5 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button></div><div id="cards-personal-tasks" class="cards"></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
-<div id="tab-goals" class="panel"><div class="section-title">📌 用户需求（你提出的任务）</div><div id="tbl-goals-user"></div><div class="section-title">🔍 系统问题（AI 诊断）</div><div id="tbl-goals-issues"></div><div class="section-title">💡 AI 大方向建议</div><div id="tbl-goals-ai"></div></div>
+<div id="tab-goals" class="panel"><div class="section-title">📌 活跃目标</div><div id="tbl-goals-user"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div><div class="section-title">🔍 系统问题（AI 诊断）</div><div id="tbl-goals-issues"></div><div class="section-title">💡 AI 大方向建议</div><div id="tbl-goals-ai"></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
 
@@ -454,9 +473,43 @@ function switchTab(name, el) {
   };
 })();
 (function(){
-  const pm={"🔴 紧急":"badge-active-task","🔴 阻塞":"badge-active-task","🔴 优先":"badge-active-task","🟡 本周":"badge-idle","🟡 持续":"badge-idle","🟡 累积":"badge-idle","🟡 便利性":"badge-idle","🟡 建议":"badge-idle","🟢 远期":"badge-empty"};
+  const pm={"🔴 紧急":"badge-active-task","🔴 阻塞":"badge-active-task","🔴 优先":"badge-active-task","🔴 P0":"badge-active-task","🟡 本周":"badge-idle","🟡 持续":"badge-idle","🟡 累积":"badge-idle","🟡 便利性":"badge-idle","🟡 建议":"badge-idle","🟢 远期":"badge-empty","🔴 本周":"badge-active-task","✅ 已完成":"badge-done"};
   const rt=(d,c)=>'<table class="tbl"><thead><tr>'+c.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+d.map(r=>'<tr>'+r.map((v,i)=>i===c.length-1?'<td><span class="badge '+(pm[v]||'')+'">'+v+'</span></td>':'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
-  document.getElementById('tbl-goals-user').innerHTML=rt(D.goalsUser.map(g=>[g.id,g.task,g.detail,g.priority]),['#','任务','详情','优先级']);
+  // 目标卡片渲染：进度条 + 待办数
+  const renderGoalCards = (goals) => {
+    return goals.map(g => {
+      const p = g.progress || 0;
+      const t = g.todos || 0;
+      const barClass = p >= 80 ? 'bar-green' : p >= 50 ? 'bar-orange' : p >= 20 ? 'bar-blue' : 'bar-red';
+      const todoHtml = t > 0
+        ? '<span class="todo-badge has-todos">📋 '+t+' 条待办</span>'
+        : '<span class="todo-badge no-todos">—</span>';
+      return '<div class="goal-card">'+
+        '<div class="goal-header">'+
+          '<span class="goal-name">'+g.task+'</span>'+
+          '<span class="badge '+(pm[g.priority]||'')+'">'+g.priority+'</span>'+
+        '</div>'+
+        '<div class="goal-detail">'+g.detail+'</div>'+
+        '<div class="goal-meta">'+
+          '<div class="goal-progress">'+
+            '<div class="bar-track"><div class="bar-fill '+barClass+'" style="width:'+p+'%"></div></div>'+
+            '<div class="bar-label">进度 '+p+'%</div>'+
+          '</div>'+
+          todoHtml+
+        '</div>'+
+      '</div>';
+    }).join('');
+  };
+  document.getElementById('tbl-goals-user').innerHTML=renderGoalCards(D.goalsUser);
+  document.getElementById('tbl-goals-archived').innerHTML=D.goalsArchived.map(g=>
+    '<div class="goal-card" style="opacity:.6">'+
+      '<div class="goal-header">'+
+        '<span class="goal-name" style="text-decoration:line-through;text-decoration-color:rgba(76,175,80,.3)">'+g.task+'</span>'+
+        '<span class="badge badge-done">✅ '+g.completedDate+'</span>'+
+      '</div>'+
+      '<div class="goal-detail">'+g.detail+'</div>'+
+    '</div>'
+  ).join('');
   document.getElementById('tbl-goals-issues').innerHTML=rt(D.goalsIssues.map(g=>[g.id,g.issue,g.source,g.severity]),['#','问题','来源','严重度']);
   document.getElementById('tbl-goals-ai').innerHTML=rt(D.goalsAI.map(g=>[g.id,g.suggestion,g.detail,g.priority]),['#','建议','详情','优先级']);
 })();
