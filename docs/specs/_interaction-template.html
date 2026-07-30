@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>竖版游戏交互规范（生产线标准） v1.0</title>
+<title>[平台名称]交互规范 v1.0</title>
 <style>
 /* ═══════════ 自动生成的 CSS 变量 ═══════════ */
 
@@ -58,7 +58,7 @@
   --sa-bottom-h: 17px;
 
   /* 网格单位 */
-  --gu: 2px;
+  --gu: 4px;
 
   /* 手机框尺寸 */
   --phone-w: 375px;
@@ -266,12 +266,12 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
 
 <div class="spec-header">
   <div class="tags"><span>📱 750×1334</span><span>📐 竖版手游</span><span>🏭 生产线标准</span><span>v1.0</span></div>
-  <h1>竖版游戏交互规范（生产线标准）</h1>
+  <h1>[平台名称]交互规范</h1>
   <p class="sub">Game Interaction Specification · 竖版手游</p>
   <p class="ref">方法论参考：网易游戏「信·达·雅」交互设计体系<br>标杆产品：阴阳师 · 梦幻西游 · 倩女幽魂 · 逆水寒 · 哈利波特：魔法觉醒</p>
 </div>
 <div class="pr-row"><div class="pr-card"><div class="pc">信</div><div class="pt">信息准确 · 易学易用</div><div class="pd">层级清晰，反馈即时，用户无需思考即可完成操作</div></div><div class="pr-card"><div class="pc">达</div><div class="pt">生动细致 · 流畅高效</div><div class="pd">过渡自然，路径最短，高频操作 ≤2 步触达</div></div><div class="pr-card"><div class="pc">雅</div><div class="pt">氛围营造 · 品牌识别</div><div class="pd">界面叙事融入世界观，独特视觉语言建立品牌认知</div></div></div>
-<div class="toc"><h3>目录</h3><ol><li><a href="#一-画布与安全区">01. 一、画布与安全区</a></li><li><a href="#二-拇指热区与操作布局">02. 二、拇指热区与操作布局</a></li><li><a href="#三-手势系统">03. 三、手势系统</a></li><li><a href="#四-触控规格">04. 四、触控规格</a></li><li><a href="#五-屏幕布局系统">05. 五、屏幕布局系统</a></li><li><a href="#六-导航系统">06. 六、导航系统</a></li><li><a href="#七-状态与反馈">07. 七、状态与反馈</a></li><li><a href="#八-弹窗体系">08. 八、弹窗体系</a></li><li><a href="#九-动效规范">09. 九、动效规范</a></li><li><a href="#十-字体与排版">10. 十、字体与排版</a></li><li><a href="#十一-色彩与对比度">11. 十一、色彩与对比度</a></li><li><a href="#十二-音效规范">12. 十二、音效规范</a></li><li><a href="#十三-横竖屏切换">13. 十三、横竖屏切换</a></li><li><a href="#十四-可访问性清单">14. 十四、可访问性清单</a></li><li><a href="#十五-交付检查清单">15. 十五、交付检查清单</a></li><li><a href="#附录-A-标准组件尺寸速查表">16. 附录 A：标准组件尺寸速查表</a></li><li><a href="#附录-B-修订记录">17. 附录 B：修订记录</a></li></ol></div>
+<div class="toc"><h3>目录</h3><ol><li><a href="#画布与安全区">01. 画布与安全区</a></li><li><a href="#网格系统">02. 网格系统</a></li><li><a href="#色彩系统">03. 色彩系统</a></li><li><a href="#字体与排版">04. 字体与排版</a></li><li><a href="#间距系统">05. 间距系统</a></li><li><a href="#拇指热区">06. 拇指热区</a></li><li><a href="#手势系统">07. 手势系统</a></li><li><a href="#触控规格">08. 触控规格</a></li><li><a href="#屏幕布局模板">09. 屏幕布局模板</a></li><li><a href="#导航系统">10. 导航系统</a></li><li><a href="#弹窗体系">11. 弹窗体系</a></li><li><a href="#基础组件规范">12. 基础组件规范</a></li><li><a href="#状态与反馈">13. 状态与反馈</a></li><li><a href="#动效规范">14. 动效规范</a></li><li><a href="#音效规范">15. 音效规范</a></li><li><a href="#横竖屏切换">16. 横竖屏切换</a></li><li><a href="#可访问性清单">17. 可访问性清单</a></li><li><a href="#交付检查清单">18. 交付检查清单</a></li><li><a href="#附录-A-组件尺寸速查表">19. 附录 A：组件尺寸速查表</a></li><li><a href="#附录-B-修订记录">20. 附录 B：修订记录</a></li></ol></div>
 
 
 <h2 id="画布与安全区"><span class="num">01</span> 画布与安全区</h2>
@@ -284,9 +284,9 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
         <div class="sa-content" style="top:22px;bottom:17px;">内容安全区 · 核心 UI 元素在此区域内</div>
         <div class="sa-bottom" style="bottom:0;height:17px;">Home Indicator ≥34px</div>
         <!-- 网格覆盖 -->
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
       </div>
-      <span class="proto-label">▲ 安全区 + 4列网格 · 4px 基础单位</span>
+      <span class="proto-label">▲ 安全区 + 6列网格 · 8px 基础单位</span>
     </div>
   </div>
   <div class="spec-text">
@@ -380,12 +380,12 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
   <div class="spec-visual" style="flex-direction:column;align-items:center;">
     <div class="proto-col">
       <div class="phone">
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
         <div style="position:absolute;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;pointer-events:none;">
-          <div style="background:rgba(200,150,74,0.15);border:1px solid rgba(200,150,74,0.3);border-radius:2px;width:176px;height:60%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--accent);font-weight:600;">2列宽<br>= 8gu</div>
+          <div style="background:rgba(200,150,74,0.15);border:1px solid rgba(200,150,74,0.3);border-radius:2px;width:114px;height:60%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--accent);font-weight:600;">2列宽<br>= 16gu</div>
         </div>
       </div>
-      <span class="proto-label">▲ 4列栅格 · 4px 基础单位 · 沟槽16px · 边距16px</span>
+      <span class="proto-label">▲ 6列栅格 · 8px 基础单位 · 沟槽16px · 边距16px</span>
     </div>
     <!-- 间距阶梯 -->
     <div class="sp-demo" style="margin-top:12px;width:100%;max-width:300px;">
@@ -403,16 +403,16 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     </div>
   </div>
   <div class="spec-text">
-    <h3>4px 基础网格</h3>
-    <p>所有尺寸、间距必须为<strong>4的倍数</strong>。</p>
-    <h3 style="margin-top:8px;">4列栅格</h3>
+    <h3>8px 基础网格</h3>
+    <p>所有尺寸、间距必须为<strong>8的倍数</strong>。</p>
+    <h3 style="margin-top:8px;">6列栅格</h3>
     <table class="tbl"><tr><th>参数</th><th>值</th></tr>
     <tr><td>画布宽</td><td>750px</td></tr>
     <tr><td>左右边距</td><td>16px×2</td></tr>
-    <tr><td>列数/沟槽</td><td>4列 / 16px×3</td></tr>
-    <tr><td>单列宽</td><td>168px</td></tr>
-    <tr><td>网格单位</td><td>4px = 1gu</td></tr></table>
-    <p style="margin-top:8px;"><strong>铁律：</strong>尺寸为4的倍数 | 左右边距16px | 优先4列栅格 | 中心锚点适配</p>
+    <tr><td>列数/沟槽</td><td>6列 / 16px×5</td></tr>
+    <tr><td>单列宽</td><td>106px</td></tr>
+    <tr><td>网格单位</td><td>8px = 1gu</td></tr></table>
+    <p style="margin-top:8px;"><strong>铁律：</strong>尺寸为8的倍数 | 左右边距16px | 优先6列栅格 | 中心锚点适配</p>
   </div>
 </div>
 
@@ -422,7 +422,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     
     <div class="proto-col">
       <div class="phone">
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
         <div style="position:absolute;top:0;left:0;right:0;height:87px;z-index:15;background:rgba(14,14,24,.95);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;padding:3px 4px;">
         <span style="font-size:6px;color:rgba(255,255,255,.5);">⚜️ 资源栏</span>
         <div style="display:flex;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--success);"></span></div></div>
@@ -436,7 +436,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     </div>
     <div class="proto-col">
       <div class="phone">
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
         <div style="position:absolute;top:0;left:0;right:0;height:60px;z-index:15;background:rgba(8,8,16,.9);display:flex;align-items:center;justify-content:space-between;padding:2px 4px;font-size:6px;color:rgba(255,255,255,.45);"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
         <div style="position:absolute;top:60px;left:0;right:0;bottom:107px;background:linear-gradient(180deg,#0a0a16,#0e0e24 40%,#161630);display:flex;align-items:center;justify-content:center;z-index:11;font-size:8px;color:rgba(255,255,255,.2);">战 场 区 域</div>
         <div style="position:absolute;bottom:33px;left:0;right:0;height:73px;z-index:15;display:flex;align-items:center;justify-content:center;gap:3px;">
@@ -446,7 +446,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     </div>
     <div class="proto-col">
       <div class="phone">
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
         <div style="position:absolute;top:0;left:0;right:0;height:73px;z-index:15;background:rgba(18,18,28,.95);display:flex;align-items:flex-end;padding:2px 4px;font-size:8px;color:#fff;font-weight:600;"><span style="font-size:10px;color:rgba(255,255,255,.35);margin-right:6px;">‹</span>背 包</div>
         <div style="position:absolute;top:73px;left:0;right:0;height:40px;z-index:14;display:flex;align-items:center;font-size:6px;color:rgba(255,255,255,.3);background:rgba(16,16,26,.9);">
           <span style="flex:1;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);padding:2px 0;">全部</span><span style="flex:1;text-align:center;">武器</span><span style="flex:1;text-align:center;">防具</span><span style="flex:1;text-align:center;">道具</span></div>
@@ -457,7 +457,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     </div>
     <div class="proto-col">
       <div class="phone">
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
         <div style="position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;align-items:center;justify-content:center;">
         <div style="width:70%;background:#1c1c2c;border-radius:8px;border:1px solid rgba(255,255,255,.05);overflow:hidden;">
           <div style="text-align:center;font-size:8px;font-weight:600;color:#fff;padding:10px 0 5px;">确认删除</div>
@@ -469,7 +469,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     </div>
     <div class="proto-col">
       <div class="phone">
-        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:84px;"></div><div class="grid-col" style="left:100px;width:84px;"></div><div class="grid-col" style="left:192px;width:84px;"></div><div class="grid-col" style="left:284px;width:84px;"></div></div>
+        <div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:53px;"></div><div class="grid-col" style="left:69px;width:53px;"></div><div class="grid-col" style="left:130px;width:53px;"></div><div class="grid-col" style="left:191px;width:53px;"></div><div class="grid-col" style="left:252px;width:53px;"></div><div class="grid-col" style="left:313px;width:53px;"></div></div>
         <div style="position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:7px 0;">
         <div style="font-size:9px;font-weight:700;color:var(--accent);">选择一张卡牌</div>
         <div style="display:flex;flex-direction:column;gap:2px;">
@@ -500,7 +500,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
   </div>
   <div class="spec-text">
     <h3>五套标准竖版模板</h3>
-    <p>所有模板均叠加 <strong>4列网格</strong> (4px 基础单位)。组件位置、尺寸全部对齐网格。</p>
+    <p>所有模板均叠加 <strong>6列网格</strong> (8px 基础单位)。组件位置、尺寸全部对齐网格。</p>
     <p><strong>A 大厅：</strong>场景化主界面，功能入口散布在场景中。<br>
     <strong>B 战斗：</strong>极简HUD + 技能栏，战斗时隐藏大部分UI。<br>
     <strong>C 列表：</strong>标准窗口界面，Tab筛选 + 可滚动列表 + 底部操作。<br>
@@ -583,8 +583,8 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     </div>
   </div>
   <div class="spec-text">
-    <p>基于 <strong>4px 基础网格</strong>，所有间距为网格单位的整数倍。</p>
-    <p>铁律：所有尺寸、间距、圆角必须以 4px 为最小单位对齐。</p>
+    <p>基于 <strong>8px 基础网格</strong>，所有间距为网格单位的整数倍。</p>
+    <p>铁律：所有尺寸、间距、圆角必须以 8px 为最小单位对齐。</p>
   </div>
 </div>
 
@@ -751,7 +751,7 @@ Dismiss ↓ 上→下 模态关闭</pre></div>
 <h2 id="可访问性清单"><span class="num">15</span> 可访问性清单</h2>
 <div class="spec-row">
   <div class="spec-visual">
-    <ul class="chk single"><li>最小触控热区 ≥44×44px</li><li>文字最小字号 ≥10px</li><li>正文对比度 ≥4.5:1</li><li>重要信息不只靠颜色区分</li><li>动效可关闭</li><li>音效独立开关</li><li>剧情字幕</li><li>操作可撤销</li></ul>
+    <ul class="chk single"><li>最小触控热区 ≥44×44px</li><li>文字最小字号 ≥10px</li><li>正文对比度 ≥4.5:1</li><li>重要信息不只靠颜色区分（加文字/图标/形状）</li><li>焦点导航有合理 Tab 顺序</li><li>动效可关闭</li><li>音效可关闭</li><li>剧情/配音有字幕</li><li>重要操作可撤销（有确认步骤）</li></ul>
   </div>
   <div class="spec-text">
     <p>支持系统字体缩放(≥120%)、色觉障碍辅助(品质=颜色+文字+边框)、合理Tab键导航顺序。</p>
@@ -790,14 +790,14 @@ Dismiss ↓ 上→下 模态关闭</pre></div>
 <div class="spec-row"><div class="spec-visual"></div><div class="spec-text">
 <table class="tbl"><tr><th>参数</th><th>值</th></tr>
 <tr><td>平台</td><td>竖版手游 (750×1334)</td></tr>
-<tr><td>网格</td><td>4px 基础 · 4列 · 沟槽16px · 边距16px</td></tr>
+<tr><td>网格</td><td>8px 基础 · 6列 · 沟槽16px · 边距16px</td></tr>
 <tr><td>安全区</td><td>顶部44px · 底部34px</td></tr>
 <tr><td>版本</td><td>v1.0 · 生产线标准</td></tr>
 </table>
 </div></div>
 
 <div class="spec-footer">
-  <p>竖版游戏交互规范（生产线标准） v1.0 · 生产线标准</p>
+  <p>[平台名称]交互规范 v1.0 · 生产线标准</p>
   <p style="margin-top:4px;">方法论：网易游戏「信·达·雅」交互设计体系 · 标杆：阴阳师 · 梦幻西游 · 倩女幽魂 · 逆水寒 · 哈利波特：魔法觉醒</p>
   <p style="margin-top:8px;font-size:10px;">此文档由 <code>tools/build-interaction-spec.ts</code> 自动生成 · 数据源：对应 .md 规范文件</p>
 </div>
