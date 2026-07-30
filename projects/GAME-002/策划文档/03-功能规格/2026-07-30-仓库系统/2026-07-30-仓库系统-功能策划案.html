@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>仓库系统 — 功能策划案</title>
+<meta name="feat-name" content="仓库系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-30"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.desktop-bar { width: 100%; height: 100%; display: flex; align-items: flex-end; justify-content: center; background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 60%, #16213e 100%); position: relative; }
+.res-bar { width: 90%; height: 56px; margin-bottom: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; gap: 32px; }
+.res-item { display: flex; align-items: center; gap: 8px; }
+.res-icon { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-primary); border: 1px solid var(--border-default); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.res-num { color: var(--text-primary); font-weight: var(--fw-bold); font-size: var(--fs-body); }
+.res-label { color: var(--text-secondary); font-size: var(--fs-small); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+</style></head><body>
+<div class="page-header"><h1>仓库系统</h1><p class="subtitle">功能策划案 — 纯数值仓库，极简资源管理</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">仓库系统</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">2026-07-30</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">AI协作</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div>
+    <hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>AI协作</td><td>2026.7.30</td><td>创建文档，基于GDD v3.1</td></tr></table>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 存档系统 — 资源数量纳入存档持久化</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 灵气经济 — 灵气产出/消耗规则</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 山峰修复 — 消耗女娲石+秘宝</span></p>
+  </div>
+  <div class="section-card">
+    <h3>功能定位</h3>
+    <p><strong>一句话：</strong>纯数值仓库。三种资源以数字存储，桌面态底部资源栏常驻显示。无格子、无图标、无整理操作。</p>
+    <p style="margin-top:var(--sp-sm);">V0.1 仓库极简原则：<span class="text-red">不做背包界面、不做格子、不做拖拽整理、不做挂件存储</span>。资源即数字，增减即加减。</p>
+  </div>
+  <div class="section-card">
+    <h3>不在范围内</h3>
+    <ul><li>独立仓库/背包界面（带格子+图标）→ V0.2</li><li>挂件存入仓库（V0.1 挂件即时装备+丢弃）→ V0.2</li><li>材料分类/筛选/排序 → V0.2</li><li>道具使用/合成/出售 → V0.3</li><li>资源数量上限 → V0.2（V0.1 无上限）</li></ul>
+  </div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示/可配置项 <span class="text-red">红色</span>=强调</p>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">活动简述</div>
+  <div class="rule-l0">目的：管理三种游戏资源的存取与显示。纯数值操作，无物品实体。</div>
+  <div class="sec-header">一、资源定义</div>
+  <div class="rule-l0">一.灵气（Spirit Energy）</div>
+  <div class="rule-l1">1.类型：<span class="text-blue">货币</span></div>
+  <div class="rule-l1">2.产出：挂机自动累积 + 战斗掉落 + 离线收益 + 点击器灵爆发</div>
+  <div class="rule-l1">3.消耗：修复剑峰（500）、进入挑战<span class="mark-yellow">（待定）</span>、修复其他山峰<span class="mark-yellow">（待定灵气消耗数值）</span></div>
+  <div class="rule-l1">4.图标：💨（蓝色或青色光点）</div>
+  <div class="rule-l0">二.女娲石（Nuwa Stone）</div>
+  <div class="rule-l1">1.类型：<span class="text-blue">通用材料</span></div>
+  <div class="rule-l1">2.产出：战斗胜利掉落</div>
+  <div class="rule-l1">3.消耗：修复山峰（每峰 1 颗）</div>
+  <div class="rule-l1">4.图标：⛰️（灰色石块）</div>
+  <div class="rule-l0">三.流派秘宝（Secret Treasure）</div>
+  <div class="rule-l1">1.类型：<span class="text-blue">专属材料</span>（6 种，对应 6 座山峰）</div>
+  <div class="rule-l2">1）剑峰秘宝、佛峰秘宝、法峰秘宝、兽峰秘宝、器峰秘宝、魂峰秘宝</div>
+  <div class="rule-l1">2.产出：战斗 Boss 掉落（对应流派）</div>
+  <div class="rule-l1">3.消耗：修复对应山峰（每峰 1 个）</div>
+  <div class="rule-l1">4.图标：📜（卷轴，各峰颜色不同）</div>
+  <div class="rule-ex">修复法峰需要：灵气 5,000 + 女娲石 ×1 + 法峰秘宝 ×1</div>
+  <div class="sec-header">二、存取规则</div>
+  <div class="rule-l0">一.增加</div>
+  <div class="rule-l1">1.任何系统均可调用 EconomyManager 增减资源</div>
+  <div class="rule-l1">2.每次增减 → 资源栏数字即时刷新 + <span class="mark-yellow">飘字反馈</span>（V0.1 无动画，直接跳变）</div>
+  <div class="rule-l0">二.校验</div>
+  <div class="rule-l1">1.消耗前检查余额：余额不足 → 操作被拒绝，按钮置灰或弹提示</div>
+  <div class="rule-l1">2.<span class="text-red">不允许负值</span>（clamp 到 0）</div>
+  <div class="rule-l0">三.存储</div>
+  <div class="rule-l1">1.全部资源在内存中以 int 保存</div>
+  <div class="rule-l1">2.存档时写入 JSON → 读档时恢复</div>
+  <div class="sec-header">三、挂件不入仓库</div>
+  <div class="rule-l0">一.V0.1 规则</div>
+  <div class="rule-l1">1.战斗中捡到挂件 → 即时装备到 3 槽之一</div>
+  <div class="rule-l1">2.同槽新挂件替换旧挂件 → <span class="text-red">旧挂件直接消失</span>（不入仓库）</div>
+  <div class="rule-l1">3.战斗结束 → 挂件槽清空（挂件不带到下一局）</div>
+  <div class="rule-l0">二.V0.2 规划</div>
+  <div class="rule-l1">1.挂件可存入背包</div>
+  <div class="rule-l1">2.战斗结束后选择保留哪些</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card">
+    <h3>界面 1 — 桌面态资源栏</h3>
+    <div class="ui-desc">
+      <div class="ui-desc-left"><div class="ui-frame">
+        <div class="desktop-bar">
+          <div class="res-bar">
+            <div class="res-item"><div class="res-icon">💨</div><div><div class="res-num">1,280</div><div class="res-label">灵气</div></div></div>
+            <div class="res-item"><div class="res-icon">⛰️</div><div><div class="res-num">2</div><div class="res-label">女娲石</div></div></div>
+            <div class="res-item"><div class="res-icon">📜</div><div><div class="res-num">1</div><div class="res-label">剑峰秘宝</div></div></div>
+          </div>
+          <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+        </div>
+      </div></div>
+      <div class="ui-desc-right">
+        <div class="ui-note"><span class="un">1</span><span class="ut">资源栏</span><div class="ud">桌面态底部常驻。半透明深色底栏，横向排列 3 种资源。每种：圆形图标 + 数字 + 标签。数字即时刷新。V0.1 仅显示拥有数量的秘宝种类（不显示 0 的其他秘宝）。</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3>动态交互 — 资源增减模拟</h3>
+  <p style="margin-bottom:var(--sp-md);color:var(--text-secondary);">点击按钮模拟资源增减，观察资源栏数字变化和边界保护（不允许负值）。</p>
+  <div class="interact-area" id="area" style="background:linear-gradient(180deg, #0a0a14 0%, #1a1a2e 60%, #16213e 100%);flex-direction:column;align-items:center;justify-content:flex-end;gap:0;">
+    <div style="display:flex;gap:32px;margin-bottom:24px;">
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">灵气</div>
+        <div style="font-size:28px;color:var(--text-primary);font-weight:700;" id="sim-energy">1280</div>
+        <div style="display:flex;gap:4px;margin-top:8px;">
+          <button onclick="addRes('energy',100)" style="padding:4px 12px;background:var(--bg-surface);border:1px solid var(--status-success);color:var(--status-success);border-radius:4px;font-size:11px;cursor:pointer;">+100</button>
+          <button onclick="addRes('energy',-200)" style="padding:4px 12px;background:var(--bg-surface);border:1px solid var(--status-danger);color:var(--status-danger);border-radius:4px;font-size:11px;cursor:pointer;">-200</button>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">女娲石</div>
+        <div style="font-size:28px;color:var(--text-primary);font-weight:700;" id="sim-stone">2</div>
+        <div style="display:flex;gap:4px;margin-top:8px;">
+          <button onclick="addRes('stone',1)" style="padding:4px 12px;background:var(--bg-surface);border:1px solid var(--status-success);color:var(--status-success);border-radius:4px;font-size:11px;cursor:pointer;">+1</button>
+          <button onclick="addRes('stone',-1)" style="padding:4px 12px;background:var(--bg-surface);border:1px solid var(--status-danger);color:var(--status-danger);border-radius:4px;font-size:11px;cursor:pointer;">-1</button>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">剑峰秘宝</div>
+        <div style="font-size:28px;color:var(--text-primary);font-weight:700;" id="sim-treasure">1</div>
+        <div style="display:flex;gap:4px;margin-top:8px;">
+          <button onclick="addRes('treasure',1)" style="padding:4px 12px;background:var(--bg-surface);border:1px solid var(--status-success);color:var(--status-success);border-radius:4px;font-size:11px;cursor:pointer;">+1</button>
+          <button onclick="addRes('treasure',-1)" style="padding:4px 12px;background:var(--bg-surface);border:1px solid var(--status-danger);color:var(--status-danger);border-radius:4px;font-size:11px;cursor:pointer;">-1</button>
+        </div>
+      </div>
+    </div>
+    <div style="width:90%;height:40px;margin-bottom:8px;background:rgba(0,0,0,0.5);border:1px solid var(--border-subtle);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;gap:32px;">
+      <span style="color:var(--text-body);font-size:12px;">💨 <span id="bar-energy">1280</span></span>
+      <span style="color:var(--text-body);font-size:12px;">⛰️ <span id="bar-stone">2</span></span>
+      <span style="color:var(--text-body);font-size:12px;">📜 <span id="bar-treasure">1</span></span>
+    </div>
+    <span class="interact-msg" id="interact-msg" style="margin-bottom:8px;"></span>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);">
+    <button class="interact-reset" onclick="resetSim()" style="padding:8px 24px;background:transparent;border:1px solid var(--border-default);border-radius:8px;color:var(--text-secondary);font-size:11px;cursor:pointer;">⟳ 重置</button>
+  </div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <p style="margin-bottom:var(--sp-md);color:var(--text-secondary);">仓库系统以数值显示为主，资产极少。大部分为像素小图标。</p>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui">
+    <table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+      <tr><td class="mono">U1</td><td>资源栏底板</td><td>底板</td><td>1152×56</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">半透明深色底栏，像素风格边框。宽度适配 1280×120 桌面态。</td></tr>
+      <tr><td class="mono">U2</td><td>灵气图标</td><td>图标</td><td>28×28</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">青色/蓝色光点或气旋。像素风格。</td></tr>
+      <tr><td class="mono">U3</td><td>女娲石图标</td><td>图标</td><td>28×28</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">灰色/五彩石头。像素风格。参考女娲补天传说。</td></tr>
+      <tr><td class="mono">U4</td><td>流派秘宝图标（×6）</td><td>图标</td><td>28×28</td><td>PNG</td><td>6</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">6种不同颜色/形状的卷轴或法器。对应6座山峰（剑/佛/法/兽/器/魂）。</td></tr>
+    </table>
+  </div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+      <tr><td class="mono">C1</td><td>资源栏概念图</td><td>UI概念</td><td>1280×120</td><td>PNG</td><td>1</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">桌面态底部资源栏在宗门场景中的整体视觉效果参考。</td></tr></table></div>
+</div></div>
+<script>
+function switchMainTab(e,t){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(t).classList.add('active');}
+function switchSubTab(e,t){var bar=e.target.parentElement;bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));bar.parentElement.querySelector('#'+t).classList.add('active');}
+
+var res = { energy: 1280, stone: 2, treasure: 1 };
+function showMsg(t){var m=document.getElementById('interact-msg');m.textContent=t;m.style.opacity='1';setTimeout(function(){m.style.opacity='0';},1500);}
+function addRes(type, delta) {
+  if (res[type] + delta < 0) { showMsg('资源不足！'); return; }
+  res[type] += delta;
+  var ids = { energy: ['sim-energy','bar-energy'], stone: ['sim-stone','bar-stone'], treasure: ['sim-treasure','bar-treasure'] };
+  ids[type].forEach(function(id){ document.getElementById(id).textContent = res[type]; });
+  if (delta > 0) showMsg('+' + delta);
+}
+function resetSim() { res = { energy: 1280, stone: 2, treasure: 1 }; ['energy','stone','treasure'].forEach(function(t){ var ids = t==='energy'?['sim-energy','bar-energy']:t==='stone'?['sim-stone','bar-stone']:['sim-treasure','bar-treasure']; ids.forEach(function(id){ document.getElementById(id).textContent = res[t]; }); }); document.getElementById('interact-msg').style.opacity='0'; }
+</script>
+</body></html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>器灵系统 — 功能策划案</title>
+<meta name="feat-name" content="器灵系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-30"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+/* 器灵选择界面样式 */
+.spirit-frame { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%); position: relative; }
+.spirit-card { width: 240px; padding: var(--sp-lg); border-radius: var(--radius-lg); background: var(--bg-surface); border: 2px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: var(--sp-xs); text-align: center; }
+.spirit-card.selected { border-color: var(--quality-legendary); box-shadow: 0 0 20px rgba(187,153,102,0.4); }
+.spirit-card .sc-icon { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--border-default); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.spirit-card .sc-name { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 4px; }
+.spirit-card .sc-desc { font-size: var(--fs-caption); color: var(--text-secondary); }
+.spirit-card .sc-trait { font-size: var(--fs-small); color: var(--quality-legendary); background: rgba(187,153,102,0.1); padding: 2px 12px; border-radius: var(--radius-full); }
+.spirit-grow { width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: space-between; padding: var(--sp-md); }
+.grow-stage { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.grow-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-default); background: var(--bg-primary); }
+.grow-dot.done { background: var(--quality-legendary); border-color: var(--quality-legendary); }
+.grow-line { flex: 1; height: 2px; background: var(--border-subtle); margin: 0 4px; }
+.grow-line.done { background: var(--quality-legendary); }
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; opacity: 0; transition: all 0.3s; text-align: center; }
+.interact-msg.show { opacity: 1; animation: msgPop 0.4s ease-out; }
+@keyframes msgPop { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.spirit-select-area { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%); position: relative; overflow: hidden; }
+.ss-card { width: 180px; padding: var(--sp-md); border-radius: var(--radius-lg); background: var(--bg-surface); border: 2px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: var(--sp-2xs); text-align: center; cursor: pointer; transition: all 0.3s; user-select: none; }
+.ss-card:hover { transform: scale(1.05); border-color: var(--quality-rare); }
+.ss-card.picked { border-color: var(--quality-legendary); box-shadow: 0 0 16px rgba(187,153,102,0.5); }
+.ss-card.picked::after { content: '✓'; position: absolute; top: 8px; right: 12px; color: var(--quality-legendary); font-size: 18px; font-weight: 700; }
+.ss-icon { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--bg-primary); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.ss-name { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ss-desc { font-size: var(--fs-small); color: var(--text-secondary); }
+.ss-trait { font-size: 10px; color: var(--quality-legendary); background: rgba(187,153,102,0.1); padding: 1px 10px; border-radius: var(--radius-full); }
+.ss-confirm { margin-top: var(--sp-lg); padding: var(--sp-sm) var(--sp-xl); border-radius: var(--radius-md); border: none; background: var(--quality-legendary); color: #000; font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); letter-spacing: 6px; cursor: pointer; }
+.ss-confirm:disabled { opacity: 0.3; cursor: not-allowed; }
+</style></head><body>
+<div class="page-header"><h1>器灵系统</h1><p class="subtitle">功能策划案 — 唯一主角：绑定·成长·免死·进化</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">器灵系统</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">2026-07-30</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">AI协作</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div>
+    <hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>AI协作</td><td>2026.7.30</td><td>创建文档，基于GDD v3.1</td></tr></table>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 山峰修复 — 器灵能力随山峰解锁</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 存档系统 — 器灵绑定+等级纳入存档</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 战斗系统 — 器灵为战斗唯一主角</span></p>
+  </div>
+  <div class="section-card">
+    <h3>功能定位</h3>
+    <p><strong>一句话：</strong>器灵是玩家的唯一化身。V0.1 仅有百世书可选，永久绑定。随山峰修复逐级成长，外观与能力同步进化。</p>
+    <p style="margin-top:var(--sp-sm); color:var(--text-secondary);">选择 → 绑定 → 成长（0→6 级，每修复一座山峰升 1 级）→ 外观进化 + 能力解锁。</p>
+  </div>
+  <div class="section-card">
+    <h3>不在范围内</h3>
+    <ul><li>诛仙剑（通关 1 次解锁）→ V0.2</li><li>神农鼎（通关 2 次解锁）→ V0.2</li><li>器灵可更换 → 永久绑定，V0.1 不可更换</li><li>器灵外观多阶段变体美术 → V0.2（V0.1 单套精灵）</li></ul>
+  </div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示/可配置项 <span class="text-red">红色</span>=强调</p>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">活动简述</div>
+  <div class="rule-l0">目的：定义器灵的获取、绑定、成长、能力体系。器灵是游戏唯一主角，所有系统围绕它运转。</div>
+  <div class="sec-header">一、器灵选择</div>
+  <div class="rule-l0">一.V0.1 可选器灵</div>
+  <div class="rule-l1">1.<span class="text-blue">百世书</span>（初始唯一可选）</div>
+  <div class="rule-l2">1）外观：一本展开的古书，书页间有微光流动</div>
+  <div class="rule-l2">2）特质：<span class="text-blue">百世轮回</span> — 战斗中 HP 归零时免死，强制退回桌面态（无惩罚）</div>
+  <div class="rule-l0">二.选择规则</div>
+  <div class="rule-l1">1.时机：首次启动 → 开场黑幕结束后进入器灵选择界面</div>
+  <div class="rule-l1">2.<span class="text-red">永久绑定</span>：选定确认后不可更换。存档中记录 spirit_id。</div>
+  <div class="rule-l1">3.V0.1 只有百世书，<span class="text-blue">直接确认即可</span>（不涉及多选对比）</div>
+  <div class="sec-header">二、器灵成长</div>
+  <div class="rule-l0">一.等级体系</div>
+  <div class="rule-l1">1.器灵等级 = <span class="text-blue">已修复山峰数量</span>（0-6 级）</div>
+  <div class="rule-l1">2.每修复一座山峰 → 器灵等级 +1</div>
+  <div class="rule-l1">3.等级不可回退（山峰修复不可逆）</div>
+  <div class="rule-l0">二.成长效果</div>
+  <div class="rule-l1">1.外观进化：每升 1 级，器灵外观有可见变化</div>
+  <div class="rule-l2">1）Lv0：暗淡破旧的古书</div>
+  <div class="rule-l2">2）Lv1-3：书页渐亮，微光增强</div>
+  <div class="rule-l2">3）Lv4-5：书页间出现金色符文流转</div>
+  <div class="rule-l2">4）Lv6：满级形态 — 金光环绕，书页展开如翅膀</div>
+  <div class="rule-ex">V0.1 可能只做 Lv0 和 Lv3 两套精灵（0-2 用 Lv0，3-5 用 Lv3，6 用满级）。具体由美术资源量决定。</div>
+  <div class="rule-l1">2.数值成长：<span class="mark-yellow">待定</span></div>
+  <div class="rule-l2">1）HP 随等级提升？→ <span class="mark-yellow">建议每级 +200 HP</span></div>
+  <div class="rule-l2">2）灵气产出速率加成？→ <span class="mark-yellow">建议每级 +10% 速率</span></div>
+  <div class="sec-header">三、山峰能力解锁</div>
+  <div class="rule-l0">一.能力映射</div>
+  <table><tr><th>山峰</th><th>解锁能力</th><th>效果</th><th>修复消耗</th></tr>
+    <tr><td>剑峰</td><td>弹射 +1</td><td>弹幕命中后弹向最近敌人</td><td>灵气 500</td></tr>
+    <tr><td>佛峰</td><td>护盾</td><td>每 30s 生成 20% HP 护盾</td><td>佛峰秘宝+女娲石+灵气</td></tr>
+    <tr><td>法峰</td><td>分裂 +1</td><td>弹幕命中后分裂为 2 发</td><td>法峰秘宝+女娲石+灵气</td></tr>
+    <tr><td>兽峰</td><td>穿透 +1</td><td>弹幕穿透 1 个敌人</td><td>兽峰秘宝+女娲石+灵气</td></tr>
+    <tr><td>器峰</td><td>范围 +20%</td><td>弹幕大小/范围 +20%</td><td>器峰秘宝+女娲石+灵气</td></tr>
+    <tr><td>魂峰</td><td>伤害 +30%</td><td>所有弹幕伤害 +30%</td><td>魂峰秘宝+女娲石+灵气</td></tr></table>
+  <div class="rule-l1">1.剑峰消耗 500 灵气（不耗秘宝），<span class="text-blue">必须第一个修复</span></div>
+  <div class="rule-l1">2.其余 5 峰消耗：对应流派秘宝 ×1 + 女娲石 ×1 + <span class="mark-yellow">灵气 5,000</span></div>
+  <div class="rule-l1">3.修复顺序：除剑峰必须先修外，其余 <span class="text-blue">自由选择</span></div>
+  <div class="sec-header">四、百世书特质：免死</div>
+  <div class="rule-l0">一.触发条件</div>
+  <div class="rule-l1">1.战斗中器灵 HP 归零</div>
+  <div class="rule-l0">二.效果</div>
+  <div class="rule-l1">1.<span class="text-blue">不死</span>：不进入 Game Over，不丢失进度</div>
+  <div class="rule-l1">2.<span class="text-blue">强制回桌面态</span>：播放「百世书护体」特效 → 战斗结束 → 回桌面态</div>
+  <div class="rule-l1">3.<span class="text-blue">无惩罚</span>：V0.1 不掉灵气、不掉材料、不重置进度</div>
+  <div class="rule-l0">三.表现</div>
+  <div class="rule-l1">1.触发时机：HP 归零瞬间</div>
+  <div class="rule-l1">2.特效：百世书虚影展开包裹器灵 → 金光一闪 → 战场消失 → 回到桌面</div>
+  <div class="rule-l1">3.文字提示：「百世轮回，护你真灵不灭」</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 1 — 器灵选择</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame">
+      <div class="spirit-select-area">
+        <div style="font-size:18px;color:var(--text-secondary);letter-spacing:4px;margin-bottom:32px;">选择你的本命器灵</div>
+        <div class="ss-card picked" style="position:relative;">
+          <div class="ss-icon">📖</div>
+          <div class="ss-name">百世书</div>
+          <div class="ss-desc">古书法宝，蕴含轮回之力</div>
+          <div class="ss-trait">百世轮回 — 免死</div>
+        </div>
+        <button class="ss-confirm">开 始 游 戏</button>
+        <div style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+        <div style="position:absolute;top:72%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+      </div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">器灵卡片</span><div class="ud">V0.1 仅一张百世书卡片。默认选中态（金色边框+发光）。卡片显示：图标+名称+描述+特质标签。V0.2 增加诛仙剑/神农鼎后变为 3 张卡片横向排列。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">开始游戏按钮</span><div class="ud">有选中时金色可点击。未选中时置灰。<span class="text-red">点击即永久绑定</span>，不设二次确认（V0.1 只有一张卡，无需确认弹窗）。</div></div>
+    </div></div>
+  </div>
+  <div class="section-card"><h3>界面 2 — 器灵成长进度（桌面态）</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame">
+      <div class="spirit-frame">
+        <div style="font-size:14px;color:var(--text-secondary);letter-spacing:2px;margin-bottom:24px;">百世书 · Lv.2</div>
+        <div class="spirit-grow">
+          <div class="grow-stage"><div class="grow-dot done"></div><span style="font-size:9px;color:var(--text-disabled);">Lv0</span></div>
+          <div class="grow-line done"></div>
+          <div class="grow-stage"><div class="grow-dot done"></div><span style="font-size:9px;color:var(--text-disabled);">剑</span></div>
+          <div class="grow-line done"></div>
+          <div class="grow-stage"><div class="grow-dot done"></div><span style="font-size:9px;color:var(--text-disabled);">佛</span></div>
+          <div class="grow-line"></div>
+          <div class="grow-stage"><div class="grow-dot"></div><span style="font-size:9px;color:var(--text-disabled);">法</span></div>
+          <div class="grow-line"></div>
+          <div class="grow-stage"><div class="grow-dot"></div><span style="font-size:9px;color:var(--text-disabled);">兽</span></div>
+          <div class="grow-line"></div>
+          <div class="grow-stage"><div class="grow-dot"></div><span style="font-size:9px;color:var(--text-disabled);">器</span></div>
+          <div class="grow-line"></div>
+          <div class="grow-stage"><div class="grow-dot"></div><span style="font-size:9px;color:var(--text-disabled);">魂</span></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:16px;">已解锁：弹射+1 · 护盾</div>
+        <div style="position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+      </div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">成长进度条</span><div class="ud">桌面态中可查看器灵当前等级和已解锁能力。7 个圆点（Lv0→剑→佛→法→兽→器→魂），已修复的金色填充，未修复的空心灰圈。连线同步变色。下方文字列出已解锁能力。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3>动态交互 — 器灵选择 + 免死模拟</h3>
+  <p style="margin-bottom:var(--sp-md);color:var(--text-secondary);">模拟器灵选择界面（点击卡片选中→确认）和百世书免死效果。</p>
+  <div class="interact-area" id="area" style="background:linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%);">
+    <div id="select-view" style="display:flex;flex-direction:column;align-items:center;gap:16px;z-index:6;">
+      <div style="font-size:18px;color:var(--text-secondary);letter-spacing:4px;">选择你的本命器灵</div>
+      <div class="ss-card" id="card-baishishu" style="position:relative;cursor:pointer;" onclick="pickSpirit()">
+        <div class="ss-icon">📖</div>
+        <div class="ss-name">百世书</div>
+        <div class="ss-desc">古书法宝，蕴含轮回之力</div>
+        <div class="ss-trait">百世轮回 — 免死</div>
+      </div>
+      <button class="ss-confirm" id="confirm-btn" disabled onclick="confirmSpirit()">开 始 游 戏</button>
+    </div>
+    <div id="death-view" style="display:none;flex-direction:column;align-items:center;gap:16px;z-index:6;">
+      <div style="font-size:14px;color:var(--status-danger);">💀 器灵 HP 归零</div>
+      <button style="padding:12px 32px;border-radius:8px;border:1px solid var(--quality-legendary);background:rgba(187,153,102,0.15);color:var(--quality-legendary);font-family:var(--font-cn);font-size:14px;font-weight:600;letter-spacing:4px;cursor:pointer;" onclick="simDeath()">触发百世轮回</button>
+    </div>
+    <span class="interact-msg" id="interact-msg"></span>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);gap:var(--sp-md);">
+    <button class="interact-reset" onclick="resetSpiritSim()">⟳ 重新开始</button>
+    <button class="interact-reset" id="death-toggle-btn" onclick="toggleDeathSim()">切换：免死模拟</button>
+  </div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">U1</td><td>器灵选择界面背景</td><td>底板</td><td>1920×1080</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗云背景，深蓝紫渐变。中央有微弱的仙门遗迹轮廓。</td></tr>
+    <tr><td class="mono">U2</td><td>百世书卡片底板</td><td>控件</td><td>240×320</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗色卡片，金色边框（选中态更亮）。四角有中国风纹样。</td></tr>
+    <tr><td class="mono">U3</td><td>百世书图标（小）</td><td>图标</td><td>64×64</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">展开古书，书页间暖色微光。像素风格。</td></tr>
+    <tr><td class="mono">U4</td><td>成长进度点（已修复/未修复）</td><td>图标</td><td>16×16</td><td>PNG</td><td>2</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">金色填充圆 vs 灰色空心圆。</td></tr>
+    <tr><td class="mono">U5</td><td>开始游戏按钮</td><td>控件</td><td>200×44</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">金色按钮，像素风格。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">C1</td><td>百世书 — Lv0 形态</td><td>角色</td><td>128×128</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗淡破旧的古书。封面有隐约的符文痕迹。色调：深棕+暗金。像素风格。</td></tr>
+    <tr><td class="mono">C2</td><td>百世书 — Lv3 形态</td><td>角色</td><td>128×128</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">书页渐亮，书脊出现金色纹路。色调更明亮。</td></tr>
+    <tr><td class="mono">C3</td><td>百世书 — Lv6 满级形态</td><td>角色</td><td>128×128</td><td>PNG</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">金光环绕，书页展开如翅膀。金色符文在书页间流转。气场强大。</td></tr>
+    <tr><td class="mono">C4</td><td>免死特效 — 百世书虚影</td><td>特效概念</td><td>256×256</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">巨大的百世书虚影包裹器灵，半透明金色轮廓。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th><th>触发/说明</th></tr>
+    <tr><td class="mono">M1</td><td>百世书待机（桌面态）</td><td>精灵表</td><td>128×128</td><td>4</td><td>8</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">书页微微开合 + 微光浮动。循环播放。</td></tr>
+    <tr><td class="mono">M2</td><td>百世书待机（战斗态）</td><td>精灵表</td><td>128×128</td><td>4</td><td>8</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">书页完全展开，更活跃的浮动动画。</td></tr>
+    <tr><td class="mono">M3</td><td>免死动画</td><td>精灵表</td><td>256×256</td><td>8</td><td>12</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">书页急速翻动 → 金光爆发 → 虚影包裹。触发时机：HP归零。</td></tr>
+    <tr><td class="mono">M4</td><td>卡片选中反馈</td><td>UI动效</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">选中时卡片微微放大+金色光晕脉冲。Tween实现。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>触发</th><th>表现</th><th>时长</th><th>优先级</th><th>实现方式</th></tr>
+    <tr><td class="mono">V1</td><td>百世书微光粒子</td><td>环境</td><td>持续</td><td>金色光点从书页间散发</td><td>循环</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">CPUParticles2D</td></tr>
+    <tr><td class="mono">V2</td><td>免死金光爆发</td><td>战斗</td><td>免死触发</td><td>全屏金色闪光 → 书影展开 → 战场淡出</td><td>1.5s</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">AnimationPlayer + Tween + 全屏 ColorRect</td></tr>
+    <tr><td class="mono">V3</td><td>卡片选中光晕</td><td>UI反馈</td><td>点击卡片</td><td>金色边框脉冲发光</td><td>持续</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Shader 或 Tween modulate</td></tr>
+  </table></div>
+</div></div>
+<script>
+function switchMainTab(e,t){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(t).classList.add('active');}
+function switchSubTab(e,t){var bar=e.target.parentElement;bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));bar.parentElement.querySelector('#'+t).classList.add('active');}
+var spiritPicked = false;
+var simMode = 'select'; // select | death
+function showMsg(t){var m=document.getElementById('interact-msg');m.textContent=t;m.classList.remove('show');void m.offsetWidth;m.classList.add('show');setTimeout(function(){m.classList.remove('show');},2500);}
+function pickSpirit(){spiritPicked=true;document.getElementById('card-baishishu').classList.add('picked');document.getElementById('confirm-btn').disabled=false;showMsg('已选择：百世书');}
+function confirmSpirit(){if(!spiritPicked)return;showMsg('永久绑定：百世书 ✓\n进入桌面放置态…');setTimeout(function(){resetSpiritSim();},2000);}
+function toggleDeathSim(){
+  simMode = simMode==='select'?'death':'select';
+  document.getElementById('select-view').style.display = simMode==='select'?'flex':'none';
+  document.getElementById('death-view').style.display = simMode==='death'?'flex':'none';
+  document.getElementById('death-toggle-btn').textContent = simMode==='select'?'切换：免死模拟':'切换：选择器灵';
+}
+function simDeath(){
+  if(simMode!=='death')return;
+  showMsg('百世轮回，护你真灵不灭 ✦');
+  setTimeout(function(){showMsg('回桌面放置态 ✓（无惩罚）');},2000);
+}
+function resetSpiritSim(){spiritPicked=false;document.getElementById('card-baishishu').classList.remove('picked');document.getElementById('confirm-btn').disabled=true;document.getElementById('interact-msg').classList.remove('show');document.getElementById('interact-msg').textContent='';}
+</script>
+</body></html>

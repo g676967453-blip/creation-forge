@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>游戏启动流程 — 功能策划案</title>
+<meta name="feat-name" content="游戏启动流程"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-30"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.mark-green  { background: rgba(78,204,163,0.20); padding: 1px 4px; border-radius: 2px; }
+.text-blue   { color: #6699bb; }
+.text-red    { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.section-card h4 { font-size: var(--fs-body); color: var(--text-secondary); font-weight: var(--fw-semibold); margin: var(--sp-lg) 0 var(--sp-xs) 0; text-transform: uppercase; letter-spacing: 2px; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-p2 { background: rgba(78,204,163,0.15); color: var(--status-success); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+.mono { font-family: 'SF Mono','Consolas',monospace; font-size: var(--fs-caption); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+td { color: var(--text-body); }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+
+/* 功能规则 */
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-l3 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 3); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+
+/* 界面说明 */
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+
+/* 主菜单专用样式 */
+.menu-frame { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%); position: relative; }
+.menu-title { font-size: 48px; color: var(--quality-legendary); font-weight: var(--fw-bold); letter-spacing: 12px; text-shadow: 0 0 30px rgba(187,153,102,0.3); }
+.menu-subtitle { font-size: 14px; color: var(--text-secondary); letter-spacing: 6px; margin-top: 8px; margin-bottom: 60px; }
+.menu-btn { width: 220px; height: 48px; border-radius: var(--radius-md); border: 1px solid var(--border-default); background: rgba(255,255,255,0.04); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); letter-spacing: 6px; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.menu-btn:hover { background: rgba(187,153,102,0.1); border-color: var(--quality-legendary); color: var(--quality-legendary); }
+.menu-btn.disabled { opacity: 0.35; pointer-events: none; }
+.menu-bg-mountains { position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: linear-gradient(180deg, transparent 0%, rgba(20,20,30,0.6) 50%, #141420 100%); pointer-events: none; }
+.menu-bg-cloud { position: absolute; top: 10%; left: 10%; width: 80%; height: 30%; background: radial-gradient(ellipse, rgba(136,136,160,0.06) 0%, transparent 70%); pointer-events: none; }
+
+/* 弹窗样式 */
+.modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 20; }
+.modal-box { width: 400px; background: var(--bg-elevated); border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--sp-xl); text-align: center; }
+.modal-box h4 { color: var(--text-primary); font-size: var(--fs-h2); letter-spacing: 4px; margin-bottom: var(--sp-md); }
+.modal-box p { color: var(--text-secondary); font-size: var(--fs-body); margin-bottom: var(--sp-lg); }
+.modal-btns { display: flex; gap: var(--sp-sm); justify-content: center; }
+.modal-btn { padding: var(--sp-xs) var(--sp-xl); border-radius: var(--radius-md); border: 1px solid var(--border-default); background: var(--bg-surface); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-label); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; transition: all 0.15s; }
+.modal-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+.modal-btn.primary { background: rgba(187,153,102,0.15); border-color: var(--quality-legendary); color: var(--quality-legendary); }
+.modal-btn.primary:hover { background: rgba(187,153,102,0.25); }
+.modal-btn.danger { background: rgba(204,68,68,0.1); border-color: var(--status-danger); color: var(--status-danger); }
+.slider-row { display: flex; align-items: center; gap: var(--sp-md); margin: var(--sp-sm) 0; }
+.slider-row .sl { font-size: var(--fs-label); color: var(--text-secondary); min-width: 60px; text-align: right; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--quality-legendary); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; margin: var(--sp-sm) 0; }
+.toggle-row .tl { font-size: var(--fs-label); color: var(--text-secondary); }
+.toggle-row select { padding: 4px 12px; background: var(--bg-primary); color: var(--text-body); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-family: var(--font-cn); font-size: var(--fs-label); }
+
+/* 动态交互 */
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 450px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-start-btn { width: 180px; height: 42px; border-radius: var(--radius-md); border: none; background: var(--text-body); color: #000; font-family: var(--font-cn); font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: 4px; cursor: pointer; transition: all 0.15s; }
+.interact-start-btn:hover { background: var(--text-primary); }
+.interact-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 5; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.interact-overlay.on { opacity: 1; }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; position: relative; z-index: 6; opacity: 0; transition: all 0.3s; white-space: pre-line; text-align: center; }
+.interact-msg.show { opacity: 1; animation: msgPop 0.4s ease-out; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; transition: all 0.15s; }
+.interact-reset:hover { border-color: var(--border-active); color: var(--text-primary); }
+@keyframes msgPop { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
+
+/* 资产表格 */
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="page-header"><h1>游戏启动流程</h1><p class="subtitle">功能策划案 — 从启动到主循环的完整编排</p></div>
+
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+
+<!-- ═══════════════ Tab 1：功能简介 ═══════════════ -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card">
+    <h3>文档信息</h3>
+    <div class="info-row">
+      <div class="info-item"><span class="label">功能名称</span><span class="value">游戏启动流程</span></div>
+      <div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div>
+      <div class="info-item"><span class="label">日期</span><span class="value">2026-07-30</span></div>
+      <div class="info-item"><span class="label">策划人</span><span class="value">AI协作</span></div>
+      <div class="info-item"><span class="label">状态</span><span class="value">策划中</span></div>
+    </div>
+    <hr><h4>变更日志</h4>
+    <table><tr><th>更新人</th><th>更新时间</th><th>更新内容</th></tr><tr><td>AI协作</td><td>2026.7.30</td><td>创建文档，基于GDD v3.1</td></tr></table>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 存档系统 — 检测存档是否存在，决定分支路径</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 器灵系统 — 器灵选择界面为首次流程节点</span></p>
+    <p style="margin-top:8px;"><span class="tag tag-csv">📄 桌面放置态 — 启动流程终点</span></p>
+  </div>
+
+  <div class="section-card">
+    <h3>功能定位</h3>
+    <p><strong>一句话：</strong>游戏启动后，根据是否有存档，走首次流程或再次流程，最终到达桌面放置态。</p>
+    <p style="margin-top:var(--sp-sm);">在整体游戏流程中的位置：</p>
+    <p style="margin-top:var(--sp-xs); color:var(--text-secondary);">
+      游戏启动 → <span style="color:var(--quality-legendary);">【本功能：启动流程编排】</span> → 桌面放置态（进入主循环）
+    </p>
+    <p style="margin-top:var(--sp-sm);">核心分支逻辑：</p>
+    <div style="margin-top:var(--sp-xs); padding:var(--sp-md); background:var(--bg-primary); border-radius:var(--radius-md); font-size:var(--fs-caption); line-height:2;">
+      游戏启动 → 存档检测<br>
+      &nbsp;&nbsp;├─ <span style="color:var(--status-success);">有存档</span> → <span style="color:var(--quality-legendary);">主菜单</span><br>
+      &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├─ 继续游戏 → 读档 → 离线收益结算 → 桌面放置态<br>
+      &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├─ 新游戏 → 确认弹窗 → 开场黑幕 → 器灵选择 → 桌面放置态<br>
+      &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└─ 设置 → 设置弹窗<br>
+      &nbsp;&nbsp;└─ <span style="color:var(--status-warning);">无存档 / 存档损坏</span> → <span class="text-red">跳过主菜单</span>，直接 → 开场黑幕 → 器灵选择 → 桌面放置态
+    </div>
+  </div>
+
+  <div class="section-card">
+    <h3>不在范围内</h3>
+    <ul>
+      <li>开场黑幕的逐段播放逻辑 → 见「开场黑幕」策划案</li>
+      <li>器灵选择卡片的详细交互与美术 → 见「器灵选择」策划案</li>
+      <li>存档数据结构的读写逻辑 → 见「存档系统」策划案</li>
+      <li>离线收益的计算公式 → 见「存档系统」策划案</li>
+      <li>桌面放置态的挂机机制与界面 → 见「桌面放置态」策划案</li>
+      <li>键位设置、画质调节 → V0.2+</li>
+      <li>诛仙剑 / 神农鼎器灵选择 → V0.2+</li>
+    </ul>
+  </div>
+  <p class="dim" style="margin-top:var(--sp-lg);"><span class="mark-yellow">黄色</span>=未定案 <span class="mark-green">绿色</span>=改动标注 <span class="text-blue">蓝色</span>=系统提示/可配置项 <span class="text-red">红色</span>=强调</p>
+</div>
+
+<!-- ═══════════════ Tab 2：功能规则 ═══════════════ -->
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">活动简述</div>
+  <div class="rule-l0">目的：编排游戏启动到进入主循环的完整流程，根据存档状态决定走首次流程还是再次流程。</div>
+
+  <div class="sec-header">一、启动检测</div>
+  <div class="rule-l0">一.存档检测</div>
+  <div class="rule-l1">1.时机：游戏进程启动后，首个执行逻辑（在任何 UI 渲染之前）</div>
+  <div class="rule-l1">2.检测逻辑：<span class="text-blue">读取本地存档文件</span></div>
+  <div class="rule-l2">1）文件存在且校验通过 → <span class="text-blue">进入主菜单</span></div>
+  <div class="rule-l2">2）文件不存在 → <span class="text-blue">跳过主菜单</span>，直接进入首次启动流程（开场黑幕 → 器灵选择 → 桌面态）</div>
+  <div class="rule-l2">3）文件存在但校验失败（损坏/版本不兼容）→ <span class="mark-yellow">视为无存档</span>，弹提示后直接进入首次启动流程</div>
+  <div class="rule-ex">存档文件路径：user://save_data.json。校验：JSON 解析 + 必填字段完整性。</div>
+  <div class="rule-l1">3.检测耗时：<span class="text-blue">&lt;100ms</span>，不显示 loading 界面</div>
+  <div class="rule-l1">4.失败兜底：任何检测异常 → 视为无存档，走首次流程。<span class="text-red">不卡死在启动阶段</span></div>
+  <div class="rule-l1">5.<span class="text-red">关键规则：主菜单仅在「有存档」时显示。无存档时不渲染主菜单 UI，直接启动开场黑幕。</span></div>
+
+  <div class="sec-header">二、主菜单</div>
+  <div class="rule-l0">一.进入条件</div>
+  <div class="rule-l1">1.<span class="text-red">仅当存档检测为「有存档」时进入主菜单</span>。无存档时此界面完全不出现。</div>
+  <div class="rule-l0">二.界面元素</div>
+  <div class="rule-l1">1.游戏标题：「开仙门」（大字，宗门主题字体）</div>
+  <div class="rule-l1">2.三个按钮：</div>
+  <div class="rule-l2">1）<span class="text-blue">继续游戏</span> — 读档 → 离线收益 → 桌面态</div>
+  <div class="rule-l2">2）<span class="text-blue">新游戏</span> — 点击弹出确认弹窗</div>
+  <div class="rule-l2">3）<span class="text-blue">设置</span> — 点击弹出设置弹窗</div>
+  <div class="rule-l1">3.背景：像素风格修仙宗门远景（暗色调，静态）</div>
+  <div class="rule-l0">三.「继续游戏」行为</div>
+  <div class="rule-l1">1.点击 → 读档 → 加载成功 → 显示离线收益结算 → 桌面放置态</div>
+  <div class="rule-l1">2.读档失败 → 弹提示「存档读取失败」，<span class="mark-yellow">回主菜单</span></div>
+  <div class="rule-l1">3.加载过程：<span class="mark-yellow">暂定简洁过渡（0.5s 淡入淡出）</span>，V0.1 不做 loading 进度条</div>
+  <div class="rule-l0">四.「新游戏」行为</div>
+  <div class="rule-l1">1.点击 → 弹出确认弹窗「当前进度将丢失，确定开始新游戏？」</div>
+  <div class="rule-l1">2.确认 → 清空存档 → 进入首次启动流程（开场黑幕 → 器灵选择 → 桌面态）</div>
+  <div class="rule-l1">3.取消 → 关闭弹窗，回主菜单</div>
+  <div class="rule-l0">五.「设置」行为</div>
+  <div class="rule-l1">1.点击 → 弹出设置弹窗</div>
+  <div class="rule-l1">2.设置项（V0.1）：</div>
+  <div class="rule-l2">1）<span class="text-blue">主音量</span>：滑块 0-100，默认 80</div>
+  <div class="rule-l2">2）<span class="text-blue">窗口模式</span>：全屏 / 窗口化 切换，默认窗口化</div>
+  <div class="rule-l3">① 全屏：<span class="text-blue">1920×1080</span> 或屏幕原生分辨率</div>
+  <div class="rule-l3">② 窗口化：<span class="text-blue">1280×720</span></div>
+  <div class="rule-l2">3）<span class="text-blue">关闭按钮</span>：关闭弹窗，设置即时生效</div>
+  <div class="rule-l1">3.V0.1 明确不做：键位设置、画质调节、语言切换</div>
+
+  <div class="sec-header">三、首次启动流程</div>
+  <div class="rule-l0">一.触发条件</div>
+  <div class="rule-l1">1.存档检测为「无存档」</div>
+  <div class="rule-l1">2.主菜单中确认「新游戏」</div>
+  <div class="rule-l0">二.流程步骤</div>
+  <div class="rule-l1">1.开场黑幕（世界观叙事，逐段淡入淡出）</div>
+  <div class="rule-l2">1）纯黑背景，白色文字逐段呈现</div>
+  <div class="rule-l2">2）可点击/按键跳过，也可等待自动播放完毕</div>
+  <div class="rule-l2">3）详见「开场黑幕」策划案</div>
+  <div class="rule-l1">2.黑幕结束 → 过渡 → 器灵选择界面</div>
+  <div class="rule-l2">1）过渡方式：<span class="mark-yellow">0.5s 淡入淡出</span></div>
+  <div class="rule-l2">2）V0.1 仅百世书可选（诛仙剑/神农鼎 V0.2+）</div>
+  <div class="rule-l2">3）选定后确认 → 不可更改（永久绑定）→ 详见「器灵选择」策划案</div>
+  <div class="rule-l1">3.器灵选择确认 → 过渡 → 桌面放置态</div>
+  <div class="rule-l2">1）过渡方式：<span class="mark-yellow">0.5s 淡入淡出</span></div>
+  <div class="rule-l2">2）此时触发首次自动存档</div>
+  <div class="rule-l2">3）进入主循环（详见「桌面放置态」策划案）</div>
+
+  <div class="sec-header">四、再次启动流程</div>
+  <div class="rule-l0">一.触发条件</div>
+  <div class="rule-l1">1.有存档 + 主菜单选择「继续游戏」</div>
+  <div class="rule-l0">二.流程步骤</div>
+  <div class="rule-l1">1.读档 → 加载游戏状态</div>
+  <div class="rule-l1">2.计算离线收益（离线时长 × 灵气基础速率，上限 24h）</div>
+  <div class="rule-l1">3.弹出离线收益提示：「你离开了 X 小时 X 分，器灵修炼获得 💨 +N 灵气」</div>
+  <div class="rule-l2">1）玩家点击「确认」关闭</div>
+  <div class="rule-l2">2）<span class="mark-yellow">暂定自动 3s 后关闭</span></div>
+  <div class="rule-l1">4.进入桌面放置态（挂机继续）</div>
+
+  <div class="sec-header">五、异常处理</div>
+  <div class="rule-l0">一.存档损坏</div>
+  <div class="rule-l1">1.检测到存档文件无法解析 → 弹提示「存档数据异常，将进入新游戏」</div>
+  <div class="rule-l1">2.玩家确认 → 清空损坏存档 → 走首次启动流程</div>
+  <div class="rule-l0">二.读档失败</div>
+  <div class="rule-l1">1.继续游戏时读档失败 → 弹提示「存档读取失败，请重试」</div>
+  <div class="rule-l1">2.回主菜单，不自动进入新游戏</div>
+  <div class="rule-l0">三.启动崩溃恢复</div>
+  <div class="rule-l1">1.<span class="mark-yellow">暂不做崩溃恢复</span>，V0.2 考虑</div>
+
+  <div class="sec-header">六、过渡规范</div>
+  <div class="rule-l0">一.通用规则</div>
+  <div class="rule-l1">1.所有界面切换使用<span class="text-blue">淡入淡出过渡</span></div>
+  <div class="rule-l1">2.过渡时长：<span class="text-blue">0.5s</span></div>
+  <div class="rule-l1">3.过渡期间<span class="text-blue">不响应输入</span></div>
+  <div class="rule-l0">二.例外</div>
+  <div class="rule-l1">1.开场黑幕内部逐段切换有自己的过渡逻辑（见对应策划案）</div>
+  <div class="rule-l1">2.设置弹窗不触发全屏过渡，仅弹窗本身淡入/淡出</div>
+</div></div>
+
+<!-- ═══════════════ Tab 3：界面说明 ═══════════════ -->
+<div class="tab-panel" id="tab-ui-desc">
+  <!-- 界面1：主菜单 -->
+  <div class="section-card">
+    <h3 style="margin-bottom:var(--sp-md);">界面 1 — 主菜单</h3>
+    <div class="ui-desc">
+      <div class="ui-desc-left">
+        <div class="ui-frame">
+          <div class="menu-frame">
+            <div class="menu-bg-cloud"></div>
+            <div class="menu-bg-mountains"></div>
+            <div class="menu-title">开 仙 门</div>
+            <div class="menu-subtitle">— 造化坊 —</div>
+            <div class="menu-btn" style="border-color:var(--quality-legendary); color:var(--quality-legendary);">继 续 游 戏</div>
+            <div class="menu-btn">新 游 戏</div>
+            <div class="menu-btn">设 置</div>
+            <div style="position:absolute;top:30%;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+            <div style="position:absolute;top:55%;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+            <div style="position:absolute;top:63%;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
+            <div style="position:absolute;top:71%;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">4</div>
+            <div style="position:absolute;bottom:10%;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">5</div>
+          </div>
+        </div>
+      </div>
+      <div class="ui-desc-right">
+        <div class="ui-note"><span class="un">1</span><span class="ut">游戏标题「开仙门」</span><div class="ud">金色大字，宗门主题字体。居中对齐。带微弱发光（text-shadow 模拟灵气）。静态显示。</div></div>
+        <div class="ui-note"><span class="un">2</span><span class="ut">「继续游戏」按钮</span><div class="ud">点击 → 读档 → 离线收益 → 桌面态。hover 时边框变金色。<span class="text-red">主菜单仅在「有存档」时出现</span>，因此此按钮始终可用。</div></div>
+        <div class="ui-note"><span class="un">3</span><span class="ut">「新游戏」按钮</span><div class="ud">始终可点击。点击 → 弹出确认弹窗（界面 3）。确认后清档走首次流程。</div></div>
+        <div class="ui-note"><span class="un">4</span><span class="ut">「设置」按钮</span><div class="ud">始终可点击。点击 → 弹出设置弹窗（界面 2）。</div></div>
+        <div class="ui-note"><span class="un">5</span><span class="ut">背景</span><div class="ud">深色渐变（深蓝→暗紫），底部模拟山峦剪影。顶部云雾光晕装饰。纯 CSS 实现，最终版需替换为像素原画。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 界面2：设置弹窗 -->
+  <div class="section-card">
+    <h3 style="margin-bottom:var(--sp-md);">界面 2 — 设置弹窗</h3>
+    <div class="ui-desc">
+      <div class="ui-desc-left">
+        <div class="ui-frame">
+          <div class="menu-frame">
+            <div class="menu-title" style="font-size:28px;margin-bottom:20px;">开 仙 门</div>
+            <div class="menu-btn" style="border-color:var(--quality-legendary);">继 续 游 戏</div>
+            <div class="menu-btn">新 游 戏</div>
+            <div class="menu-btn">设 置</div>
+            <div class="modal-overlay">
+              <div class="modal-box" style="text-align:left;">
+                <h4 style="text-align:center;">设 置</h4>
+                <div class="slider-row"><span class="sl">主音量</span><input type="range" min="0" max="100" value="80"><span style="font-size:12px;color:var(--text-secondary);">80</span></div>
+                <div class="toggle-row"><span class="tl">窗口模式</span><select><option>窗口化 1280×720</option><option>全屏</option></select></div>
+                <div style="text-align:center;margin-top:var(--sp-md);"><button class="modal-btn primary" style="width:100%;">关 闭</button></div>
+              </div>
+            </div>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:25;">1</div>
+            <div style="position:absolute;top:57%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:25;">2</div>
+            <div style="position:absolute;top:64%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:25;">3</div>
+          </div>
+        </div>
+      </div>
+      <div class="ui-desc-right">
+        <div class="ui-note"><span class="un">1</span><span class="ut">弹窗容器</span><div class="ud">半透明深色遮罩覆盖主菜单。弹窗居中，暗色卡片背景 + 边框。V0.1 不做弹窗打开/关闭动画（直接显隐），V0.2 加淡入缩放。</div></div>
+        <div class="ui-note"><span class="un">2</span><span class="ut">音量滑块</span><div class="ud">范围 0-100，默认 80。拖动即时生效（主音量，不含单独音效/音乐通道 — V0.2+）。滑块右侧显示当前数值。</div></div>
+        <div class="ui-note"><span class="un">3</span><span class="ut">窗口模式切换</span><div class="ud">下拉选择：窗口化 1280×720 | 全屏。切换即时生效。V0.1 不做分辨率多档选择。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 界面3：新游戏确认弹窗 -->
+  <div class="section-card">
+    <h3 style="margin-bottom:var(--sp-md);">界面 3 — 新游戏确认弹窗</h3>
+    <div class="ui-desc">
+      <div class="ui-desc-left">
+        <div class="ui-frame">
+          <div class="menu-frame">
+            <div class="menu-title" style="font-size:28px;margin-bottom:20px;">开 仙 门</div>
+            <div class="menu-btn" style="border-color:var(--quality-legendary);">继 续 游 戏</div>
+            <div class="menu-btn">新 游 戏</div>
+            <div class="menu-btn">设 置</div>
+            <div class="modal-overlay">
+              <div class="modal-box">
+                <h4>开始新游戏</h4>
+                <p>当前进度将丢失，确定开始新游戏？</p>
+                <div class="modal-btns">
+                  <button class="modal-btn danger" style="width:100px;">确 定</button>
+                  <button class="modal-btn" style="width:100px;">取 消</button>
+                </div>
+              </div>
+            </div>
+            <div style="position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:25;">1</div>
+            <div style="position:absolute;top:58%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:25;">2</div>
+          </div>
+        </div>
+      </div>
+      <div class="ui-desc-right">
+        <div class="ui-note"><span class="un">1</span><span class="ut">警告文案</span><div class="ud">明确告知「当前进度将丢失」。<span class="text-red">措辞不可模糊</span>，必须让玩家清楚后果。</div></div>
+        <div class="ui-note"><span class="un">2</span><span class="ut">确定 / 取消</span><div class="ud">确定 — 红色按钮（危险操作），清档 → 首次流程。取消 — 灰色按钮，关闭弹窗回主菜单。两按钮并排，确定在左、取消在右。</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ Tab 4：动态交互 ═══════════════ -->
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">动态交互 — 主菜单模拟</h3>
+  <p style="margin-bottom:var(--sp-md); color:var(--text-secondary);">模拟启动流程的完整分支。默认「有存档」→ 显示主菜单。切换为「无存档」→ 跳过主菜单，直接走首次流程。</p>
+  <div class="interact-area" id="interact-area" style="background:linear-gradient(180deg, #0a0a14 0%, #1a1a2e 40%, #16213e 100%);">
+    <div class="interact-overlay" id="interact-overlay"></div>
+    <!-- 主菜单按钮（有存档时显示） -->
+    <div id="menu-btns" style="display:flex;flex-direction:column;align-items:center;gap:16px;z-index:6;position:relative;">
+      <div style="font-size:40px;color:#bb9966;font-weight:700;letter-spacing:12px;text-shadow:0 0 30px rgba(187,153,102,0.3);margin-bottom:24px;">开 仙 门</div>
+      <button class="menu-btn" id="btn-continue" style="width:220px;height:48px;border:1px solid var(--border-default);background:rgba(255,255,255,0.04);color:var(--text-body);font-family:var(--font-cn);font-size:14px;font-weight:600;letter-spacing:6px;cursor:pointer;border-radius:8px;" onclick="simContinue()">继 续 游 戏</button>
+      <button class="menu-btn" id="btn-newgame" style="width:220px;height:48px;border:1px solid var(--border-default);background:rgba(255,255,255,0.04);color:var(--text-body);font-family:var(--font-cn);font-size:14px;font-weight:600;letter-spacing:6px;cursor:pointer;border-radius:8px;" onclick="simNewGame()">新 游 戏</button>
+      <button class="menu-btn" id="btn-settings" style="width:220px;height:48px;border:1px solid var(--border-default);background:rgba(255,255,255,0.04);color:var(--text-body);font-family:var(--font-cn);font-size:14px;font-weight:600;letter-spacing:6px;cursor:pointer;border-radius:8px;" onclick="simSettings()">设 置</button>
+    </div>
+    <!-- 无存档提示（无存档时显示，替代主菜单） -->
+    <div id="no-save-view" style="display:none;flex-direction:column;align-items:center;gap:16px;z-index:6;position:relative;">
+      <div style="font-size:20px;color:var(--text-secondary);letter-spacing:4px;">未检测到存档</div>
+      <div style="font-size:14px;color:var(--text-disabled);">跳过主菜单，直接进入首次启动流程</div>
+    </div>
+    <span class="interact-msg" id="interact-msg"></span>
+    <div id="modal-layer" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:25;" onclick="closeModal(event)"></div>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);gap:var(--sp-md);">
+    <button class="interact-reset" onclick="resetInteract()">⟳ 重新开始</button>
+    <button class="interact-reset" onclick="toggleSave()">切换：<span id="save-status">有存档</span></button>
+  </div>
+</div></div>
+
+<!-- ═══════════════ Tab 5：资产需求 ═══════════════ -->
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+
+  <!-- UI -->
+  <div class="sub-tab-panel active" id="sub-ui">
+    <table class="asset-table">
+      <tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+      <tr><td class="mono">U1</td><td>主菜单背景</td><td>底板</td><td>1920×1080</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">中国风像素，修仙宗门远景，暗色调，山峦剪影+云雾。色调：深蓝→暗紫渐变。氛围：静谧、神秘。</td></tr>
+      <tr><td class="mono">U2</td><td>按钮底板（常态）</td><td>控件</td><td>220×48</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">像素风格按钮，暗色半透明底+细边框。中国风纹样装饰（云纹/回纹）。</td></tr>
+      <tr><td class="mono">U3</td><td>按钮底板（悬浮态）</td><td>控件</td><td>220×48</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">同 U2，边框变为金色发光，背景微亮。</td></tr>
+      <tr><td class="mono">U4</td><td>弹窗底板</td><td>底板</td><td>400×280</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗色卡片背景，四周带像素边框装饰。半透明遮罩层覆盖主菜单。</td></tr>
+      <tr><td class="mono">U5</td><td>弹窗按钮（确定/取消）</td><td>控件</td><td>100×36</td><td>PNG</td><td>2</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">确定=红色调，取消=灰色调。像素风格。</td></tr>
+      <tr><td class="mono">U6</td><td>游戏标题字</td><td>字体</td><td>—</td><td>TTF/OTF</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">中国风毛笔书法字体。「开仙门」三字 + 英文 fallback。</td></tr>
+      <tr><td class="mono">U7</td><td>设置面板滑块</td><td>控件</td><td>320×24</td><td>PNG</td><td>1</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">像素风格音量滑块轨道+拖动手柄。</td></tr>
+    </table>
+  </div>
+
+  <!-- 原画 -->
+  <div class="sub-tab-panel" id="sub-concept">
+    <table class="asset-table">
+      <tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向/设计说明</th></tr>
+      <tr><td class="mono">C1</td><td>主菜单氛围图</td><td>场景</td><td>1920×1080</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">中国风像素场景。远山如黛，云雾缭绕。中央隐约可见仙门遗迹。色调：深蓝+暗紫，带一点金色微光（灵气）。情绪：千年之后的寂静与新生。</td></tr>
+      <tr><td class="mono">C2</td><td>山峦剪影分层</td><td>场景</td><td>1920×400</td><td>PNG</td><td>3-4</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">近/中/远三层山峦剪影，供视差滚动（V0.2）。V0.1 可先做单层静态。</td></tr>
+    </table>
+  </div>
+
+  <!-- 动作 -->
+  <div class="sub-tab-panel" id="sub-animation">
+    <table class="asset-table">
+      <tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th><th>触发/说明</th></tr>
+      <tr><td class="mono">M1</td><td>标题呼吸光</td><td>UI动效</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">游戏标题「开仙门」微弱脉冲发光，2s 周期。代码实现（Tween + modulate），无需精灵表。</td></tr>
+      <tr><td class="mono">M2</td><td>云层漂移</td><td>场景动效</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">背景云层缓慢横向漂移，代码实现（shader 或 scroll texture），V0.1 可静态。</td></tr>
+    </table>
+  </div>
+
+  <!-- 特效 -->
+  <div class="sub-tab-panel" id="sub-vfx">
+    <table class="asset-table">
+      <tr><th>编号</th><th>名称</th><th>类别</th><th>触发</th><th>表现</th><th>时长</th><th>优先级</th><th>实现方式</th></tr>
+      <tr><td class="mono">V1</td><td>按钮悬浮光效</td><td>UI反馈</td><td>hover</td><td>按钮边框从暗色渐变至金色微光</td><td>0.2s</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">Tween modulate + 边框颜色过渡</td></tr>
+      <tr><td class="mono">V2</td><td>弹窗入场</td><td>UI过渡</td><td>弹窗打开</td><td>从 0.9 缩放 + 淡入至 1.0</td><td>0.2s</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">Tween scale + modulate（V0.1 可直接显隐）</td></tr>
+      <tr><td class="mono">V3</td><td>场景过渡</td><td>全屏</td><td>界面切换</td><td>全屏淡入淡出（黑）</td><td>0.5s</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">ColorRect + Tween modulate alpha</td></tr>
+      <tr><td class="mono">V4</td><td>灵气粒子</td><td>环境</td><td>持续</td><td>稀疏金色小光点从底部向上漂浮</td><td>循环</td><td><span class="tag tag-p2">P2</span></td><td class="prompt-cell">CPUParticles2D 或简单 Tween 节点动画</td></tr>
+    </table>
+  </div>
+</div></div>
+
+<script>
+/* ═══════ 页签切换 ═══════ */
+function switchMainTab(event, tabId) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+function switchSubTab(event, tabId) {
+  var bar = event.target.parentElement;
+  bar.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  bar.parentElement.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
+  bar.parentElement.querySelector('#' + tabId).classList.add('active');
+}
+
+/* ═══════ 动态交互逻辑 ═══════ */
+var hasSave = true;
+var simState = 'idle';
+
+function updateUI() {
+  var menuBtns = document.getElementById('menu-btns');
+  var noSaveView = document.getElementById('no-save-view');
+  if (hasSave) {
+    menuBtns.style.display = 'flex';
+    noSaveView.style.display = 'none';
+  } else {
+    menuBtns.style.display = 'none';
+    noSaveView.style.display = 'flex';
+  }
+}
+
+function showMsg(text) {
+  var m = document.getElementById('interact-msg');
+  m.textContent = text;
+  m.classList.remove('show');
+  void m.offsetWidth;
+  m.classList.add('show');
+  setTimeout(function(){ m.classList.remove('show'); }, 2500);
+}
+
+function simContinue() {
+  if (simState !== 'idle') return;
+  var overlay = document.getElementById('interact-overlay');
+  overlay.classList.add('on');
+  showMsg('读档中…');
+  setTimeout(function(){
+    showMsg('你离开了 3 小时 20 分\n器灵修炼获得 💨 +12,800 灵气');
+    setTimeout(function(){
+      overlay.classList.remove('on');
+      showMsg('进入桌面放置态 ✓');
+    }, 2500);
+  }, 800);
+}
+
+function simNewGame() {
+  if (simState !== 'idle') return;
+  simState = 'newgame-confirm';
+  var modal = document.getElementById('modal-layer');
+  modal.style.display = 'flex';
+  modal.innerHTML = '<div class="modal-box" onclick="event.stopPropagation()">' +
+    '<h4>开始新游戏</h4>' +
+    '<p>当前进度将丢失，确定开始新游戏？</p>' +
+    '<div class="modal-btns">' +
+    '<button class="modal-btn danger" style="width:100px;" onclick="confirmNewGame()">确 定</button>' +
+    '<button class="modal-btn" style="width:100px;" onclick="closeModal()">取 消</button>' +
+    '</div></div>';
+}
+
+function confirmNewGame() {
+  closeModal();
+  hasSave = false;
+  document.getElementById('save-status').textContent = '无存档';
+  updateUI();
+  var overlay = document.getElementById('interact-overlay');
+  overlay.classList.add('on');
+  showMsg('跳过主菜单 → 开场黑幕 → 器灵选择…');
+  setTimeout(function(){
+    overlay.classList.remove('on');
+    showMsg('进入桌面放置态 ✓（首次）');
+    hasSave = true;
+    document.getElementById('save-status').textContent = '有存档';
+    updateUI();
+  }, 2500);
+}
+
+function simSettings() {
+  if (simState !== 'idle') return;
+  simState = 'settings';
+  var modal = document.getElementById('modal-layer');
+  modal.style.display = 'flex';
+  modal.innerHTML = '<div class="modal-box" style="text-align:left;" onclick="event.stopPropagation()">' +
+    '<h4 style="text-align:center;">设 置</h4>' +
+    '<div class="slider-row"><span class="sl">主音量</span><input type="range" min="0" max="100" value="80"><span style="font-size:12px;color:var(--text-secondary);">80</span></div>' +
+    '<div class="toggle-row"><span class="tl">窗口模式</span><select><option>窗口化 1280×720</option><option>全屏</option></select></div>' +
+    '<div style="text-align:center;margin-top:var(--sp-md);"><button class="modal-btn primary" style="width:100%;" onclick="closeModal()">关 闭</button></div>' +
+    '</div>';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-layer') && e.target.id !== 'modal-layer') {
+    if (e.target.tagName !== 'BUTTON' && e.target.closest('.modal-box')) return;
+  }
+  document.getElementById('modal-layer').style.display = 'none';
+  document.getElementById('modal-layer').innerHTML = '';
+  simState = 'idle';
+}
+
+function toggleSave() {
+  hasSave = !hasSave;
+  document.getElementById('save-status').textContent = hasSave ? '有存档' : '无存档';
+  updateUI();
+  showMsg(hasSave ? '已切换为：有存档 → 显示主菜单' : '已切换为：无存档 → 跳过主菜单，直接开场黑幕');
+}
+
+function resetInteract() {
+  document.getElementById('interact-overlay').classList.remove('on');
+  document.getElementById('modal-layer').style.display = 'none';
+  document.getElementById('modal-layer').innerHTML = '';
+  document.getElementById('interact-msg').classList.remove('show');
+  document.getElementById('interact-msg').textContent = '';
+  hasSave = true;
+  document.getElementById('save-status').textContent = '有存档';
+  updateUI();
+  simState = 'idle';
+}
+</script>
+</body>
+</html>

@@ -451,6 +451,12 @@ export function collectData() {
       desc: "连接飞书美术排期表 → 4目标分析（基础状况/风险逾期/信息规范/综合建议）→ 输出审查报告", steps: "选定审查范围 → 飞书读取数据 → 4目标分析 → 生成报告 → 存档", trigger: "/art-review 或「审查美术」「美术review」" },
     { name: "写策划案-HTML-v0.1", version: "v0.1", skill: "待建", project: "全局", status: "active", category: "游戏开发",
       desc: "🆕 轻量级策划案工作流。一份 HTML = 完整策划案，5 页签（简介/规则/界面说明/动态交互/资产需求），中小功能适用", steps: "复制模板 → AI 读上下文 → 逐 tab 协作填充 → 浏览器验证 → 定稿", trigger: "待建" },
+    { name: "创建项目", version: "v1", skill: "/new-project", project: "全局", status: "active", category: "造化坊",
+      desc: "标准化项目创建：4 类项目模型（游戏/自媒体/管线/其他），7 步从模糊想法到仪表盘注册", steps: "确定方向 → 确定类型和技术栈 → 项目初始化 → 注册到体系 → 创建CLAUDE.md → 第一份工作记录 → 同步仪表盘", trigger: "/new-project 或「新建项目」「创建项目」" },
+    { name: "创建工作流", version: "v1", skill: "/new-workflow", project: "全局", status: "active", category: "造化坊",
+      desc: "🏭 元工作流：用工作流定义工作流自身。发现重复模式 → 提炼标准步骤 → 生成文档+SKILL → 注册三大索引", steps: "发现与识别 → 提炼标准步骤 → 编写知识层文档 → 创建SKILL → 注册到体系 → 验证", trigger: "/new-workflow 或「建立新工作流」「标准化流程」" },
+    { name: "目标管理", version: "v1", skill: "/goals", project: "全局", status: "active", category: "造化坊",
+      desc: "SMART 化目标设定 → 三层拆解（目标→里程碑→行动项）→ 月度复盘。上限 3 个活跃目标", steps: "定义目标 → 拆解为可执行步骤 → 写入体系 → 关联项目和工作流 → 进展追踪 → 复盘", trigger: "/goals 或「定目标」「做规划」「复盘」" },
   ];
   const skillsDir = path.join(ROOT, ".claude/skills");
   const skillsRaw = listSkills(skillsDir);
@@ -459,27 +465,29 @@ export function collectData() {
   // 旧任务看板已合并入个人待办系统（docs/个人待办.md），此处不再维护
 
   const goalsUser = [
-    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏", priority: "🟡 持续" },
-    { id: "U5", task: "GAME-002 设计决策确认（9/19）✅", detail: "07-26 集中确认 Tier 1-2 共 9 项（X5/X7/X9/X12/X13/X14/X18/X19）+ Tier 3 默认值", priority: "✅ 已完成" },
-    { id: "U6", task: "GAME-002 V0.1 核心架构搭建 ✅", detail: "7 新模块（SpiritSeat/Disciple/BlessingManager+3 Data类）+ GameManager 集成 + MCP 编译验证通过", priority: "✅ 已完成" },
-    { id: "U7", task: "GAME-002 全面诊断 + 文档修复 ✅", detail: "godot-master框架诊断（3高优修复项）+118份文档审计（6矛盾修复+30归档标记+3新V0.1规格+验证日期刷新）", priority: "✅ 已完成" },
-    { id: "U2", task: "GAME-002 Phase 3：祝福3选1UI + 弟子接入 + 旧代码删除", detail: "创建独立祝福选择面板；DiscipleSquad接入战斗循环；删除card_manager/summons/upgrades旧模块", priority: "🔴 本周" },
-    { id: "U4", task: "asset-pipeline 产出 GAME-002 实际素材", detail: "道具图标管线已验证，需对接到 GAME-002 的具体需求", priority: "🟢 远期" },
+    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏。7月已14期", priority: "🟡 持续", progress: 100, todos: 1 },
+    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证", priority: "🔴 P0", progress: 80, todos: 5 },
+    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "等待 GAME-002 V0.1 稳定后提取道具清单，批量生产第一批图标", priority: "🟢 远期", progress: 20, todos: 1 },
+  ];
+
+  const goalsArchived = [
+    { task: "完善造化坊「目标计划」板块", detail: "3 个全局工作流 + 目标规划.md + 仪表盘进度条+待办数。端到端流程跑通", completedDate: "2026-07-30" },
+    { task: "GAME-002 全面诊断 + 文档修复", detail: "godot-master框架诊断（3高优修复项）+118份文档审计", completedDate: "2026-07-28" },
+    { task: "GAME-002 V0.1 核心架构搭建", detail: "7 新模块（SpiritSeat/Disciple/BlessingManager+3 Data类）+ GameManager 集成", completedDate: "2026-07-27" },
+    { task: "GAME-002 设计决策确认（9/19）", detail: "集中确认 Tier 1-2 共 9 项 + Tier 3 默认值", completedDate: "2026-07-26" },
   ];
 
   const goalsIssues = [
-    { id: "I1", issue: "GAME-002 V0.1 旧代码模块已删除 ✅", source: "07-28 文件梳理：card_manager/summons/upgrades 已于 Phase 3 清理", severity: "✅ 已解决" },
     { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
     { id: "I7", issue: "CODE_WIKI.md 已更新 V0.0→V0.1 过渡状态，数值总览已同步 CSV", source: "07-26 文档修复完成（1/3轮），第三轮归档标注待补充", severity: "🟢 跟踪" },
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
-    { id: "I6", issue: "Git push 已稳定 ✅", source: "07-28：SSH Key 已配置并验证通过", severity: "✅ 已解决" },
   ];
 
   const goalsAI = [
     { id: "A1", suggestion: "Phase 3：祝福3选1 UI 面板制作 + 接入升级流程", detail: "旧代码已清理。下一步：创建独立祝福选择面板，DiscipleSquad 接入战斗循环。", priority: "🔴 优先" },
-    { id: "A2", suggestion: "手动跑通完整一局 ✅", detail: "已在 Godot 编辑器中测试 经营→战斗→结算 闭环，gameplay 级验证通过。", priority: "✅ 已完成" },
     { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "14 期存量足够，按 /new-post 流程持续产出即可。重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
+    { id: "A4", suggestion: "目标管理体系已上线，建议 8 月做首次月度复盘 🆕", detail: "三个全局工作流+目标规划.md+仪表盘进度条全部就位。8月1日可做首次正式月度复盘，回顾 7 月成果。", priority: "🟡 建议" },
   ];
 
   const toolGuides = [
@@ -516,7 +524,7 @@ export function collectData() {
     today, worksData, gitCommits, commitCount,
     skillCount, skillStandard: skillsCount.standard, skillFlat: skillsCount.flat,
     workflowCount, guideCount, worksCount: worksFiles.length,
-    projects, workflows, skills, goalsUser, goalsIssues, goalsAI,
+    projects, workflows, skills, goalsUser, goalsArchived, goalsIssues, goalsAI,
     toolGuides, assets, external,
     personalTasks,
   };
