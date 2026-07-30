@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=750, initial-scale=1.0">
+<title>卡牌背包 — 低保真原型</title>
+<style>
+/* ═══════════ 基础重置 ═══════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ═══════════ 色彩系统 ═══════════ */
+:root {
+  /* 基础 4 色 */
+  --lo-ink:   #222222;
+  --lo-fill:  #E0E0E0;
+  --lo-muted: #999999;
+  --lo-bg:    #FAFAFA;
+  /* 稀有度 4 色 */
+  --lo-tier-common:    #8888A0;
+  --lo-tier-rare:      #6699BB;
+  --lo-tier-epic:      #9977BB;
+  --lo-tier-legendary: #BB9966;
+  /* 间距 */
+  --lo-xs: 4px;  --lo-sm: 8px;  --lo-md: 16px;  --lo-lg: 24px;
+}
+
+body {
+  width: 750px; min-height: 1334px; margin: 0 auto;
+  background: var(--lo-bg);
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: var(--lo-ink);
+  line-height: 1.6;
+}
+
+/* ═══════════ 基线框组件 ═══════════ */
+.lo-btn {
+  display: block; width: 100%;
+  border: 2px solid var(--lo-ink); border-radius: 4px;
+  padding: var(--lo-sm) var(--lo-md);
+  font: inherit; font-size: 14px; color: var(--lo-ink);
+  background: var(--lo-bg); cursor: pointer;
+  text-align: left; min-height: 44px;
+  transition: background 0.1s;
+}
+.lo-btn:hover   { background: var(--lo-fill); }
+.lo-btn:active  { background: var(--lo-fill); }
+.lo-btn.on      { background: var(--lo-fill); font-weight: bold; }
+
+.lo-badge {
+  display: inline-block; padding: 2px 8px;
+  border: 2px solid var(--lo-ink); border-radius: 4px;
+  font-size: 12px; line-height: 1.4;
+}
+
+/* ═══════════ 面板布局 ═══════════ */
+.lo-panel {
+  position: fixed; inset: 0;
+  background: var(--lo-bg);
+  display: flex; flex-direction: column;
+  /* tr: scale+fade 250ms ease-out */
+}
+
+/* ── 顶部栏 ── */
+.lo-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--lo-md) var(--lo-lg);
+  border-bottom: 2px solid var(--lo-ink);
+  height: 64px; flex-shrink: 0;
+}
+.lo-topbar .lo-title {
+  font-size: 24px; font-weight: bold;
+}
+.lo-close-btn {
+  width: 48px; height: 48px;
+  border: 2px solid var(--lo-ink); border-radius: 4px;
+  background: var(--lo-bg); cursor: pointer;
+  font-size: 28px; line-height: 44px; text-align: center;
+  color: var(--lo-ink);
+}
+.lo-close-btn:active { background: var(--lo-fill); }
+
+/* ── 主内容区（三栏） ── */
+.lo-body {
+  display: flex; flex: 1; overflow: hidden;
+}
+
+/* 左侧筛选栏 */
+.lo-sidebar {
+  width: 140px; flex-shrink: 0;
+  border-right: 2px solid var(--lo-ink);
+  padding: var(--lo-md);
+  display: flex; flex-direction: column; gap: var(--lo-xs);
+  overflow-y: auto;
+}
+.lo-sidebar .lo-section-label {
+  font-size: 12px; color: var(--lo-muted);
+  padding: var(--lo-sm) 0 var(--lo-xs) 0;
+}
+.lo-sidebar .lo-section-label:not(:first-child) {
+  border-top: 1px dashed var(--lo-muted);
+  margin-top: var(--lo-sm); padding-top: var(--lo-md);
+}
+
+/* 中央网格 */
+.lo-grid-area {
+  flex: 1; padding: var(--lo-md);
+  display: flex; flex-direction: column; gap: var(--lo-sm);
+  overflow-y: auto;
+}
+.lo-grid-header {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 14px;
+}
+.lo-progress-bar {
+  width: 120px; height: 16px;
+  border: 2px solid var(--lo-ink); border-radius: 2px;
+  overflow: hidden; flex-shrink: 0;
+}
+.lo-progress-fill {
+  height: 100%; background: var(--lo-fill);
+  transition: width 0.2s;
+}
+.lo-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--lo-sm);
+  align-content: start;
+}
+.lo-card {
+  aspect-ratio: 3 / 4;
+  border: 2px solid var(--lo-ink); border-radius: 4px;
+  background: var(--lo-bg); cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--lo-xs); padding: var(--lo-sm);
+  position: relative; font-size: 14px;
+  transition: background 0.1s, border-color 0.1s;
+}
+.lo-card:hover         { background: var(--lo-fill); }
+.lo-card:active        { background: var(--lo-fill); }
+.lo-card.selected      { background: var(--lo-fill); border-width: 3px; }
+
+/* 稀有度边框色 */
+.lo-card.tier-common    { border-color: var(--lo-tier-common); }
+.lo-card.tier-rare      { border-color: var(--lo-tier-rare); }
+.lo-card.tier-epic      { border-color: var(--lo-tier-epic); }
+.lo-card.tier-legendary { border-color: var(--lo-tier-legendary); }
+
+.lo-card.locked {
+  border: 2px dashed var(--lo-muted) !important;
+  opacity: 0.6; cursor: default;
+}
+.lo-card.locked:hover { background: var(--lo-bg); }
+
+.lo-card .tier-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid; /* 颜色由父级 .tier-* 决定 */
+}
+.lo-card.tier-common    .tier-dot { border-color: var(--lo-tier-common); }
+.lo-card.tier-rare      .tier-dot { border-color: var(--lo-tier-rare); }
+.lo-card.tier-epic      .tier-dot { border-color: var(--lo-tier-epic); }
+.lo-card.tier-legendary .tier-dot { border-color: var(--lo-tier-legendary); }
+
+.lo-card .card-icon {
+  width: 48px; height: 48px;
+  border: 2px dashed var(--lo-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--lo-muted);
+  /* 斜线填充 */
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 3px,
+    var(--lo-fill) 3px, var(--lo-fill) 6px
+  );
+}
+.lo-card.locked .card-icon {
+  border-style: dashed;
+}
+.lo-card .card-name {
+  font-size: 12px; text-align: center; line-height: 1.3;
+}
+.lo-card.locked .card-name {
+  color: var(--lo-muted);
+}
+
+/* 右侧详情 */
+.lo-detail {
+  width: 180px; flex-shrink: 0;
+  border-left: 2px solid var(--lo-ink);
+  padding: var(--lo-lg);
+  display: flex; flex-direction: column;
+  align-items: center; gap: var(--lo-md);
+  text-align: center;
+}
+.lo-detail-empty {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--lo-muted); font-size: 14px;
+}
+.lo-detail-content {
+  display: flex; flex-direction: column;
+  align-items: center; gap: var(--lo-sm);
+}
+.lo-detail-icon {
+  width: 80px; height: 80px;
+  border: 3px solid var(--lo-ink); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; color: var(--lo-muted);
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 4px,
+    var(--lo-fill) 4px, var(--lo-fill) 8px
+  );
+}
+.lo-detail-icon.tier-common    { border-color: var(--lo-tier-common); }
+.lo-detail-icon.tier-rare      { border-color: var(--lo-tier-rare); }
+.lo-detail-icon.tier-epic      { border-color: var(--lo-tier-epic); }
+.lo-detail-icon.tier-legendary { border-color: var(--lo-tier-legendary); }
+
+.lo-detail-name {
+  font-size: 24px; font-weight: bold;
+}
+.lo-detail-meta {
+  font-size: 12px; color: var(--lo-muted);
+}
+.lo-detail-desc {
+  font-size: 14px; color: var(--lo-muted);
+  line-height: 1.5;
+  /* 模拟描述文字 */
+}
+.lo-detail-value {
+  font-size: 14px; padding: var(--lo-xs) var(--lo-sm);
+  border: 2px solid var(--lo-ink); border-radius: 4px;
+}
+
+/* ═══════════ 标注注释风格 ═══════════ */
+.lo-annotation {
+  font-size: 11px; color: var(--lo-muted);
+  font-style: italic;
+  padding: var(--lo-xs) var(--lo-sm);
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 卡牌背包面板（全屏弹窗）                       -->
+<!-- tr: scale+fade 250ms ease-out              -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="lo-panel" id="panel">
+
+  <!-- ── 顶部栏 ── -->
+  <div class="lo-topbar">
+    <span class="lo-title">[ 卡牌背包 ]</span>
+    <!-- 关闭按钮：焦点回到经营主界面「卡牌背包」按钮 -->
+    <button class="lo-close-btn" title="关闭 (Esc)" onclick="closePanel()" autofocus>×</button>
+  </div>
+
+  <!-- ── 三栏主体 ── -->
+  <div class="lo-body">
+
+    <!-- ═══ 左侧筛选栏 (140px) ═══ -->
+    <div class="lo-sidebar" id="sidebar">
+      <div class="lo-section-label">分类</div>
+      <button class="lo-btn on" data-filter="cat" data-val="all" onclick="filter(this)">
+        全部 <span style="color:var(--lo-muted);">18</span>
+      </button>
+      <button class="lo-btn" data-filter="cat" data-val="disciple" onclick="filter(this)">
+        弟子 <span style="color:var(--lo-muted);">6</span>
+      </button>
+      <button class="lo-btn" data-filter="cat" data-val="technique" onclick="filter(this)">
+        技法 <span style="color:var(--lo-muted);">6</span>
+      </button>
+      <button class="lo-btn" data-filter="cat" data-val="buff" onclick="filter(this)">
+        增益 <span style="color:var(--lo-muted);">6</span>
+      </button>
+
+      <div class="lo-section-label">稀有度</div>
+      <button class="lo-btn" data-filter="tier" data-val="all" onclick="filter(this)">
+        全部
+      </button>
+      <!-- 稀有度按钮用对应色边框标注 -->
+      <button class="lo-btn" style="border-color:var(--lo-tier-common);" data-filter="tier" data-val="common" onclick="filter(this)">
+        █ 普通
+      </button>
+      <button class="lo-btn" style="border-color:var(--lo-tier-rare);" data-filter="tier" data-val="rare" onclick="filter(this)">
+        █ 稀有
+      </button>
+      <button class="lo-btn" style="border-color:var(--lo-tier-epic);" data-filter="tier" data-val="epic" onclick="filter(this)">
+        █ 史诗
+      </button>
+      <button class="lo-btn" style="border-color:var(--lo-tier-legendary);" data-filter="tier" data-val="legend" onclick="filter(this)">
+        █ 传说
+      </button>
+      <!-- 稀有度选中的筛选按钮保持对应色 -->
+      <p class="lo-annotation" style="margin-top: var(--lo-md);">
+        <!-- 两个维度取交集 -->
+      </p>
+    </div>
+
+    <!-- ═══ 中央网格区 ═══ -->
+    <div class="lo-grid-area">
+      <div class="lo-grid-header">
+        <span id="grid-tab">全部</span>
+        <span style="font-size:14px;">
+          已收集 <strong id="collect-count">12</strong>/<span id="total-count">18</span>
+        </span>
+        <div class="lo-progress-bar">
+          <div class="lo-progress-fill" id="progress-fill" style="width:66.7%;"></div>
+        </div>
+      </div>
+      <div class="lo-grid" id="card-grid">
+        <!-- JS 动态渲染 -->
+      </div>
+    </div>
+
+    <!-- ═══ 右侧详情区 (180px) ═══ -->
+    <div class="lo-detail" id="detail-panel">
+      <div class="lo-detail-empty" id="detail-empty">
+        [点击卡牌<br>查看详情]
+      </div>
+      <div class="lo-detail-content" id="detail-content" style="display:none;">
+        <div class="lo-detail-icon" id="detail-icon">[图]</div>
+        <div class="lo-detail-name" id="detail-name"></div>
+        <div class="lo-detail-meta" id="detail-meta"></div>
+        <div class="lo-detail-desc" id="detail-desc"></div>
+        <div class="lo-detail-value" id="detail-value"></div>
+      </div>
+    </div>
+
+  </div><!-- /lo-body -->
+</div><!-- /lo-panel -->
+
+<!-- ═══════════════════════════════════════════ -->
+<script>
+/* ═══════════ 卡牌数据 ═══════════ */
+var CARDS = [
+  {id:'atk1',name:'淬体决',  cat:'disciple',   tier:'common',    desc:'攻击力提升',         val:'ATK +5',       unlock:true},
+  {id:'hp1', name:'铁骨诀',  cat:'disciple',   tier:'common',    desc:'生命上限提升',       val:'HP +50',       unlock:true},
+  {id:'spd1',name:'疾风步',  cat:'disciple',   tier:'common',    desc:'移动速度提升',       val:'SPD +30',      unlock:true},
+  {id:'cd1', name:'连击诀',  cat:'disciple',   tier:'rare',      desc:'攻击间隔缩短',       val:'CD −0.15s',    unlock:true},
+  {id:'rng1',name:'远击诀',  cat:'disciple',   tier:'rare',      desc:'攻击范围扩大',       val:'RNG +30',      unlock:true},
+  {id:'life',name:'噬血诀',  cat:'disciple',   tier:'epic',      desc:'攻击附带吸血效果',   val:'吸血 10%',     unlock:false},
+  {id:'pier',name:'破甲击',  cat:'technique',  tier:'common',    desc:'无视部分护甲',       val:'穿甲 +5',      unlock:true},
+  {id:'crit',name:'会心诀',  cat:'technique',  tier:'common',    desc:'暴击率提升',         val:'暴击 +8%',     unlock:true},
+  {id:'knock',name:'震退击', cat:'technique',  tier:'rare',      desc:'攻击附带击退',       val:'击退 +80',     unlock:true},
+  {id:'dmg', name:'杀意诀',  cat:'technique',  tier:'rare',      desc:'所有伤害提升',       val:'伤害 +15%',    unlock:true},
+  {id:'multi',name:'分化诀', cat:'technique',  tier:'epic',      desc:'额外投射物概率',     val:'弹射 30%',     unlock:false},
+  {id:'chain',name:'连锁诀', cat:'technique',  tier:'epic',      desc:'攻击弹射目标',       val:'弹射 +1',      unlock:true},
+  {id:'regen',name:'回春术', cat:'buff',       tier:'common',    desc:'持续回复生命',       val:'回复 2%/3s',   unlock:true},
+  {id:'exp',  name:'悟道丹', cat:'buff',       tier:'common',    desc:'经验获取提升',       val:'经验 +20%',    unlock:true},
+  {id:'heal', name:'甘霖术', cat:'buff',       tier:'rare',      desc:'周期性大量回复',     val:'回复 30%/5波', unlock:false},
+  {id:'armor',name:'护体罡气',cat:'buff',      tier:'rare',      desc:'护甲值提升',         val:'护甲 +10',     unlock:true},
+  {id:'evade',name:'幻影步', cat:'buff',       tier:'epic',      desc:'闪避率提升',         val:'闪避 +10%',    unlock:true},
+  {id:'block',name:'不灭金身',cat:'buff',      tier:'legend',    desc:'格挡值大幅提升',     val:'格挡 +50',     unlock:false}
+];
+
+var activeCat = 'all';
+var activeTier = 'all';
+var selectedId = null;
+
+/* ═══════════ 筛选逻辑（两个维度取交集） ═══════════ */
+function filter(btn) {
+  var group = btn.getAttribute('data-filter'); // 'cat' or 'tier'
+  var val = btn.getAttribute('data-val');
+
+  if (group === 'cat') activeCat = val;
+  if (group === 'tier') activeTier = val;
+
+  // 同一组内切换 active 态
+  btn.parentElement.querySelectorAll('.lo-btn[data-filter="'+group+'"]').forEach(function(b){
+    b.classList.remove('on');
+  });
+  btn.classList.add('on');
+
+  renderGrid();
+}
+
+/* ═══════════ 渲染网格 ═══════════ */
+function renderGrid() {
+  var filtered = CARDS.filter(function(c){
+    if (activeCat !== 'all' && c.cat !== activeCat) return false;
+    if (activeTier !== 'all' && c.tier !== activeTier) return false;
+    return true;
+  });
+
+  var unlocked = CARDS.filter(function(c){ return c.unlock; }).length;
+  var total = CARDS.length;
+  document.getElementById('collect-count').textContent = unlocked;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('progress-fill').style.width = (unlocked/total*100) + '%';
+
+  var grid = document.getElementById('card-grid');
+  if (filtered.length === 0) {
+    // ── Empty 态 ──
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:var(--lo-2xl);color:var(--lo-muted);">[ 暂无卡牌 ]</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(function(c){
+    var classes = 'lo-card';
+    if (c.unlock) { classes += ' tier-' + c.tier; }
+    else          { classes += ' locked'; }
+    if (selectedId === c.id) { classes += ' selected'; }
+
+    var dot = c.unlock
+      ? '<span class="tier-dot"></span>'
+      : '';
+    var icon = c.unlock
+      ? '<span class="card-icon">[ ' + c.name.charAt(0) + ' ]</span>'
+      : '<span class="card-icon" style="border-style:dashed;">🔒</span>';
+    var name = c.unlock ? c.name : '???';
+
+    return '<div class="'+classes+'" data-id="'+c.id+'" onclick="selectCard(\''+c.id+'\')">'
+      + dot + icon + '<span class="card-name">'+name+'</span></div>';
+  }).join('');
+}
+
+/* ═══════════ 选择卡牌 → 右侧详情更新 ═══════════ */
+function selectCard(id) {
+  var card = CARDS.find(function(c){ return c.id === id; });
+  if (!card) return;
+  selectedId = id;
+  renderGrid();
+
+  var empty = document.getElementById('detail-empty');
+  var content = document.getElementById('detail-content');
+
+  if (card.unlock) {
+    empty.style.display = 'none';
+    content.style.display = 'flex';
+
+    var tierLabels = { common:'普通', rare:'稀有', epic:'史诗', legend:'传说' };
+    var catLabels  = { disciple:'弟子', technique:'技法', buff:'增益' };
+
+    document.getElementById('detail-icon').className = 'lo-detail-icon tier-' + card.tier;
+    document.getElementById('detail-icon').textContent = '[ ' + card.name.charAt(0) + ' ]';
+    document.getElementById('detail-name').textContent = card.name;
+    document.getElementById('detail-meta').innerHTML =
+      '<span style="color:var(--lo-tier-'+card.tier+');">█ '+tierLabels[card.tier]+'</span>'
+      + ' · ' + catLabels[card.cat];
+    document.getElementById('detail-desc').textContent = card.desc;
+    document.getElementById('detail-value').textContent = card.val;
+  } else {
+    // 未收集 = 展示锁定信息
+    empty.style.display = 'none';
+    content.style.display = 'flex';
+
+    document.getElementById('detail-icon').className = 'lo-detail-icon';
+    document.getElementById('detail-icon').textContent = '🔒';
+    document.getElementById('detail-icon').style.borderStyle = 'dashed';
+    document.getElementById('detail-name').textContent = '???';
+    document.getElementById('detail-meta').textContent = '未收集';
+    document.getElementById('detail-desc').textContent = '～～～～～～';
+    document.getElementById('detail-value').textContent = '[未知]';
+  }
+}
+
+/* ═══════════ 关闭面板 ═══════════ */
+function closePanel() {
+  // tr: scale+fade 200ms ease-in
+  // 焦点回到经营主界面「卡牌背包」按钮
+  document.getElementById('panel').style.display = 'none';
+  // 原型中模拟：在真实场景中这里会 pop 回主界面
+  alert('[ 返回经营主界面 ]\n焦点回到「卡牌背包」按钮');
+}
+
+/* ═══════════ 键盘导航 ═══════════ */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closePanel();
+  }
+});
+
+/* ═══════════ 初始化 ═══════════ */
+renderGrid();
+</script>
+</body>
+</html>
