@@ -220,7 +220,7 @@ const SKILL_DESC_ZH: Record<string, string> = {
   "steam-publish": "Steam 发布：Steamworks 配置、商店页面、成就/统计 API、测试分支、Early Access 策略",
   // 项目自定义扁平 SKILL
   "git-commit": "Git 提交推送：检查变更 → 生成约定式提交 → 确认 → commit → push 到远程仓库",
-  "new-post": "小红书帖子制作：works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布",
+  "new-post": "小红书帖子制作：works/ 选材 → 文案撰写 → HTML 排版 → Puppeteer 截图导出（6 PNG）→ Pixso 导入（可选）",
   "update-dashboard": "仪表盘更新：检查数据源 → 更新脚本 → 生成 HTML 仪表盘（8 页签：系统总览/项目状态/工作流清单/近期动态/任务看板/目标计划/知识库/资产地址）",
   "item-icon": "游戏道具图标生产：道具清单 → Lovart AI 生成 → Photoshop 抠图 → 切片输出",
   "libtv": "LibTV 媒体生产集成：视频/音频/AI 内容生成，含命令、示例、模型 schema、节点类型",
@@ -269,11 +269,11 @@ export interface PersonalTasksData {
 export function loadPersonalTasks(): PersonalTasksData {
   const filePath = path.join(ROOT, "docs", "个人待办.md");
   const CATEGORY_MAP: Record<string, { key: string; label: string; emoji: string; color: string }> = {
+    "🔄": { key: "R", label: "循环任务", emoji: "🔄", color: "#ff6b6b" },
     "🏢": { key: "D", label: "主美工作", emoji: "🏢", color: "#4caf50" },
     "📱": { key: "X", label: "小红书", emoji: "📱", color: "#ff9800" },
     "🎮": { key: "G", label: "游戏开发", emoji: "🎮", color: "#42a5f5" },
     "🔧": { key: "F", label: "造化坊", emoji: "🔧", color: "#ce93d8" },
-    "🏠": { key: "L", label: "日常管理", emoji: "🏠", color: "#78909c" },
   };
 
   const categories: PersonalTasksData["categories"] = [];
@@ -383,7 +383,7 @@ export function loadPersonalTasks(): PersonalTasksData {
     }
   } catch {
     // 文件不存在时返回空结构
-    for (const emoji of ["🏢", "📱", "🎮", "🔧", "🏠"]) {
+    for (const emoji of ["🔄", "🏢", "📱", "🎮", "🔧"]) {
       const catDef = CATEGORY_MAP[emoji];
       if (catDef) categories.push({ ...catDef, tasks: [] });
     }
@@ -423,7 +423,7 @@ export function collectData() {
 
   const projects = [
     { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~40%", output: "闭环完整+MCP在线+5层防御+15波+6功法+35/93任务✅+文档审计修复", blocker: "待祝福3选1UI+弟子接入主循环+旧模块删除" },
-    { name: "小红书自媒体", engine: "HTML/CSS + Pixso", status: "active", statusText: "活跃", progress: "14 期帖子", output: "post-13/14 + 目录扁平化", blocker: "—" },
+    { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: "14 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
     { name: "originals / sandbox", engine: "待定", status: "empty", statusText: "空白", progress: "—", output: "—", blocker: "—" },
   ];
@@ -437,10 +437,10 @@ export function collectData() {
       desc: "管理 5 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
     { name: "功能开发-流水线", version: "v2", skill: "待建", project: "全局", status: "mature", category: "游戏开发",
       desc: "通用 4 阶段 + 数据原则 + 实现后步骤：策划→需求→UI交互→美术资产→(实现：代码+测试+文档同步)", steps: "功能策划(01) → 功能需求(02) → 界面交互UI(03) → 美术资产(04) → 进入实现", trigger: "待建" },
-    { name: "小红书-制作帖子", version: "v2", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
-      desc: "从 works/ 日志选题，制作 6 卡图文帖子发布到小红书", steps: "works/ 选材 → 文案撰写 → HTML 排版 → Pixso 设计 → 发布", trigger: "/new-post 或「制作帖子」" },
+    { name: "小红书-制作帖子", version: "v3", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
+      desc: "从 works/ 日志选题，制作 6 卡图文帖子：文案→HTML→Puppeteer逐卡截图→6 PNG导出", steps: "works/ 选材 → 文案撰写 → HTML 排版 → Puppeteer 截图导出(6 PNG) → Pixso 导入（可选）", trigger: "/new-post 或「制作帖子」" },
     { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "自媒体",
-      desc: "将 HTML 帖子逐张卡片导入 Pixso 进行设计精调", steps: "打开 Pixso → code_to_design 导入 HTML → 逐卡调整 → 导出截图", trigger: "纯人工操作，无对应 SKILL" },
+      desc: "将 HTML 帖子导入 Pixso 进行设计精调（可选步骤，主截图已由 Puppeteer 完成）", steps: "打开 Pixso → 取消画布选中 → code_to_design 导入 HTML → 重命名 frame → 手动调整", trigger: "纯人工操作，无对应 SKILL" },
     { name: "道具图标-生产", version: "v1", skill: "/item-icon", project: "asset-pipeline", status: "mature", category: "游戏开发",
       desc: "游戏道具图标批量生产：Lovart AI 生成 → Photoshop 抠图 → 256px 切片", steps: "道具清单 → Lovart 生成(多模型可选) → PS 抠图 → 切片输出", trigger: "/item-icon 或「生成图标」" },
     { name: "工作日志记录", version: "v1", skill: "/write-log", project: "全局", status: "mature", category: "造化坊",

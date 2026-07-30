@@ -30,10 +30,10 @@ function computeGrid(config: SpecConfig): GridMetrics {
   const phoneH = Math.round(config.canvas_height * scale);
 
   const contentW = config.canvas_width - config.grid_margin * 2;
-  const colW = (contentW - config.grid_gutter * (config.grid_columns - 1)) / config.grid_columns;
+  const colW = Math.round((contentW - config.grid_gutter * (config.grid_columns - 1)) / config.grid_columns);
   const gutterW = config.grid_gutter;
   const marginW = config.grid_margin;
-  const gridUnit = config.grid_base * scale;
+  const gridUnit = Math.round(config.grid_base * scale * 100) / 100;
 
   const spacing = {
     xs: Math.round(4 * scale),
@@ -94,7 +94,7 @@ ${generateCSS(config, m)}
 body{background:var(--page-bg);color:var(--text-body);font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;line-height:1.7;max-width:1100px;margin:0 auto;padding:40px 20px 100px}
 
 /* Header */
-.spec-header{text-align:center;padding:48px 0 36px;border-bottom:2px solid var(--border-subtle);margin-bottom:36px}
+.spec-header{text-align:left;padding:48px 0 36px;border-bottom:2px solid var(--border-subtle);margin-bottom:36px}
 .spec-header .tags{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .spec-header .tags span{font-size:10px;color:var(--text-muted);background:var(--surface);padding:2px 10px;border-radius:99px;border:1px solid var(--border-subtle);letter-spacing:1px}
 .spec-header h1{font-size:28px;font-weight:700;color:var(--text-head);letter-spacing:3px;margin-bottom:4px}
@@ -147,7 +147,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
 .proto-col{display:flex;flex-direction:column;align-items:center;gap:4px}
 .proto-label{font-size:10px;color:var(--text-muted);text-align:center;letter-spacing:1px}
 .phone{width:${m.phoneW}px;height:${m.phoneH}px;background:var(--phone-bg);border:2.5px solid var(--phone-border);border-radius:16px;position:relative;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.1)}
-.phone .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:14px;background:var(--phone-bg);border-radius:0 0 9px 9px;z-index:20}
+.phone .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:14px;background:var(--phone-bg);border-radius:0 0 9px 9px;z-index:20;border:1px solid var(--phone-border);border-top:none}
 
 /* ═══════════ 网格覆盖层 ═══════════ */
 .grid-overlay{position:absolute;inset:0;pointer-events:none;z-index:10}
@@ -288,7 +288,6 @@ ${rarityCardCSS(config)}
 <body>
 
 ${renderHeader(config, title)}
-${renderPrinciples(config)}
 ${renderTOC(sections)}
 
 ${renderCanvasDemo(config, m)}
@@ -353,8 +352,8 @@ function generateCSS(config: SpecConfig, m: GridMetrics): string {
   --q-legendary: ${config.rarity_colors.legendary || "#bb9966"};
 
   /* 手机框 */
-  --phone-bg: #12121e;
-  --phone-border: #3a3a4a;
+  --phone-bg: #e8e8ec;
+  --phone-border: #bbb;
 
   /* 网格覆盖色 */
   --grid-col-color: rgba(74,139,200,0.06);
@@ -381,6 +380,7 @@ function generateCSS(config: SpecConfig, m: GridMetrics): string {
   /* 手机框尺寸 */
   --phone-w: ${m.phoneW}px;
   --phone-h: ${m.phoneH}px;
+
 }
 `;
 }
@@ -398,7 +398,6 @@ function renderHeader(config: SpecConfig, title: string): string {
   <div class="tags"><span>${icon} ${config.canvas_width}×${config.canvas_height}</span><span>📐 ${tag(config.platform)}</span><span>🏭 生产线标准</span><span>v${esc(config.version)}</span></div>
   <h1>${esc(title)}</h1>
   <p class="sub">Game Interaction Specification · ${tag(config.platform)}</p>
-  <p class="ref">方法论参考：${esc(config.methodology)}<br>标杆产品：${esc(config.benchmarks)}</p>
 </div>`;
 }
 
@@ -867,50 +866,50 @@ function renderLayoutTemplates(config: SpecConfig, m: GridMetrics): string {
   const templates = [
     {
       id: "A", name: "大厅/主界面",
-      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.13)}px;z-index:15;background:rgba(14,14,24,.95);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;padding:${Math.round(5*m.scale)}px ${Math.round(8*m.scale)}px;">
-        <span style="font-size:6px;color:rgba(255,255,255,.5);">⚜️ 资源栏</span>
+      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.13)}px;z-index:15;background:#fff;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;padding:${Math.round(5*m.scale)}px ${Math.round(8*m.scale)}px;">
+        <span style="font-size:7px;color:var(--text-muted);">⚜️ 资源栏</span>
         <div style="display:flex;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--success);"></span></div></div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.13)}px;left:0;right:0;height:${Math.round(m.phoneH*0.38)}px;background:linear-gradient(180deg,rgba(25,20,40,.7),rgba(18,16,28,.8));display:flex;align-items:center;justify-content:center;z-index:11;font-size:8px;color:rgba(255,255,255,.3);">主视觉展示区</div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.13)}px;left:0;right:0;height:${Math.round(m.phoneH*0.38)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;z-index:11;font-size:9px;color:var(--text-muted);">主视觉展示区</div>
         <div style="position:absolute;top:${Math.round(m.phoneH*0.51)}px;left:0;right:0;height:${Math.round(m.phoneH*0.30)}px;z-index:12;display:flex;flex-wrap:wrap;padding:${Math.round(5*m.scale)}px ${Math.round(12*m.scale)}px;gap:${Math.round(4*m.scale)}px;align-content:center;justify-content:center;">
-          ${Array.from({length:8}, () => `<div style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;background:rgba(255,255,255,.03);border-radius:4px;border:1px solid rgba(255,255,255,.03);"></div>`).join("")}</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:rgba(12,12,22,.97);display:flex;align-items:center;justify-content:space-around;padding-bottom:${Math.round(7*m.scale)}px;border-top:1px solid rgba(255,255,255,.04);font-size:6px;color:rgba(255,255,255,.25);">
+          ${Array.from({length:8}, () => `<div style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;background:rgba(0,0,0,.04);border-radius:4px;border:1px solid var(--border-subtle);"></div>`).join("")}</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:center;justify-content:space-around;padding-bottom:${Math.round(7*m.scale)}px;border-top:1px solid var(--border-subtle);font-size:7px;color:var(--text-muted);">
           <span style="display:flex;flex-direction:column;align-items:center;color:var(--accent);">● 首页</span><span>○ 英雄</span><span>○ 背包</span><span>○ 设置</span></div>`,
     },
     {
       id: "B", name: "战斗界面",
-      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.09)}px;z-index:15;background:rgba(8,8,16,.9);display:flex;align-items:center;justify-content:space-between;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:6px;color:rgba(255,255,255,.45);"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.09)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.16)}px;background:linear-gradient(180deg,#0a0a16,#0e0e24 40%,#161630);display:flex;align-items:center;justify-content:center;z-index:11;font-size:8px;color:rgba(255,255,255,.2);">战 场 区 域</div>
+      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.09)}px;z-index:15;background:#f5f5f8;display:flex;align-items:center;justify-content:space-between;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:7px;color:var(--text-body);"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.09)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.16)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;z-index:11;font-size:9px;color:var(--text-muted);">战 场 区 域</div>
         <div style="position:absolute;bottom:${Math.round(m.phoneH*0.05)}px;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;display:flex;align-items:center;justify-content:center;gap:${Math.round(6*m.scale)}px;">
-          ${Array.from({length:3}, () => `<div style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;background:rgba(255,255,255,.05);border-radius:6px;border:1px solid rgba(255,255,255,.06);"></div>`).join("")}</div>`,
+          ${Array.from({length:3}, () => `<div style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;background:rgba(0,0,0,.04);border-radius:6px;border:1px solid var(--border-subtle);"></div>`).join("")}</div>`,
     },
     {
       id: "C", name: "列表/背包",
-      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:rgba(18,18,28,.95);display:flex;align-items:flex-end;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:8px;color:#fff;font-weight:600;"><span style="font-size:10px;color:rgba(255,255,255,.35);margin-right:6px;">‹</span>背 包</div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.11)}px;left:0;right:0;height:${Math.round(m.phoneH*0.06)}px;z-index:14;display:flex;align-items:center;font-size:6px;color:rgba(255,255,255,.3);background:rgba(16,16,26,.9);">
+      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:flex-end;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:8px;color:var(--text-head);font-weight:600;"><span style="font-size:10px;color:var(--text-muted);margin-right:6px;">‹</span>背 包</div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.11)}px;left:0;right:0;height:${Math.round(m.phoneH*0.06)}px;z-index:14;display:flex;align-items:center;font-size:7px;color:var(--text-muted);background:#f0f0f4;">
           <span style="flex:1;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);padding:2px 0;">全部</span><span style="flex:1;text-align:center;">武器</span><span style="flex:1;text-align:center;">防具</span><span style="flex:1;text-align:center;">道具</span></div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.17)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.11)}px;z-index:11;display:flex;flex-direction:column;gap:${Math.round(2*m.scale)}px;padding:${Math.round(4*m.scale)}px;"><span style="font-size:7px;color:rgba(255,255,255,.15);text-align:center;margin-top:20px;">列表内容区 (可滚动)</span></div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:rgba(14,14,24,.95);display:flex;align-items:center;justify-content:space-around;font-size:6px;color:rgba(255,255,255,.3);"><span>排序</span><span>筛选</span><span>分解</span></div>`,
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.17)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.11)}px;z-index:11;display:flex;flex-direction:column;gap:${Math.round(2*m.scale)}px;padding:${Math.round(4*m.scale)}px;"><span style="font-size:8px;color:var(--text-muted);text-align:center;margin-top:20px;">列表内容区 (可滚动)</span></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:center;justify-content:space-around;font-size:7px;color:var(--text-body);"><span>排序</span><span>筛选</span><span>分解</span></div>`,
     },
     {
       id: "D", name: "弹窗/对话框",
-      html: `<div style="position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;align-items:center;justify-content:center;">
-        <div style="width:70%;background:#1c1c2c;border-radius:8px;border:1px solid rgba(255,255,255,.05);overflow:hidden;">
-          <div style="text-align:center;font-size:8px;font-weight:600;color:#fff;padding:10px 0 5px;">确认删除</div>
-          <div style="padding:8px 12px;font-size:6px;color:rgba(255,255,255,.35);text-align:center;min-height:28px;display:flex;align-items:center;justify-content:center;">确定删除此项？此操作不可撤销。</div>
-          <div style="display:flex;border-top:1px solid rgba(255,255,255,.04);"><div style="flex:1;text-align:center;padding:7px 0;font-size:7px;color:rgba(255,255,255,.35);border-right:1px solid rgba(255,255,255,.04);">取消</div><div style="flex:1;text-align:center;padding:7px 0;font-size:7px;color:var(--accent);font-weight:600;">确认</div></div>
+      html: `<div style="position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;align-items:center;justify-content:center;">
+        <div style="width:70%;background:#fff;border-radius:8px;border:1px solid var(--border-default);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1);">
+          <div style="text-align:center;font-size:9px;font-weight:600;color:var(--text-head);padding:10px 0 5px;">确认删除</div>
+          <div style="padding:8px 12px;font-size:7px;color:var(--text-body);text-align:center;min-height:28px;display:flex;align-items:center;justify-content:center;">确定删除此项？此操作不可撤销。</div>
+          <div style="display:flex;border-top:1px solid var(--border-subtle);"><div style="flex:1;text-align:center;padding:7px 0;font-size:8px;color:var(--text-muted);border-right:1px solid var(--border-subtle);">取消</div><div style="flex:1;text-align:center;padding:7px 0;font-size:8px;color:var(--accent);font-weight:600;">确认</div></div>
         </div></div>`,
     },
     {
       id: "E", name: "卡片选择",
-      html: `<div style="position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(4*m.scale)}px;padding:${Math.round(14*m.scale)}px 0;">
+      html: `<div style="position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(4*m.scale)}px;padding:${Math.round(14*m.scale)}px 0;">
         <div style="font-size:9px;font-weight:700;color:var(--accent);">选择一张卡牌</div>
         <div style="display:flex;flex-direction:column;gap:${Math.round(4*m.scale)}px;">
           ${Array.from({length:3}, (_, i) => `
-          <div style="width:${Math.round(115*m.scale)}px;padding:${Math.round(7*m.scale)}px ${Math.round(9*m.scale)}px;background:rgba(16,16,30,.95);border:1.3px solid rgba(255,255,255,.08);border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:${Math.round(3*m.scale)}px;">
-            <div style="font-size:5px;padding:0 6px;border-radius:99px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.35);">品质</div>
-            <div style="width:20px;height:20px;background:rgba(255,255,255,.03);border-radius:3px;"></div>
-            <div style="font-size:7px;color:rgba(255,255,255,.65);">卡片 ${i+1}</div>
-            <div style="font-size:6px;padding:1px 12px;border-radius:99px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);">选择此卡</div>
+          <div style="width:${Math.round(115*m.scale)}px;padding:${Math.round(7*m.scale)}px ${Math.round(9*m.scale)}px;background:#fff;border:1.3px solid var(--border-default);border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:${Math.round(3*m.scale)}px;">
+            <div style="font-size:6px;padding:0 6px;border-radius:99px;background:rgba(0,0,0,.04);color:var(--text-muted);">品质</div>
+            <div style="width:20px;height:20px;background:rgba(0,0,0,.03);border-radius:3px;"></div>
+            <div style="font-size:8px;color:var(--text-head);">卡片 ${i+1}</div>
+            <div style="font-size:6px;padding:1px 12px;border-radius:99px;background:rgba(0,0,0,.04);color:var(--text-muted);">选择此卡</div>
           </div>`).join("")}
         </div>
       </div>`,

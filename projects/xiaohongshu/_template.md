@@ -27,4 +27,4 @@
 
 ---
 
-_产出：`YYYY-MM-DD-主题/index.html`（6 张卡片，1080×1440px，暗色系）_
+_产出：`YYYY-MM-DD-主题/index.html` + 6 张卡片PNG（Puppeteer 截图，1080×1440px，暗色系）_

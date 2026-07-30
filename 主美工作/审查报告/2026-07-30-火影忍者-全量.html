@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>火影忍者 美术审查报告 — 2026-07-30（全量数据）</title>
+<style>
+:root {
+  --bg:#f8f9fa;--card-bg:#fff;--text:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;
+  --red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb;
+  --green:#059669;--green-bg:#ecfdf5;--blue:#2563eb;--blue-bg:#eff6ff;--slate:#475569;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+.header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:32px 36px;border-radius:var(--radius);margin-bottom:24px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.header h1{font-size:1.75rem;font-weight:700;margin-bottom:8px}
+.header .meta{font-size:.875rem;color:#94a3b8;display:flex;flex-wrap:wrap;gap:16px}
+.header .warning{background:var(--red-bg);color:var(--red);padding:8px 14px;border-radius:6px;margin-top:12px;font-size:.8rem;display:inline-block}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--card-bg);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border-left:4px solid var(--blue)}
+.kpi-card.risk{border-left-color:var(--red)}
+.kpi-card.good{border-left-color:var(--green)}
+.kpi-card.warn{border-left-color:var(--amber)}
+.kpi-card .label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-card .value{font-size:1.5rem;font-weight:700}
+.kpi-card .sub{font-size:.75rem;color:var(--text-muted);margin-top:2px}
+.section{background:var(--card-bg);border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;box-shadow:var(--shadow)}
+.section h2{font-size:1.25rem;font-weight:700;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.section h3{font-size:1rem;font-weight:600;margin:20px 0 12px;color:var(--slate)}
+.section h4{font-size:.9rem;font-weight:600;margin:16px 0 8px}
+.table-wrap{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{background:#f1f5f9;font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);white-space:nowrap;font-size:.8rem;color:var(--slate);text-transform:uppercase;letter-spacing:.3px}
+td{padding:8px 12px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8fafc}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.75rem;font-weight:600}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-slate{background:#f1f5f9;color:var(--slate)}
+.status-fail{color:var(--red);font-weight:600}
+.bar-track{flex:1;height:20px;background:#f1f5f9;border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px}
+.bar-fill.red{background:var(--red)}.bar-fill.amber{background:var(--amber)}.bar-fill.green{background:var(--green)}.bar-fill.blue{background:var(--blue)}
+.highlight{background:var(--blue-bg);border-left:3px solid var(--blue);padding:12px 16px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.875rem}
+.highlight.red{background:var(--red-bg);border-left-color:var(--red)}
+.highlight.amber{background:var(--amber-bg);border-left-color:var(--amber)}
+.highlight.green{background:var(--green-bg);border-left-color:var(--green)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.split{grid-template-columns:1fr}}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.7rem;font-weight:600;margin-right:2px}
+.tag-p0{background:#fecaca;color:#991b1b}.tag-p1{background:#fed7aa;color:#9a3412}
+.tag-p2{background:#fef08a;color:#854d0e}.tag-p3{background:#dbeafe;color:#1e40af}
+.risk-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;margin:12px 0}
+.risk-bar .seg{display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#fff}
+.risk-bar .seg.red{background:var(--red)}.risk-bar .seg.amber{background:var(--amber)}
+.risk-bar .seg.yellow{background:#ca8a04}.risk-bar .seg.green{background:var(--green)}
+.footer{text-align:center;color:var(--text-muted);font-size:.8rem;padding:20px}
+.advice-card{padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:12px}
+.advice-card h3{margin:0 0 8px!important}
+.advice-card p,.advice-card ul{margin:0;font-size:.875rem}
+.advice-card.urgent{background:var(--red-bg);border-left:4px solid var(--red)}
+.advice-card.urgent h3{color:var(--red)}
+.advice-card.important{background:var(--amber-bg);border-left:4px solid var(--amber)}
+.advice-card.important h3{color:var(--amber)}
+.advice-card.normal{background:var(--green-bg);border-left:4px solid var(--green)}
+.advice-card.normal h3{color:var(--green)}
+@media print{body{background:#fff;padding:0}.section{box-shadow:none;break-inside:avoid;border:1px solid #ddd}.header{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🎨 美术审查报告 — 火影忍者</h1>
+  <div class="meta">
+    <span>📅 2026-07-30</span>
+    <span>📊 全量数据 · 1,695 条</span>
+    <span>🔍 审查类型：标准（4目标）</span>
+    <span>👤 审查人：AI</span>
+  </div>
+  <div class="warning">⚠️ 11 个公式字段因 Base 旧 schema 不可读（制作风险/距交付日/组别等），风险基于计划截止时间 + 进度自行判定。执行人缺失 165 项（9.7%）影响分析精度。</div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpi-grid">
+  <div class="kpi-card"><div class="label">总任务量</div><div class="value">1,695</div><div class="sub">时间跨度 2026-04 ~ 09（6个月）</div></div>
+  <div class="kpi-card risk"><div class="label">已完成率</div><div class="value">68.7%</div><div class="sub">1,164 / 1,695 — 明显偏低</div></div>
+  <div class="kpi-card risk"><div class="label">⚠️ 风险率</div><div class="value" style="color:#dc2626">27.1%</div><div class="sub">🔴39 + ⚠️40 + 🟡380</div></div>
+  <div class="kpi-card"><div class="label">投入人力</div><div class="value">60 人</div><div class="sub">执行人60 + 负责人12 · 人均28.3项</div></div>
+  <div class="kpi-card warn"><div class="label">执行人缺失</div><div class="value">165 项</div><div class="sub">9.7% — 大量任务无人认领</div></div>
+  <div class="kpi-card risk"><div class="label">未排期</div><div class="value">380 项</div><div class="sub">22.4% — 近四分之一无计划</div></div>
+</div>
+
+<!-- 一、基础状况 -->
+<div class="section">
+<h2>📋 一、基础状况</h2>
+
+<div class="split">
+<div>
+<h3>进度分布</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>状态</th><th class="num">数量</th><th class="num">占比</th></tr>
+  <tr><td>✅ 已完成</td><td class="num"><strong>1,164</strong></td><td class="num">68.7%</td></tr>
+  <tr style="background:#fef2f2"><td>📋 未开始</td><td class="num"><strong style="color:#dc2626">418</strong></td><td class="num"><strong style="color:#dc2626">24.7%</strong></td></tr>
+  <tr><td>⏸️ 暂停</td><td class="num">65</td><td class="num">3.8%</td></tr>
+  <tr><td>❌ 作废</td><td class="num">45</td><td class="num">2.7%</td></tr>
+  <tr><td>🔄 进行中</td><td class="num" style="color:#dc2626">3</td><td class="num">0.2%</td></tr>
+</table>
+</div>
+</div>
+<div>
+<h3>对比：火影 vs 指尖三国</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>指标</th><th class="num">火影</th><th class="num">指尖</th></tr>
+  <tr><td>总任务</td><td class="num">1,695</td><td class="num">2,313</td></tr>
+  <tr><td>完成率</td><td class="num" style="color:#dc2626">68.7%</td><td class="num" style="color:#059669">92.6%</td></tr>
+  <tr><td>未开始率</td><td class="num" style="color:#dc2626">24.7%</td><td class="num">5.5%</td></tr>
+  <tr><td>进行中</td><td class="num" style="color:#dc2626">3</td><td class="num">10</td></tr>
+  <tr><td>风险率</td><td class="num" style="color:#dc2626">27.1%</td><td class="num">5.4%</td></tr>
+  <tr><td>执行人缺失</td><td class="num" style="color:#dc2626">9.7%</td><td class="num">2.5%</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<h3>业务类型分布</h3>
+<div class="highlight blue">🔍 火影与指尖同样是 <strong>UI 密集型项目</strong>（UI界面设计均占 40%+），但火影的动作和拆图占比更高（合计 23% vs 指尖 16.3%），反映火影忍者角色数量多、需要大量角色资源拆解。</div>
+<div class="table-wrap">
+<table>
+  <tr><th>类型</th><th class="num">数量</th><th class="num">占比</th><th>比例条</th></tr>
+  <tr><td>UI界面设计</td><td class="num"><strong>693</strong></td><td class="num">40.9%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div></td></tr>
+  <tr><td>动作</td><td class="num">216</td><td class="num">12.7%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:31.2%"></div></div></td></tr>
+  <tr><td>角色原画</td><td class="num">201</td><td class="num">11.9%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:29%"></div></div></td></tr>
+  <tr><td>拆图</td><td class="num">175</td><td class="num">10.3%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:25.3%"></div></div></td></tr>
+  <tr><td>战斗特效</td><td class="num">97</td><td class="num">5.7%</td><td></td></tr>
+  <tr><td>UI动特效</td><td class="num">95</td><td class="num">5.6%</td><td></td></tr>
+  <tr><td>场景原画-功能</td><td class="num">64</td><td class="num">3.8%</td><td></td></tr>
+  <tr><td>功能图标</td><td class="num">61</td><td class="num">3.6%</td><td></td></tr>
+  <tr><td colspan="4" style="color:var(--text-muted)">+ 场景原画-战斗31 · 场景地编17 · 场景特效16 · 道具图标13 · 团队管理10 · 其他5</td></tr>
+</table>
+</div>
+
+<div class="split">
+<div>
+<h3>优先级分布</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>优先级</th><th class="num">数量</th><th class="num">占比</th></tr>
+  <tr><td><span class="tag tag-p0">P0</span></td><td class="num">4</td><td class="num">0.2%</td></tr>
+  <tr><td><span class="tag tag-p1">P1</span></td><td class="num">829</td><td class="num">48.9%</td></tr>
+  <tr><td><span class="tag tag-p2">P2</span></td><td class="num">266</td><td class="num">15.7%</td></tr>
+  <tr><td><span class="tag tag-p3">P3</span></td><td class="num">393</td><td class="num">23.2%</td></tr>
+  <tr><td><span class="badge badge-slate">P4</span></td><td class="num">70</td><td class="num">4.1%</td></tr>
+  <tr><td><span class="badge badge-slate">P5</span></td><td class="num">28</td><td class="num">1.7%</td></tr>
+  <tr><td>⬜ (空)</td><td class="num">105</td><td class="num">6.2%</td></tr>
+</table>
+</div>
+<div class="highlight amber">P1 占比近半（48.9%），P0 仅 4 项。与指尖的 P0 356 项形成鲜明对比——火影的优先级标注更保守（或更诚实）。</div>
+</div>
+<div>
+<h3>人力负载 Top 10</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>执行人</th><th class="num">任务量</th></tr>
+  <tr style="background:#fef2f2"><td>⬜ (空)</td><td class="num"><strong style="color:#dc2626">165</strong></td></tr>
+  <tr><td>何冯雨</td><td class="num">126</td></tr>
+  <tr><td>唐玲玲</td><td class="num">101</td></tr>
+  <tr><td>兰润威</td><td class="num">87</td></tr>
+  <tr><td>聂丙坤</td><td class="num">86</td></tr>
+  <tr><td>陈久龙</td><td class="num">83</td></tr>
+  <tr><td>外包-邓纯</td><td class="num">74</td></tr>
+  <tr><td>张茜</td><td class="num">63</td></tr>
+  <tr><td>杨浩</td><td class="num">56</td></tr>
+  <tr><td>罗雪绮</td><td class="num">51</td></tr>
+</table>
+</div>
+<div class="highlight red">🔴 <strong>165 项无执行人</strong>，占总量 9.7%。这是火影最严重的管理问题——大量任务漂浮在真空中。</div>
+</div>
+</div>
+
+<h3>月度任务完成趋势</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>月份</th><th class="num">总任务</th><th class="num">已完成</th><th class="num">完成率</th><th>趋势条</th></tr>
+  <tr><td>2026-04</td><td class="num">6</td><td class="num">6</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:0.7%"></div></div></td></tr>
+  <tr><td>2026-05</td><td class="num">84</td><td class="num">84</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:9.6%"></div></div></td></tr>
+  <tr><td>2026-06</td><td class="num">273</td><td class="num">272</td><td class="num">99.6%</td><td><div class="bar-track"><div class="bar-fill green" style="width:31.3%"></div></div></td></tr>
+  <tr><td>2026-07</td><td class="num"><strong>872</strong></td><td class="num">792</td><td class="num"><span style="color:#d97706">90.8%</span></td><td><div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div></td></tr>
+  <tr><td>2026-08</td><td class="num">79</td><td class="num">2</td><td class="num"><span style="color:#dc2626">2.5%</span></td><td><div class="bar-track"><div class="bar-fill red" style="width:9.1%"></div></div></td></tr>
+</table>
+</div>
+<div class="highlight amber">📈 7月是产能最高峰（872项），但完成率已降至90.8%。8月目前仅排79项，完成率2.5%——严重偏低。</div>
+</div>
+
+<!-- 二、风险逾期 -->
+<div class="section">
+<h2>⚠️ 二、风险逾期</h2>
+<div class="highlight amber">⚠️ 制作风险/距交付日公式字段不可读（Base旧schema），基于计划截止时间+进度自行判定。与7/29报告的差异：当时用 record-search filter 读<code>制作风险.contains("🔴逾期")</code>得到6项，本次用日期计算得到39项——差异原因是7/29当天到期项在当天不算逾期，今天（7/30）全部转为逾期。</div>
+
+<h3>风险总览</h3>
+<div class="risk-bar">
+  <div class="seg red" style="width:2.3%">🔴39</div>
+  <div class="seg amber" style="width:2.4%">⚠️40</div>
+  <div class="seg yellow" style="width:22.4%">🟡380</div>
+  <div class="seg green" style="width:72.9%">🟢1,236</div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-top:4px">
+  <span>逾期 2.3%</span><span>即将逾期 2.4%</span><span>未排期 22.4%</span><span>正常 72.9%</span>
+</div>
+
+<div class="kpi-grid" style="margin-top:16px">
+  <div class="kpi-card risk"><div class="label">🔴 逾期</div><div class="value">39</div><div class="sub">2.3% — 是7/29报告的6.5倍</div></div>
+  <div class="kpi-card risk"><div class="label">⚠️ 即将逾期(3天)</div><div class="value">40</div><div class="sub">2.4% — 明天将批量转逾期</div></div>
+  <div class="kpi-card risk"><div class="label">🟡 未排期</div><div class="value">380</div><div class="sub">22.4% — 近四分之一</div></div>
+  <div class="kpi-card good"><div class="label">🟢 正常</div><div class="value">1,236</div><div class="sub">72.9%</div></div>
+</div>
+<div class="highlight red"><strong>🔴 风险率 27.1%</strong>——指尖三国仅 5.4%。火影忍者是五个项目中风险最高的。</div>
+
+<h3>🔴 逾期项清单（39 项）</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>任务</th><th>执行人</th><th>业务类型</th><th>截止日</th><th>进度</th><th>优先级</th></tr>
+  <tr style="background:#fef2f2"><td>【UI】【设计】皮肤商城（3张）</td><td>陈久龙</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【UI】联盟远征（序号1）</td><td>左持梦</td><td>UI界面设计</td><td>07-17</td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】特惠基金（6张）</td><td>陈久龙</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】充值排行榜(2张)</td><td>张瑶</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】角色冲刺（2张）</td><td>张瑶</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】光武冲刺（2张）</td><td>张瑶</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】机关冲刺(2张)</td><td>张瑶</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【动作】干柿鬼鲛 banner动作</td><td>闫磐石</td><td>动作</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr><td>【图标】火影饰品图标（53个）</td><td>外包-墨风010</td><td>道具图标</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr><td>【火影】【BOSS】外道魔像-原画制作</td><td>焦列康</td><td>角色原画</td><td>07-29</td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】每日充值弹窗界面（序号3）</td><td>张勇</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr style="background:#fef2f2"><td>【动作】大蛇丸-大招banner动作</td><td>闫磐石</td><td>动作</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【动作】咒印·佐助-大招banner</td><td>陈雪莲</td><td>动作</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【动作】波风水门-大招banner</td><td>陈雪莲</td><td>动作</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【动作】我爱罗-大招banner动作</td><td>闫磐石</td><td>动作</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p3">P3</span></td></tr>
+  <tr style="background:#fef2f2"><td>【特效】白绝入侵特效需求</td><td>徐荦敏</td><td>UI动特效</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【动作】自来也 跑步动作优化</td><td>闫磐石</td><td>动作</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【图标】限时招募功能图标×5</td><td><strong>外包-墨风011</strong></td><td>功能图标</td><td>07-27</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【图标】限时神兵功能图标（彩色4个）</td><td><strong>外包-墨风011</strong></td><td>功能图标</td><td>07-27</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【特效】我爱罗-立绘展示特效</td><td>杨浩</td><td>UI动特效</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【特效】干柿鬼鲛-立绘展示特效</td><td>杨浩</td><td>UI动特效</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】月卡界面优化（序号7）</td><td>曹岚舒</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】忍界大战关卡界面新方案</td><td>罗雪绮</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【原画】通灵兽背景原画</td><td>陈绍</td><td>场景原画-功能</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-amber">进行中</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【特效】赛季入口banner特效</td><td>裴泽丽</td><td>UI动特效</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】新联盟主界面切图</td><td>罗雪绮</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【UI】通用道具弹窗（序号4）</td><td><strong>王文静</strong></td><td>UI界面设计</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【UI】通用道具弹窗（序号5）</td><td><strong>王文静</strong></td><td>UI界面设计</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【UI】通用道具弹窗（序号6）</td><td><strong>王文静</strong></td><td>UI界面设计</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>【UI】通用道具弹窗（序号7-12）×6</td><td><strong>王文静</strong></td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr style="background:#fef2f2"><td>通用弹窗调色</td><td>罗雪绮</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td>⬜ (空)</td></tr>
+  <tr style="background:#fef2f2"><td>规范颜色制作</td><td>罗雪绮</td><td>UI界面设计</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td>⬜ (空)</td></tr>
+</table>
+</div>
+<div class="highlight red">
+  <strong>🔴 逾期特征：</strong><br>
+  • <strong>32 项今天（7/30）到期仍未完成</strong>（占逾期的82%），绝大多数为「未开始」状态<br>
+  • <strong>王文静 独占 9 项</strong>（通用道具弹窗序列4-12），全部未开始且 P1<br>
+  • 外包-墨风011 的 4 项功能图标自 7/27 起逾期，已 3 天未处理<br>
+  • 仅 1 项逾期任务有人在跟进（通灵兽背景原画-陈绍-进行中）
+</div>
+
+<h3>⚠️ 即将逾期（40 项，精选 20 项）</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>任务</th><th>执行人</th><th>业务类型</th><th>截止日</th><th>进度</th></tr>
+  <tr><td>【特效】第四尾·鸣人-战斗特效制作</td><td>张瑾芳</td><td>战斗特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【图标】火影功能图标需求汇总（<strong>195个</strong>）</td><td>周彩霞</td><td>功能图标</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【火影】【BOSS】外道魔像-战斗特效</td><td>王虹</td><td>战斗特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【火影】【BOSS】佩恩地狱道-战斗特效</td><td>于海芳</td><td>战斗特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【火影】【BOSS】佩恩畜生道-战斗特效</td><td>隆欢</td><td>战斗特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】组织对决（群雄逐鹿）（序号4）</td><td>曹岚舒</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】新版64进1UI需求【序号：2】</td><td>任莉梅</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】酒肆占卜（5张）（序号4）</td><td>何冯雨</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】限时招募（序号3/5/6/7）×4</td><td>何冯雨/张勇</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】限时神兵（序号2/4/5）×3</td><td>何冯雨/左持梦</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【动作】波风水门-战斗+5动作</td><td>彭璐</td><td>动作</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【动作】旗木卡卡西-大招banner</td><td>陈雪莲</td><td>动作</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【动作】千手扉间-大招banner</td><td>陈雪莲</td><td>动作</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【图标】主界面功能图标（彩色立体）</td><td>周彩霞</td><td>功能图标</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】秘境美术三个选择图制作</td><td>曹岚舒</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【特效】头像框特效制作</td><td>杨浩</td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI特效】联盟秘传忍术特效</td><td>裴泽丽</td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【原画】火之意志赛季角色皮肤风格</td><td>兰润威</td><td>角色原画</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+</table>
+</div>
+<div class="highlight red">⚠️ <strong>40 项明天（7/31）截止，全部未开始</strong>。明天过后逾期数将从39暴增至~79。何冯雨独占6项、陈雪莲/周彩霞/杨浩/曹岚舒各2-3项。</div>
+
+<div class="split" style="margin-top:20px">
+<div>
+<h3>风险按业务类型</h3>
+<table>
+  <tr><th>类型</th><th class="num">🔴</th><th class="num">⚠️</th><th class="num">合计</th></tr>
+  <tr><td>UI界面设计</td><td class="num">22</td><td class="num">23</td><td class="num"><strong style="color:#dc2626">45</strong></td></tr>
+  <tr><td>动作</td><td class="num">6</td><td class="num">4</td><td class="num"><strong>10</strong></td></tr>
+  <tr><td>UI动特效</td><td class="num">4</td><td class="num">5</td><td class="num"><strong>9</strong></td></tr>
+  <tr><td>功能图标</td><td class="num">4</td><td class="num">2</td><td class="num"><strong>6</strong></td></tr>
+  <tr><td>战斗特效</td><td class="num">0</td><td class="num">4</td><td class="num"><strong>4</strong></td></tr>
+</table>
+</div>
+<div>
+<h3>风险按执行人 Top 10</h3>
+<table>
+  <tr><th>执行人</th><th class="num">🔴</th><th class="num">⚠️</th><th class="num">合计</th></tr>
+  <tr style="background:#fef2f2"><td><strong>王文静</strong></td><td class="num">9</td><td class="num">7</td><td class="num"><strong style="color:#dc2626">16</strong></td></tr>
+  <tr><td>张瑶</td><td class="num">4</td><td class="num">2</td><td class="num"><strong>6</strong></td></tr>
+  <tr><td>何冯雨</td><td class="num">0</td><td class="num">6</td><td class="num"><strong>6</strong></td></tr>
+  <tr><td>闫磐石</td><td class="num">4</td><td class="num">1</td><td class="num"><strong>5</strong></td></tr>
+  <tr><td>陈雪莲</td><td class="num">2</td><td class="num">2</td><td class="num">4</td></tr>
+  <tr><td>外包-墨风011</td><td class="num">4</td><td class="num">0</td><td class="num">4</td></tr>
+  <tr><td>杨浩</td><td class="num">2</td><td class="num">2</td><td class="num">4</td></tr>
+  <tr><td>曹岚舒</td><td class="num">1</td><td class="num">3</td><td class="num">4</td></tr>
+  <tr><td>罗雪绮</td><td class="num">4</td><td class="num">0</td><td class="num">4</td></tr>
+  <tr><td>裴泽丽</td><td class="num">1</td><td class="num">3</td><td class="num">4</td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<!-- 三、信息规范性 -->
+<div class="section">
+<h2>📝 三、信息规范性</h2>
+<div class="table-wrap">
+<table>
+  <tr><th>检查项</th><th>状态</th><th class="num">异常数</th><th class="num">占比</th><th>严重度</th></tr>
+  <tr style="background:#fef2f2"><td><strong>已完成无实际截止</strong></td><td><span class="status-fail">❌ FAIL</span></td><td class="num"><strong style="color:#dc2626">962</strong></td><td class="num"><strong style="color:#dc2626">56.8%</strong></td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>计划截止为空</strong></td><td><span class="status-fail">❌ FAIL</span></td><td class="num"><strong style="color:#dc2626">380</strong></td><td class="num"><strong style="color:#dc2626">22.4%</strong></td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>执行人为空</strong></td><td><span class="status-fail">❌ FAIL</span></td><td class="num"><strong style="color:#dc2626">165</strong></td><td class="num"><strong style="color:#dc2626">9.7%</strong></td><td><span class="badge badge-red">🔴 高</span></td></tr>
+  <tr style="background:#fffbeb"><td>优先级为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">105</td><td class="num">6.2%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr style="background:#fffbeb"><td>暂停/作废无备注</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">95</td><td class="num">5.6%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr><td>主任务为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">57</td><td class="num">3.4%</td><td><span class="badge badge-amber">🟡 中</span></td></tr>
+  <tr><td>实际截止早于计划开始</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">4</td><td class="num">0.2%</td><td><span class="badge badge-green">🟢 低</span></td></tr>
+  <tr><td>业务类型为空</td><td><span class="status-fail">❌ FAIL</span></td><td class="num">1</td><td class="num">0.1%</td><td><span class="badge badge-green">🟢 低</span></td></tr>
+  <tr><td>负责人为空</td><td><span class="status-ok">✅ OK</span></td><td class="num">0</td><td class="num">0%</td><td>—</td></tr>
+</table>
+</div>
+
+<h3>三大核心问题</h3>
+
+<div class="advice-card urgent"><h3>🔴 执行人缺失 165 项（9.7%）</h3>
+<p>火影最严重的管理问题。指尖三国仅 57 项（2.5%），火影是它的近 3 倍。这 165 项中 95 项未排期——无人认领 + 无计划时间 = 完全漂浮状态。其中 110 项处于已完成的旧数据中（可能是历史导入遗留），但仍有 55 项需要立即分配。</p></div>
+
+<div class="advice-card urgent"><h3>🔴 未排期 380 项（22.4%）</h3>
+<p>近四分之一任务无计划截止时间。指尖三国仅 4.1%。未排期按业务类型：UI界面设计占大头。这意味着火影的排期管理覆盖度仅 77.6%，远低于指尖的 95.9%。</p></div>
+
+<div class="advice-card urgent"><h3>🔴 已完成无实际截止 962 项（56.8%）</h3>
+<p>1,164 项已完成中仅 202 项有实际截止。虽比指尖的 72.5% 好一些，但绝对值仍接近千项。UI界面设计 492 项缺失最严重。</p></div>
+</div>
+
+<!-- 四、深度分析 -->
+<div class="section">
+<h2>🔬 四、深度分析</h2>
+
+<div class="split">
+<div>
+<h3>开发阶段分布</h3>
+<table>
+  <tr><th>阶段</th><th class="num">总量</th><th class="num">已完成</th><th class="num">未开始</th><th class="num">暂停</th></tr>
+  <tr><td><strong>量产</strong></td><td class="num"><strong>1,016</strong></td><td class="num">689</td><td class="num" style="color:#dc2626">282</td><td class="num">5</td></tr>
+  <tr><td>优化</td><td class="num">434</td><td class="num">304</td><td class="num">69</td><td class="num" style="color:#d97706">58</td></tr>
+  <tr><td>(空)</td><td class="num">125</td><td class="num">61</td><td class="num">63</td><td class="num">0</td></tr>
+  <tr><td>研发</td><td class="num">120</td><td class="num">110</td><td class="num">4</td><td class="num">2</td></tr>
+</table>
+<div class="highlight amber">📊 量产阶段占 60%，未开始率 27.8%——远高于指尖的 6.4%。<strong>优化阶段暂停 58 项</strong>（13.4%）是异常信号——品质迭代工作大量搁置。</div>
+</div>
+<div>
+<h3>工作量统计</h3>
+<div class="kpi-grid" style="grid-template-columns:1fr 1fr">
+  <div class="kpi-card"><div class="label">标准人日合计</div><div class="value">1,395.7</div></div>
+  <div class="kpi-card"><div class="label">人均标准人日</div><div class="value">23.3</div></div>
+  <div class="kpi-card"><div class="label">外包占比</div><div class="value">11.9%</div><div class="sub">202项</div></div>
+  <div class="kpi-card risk"><div class="label">无执行人</div><div class="value">165</div><div class="sub">9.7%</div></div>
+</div>
+<div class="highlight blue">外包仅 11.9%（指尖 33%），火影以内制为主。外包-邓纯（74项）是最大外部供应商。</div>
+</div>
+</div>
+
+<h3>系统名称 Top 15</h3>
+<table>
+  <tr><th>系统</th><th class="num">任务数</th></tr>
+  <tr><td><strong>角色资源</strong></td><td class="num"><strong>271</strong></td></tr>
+  <tr><td>BOSS</td><td class="num">50</td></tr>
+  <tr><td>角色资源-皮肤</td><td class="num">7</td></tr>
+</table>
+<div class="highlight amber">⚠️ 仅 3 个系统有数据，其余 1,367 项（80.6%）系统名称为空。相比指尖三国有 15+ 个系统分类，火影的系统名称字段几乎未被使用——<strong>无法按功能模块做精细化管理</strong>。</div>
+
+<h3>火影 vs 指尖三国 全量对比</h3>
+<table>
+  <tr><th>维度</th><th class="num">火影忍者</th><th class="num">指尖三国</th><th>差距</th></tr>
+  <tr><td>总任务</td><td class="num">1,695</td><td class="num">2,313</td><td>—</td></tr>
+  <tr><td>完成率</td><td class="num" style="color:#dc2626">68.7%</td><td class="num" style="color:#059669">92.6%</td><td>差 23.9pp</td></tr>
+  <tr><td>未开始率</td><td class="num" style="color:#dc2626">24.7%</td><td class="num">5.5%</td><td>差 19.2pp</td></tr>
+  <tr><td>暂停率</td><td class="num" style="color:#d97706">3.8%</td><td class="num">0.7%</td><td>差 3.1pp</td></tr>
+  <tr><td>🔴逾期</td><td class="num" style="color:#dc2626">39 (2.3%)</td><td class="num">13 (0.6%)</td><td>3倍</td></tr>
+  <tr><td>🟡未排期</td><td class="num" style="color:#dc2626">380 (22.4%)</td><td class="num">94 (4.1%)</td><td>5.5倍</td></tr>
+  <tr><td>执行人缺失</td><td class="num" style="color:#dc2626">165 (9.7%)</td><td class="num">57 (2.5%)</td><td>3.9倍</td></tr>
+  <tr><td>系统名称覆盖率</td><td class="num" style="color:#dc2626">19.4%</td><td class="num">~80%</td><td>差 60pp</td></tr>
+  <tr><td>进行中</td><td class="num" style="color:#dc2626">3</td><td class="num">10</td><td>—</td></tr>
+</table>
+<div class="highlight red">火影忍者在<strong>所有维度</strong>均差于指尖三国。核心差距在未排期率（22.4% vs 4.1%）和执行人缺失率（9.7% vs 2.5%），反映排期管理和责任分配两个基础管理环节存在系统性问题。</div>
+</div>
+
+<!-- 五、综合建议 -->
+<div class="section">
+<h2>💡 五、综合建议</h2>
+
+<div class="advice-card urgent">
+  <h3>1. 🔴【紧急】今天到期的 32 项立即处理</h3>
+  <p>39 项逾期中 32 项今天（7/30）到期。40 项明天（7/31）到期。明天过后逾期数将达 ~79。必须今天完成一轮批量跟进：</p>
+  <ul style="margin-top:8px">
+    <li><strong>王文静</strong>（9项逾期+7项即将）：通用道具弹窗序列 —— 最高优先级</li>
+    <li><strong>张瑶</strong>（4项逾期+2项即将）：冲刺类UI界面</li>
+    <li><strong>闫磐石/陈雪莲</strong>（各4-5项）：banner动作类</li>
+    <li><strong>何冯雨</strong>（6项即将）：限时招募/神兵UI</li>
+  </ul>
+</div>
+
+<div class="advice-card urgent">
+  <h3>2. 🔴【紧急】消灭 165 项无执行人任务</h3>
+  <p>165 项任务无人认领，其中 55 项非历史数据需要立即分配。建议今天逐条过一遍，至少为未开始+未排期的项目指定执行人。</p>
+</div>
+
+<div class="advice-card urgent">
+  <h3>3. 🔴【重要】补齐 380 项未排期任务的时间计划</h3>
+  <p>22.4% 的任务无计划截止——这是造成大量任务堆积成「未开始」状态的根源。建议本周内完成批量排期。</p>
+</div>
+
+<div class="advice-card important">
+  <h3>4. 🟡【重要】优化阶段 58 项暂停审查</h3>
+  <p>优化阶段暂停率高达 13.4%，远超其他阶段。需确认这些品质迭代工作是被什么阻塞的，是否需要重新激活或正式关闭。</p>
+</div>
+
+<div class="advice-card important">
+  <h3>5. 🟡【建议】建立系统名称字段使用规范</h3>
+  <p>80.6% 的任务系统名称为空——火影是目前唯一无法按功能模块做精细化管理的项目。建议参考指尖三国的「英雄/小兵/塔防战斗」分类体系，建立火影的系统名称枚举值。</p>
+</div>
+
+<div class="advice-card normal">
+  <h3>6. 🟢【建议】补齐 962 项实际截止时间</h3>
+  <p>与指尖三国同样的数据质量问题。建议长期在飞书表中加校验规则，短期优先补充近3个月数据。</p>
+</div>
+</div>
+
+<div class="footer">
+  <p>报告生成时间：2026-07-30 · 数据来源：飞书 base_token=<code>CIqGbSjbHa3woDsaGJkcPEZ6nPf</code> table=<code>tblG9BsUII6nIpIE</code> · 全量 1,695 条</p>
+  <p style="margin-top:4px">审查工具链：lark-cli → Node.js 全量分页拉取 → 4目标交叉分析 → HTML 报告</p>
+</div>
+
+</div>
+</body>
+</html>

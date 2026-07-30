@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苍穹诀 美术审查报告 — 2026-07-30（全量数据）</title>
+<style>
+:root{--bg:#f8f9fa;--card-bg:#fff;--text:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb;--green:#059669;--green-bg:#ecfdf5;--blue:#2563eb;--blue-bg:#eff6ff;--slate:#475569;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+.header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:32px 36px;border-radius:var(--radius);margin-bottom:24px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
+.header h1{font-size:1.75rem;font-weight:700;margin-bottom:8px}
+.header .meta{font-size:.875rem;color:#94a3b8;display:flex;flex-wrap:wrap;gap:16px}
+.header .notice{background:var(--green-bg);color:var(--green);padding:8px 14px;border-radius:6px;margin-top:12px;font-size:.8rem;display:inline-block}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{background:var(--card-bg);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--blue)}
+.kpi-card.risk{border-left-color:var(--red)}.kpi-card.good{border-left-color:var(--green)}.kpi-card.warn{border-left-color:var(--amber)}
+.kpi-card .label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-card .value{font-size:1.4rem;font-weight:700}.kpi-card .sub{font-size:.72rem;color:var(--text-muted);margin-top:2px}
+.section{background:var(--card-bg);border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;box-shadow:var(--shadow)}
+.section h2{font-size:1.25rem;font-weight:700;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.section h3{font-size:1rem;font-weight:600;margin:20px 0 12px;color:var(--slate)}
+.table-wrap{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{background:#f1f5f9;font-weight:600;text-align:left;padding:9px 11px;border-bottom:2px solid var(--border);white-space:nowrap;font-size:.78rem;color:var(--slate)}
+td{padding:7px 11px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8fafc}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600}
+.badge-red{background:var(--red-bg);color:var(--red)}.badge-amber{background:var(--amber-bg);color:var(--amber)}.badge-green{background:var(--green-bg);color:var(--green)}.badge-blue{background:var(--blue-bg);color:var(--blue)}.badge-slate{background:#f1f5f9;color:var(--slate)}
+.bar-track{flex:1;height:18px;background:#f1f5f9;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}.bar-fill.red{background:var(--red)}.bar-fill.amber{background:var(--amber)}.bar-fill.green{background:var(--green)}.bar-fill.blue{background:var(--blue)}
+.highlight{background:var(--blue-bg);border-left:3px solid var(--blue);padding:12px 16px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.highlight.red{background:var(--red-bg);border-left-color:var(--red)}.highlight.amber{background:var(--amber-bg);border-left-color:var(--amber)}.highlight.green{background:var(--green-bg);border-left-color:var(--green)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:768px){.split{grid-template-columns:1fr}}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:.68rem;font-weight:600;margin-right:2px}
+.tag-p0{background:#fecaca;color:#991b1b}.tag-p1{background:#fed7aa;color:#9a3412}.tag-p2{background:#fef08a;color:#854d0e}.tag-p3{background:#dbeafe;color:#1e40af}
+.risk-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin:12px 0}
+.risk-bar .seg{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:#fff}
+.risk-bar .seg.red{background:var(--red)}.risk-bar .seg.amber{background:var(--amber)}.risk-bar .seg.yellow{background:#ca8a04}.risk-bar .seg.green{background:var(--green)}
+.advice-card{padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:10px}
+.advice-card h3{margin:0 0 8px!important;font-size:.95rem}.advice-card p,.advice-card ul{margin:0;font-size:.85rem}
+.advice-card.urgent{background:var(--red-bg);border-left:4px solid var(--red)}.advice-card.urgent h3{color:var(--red)}
+.advice-card.important{background:var(--amber-bg);border-left:4px solid var(--amber)}.advice-card.important h3{color:var(--amber)}
+.advice-card.normal{background:var(--green-bg);border-left:4px solid var(--green)}.advice-card.normal h3{color:var(--green)}
+.footer{text-align:center;color:var(--text-muted);font-size:.8rem;padding:20px}
+.cmp-table td:first-child{font-weight:600}
+.cmp-best{color:var(--green);font-weight:700}.cmp-worst{color:var(--red);font-weight:700}
+@media print{body{background:#fff;padding:0}.section{box-shadow:none;break-inside:avoid;border:1px solid #ddd}.header{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>🎨 美术审查报告 — 苍穹诀</h1>
+  <div class="meta">
+    <span>📅 2026-07-30</span>
+    <span>📊 全量数据 · 5,064 条</span>
+    <span>🔍 审查类型：标准（4目标）</span>
+    <span>👤 审查人：AI</span>
+    <span>⏳ 时间跨度：2025-08 ~ 2026-12（17个月）</span>
+  </div>
+  <div class="notice">✅ 苍穹诀是五个项目中<strong>最成熟</strong>的项目——规模最大（5,064条）、团队最大（98人）、历史最久（17个月）、风险最低（2.5%）。已进入维护期。</div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid">
+  <div class="kpi-card"><div class="label">总任务量</div><div class="value">5,064</div><div class="sub">五项目最大 · 17个月跨度</div></div>
+  <div class="kpi-card good"><div class="label">已完成率</div><div class="value" style="color:#059669">96.3%</div><div class="sub">4,878 / 5,064 — 最优</div></div>
+  <div class="kpi-card good"><div class="label">风险率</div><div class="value" style="color:#059669">2.5%</div><div class="sub">🔴7 + ⚠️9 + 🟡110</div></div>
+  <div class="kpi-card"><div class="label">投入人力</div><div class="value">98 人</div><div class="sub">执行人98 · 负责人16 · 人均51.7</div></div>
+  <div class="kpi-card warn"><div class="label">主任务缺失</div><div class="value">815 项</div><div class="sub">16.1% — 模块归类不足</div></div>
+  <div class="kpi-card"><div class="label">外包占比</div><div class="value">3.6%</div><div class="sub">181项 · 以内制为主</div></div>
+</div>
+
+<!-- 一、基础状况 -->
+<div class="section">
+<h2>📋 一、基础状况</h2>
+
+<div class="split">
+<div>
+<h3>进度分布</h3>
+<table>
+  <tr><th>状态</th><th class="num">数量</th><th class="num">占比</th></tr>
+  <tr><td>✅ 已完成</td><td class="num"><strong>4,878</strong></td><td class="num">96.3%</td></tr>
+  <tr><td>📋 未开始</td><td class="num">118</td><td class="num">2.3%</td></tr>
+  <tr><td>❌ 作废</td><td class="num">53</td><td class="num">1.0%</td></tr>
+  <tr><td>⏸️ 暂停</td><td class="num">13</td><td class="num">0.3%</td></tr>
+  <tr><td>🔄 进行中</td><td class="num">2</td><td class="num">0.0%</td></tr>
+</table>
+</div>
+<div>
+<h3>三项目进度对比</h3>
+<table>
+  <tr><th>状态</th><th>苍穹诀</th><th>火影</th><th>指尖</th></tr>
+  <tr><td>已完成</td><td class="num cmp-best">96.3%</td><td class="num">68.7%</td><td class="num">92.6%</td></tr>
+  <tr><td>未开始</td><td class="num cmp-best">2.3%</td><td class="num cmp-worst">24.7%</td><td class="num">5.5%</td></tr>
+  <tr><td>暂停</td><td class="num cmp-best">0.3%</td><td class="num cmp-worst">3.8%</td><td class="num">0.7%</td></tr>
+  <tr><td>作废</td><td class="num">1.0%</td><td class="num cmp-worst">2.7%</td><td class="num">0.6%</td></tr>
+</table>
+</div>
+</div>
+
+<h3>业务类型分布（19 类）</h3>
+<div class="highlight blue">🔍 苍穹诀是<strong>UI密集型+图标重型</strong>项目。UI界面设计 32.6% + 道具图标 10.4% + UI动特效 10.0% + 功能图标 9.3% = 图标/UI相关合计 <strong>62.3%</strong>。与指尖三国（偏UI）、火影（偏动作拆图）形成差异化。</div>
+<table>
+  <tr><th>类型</th><th class="num">数量</th><th class="num">占比</th><th>比例条</th></tr>
+  <tr><td>UI界面设计</td><td class="num"><strong>1,649</strong></td><td class="num">32.6%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div></td></tr>
+  <tr><td>道具图标</td><td class="num">526</td><td class="num">10.4%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:31.9%"></div></div></td></tr>
+  <tr><td>UI动特效</td><td class="num">505</td><td class="num">10.0%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:30.6%"></div></div></td></tr>
+  <tr><td>功能图标</td><td class="num">472</td><td class="num">9.3%</td><td><div class="bar-track"><div class="bar-fill blue" style="width:28.6%"></div></div></td></tr>
+  <tr><td>角色原画</td><td class="num">455</td><td class="num">9.0%</td><td></td></tr>
+  <tr><td>动作</td><td class="num">446</td><td class="num">8.8%</td><td></td></tr>
+  <tr><td>拆图</td><td class="num">315</td><td class="num">6.2%</td><td></td></tr>
+  <tr><td>战斗特效</td><td class="num">281</td><td class="num">5.5%</td><td></td></tr>
+  <tr><td>场景原画-功能</td><td class="num">236</td><td class="num">4.7%</td><td></td></tr>
+  <tr><td colspan="4" style="color:var(--text-muted)">+ 属性图标51 · 场景原画-战斗35 · 团队管理29 · 场景地编23 · 场景特效15 · 引擎配置8 · 技能图标6 · 特效设计6 · 其它2</td></tr>
+</table>
+
+<div class="split">
+<div>
+<h3>优先级分布</h3>
+<table>
+  <tr><th>优先级</th><th class="num">数量</th><th class="num">占比</th></tr>
+  <tr><td><span class="tag tag-p0">P0</span></td><td class="num">124</td><td class="num">2.4%</td></tr>
+  <tr><td><span class="tag tag-p1">P1</span></td><td class="num">2,509</td><td class="num">49.5%</td></tr>
+  <tr><td><span class="tag tag-p2">P2</span></td><td class="num">1,046</td><td class="num">20.7%</td></tr>
+  <tr><td><span class="tag tag-p3">P3</span></td><td class="num">748</td><td class="num">14.8%</td></tr>
+  <tr><td><span class="badge badge-slate">P4</span></td><td class="num">289</td><td class="num">5.7%</td></tr>
+  <tr><td><span class="badge badge-slate">P5</span></td><td class="num">89</td><td class="num">1.8%</td></tr>
+  <tr><td>⬜ (空)</td><td class="num">259</td><td class="num">5.1%</td></tr>
+</table>
+</div>
+<div>
+<h3>人力负载 Top 10</h3>
+<table>
+  <tr><th>执行人</th><th class="num">任务量</th></tr>
+  <tr><td><strong>李旭峰</strong></td><td class="num">346</td></tr>
+  <tr><td>王文静</td><td class="num">327</td></tr>
+  <tr><td>唐玲玲</td><td class="num">289</td></tr>
+  <tr><td>周彩霞</td><td class="num">265</td></tr>
+  <tr><td>石维松</td><td class="num">254</td></tr>
+  <tr><td>刘茜</td><td class="num">231</td></tr>
+  <tr><td>李翰</td><td class="num">208</td></tr>
+  <tr><td>易辉</td><td class="num">167</td></tr>
+  <tr><td>周毅</td><td class="num">160</td></tr>
+  <tr><td>刘桐妤</td><td class="num">151</td></tr>
+</table>
+<div class="highlight amber">⚠️ 王文静在苍穹诀有 327 项任务，同时在火影忍者有 16 项风险任务——是<strong>跨项目关键人</strong>。</div>
+</div>
+</div>
+
+<h3>月度任务趋势（17 个月）</h3>
+<div class="highlight blue">📈 2025-12 是产能巅峰（1,368项/月），之后逐月递减。2026年进入维护期，月均 ~230 项。这与火影（7月872项还在冲）和指尖（5-6月700+）形成鲜明对比——苍穹诀已过生命周期高峰。</div>
+<table>
+  <tr><th>月份</th><th class="num">总任务</th><th class="num">已完成</th><th class="num">完成率</th><th>趋势</th></tr>
+  <tr><td>2025-08</td><td class="num">2</td><td class="num">2</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:0.1%"></div></div></td></tr>
+  <tr><td>2025-09</td><td class="num">52</td><td class="num">52</td><td class="num">100%</td><td><div class="bar-track"><div class="bar-fill green" style="width:3.8%"></div></div></td></tr>
+  <tr><td>2025-10</td><td class="num">143</td><td class="num">142</td><td class="num">99.3%</td><td><div class="bar-track"><div class="bar-fill green" style="width:10.5%"></div></div></td></tr>
+  <tr><td>2025-11</td><td class="num">646</td><td class="num">640</td><td class="num">99.1%</td><td><div class="bar-track"><div class="bar-fill green" style="width:47.2%"></div></div></td></tr>
+  <tr style="background:#eff6ff"><td>2025-12</td><td class="num"><strong>1,368</strong></td><td class="num">1,346</td><td class="num">98.4%</td><td><div class="bar-track"><div class="bar-fill green" style="width:100%"></div></div></td></tr>
+  <tr><td>2026-01</td><td class="num">1,071</td><td class="num">1,068</td><td class="num">99.7%</td><td><div class="bar-track"><div class="bar-fill green" style="width:78.3%"></div></div></td></tr>
+  <tr><td>2026-02</td><td class="num">288</td><td class="num">287</td><td class="num">99.7%</td><td></td></tr>
+  <tr><td>2026-03</td><td class="num">348</td><td class="num">348</td><td class="num">100%</td><td></td></tr>
+  <tr><td>2026-04</td><td class="num">283</td><td class="num">283</td><td class="num">100%</td><td></td></tr>
+  <tr><td>2026-05</td><td class="num">227</td><td class="num">227</td><td class="num">100%</td><td></td></tr>
+  <tr><td>2026-06</td><td class="num">234</td><td class="num">234</td><td class="num">100%</td><td></td></tr>
+  <tr><td>2026-07</td><td class="num">227</td><td class="num">212</td><td class="num"><span style="color:#d97706">93.4%</span></td><td></td></tr>
+  <tr><td>2026-08</td><td class="num">39</td><td class="num">0</td><td class="num" style="color:#dc2626">0%</td><td></td></tr>
+  <tr><td>2026-09</td><td class="num">21</td><td class="num">0</td><td class="num">0%</td><td></td></tr>
+</table>
+</div>
+
+<!-- 二、风险 -->
+<div class="section">
+<h2>⚠️ 二、风险逾期</h2>
+
+<h3>风险总览</h3>
+<div class="risk-bar">
+  <div class="seg red" style="width:0.1%">7</div>
+  <div class="seg amber" style="width:0.2%">9</div>
+  <div class="seg yellow" style="width:2.2%">110</div>
+  <div class="seg green" style="width:97.5%">4,938</div>
+</div>
+<div class="kpi-grid" style="margin-top:14px">
+  <div class="kpi-card good"><div class="label">🔴 逾期</div><div class="value">7</div><div class="sub">0.1% — 极低</div></div>
+  <div class="kpi-card good"><div class="label">⚠️ 即将逾期</div><div class="value">9</div><div class="sub">0.2%</div></div>
+  <div class="kpi-card"><div class="label">🟡 未排期</div><div class="value">110</div><div class="sub">2.2%</div></div>
+  <div class="kpi-card good"><div class="label">🟢 正常</div><div class="value">4,938</div><div class="sub">97.5% — 极高</div></div>
+</div>
+<div class="highlight green">✅ 风险率 <strong>2.5%</strong>——五项目最低。火影 27.1%、指尖 5.4%。苍穹诀的排期管理是标杆水平。</div>
+
+<h3>🔴 逾期项（7 项）</h3>
+<table>
+  <tr><th>任务</th><th>执行人</th><th>业务类型</th><th>截止日</th><th>进度</th><th>优先级</th></tr>
+  <tr style="background:#fef2f2"><td>【图标】圣物系统宝箱图标需求</td><td>易辉</td><td>道具图标</td><td><span style="color:#dc2626;font-weight:600">07-30 ⚡</span></td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【UI】千里单骑-每日签到</td><td><strong>唐玲玲</strong></td><td>UI界面设计</td><td>07-23</td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr><td>【UI】千里单骑-单骑基金</td><td><strong>唐玲玲</strong></td><td>UI界面设计</td><td>07-23</td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr><td>【UI】千里单骑-单骑周卡</td><td><strong>唐玲玲</strong></td><td>UI界面设计</td><td>07-22</td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+  <tr><td>【UI】游戏卡牌和信息优化</td><td><strong>唐玲玲</strong></td><td>UI界面设计</td><td>07-29</td><td><span class="badge badge-slate">暂停</span></td><td><span class="tag tag-p3">P4</span></td></tr>
+  <tr><td>【图标】圣物系统图标需求</td><td>周彩霞</td><td>道具图标</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p1">P1</span></td></tr>
+  <tr><td>【图标】神水镜限时招募活动图标×3</td><td>周彩霞</td><td>功能图标</td><td>07-29</td><td><span class="badge badge-red">未开始</span></td><td><span class="tag tag-p2">P2</span></td></tr>
+</table>
+<div class="highlight amber">🔍 逾期特征：唐玲玲 4 项（千里单骑系列全部暂停）、周彩霞 2 项图标、易辉 1 项。无大规模逾期。</div>
+
+<h3>⚠️ 即将逾期（9 项）</h3>
+<table>
+  <tr><th>任务</th><th>执行人</th><th>业务类型</th><th>截止日</th><th>进度</th></tr>
+  <tr><td>【原画】神陆逊 原皮 - 武器原画</td><td style="color:#dc2626">(空)❗</td><td>角色原画</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【特效】神吕布 皮肤（03）- 立绘特效</td><td>刘茜</td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【特效】神吕布 皮肤（03）- 光武特效</td><td>易芷清</td><td>UI动特效</td><td>08-01</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【动作】第一期月度福利活动-背景人物动作</td><td>周毅</td><td>动作</td><td>07-31</td><td><span class="badge badge-amber">进行中</span></td></tr>
+  <tr><td>【特效】三重转盘特效需求</td><td>刘茜</td><td>UI动特效</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】三国-繁体-开服倒计时界面</td><td>唐玲玲</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【UI】三国-繁体-账号绑定界面</td><td>唐玲玲</td><td>UI界面设计</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>改反馈</td><td>周毅</td><td>动作</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+  <tr><td>【图标】vip客服-客服图标</td><td>唐玲玲</td><td>功能图标</td><td>07-31</td><td><span class="badge badge-red">未开始</span></td></tr>
+</table>
+<div class="highlight amber">唐玲玲再+3项即将逾期（合计7项风险任务）。1项无执行人（神陆逊武器原画 P4）。整体风险可控。</div>
+</div>
+
+<!-- 三、信息规范 -->
+<div class="section">
+<h2>📝 三、信息规范性</h2>
+<table>
+  <tr><th>检查项</th><th class="num">异常数</th><th class="num">占比</th><th>严重度</th><th>火影对比</th><th>指尖对比</th></tr>
+  <tr style="background:#fef2f2"><td><strong>已完成无实际截止</strong></td><td class="num"><strong>3,564</strong></td><td class="num"><strong>70.4%</strong></td><td><span class="badge badge-red">🔴高</span></td><td class="num">56.8%</td><td class="num">72.5%</td></tr>
+  <tr style="background:#fef2f2"><td><strong>主任务为空</strong></td><td class="num"><strong>815</strong></td><td class="num"><strong>16.1%</strong></td><td><span class="badge badge-red">🔴高</span></td><td class="num">3.4%</td><td class="num">8.3%</td></tr>
+  <tr><td>优先级为空</td><td class="num">259</td><td class="num">5.1%</td><td><span class="badge badge-amber">🟡中</span></td><td class="num">6.2%</td><td class="num">2.7%</td></tr>
+  <tr><td>计划截止为空</td><td class="num">110</td><td class="num">2.2%</td><td><span class="badge badge-amber">🟡中</span></td><td class="num cmp-worst">22.4%</td><td class="num">4.1%</td></tr>
+  <tr><td>执行人为空</td><td class="num">60</td><td class="num">1.2%</td><td><span class="badge badge-green">🟢低</span></td><td class="num cmp-worst">9.7%</td><td class="num">2.5%</td></tr>
+  <tr><td>暂停/作废无备注</td><td class="num">49</td><td class="num">1.0%</td><td><span class="badge badge-green">🟢低</span></td><td class="num">5.6%</td><td class="num">0.9%</td></tr>
+  <tr><td>负责人为空</td><td class="num">9</td><td class="num">0.2%</td><td><span class="badge badge-green">🟢低</span></td><td class="num">0%</td><td class="num">0.2%</td></tr>
+  <tr><td>业务类型为空</td><td class="num">4</td><td class="num">0.1%</td><td><span class="badge badge-green">🟢低</span></td><td class="num">0.1%</td><td class="num">0.3%</td></tr>
+</table>
+
+<div class="split" style="margin-top:16px">
+<div>
+<h3>🔴 已完成无实际截止（3,564项）</h3>
+<div class="highlight red">与指尖三国（72.5%）并列的共性顽疾。4,878 项已完成中仅 1,314 项有实际截止。三大项目此项均超 55%，说明<strong>这是飞书排期表的系统性缺陷</strong>，非个别项目管理问题。</div>
+</div>
+<div>
+<h3>🔴 主任务为空（815项，16.1%）</h3>
+<div class="highlight red">苍穹诀独有问题——是火影（3.4%）的<strong>4.7倍</strong>、指尖（8.3%）的<strong>2倍</strong>。815 项仅有子任务无主任务归类，无法按功能模块聚合。这是历史遗留——早期任务创建时可能未强制要求填写主任务字段。</div>
+</div>
+</div>
+</div>
+
+<!-- 四、深度分析 -->
+<div class="section">
+<h2>🔬 四、深度分析</h2>
+
+<div class="split">
+<div>
+<h3>开发阶段分布</h3>
+<table>
+  <tr><th>阶段</th><th class="num">总量</th><th class="num">已完成</th><th class="num">未开始</th></tr>
+  <tr><td><strong>量产</strong></td><td class="num"><strong>4,213</strong></td><td class="num">4,047</td><td class="num">109</td></tr>
+  <tr><td>优化</td><td class="num">590</td><td class="num">582</td><td class="num">1</td></tr>
+  <tr><td>研发</td><td class="num">149</td><td class="num">145</td><td class="num">0</td></tr>
+  <tr><td>(空)</td><td class="num">112</td><td class="num">104</td><td class="num">8</td></tr>
+</table>
+<div class="highlight blue">量产占 83.2%——比指尖（77.3%）更高。研发仅 149 项且全部完成。这是最典型的<strong>成熟运营期</strong>项目画像。</div>
+</div>
+<div>
+<h3>系统名称 Top 10</h3>
+<table>
+  <tr><th>系统</th><th class="num">任务数</th></tr>
+  <tr><td><strong>角色资源</strong></td><td class="num"><strong>875</strong></td></tr>
+  <tr><td>角色资源-皮肤</td><td class="num">335</td></tr>
+  <tr><td>光武</td><td class="num">183</td></tr>
+  <tr><td>机关兽</td><td class="num">123</td></tr>
+  <tr><td>UI动特效</td><td class="num">74</td></tr>
+  <tr><td>限时招募</td><td class="num">72</td></tr>
+  <tr><td>诸侯纷争</td><td class="num">61</td></tr>
+  <tr><td>上古神兵</td><td class="num">51</td></tr>
+  <tr><td>称号</td><td class="num">51</td></tr>
+  <tr><td>BOSS</td><td class="num">38</td></tr>
+</table>
+<div class="highlight blue">系统覆盖率 48.3%——介于指尖（~80%）和火影（19.4%）之间。角色资源（875+335=1,210）是绝对核心。</div>
+</div>
+</div>
+
+<h3>三项目全面对比</h3>
+<table class="cmp-table">
+  <tr><th>维度</th><th>苍穹诀</th><th>火影忍者</th><th>指尖三国</th></tr>
+  <tr><td>总任务量</td><td class="num"><strong>5,064</strong></td><td class="num">1,695</td><td class="num">2,313</td></tr>
+  <tr><td>完成率</td><td class="num cmp-best">96.3% ⭐</td><td class="num cmp-worst">68.7%</td><td class="num">92.6%</td></tr>
+  <tr><td>风险率</td><td class="num cmp-best">2.5% ⭐</td><td class="num cmp-worst">27.1%</td><td class="num">5.4%</td></tr>
+  <tr><td>🔴逾期</td><td class="num cmp-best">7 ⭐</td><td class="num cmp-worst">39</td><td class="num">13</td></tr>
+  <tr><td>🟡未排期</td><td class="num cmp-best">110 (2.2%) ⭐</td><td class="num cmp-worst">380 (22.4%)</td><td class="num">94 (4.1%)</td></tr>
+  <tr><td>执行人缺失</td><td class="num cmp-best">60 (1.2%) ⭐</td><td class="num cmp-worst">165 (9.7%)</td><td class="num">57 (2.5%)</td></tr>
+  <tr><td>系统覆盖率</td><td class="num">48.3%</td><td class="num cmp-worst">19.4%</td><td class="num cmp-best">~80% ⭐</td></tr>
+  <tr><td>主任务缺失</td><td class="num cmp-worst">815 (16.1%)</td><td class="num cmp-best">57 (3.4%) ⭐</td><td class="num">192 (8.3%)</td></tr>
+  <tr><td>人力规模</td><td class="num">98 人</td><td class="num">60 人</td><td class="num">51 人</td></tr>
+  <tr><td>时间跨度</td><td>17 个月</td><td>6 个月</td><td>7 个月</td></tr>
+  <tr><td>生命周期</td><td><span class="badge badge-green">维护期</span></td><td><span class="badge badge-red">冲峰期</span></td><td><span class="badge badge-blue">稳定期</span></td></tr>
+</table>
+<div class="highlight green">苍穹诀在 10 项对比中拿下 <strong>6 项最优</strong>。唯一短板：主任务缺失率（16.1%）和系统覆盖率（48.3%）——都是历史数据质量遗留问题，非当前管理问题。</div>
+</div>
+
+<!-- 五、建议 -->
+<div class="section">
+<h2>💡 五、综合建议</h2>
+
+<div class="advice-card important">
+  <h3>1. 🟡 唐玲玲 7 项风险任务集中处理</h3>
+  <p>唐玲玲是苍穹诀唯一风险集中人：3 项千里单骑 UI（暂停）+ 1 项游戏卡牌优化（暂停）+ 3 项即将逾期（繁体UI×2 + 客服图标）。建议沟通确认千里单骑系列是继续还是正式关闭。</p>
+</div>
+
+<div class="advice-card important">
+  <h3>2. 🟡 补齐 815 项主任务归类</h3>
+  <p>16.1% 的任务缺主任务——苍穹诀独有短板。建议按系统名称批量回填主任务字段，优先处理角色资源（875项）和角色资源-皮肤（335项）两个最大系统。</p>
+</div>
+
+<div class="advice-card normal">
+  <h3>3. 🟢 8-9 月排期仅 60 项——维护期正常</h3>
+  <p>苍穹诀已过生命周期高峰（2025-12），8月39项+9月21项是<strong>维护期正常水平</strong>，不需要像火影那样预警。但需关注是否有未录入的新需求。</p>
+</div>
+
+<div class="advice-card normal">
+  <h3>4. 🟢 王文静跨项目负载关注</h3>
+  <p>王文静在苍穹诀有 327 项（历史已完成为主），同时在火影忍者当前有 16 项风险任务。如果两个项目同时有需求，需协调优先级。</p>
+</div>
+</div>
+
+<div class="footer">
+  <p>报告生成时间：2026-07-30 · 数据来源：飞书 base_token=<code>CCDnbqmhUayNqtsSNoqc6sNpnQ2</code> table=<code>tbla5vOHQXQmG5zm</code> · 全量 5,064 条</p>
+  <p style="margin-top:4px">审查工具链：lark-cli → Node.js 全量分页（26页）→ 4目标交叉分析 → HTML 报告</p>
+</div>
+
+</div>
+</body>
+</html>

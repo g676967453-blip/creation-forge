@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美术排期表 数据设计分析报告 — 2026-07-30</title>
+<style>
+:root{--bg:#f8f9fa;--card-bg:#fff;--text:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb;--green:#059669;--green-bg:#ecfdf5;--blue:#2563eb;--blue-bg:#eff6ff;--slate:#475569;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.06)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+.header{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:36px 40px;border-radius:var(--radius);margin-bottom:28px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.header h1{font-size:1.8rem;font-weight:700;margin-bottom:10px}
+.header .sub{font-size:.9rem;color:#94a3b8;line-height:1.6}
+.section{background:var(--card-bg);border-radius:var(--radius);padding:32px 36px;margin-bottom:22px;box-shadow:var(--shadow)}
+.section h2{font-size:1.3rem;font-weight:700;margin-bottom:8px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.section h3{font-size:1.05rem;font-weight:600;margin:24px 0 10px;color:var(--slate)}
+.section h4{font-size:.9rem;font-weight:600;margin:16px 0 6px}
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th{background:#f1f5f9;font-weight:600;text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);font-size:.78rem;color:var(--slate);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#f8fafc}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:600}
+.badge-red{background:var(--red-bg);color:var(--red)}.badge-amber{background:var(--amber-bg);color:var(--amber)}.badge-green{background:var(--green-bg);color:var(--green)}.badge-blue{background:var(--blue-bg);color:var(--blue)}.badge-slate{background:#f1f5f9;color:var(--slate)}
+.bar-track{height:16px;background:#f1f5f9;border-radius:3px;overflow:hidden;margin:2px 0}
+.bar-fill{height:100%;border-radius:3px}.bar-fill.red{background:var(--red)}.bar-fill.amber{background:var(--amber)}.bar-fill.green{background:var(--green)}.bar-fill.blue{background:var(--blue)}
+.highlight{background:var(--blue-bg);border-left:3px solid var(--blue);padding:12px 16px;border-radius:0 6px 6px 0;margin:14px 0;font-size:.85rem}
+.highlight.red{background:var(--red-bg);border-left-color:var(--red)}.highlight.amber{background:var(--amber-bg);border-left-color:var(--amber)}.highlight.green{background:var(--green-bg);border-left-color:var(--green)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:768px){.split{grid-template-columns:1fr}}
+.goal-card{border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.goal-card h3{display:flex;align-items:center;gap:10px;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.goal-card .verdict{font-size:.82rem;margin-left:auto}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}@media(max-width:768px){.grid-3{grid-template-columns:1fr}}
+.metric-card{background:#f8fafc;border-radius:8px;padding:16px;text-align:center}
+.metric-card .val{font-size:1.5rem;font-weight:700}.metric-card .lbl{font-size:.72rem;color:var(--text-muted);margin-top:4px}
+.finding{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.finding .icon{font-size:1.2rem;flex-shrink:0;width:28px}
+.finding .body{flex:1;font-size:.85rem}
+.finding .body strong{display:block;margin-bottom:2px}
+.rec-card{padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:10px;font-size:.85rem}
+.rec-card h4{margin:0 0 6px!important;font-size:.9rem}
+.rec-card.p0{background:var(--red-bg);border-left:4px solid var(--red)}.rec-card.p0 h4{color:var(--red)}
+.rec-card.p1{background:var(--amber-bg);border-left:4px solid var(--amber)}.rec-card.p1 h4{color:var(--amber)}
+.rec-card.p2{background:var(--blue-bg);border-left:4px solid var(--blue)}.rec-card.p2 h4{color:var(--blue)}
+.rec-card.p3{background:var(--green-bg);border-left:4px solid var(--green)}.rec-card.p3 h4{color:var(--green)}
+.score-ring{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;font-weight:700;font-size:1.1rem;flex-shrink:0}
+.score-ring.low{background:var(--red-bg);color:var(--red);border:3px solid var(--red)}
+.score-ring.mid{background:var(--amber-bg);color:var(--amber);border:3px solid var(--amber)}
+.score-ring.high{background:var(--green-bg);color:var(--green);border:3px solid var(--green)}
+.footer{text-align:center;color:var(--text-muted);font-size:.8rem;padding:24px}
+@media print{body{background:#fff;padding:0}.section{box-shadow:none;break-inside:avoid;border:1px solid #ddd}.header{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>📐 美术排期表 数据设计分析报告</h1>
+  <div class="sub">
+    分析对象：飞书 Base「美术排期表」— 苍穹诀 / 火影忍者 / 指尖三国 三项目<br>
+    分析范围：表结构（42字段）、数据规则、数据质量（共9,072条）、与4大管理目标的匹配度<br>
+    分析日期：2026-07-30 · 基于全量数据审查
+  </div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="section">
+<h2>📊 总览：表设计健康度</h2>
+
+<div class="grid-3" style="margin-top:16px">
+  <div class="metric-card">
+    <div class="val" style="color:var(--red)">10/42</div>
+    <div class="lbl">公式字段不可读（24%）<br>Base 旧 schema 根因</div>
+  </div>
+  <div class="metric-card">
+    <div class="val" style="color:var(--red)">67%</div>
+    <div class="lbl">平均实际截止缺失率<br>三项目 962~3,564 项</div>
+  </div>
+  <div class="metric-card">
+    <div class="val" style="color:var(--amber)">2/4</div>
+    <div class="lbl">管理目标无法有效支撑<br>目标一和目标四严重受限</div>
+  </div>
+</div>
+
+<div class="highlight red" style="margin-top:16px">
+  <strong>核心诊断：</strong>飞书美术排期表是一张「记录表」而非「管理表」。它能记录「谁在什么时候要做什么」，但无法有效回答「有什么风险」「谁产能高」「阶段需求变化」这三个核心管理问题。10 个公式字段因 Base 旧 schema 全部不可读——恰是风险预警、产能计算、趋势预测的关键字段。
+</div>
+</div>
+
+<!-- GOAL 1 -->
+<div class="section">
+<h2>🎯 目标一：持续监测美术任务进度</h2>
+<div class="highlight amber">这是排期表<strong>最核心的设计目的</strong>——但也是受公式字段不可读影响最严重的目标。</div>
+
+<div class="goal-card">
+<h3>数据点需求 vs 实际可用性 <span class="verdict"><span class="badge badge-amber">⚠️ 部分可用</span></span></h3>
+<table>
+  <tr><th>需要的数据点</th><th>字段名</th><th>存在</th><th>可读</th><th>数据质量</th><th>判定</th></tr>
+  <tr><td>任务完成状态</td><td>进度</td><td>✅</td><td>✅</td><td>三项目 99%+ 填充</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr><td>计划交付日期</td><td>计划截止时间</td><td>✅</td><td>✅</td><td>苍穹诀 97.8% · 指尖 95.9% · 火影 77.6%</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>风险等级判定</strong></td><td>制作风险</td><td>✅</td><td>❌ 公式</td><td>—</td><td><span class="badge badge-red">不可用</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>距交付剩余天数</strong></td><td>距交付日</td><td>✅</td><td>❌ 公式</td><td>—</td><td><span class="badge badge-red">不可用</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>预排期风险</strong></td><td>预排期风险</td><td>✅</td><td>❌ 公式</td><td>—</td><td><span class="badge badge-red">不可用</span></td></tr>
+  <tr><td>实际交付日期</td><td>实际截止时间</td><td>✅</td><td>✅</td><td style="color:var(--red)">缺失 57-72%</td><td><span class="badge badge-amber">部分可用</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>实际 vs 计划偏差</strong></td><td>—</td><td>❌</td><td>—</td><td>—</td><td><span class="badge badge-red">不存在</span></td></tr>
+</table>
+</div>
+
+<div class="finding"><div class="icon">🔴</div><div class="body"><strong>致命缺陷：风险预警机制完全失效</strong>制作风险、距交付日、预排期风险——三个最关键的监测公式字段全部不可读。主美无法在飞书表中直接看到「哪些任务逾期了」「哪些即将逾期」，只能靠人工逐条检查日期。这是 Base 旧 schema 不计算后端公式的技术限制，非设计缺陷，但影响等同设计缺陷。</div></div>
+<div class="finding"><div class="icon">🔴</div><div class="body"><strong>闭环数据断裂：67% 已完成任务无实际截止</strong>无法计算「计划 vs 实际」偏差。不知道延期了多久、哪些类型/人员延期率高。进度监测只有「是否完成」一个维度，缺少「是否按时」「延期多久」两个关键维度。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>缺少「偏差天数」计算字段</strong>即使实际截止时间填了，也没有自动计算「实际-计划」的天数差。需手动导出 Excel 做差。</div></div>
+</div>
+
+<!-- GOAL 2 -->
+<div class="section">
+<h2>🎯 目标二：分类不同项目的美术类型需求</h2>
+<div class="highlight green">四个目标中<strong>实现最好</strong>的一个。基础分类字段齐全，跨项目对比可行但操作成本高。</div>
+
+<div class="goal-card">
+<h3>数据点需求 vs 实际可用性 <span class="verdict"><span class="badge badge-green">✅ 基本可用</span></span></h3>
+<table>
+  <tr><th>需要的数据点</th><th>字段名</th><th>存在</th><th>可读</th><th>数据质量</th><th>判定</th></tr>
+  <tr><td>项目归属</td><td>项目名称</td><td>✅</td><td>✅</td><td>99%+ 填充</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr><td>美术类型</td><td>业务类型</td><td>✅</td><td>✅</td><td>99%+ 填充 · 15-19 类</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr><td>UI 子类型</td><td>界面类型</td><td>✅</td><td>✅</td><td>部分填充</td><td><span class="badge badge-amber">部分可用</span></td></tr>
+  <tr><td>角色/IP 关联</td><td>角色名称</td><td>⚠️ 仅火影</td><td>✅</td><td>火影有，其余无</td><td><span class="badge badge-amber">不一致</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>跨项目聚合查询</strong></td><td>—</td><td>❌</td><td>—</td><td>5个独立Base</td><td><span class="badge badge-red">不可用</span></td></tr>
+</table>
+</div>
+
+<div class="finding"><div class="icon">✅</div><div class="body"><strong>业务类型分类已足够支撑项目间对比</strong>15-19 个分类覆盖全面。本次三项目审查已产出清晰的差异化画像：苍穹诀=图标重型（UI+图标 62%）、火影=动作拆图型（动作+拆图 23%）、指尖=纯UI型（UI 44%）。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>5 个独立 Base 阻断了统一视图</strong>每个项目是独立的飞书 Base，无法在一个查询中跨项目聚合。要做「五个项目的美术类型总需求分布」，需分别拉取 5 次数据再合并。不是字段设计问题，是架构问题。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>角色名称字段不一致</strong>仅火影有角色名称字段。苍穹诀和指尖三国无法按角色/IP 维度聚合需求。</div></div>
+</div>
+
+<!-- GOAL 3 -->
+<div class="section">
+<h2>🎯 目标三：同游戏不同阶段的美术需求分析</h2>
+<div class="highlight amber">字段骨架存在，但<strong>关键连接字段（系统名称、主任务）覆盖率参差不齐</strong>，制约了分析深度。</div>
+
+<div class="goal-card">
+<h3>数据点需求 vs 实际可用性 <span class="verdict"><span class="badge badge-amber">⚠️ 部分可用</span></span></h3>
+<table>
+  <tr><th>需要的数据点</th><th>字段名</th><th>存在</th><th>数据质量</th><th>判定</th></tr>
+  <tr><td>开发阶段</td><td>开发阶段</td><td>✅</td><td>95%+ 填充 · 研发/量产/优化/发行</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr><td>时间维度</td><td>计划截止时间</td><td>✅</td><td>可推导月度趋势</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr><td>功能模块归属</td><td>系统名称</td><td>✅</td><td style="color:var(--red)">指尖 80% · 苍穹诀 48% · 火影 19%</td><td><span class="badge badge-amber">不一致</span></td></tr>
+  <tr><td>任务层级归类</td><td>主任务</td><td>✅</td><td style="color:var(--red)">苍穹诀 16.1% 为空</td><td><span class="badge badge-amber">不一致</span></td></tr>
+  <tr><td>版本/里程碑</td><td>版本号</td><td>✅</td><td>有字段但数据稀疏</td><td><span class="badge badge-amber">部分可用</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>阶段→类型交叉</strong></td><td>—</td><td>⚠️</td><td>需手动交叉分析，无预设视图</td><td><span class="badge badge-red">需工具</span></td></tr>
+</table>
+</div>
+
+<div class="finding"><div class="icon">✅</div><div class="body"><strong>开发阶段 + 月度趋势已经能画出生命周期曲线</strong>本次审查中苍穹诀的「17 个月从爬坡到巅峰到维护」曲线、火影的「7月还在冲峰」判断，均基于这两个字段的交叉分析。基础能力足够。</div></div>
+<div class="finding"><div class="icon">🔴</div><div class="body"><strong>火影系统名称覆盖率仅 19.4%——无法做功能级阶段分析</strong>火影 1,695 项任务中仅 328 项有系统名称。无法回答「量产阶段英雄系统要多少人」「优化阶段 BOSS 系统需求变化」。指尖（~80%）和苍穹诀（48%）好得多，但也不完美。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>缺少版本/里程碑锚点</strong>版本号字段存在但非必填。无法将任务精确对应到「v1.2 上线」「v2.0 大版本」。分析只能按月聚合，不能按版本聚合——后者对制作人/主美更有决策价值。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>人力配置回溯困难</strong>要回答「研发阶段配了多少人、量产阶段配了多少人」，需要按阶段+时间窗口+执行人去重计数。字段数据支持但操作复杂——缺少「该阶段投入人力」的预计算指标。</div></div>
+</div>
+
+<!-- GOAL 4 -->
+<div class="section">
+<h2>🎯 目标四：美术人员产能绩效分析</h2>
+<div class="highlight red"><strong>四个目标中实现最差的一个</strong>。核心字段不可读 + 数据大量缺失 + 缺少质量维度 = 几乎无法做有效绩效分析。</div>
+
+<div class="goal-card">
+<h3>数据点需求 vs 实际可用性 <span class="verdict"><span class="badge badge-red">❌ 严重不足</span></span></h3>
+<table>
+  <tr><th>需要的数据点</th><th>字段名</th><th>存在</th><th>可读</th><th>数据质量</th><th>判定</th></tr>
+  <tr><td>执行人</td><td>执行人</td><td>✅</td><td>✅</td><td>90-98% 填充</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr><td>计划工作量</td><td>标准人日</td><td>✅</td><td>✅</td><td>部分零值（2-3%）</td><td><span class="badge badge-green">可用</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>实际工作量</strong></td><td>实际人日</td><td>✅</td><td>❌ 公式/稀疏</td><td>指尖公式不可读，其余稀疏</td><td><span class="badge badge-red">不可用</span></td></tr>
+  <tr><td>实际耗时</td><td>实际开始→实际截止</td><td>✅</td><td>✅</td><td style="color:var(--red)">实际截止缺失 57-72%</td><td><span class="badge badge-red">基本不可用</span></td></tr>
+  <tr><td>任务复杂度</td><td>难度</td><td>✅</td><td>✅</td><td>初/中/高 三级</td><td><span class="badge badge-amber">粗粒度</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>完成质量</strong></td><td>—</td><td>❌</td><td>—</td><td>—</td><td><span class="badge badge-red">不存在</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>返工/迭代次数</strong></td><td>—</td><td>❌</td><td>—</td><td>—</td><td><span class="badge badge-red">不存在</span></td></tr>
+  <tr style="background:#fef2f2"><td><strong>人均产出趋势</strong></td><td>—</td><td>⚠️</td><td>—</td><td>需大量手工计算</td><td><span class="badge badge-red">不可用</span></td></tr>
+</table>
+</div>
+
+<div class="finding"><div class="icon">🔴</div><div class="body"><strong>「计划 vs 实际」完全断裂</strong>绩效分析的基础公式是「实际人日 ÷ 标准人日 = 效率比」。但实际人日是公式字段（不可读），实际截止时间缺失 67%。连「这个人任务做完了没有、花了多久」都回答不了，更不用说效率。目前唯一能算的指标是「完成数量」——这是最粗糙的产能指标，完全忽略任务复杂度差异。</div></div>
+<div class="finding"><div class="icon">🔴</div><div class="body"><strong>缺少质量维度</strong>没有任何字段记录：返工次数、审核通过/打回、Bug 数、效果满意度。一个做了 100 个图标但返工 30 次的人 vs 做了 50 个一次通过的人——当前表完全无法区分。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>难度字段粗粒度</strong>仅有初/中/高三级，且未强制填写。无法做「加权产出」（如 1 个高难度 = 3 个低难度）。标准人日本身可以部分替代难度权重，但覆盖不完整。</div></div>
+<div class="finding"><div class="icon">🟡</div><div class="body"><strong>外包 vs 内部效率无法对比</strong>缺少人员类型标签（内部/外包）。当前只能靠执行人名称中的「外包-」前缀手动识别。</div></div>
+</div>
+
+<!-- CROSS-CUTTING ISSUES -->
+<div class="section">
+<h2>🔍 跨目标共性问题</h2>
+
+<h3>1. 公式字段不可读 — 系统性根因</h3>
+<div class="highlight red">
+  <strong>10 个公式字段三项目全部不可读：</strong>制作风险、距交付日、预排期风险、组别、实际人日、角色上游资源到位时间、小周、年份、月份、辅助计算（已完成/应完成）。<br><br>
+  这些公式恰是飞书表格的核心价值——自动计算风险等级、自动计算剩余天数、自动计算人力汇总。但因为 Base 使用旧 schema 版本不执行后端公式计算，OpenAPI 读不到计算结果。用户自己在飞书界面能看到，但 AI / 自动化工具链完全读不到。<br><br>
+  <strong>解法：升级 Base 到新 schema 版本</strong>（开启后端公式计算），一次性解决所有项目的这个问题。
+</div>
+
+<h3>2. 实际截止时间系统性缺失</h3>
+<div class="highlight red">
+  三项目 57-72% 的已完成任务没有实际截止时间。这不是个别项目的管理松懈，是<strong>流程设计的系统性缺陷</strong>——「进度」字段切到「已完成」时没有强制要求填写「实际截止时间」。<br><br>
+  影响链：无实际截止 → 无法计算延期天数 → 无法做工期准确度回溯 → 无法做人员效率评估 → 无法优化排期估算。
+</div>
+
+<h3>3. 字段填充率三项目分化严重</h3>
+<table>
+  <tr><th>字段</th><th class="num">苍穹诀</th><th class="num">火影忍者</th><th class="num">指尖三国</th><th>差距</th></tr>
+  <tr><td>执行人</td><td class="num" style="color:var(--green)">98.8%</td><td class="num" style="color:var(--red)">90.3%</td><td class="num">97.5%</td><td>8.5pp</td></tr>
+  <tr><td>计划截止</td><td class="num" style="color:var(--green)">97.8%</td><td class="num" style="color:var(--red)">77.6%</td><td class="num">95.9%</td><td>20.2pp</td></tr>
+  <tr><td>系统名称</td><td class="num">48.3%</td><td class="num" style="color:var(--red)">19.4%</td><td class="num" style="color:var(--green)">~80%</td><td>60.6pp</td></tr>
+  <tr><td>主任务</td><td class="num" style="color:var(--red)">83.9%</td><td class="num" style="color:var(--green)">96.6%</td><td class="num">91.7%</td><td>12.7pp</td></tr>
+  <tr><td>优先级</td><td class="num">94.9%</td><td class="num">93.8%</td><td class="num" style="color:var(--green)">97.3%</td><td>3.5pp</td></tr>
+</table>
+<div class="highlight amber">这意味着同一张表模板在不同项目中的使用规范度差异极大。火影在排期管理、人员分配两个基础维度上都远落后于苍穹诀和指尖。需要统一填写规范而非纵容项目各自为政。</div>
+
+<h3>4. 业务类型分类体系缺乏统一标准</h3>
+<table>
+  <tr><th>苍穹诀独有</th><th>火影独有</th><th>指尖独有</th></tr>
+  <tr><td>引擎配置、特效设计</td><td>字体设计、其它</td><td>—（最精简）</td></tr>
+</table>
+<div class="highlight amber">三个项目共有 15 个业务类型，但苍穹诀多了「引擎配置」「特效设计」，火影多了「字体设计」「其它」，指尖的「技能图标」「属性图标」在苍穹诀中也有。不是大问题，但长期来看应该收敛到一套标准分类。</div>
+</div>
+
+<!-- SCORECARD -->
+<div class="section">
+<h2>📊 四目标支撑度评分</h2>
+
+<table>
+  <tr><th>目标</th><th>评分</th><th>核心瓶颈</th><th>最缺的数据点</th></tr>
+  <tr>
+    <td><strong>目标一：进度监测</strong></td>
+    <td><span class="score-ring low">2/5</span></td>
+    <td>公式字段不可读 · 实际截止缺失 67%</td>
+    <td>制作风险（可读）+ 实际截止时间（填写）</td>
+  </tr>
+  <tr>
+    <td><strong>目标二：项目间对比</strong></td>
+    <td><span class="score-ring high">4/5</span></td>
+    <td>5个独立Base · 偶有字段不一致</td>
+    <td>跨Base聚合能力 · 统一业务类型字典</td>
+  </tr>
+  <tr>
+    <td><strong>目标三：阶段分析</strong></td>
+    <td><span class="score-ring mid">3/5</span></td>
+    <td>系统名称覆盖率不均 · 缺里程碑锚点</td>
+    <td>系统名称（强制填写）· 版本/里程碑字段</td>
+  </tr>
+  <tr>
+    <td><strong>目标四：产能绩效</strong></td>
+    <td><span class="score-ring low">1/5</span></td>
+    <td>实际人日不可读 · 无质量维度 · 无返工追踪</td>
+    <td>实际人日（可读）+ 质量评级 + 返工标记</td>
+  </tr>
+</table>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="section">
+<h2>🛠️ 改进建议（按优先级）</h2>
+
+<div class="rec-card p0">
+  <h4>P0 · 升级 Base Schema 版本（一次性，影响全部4个目标）</h4>
+  将 5 个项目的飞书 Base 升级到新 schema 版本，开启后端公式计算。这将一次性恢复 10 个公式字段的 API 可读性——制作风险、距交付日、实际人日等核心字段将重新可用。这是投入产出比最高的单项改进。
+</div>
+
+<div class="rec-card p0">
+  <h4>P0 · 进度=已完成 时强制填写实际截止时间</h4>
+  在飞书表中添加校验规则：当进度字段切换为「已完成」时，实际截止时间为必填。解决三项目 57-72% 的数据缺口，使延期分析、效率评估成为可能。
+</div>
+
+<div class="rec-card p1">
+  <h4>P1 · 统一系统名称为必填字段</h4>
+  设置系统名称为必填（至少对 P0/P1 任务）。建立各项目的系统名称枚举字典，收敛命名（如指尖三国的「t 塔防战斗」和「塔防战斗内」统一）。当前火影 19.4% 覆盖率是最紧迫的改善目标。
+</div>
+
+<div class="rec-card p1">
+  <h4>P1 · 新增「人员类型」字段</h4>
+  添加单选字段：内部 / 外包-个人 / 外包-供应商。目前靠执行人名称中的「外包-」前缀识别，不可靠且无法自动统计外包占比和效率对比。
+</div>
+
+<div class="rec-card p2">
+  <h4>P2 · 新增「质量评级」字段（轻量版）</h4>
+  仅需 3 个选项：一次通过 / 修改后通过 / 需重做。不需要复杂的多维度评分。这个字段是产能绩效分析从「只看数量」升级到「数量+质量」的最小可行方案。
+</div>
+
+<div class="rec-card p2">
+  <h4>P2 · 统一 5 个项目的业务类型字典</h4>
+  当前 15-19 个分类中有 4-5 个是项目特有的。建议收敛到一套 18 类的标准字典，方便跨项目横向对比和市场盘點。
+</div>
+
+<div class="rec-card p3">
+  <h4>P3 · 长期：考虑跨 Base 统一视图</h4>
+  用飞书多维表格的数据同步能力或 API 聚合，建立一个「主美总览表」，自动汇总 5 个项目的美术排期数据到一个看板中。这是从「各项目独立管理」到「主美全局视角」的架构跃迁。
+</div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section">
+<h2>📋 三项目数据治理成熟度对比</h2>
+<table>
+  <tr><th>治理维度</th><th>苍穹诀</th><th>指尖三国</th><th>火影忍者</th></tr>
+  <tr><td>排期覆盖率</td><td class="num" style="color:var(--green)">97.8% ⭐</td><td class="num">95.9%</td><td class="num" style="color:var(--red)">77.6%</td></tr>
+  <tr><td>执行人分配率</td><td class="num" style="color:var(--green)">98.8% ⭐</td><td class="num">97.5%</td><td class="num" style="color:var(--red)">90.3%</td></tr>
+  <tr><td>系统名称覆盖率</td><td class="num">48.3%</td><td class="num" style="color:var(--green)">~80% ⭐</td><td class="num" style="color:var(--red)">19.4%</td></tr>
+  <tr><td>主任务填充率</td><td class="num" style="color:var(--red)">83.9%</td><td class="num">91.7%</td><td class="num" style="color:var(--green)">96.6% ⭐</td></tr>
+  <tr><td>优先级填充率</td><td class="num">94.9%</td><td class="num" style="color:var(--green)">97.3%</td><td class="num">93.8%</td></tr>
+  <tr><td>实际截止填写率</td><td class="num">29.6%</td><td class="num">27.5%</td><td class="num" style="color:var(--green)">43.2% ⭐</td></tr>
+  <tr><td style="font-weight:700">综合成熟度</td><td class="num"><span class="badge badge-amber">⭐⭐⭐</span></td><td class="num"><span class="badge badge-amber">⭐⭐⭐</span></td><td class="num"><span class="badge badge-red">⭐⭐</span></td></tr>
+</table>
+</div>
+
+<div class="footer">
+  <p>报告生成时间：2026-07-30 · 分析范围：苍穹诀 5,064 条 + 火影忍者 1,695 条 + 指尖三国 2,313 条 = 共 9,072 条</p>
+  <p style="margin-top:6px">数据来源：飞书美术排期表（3个Base）· 字段元数据 + 全量记录 + 交叉分析</p>
+</div>
+
+</div>
+</body>
+</html>
