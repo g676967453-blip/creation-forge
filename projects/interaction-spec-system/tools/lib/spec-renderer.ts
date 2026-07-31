@@ -25,9 +25,9 @@ interface GridMetrics {
 }
 
 function computeGrid(config: SpecConfig): GridMetrics {
-  const phoneW = 375; // 固定展示手机框宽度
+  const phoneW = 420; // 展示手机框宽度（适配竖版720/横版1334）
   const scale = phoneW / config.canvas_width;
-  const phoneH = Math.round(config.canvas_height * scale);
+  const phoneH = phoneW * config.canvas_height / config.canvas_width; // 不取整，保持精确宽高比
 
   const contentW = config.canvas_width - config.grid_margin * 2;
   const colW = Math.round((contentW - config.grid_gutter * (config.grid_columns - 1)) / config.grid_columns);
@@ -47,9 +47,9 @@ function computeGrid(config: SpecConfig): GridMetrics {
 
   const thumbZones = {
     y0: 0,
-    y1: Math.round(500 * scale),
-    y2: Math.round(800 * scale),
-    y3: Math.round(1100 * scale),
+    y1: Math.round(phoneH * 0.39),    // 0~39% 难以触及 (对应1280画布 0~500)
+    y2: Math.round(phoneH * 0.625),   // 39~63% 伸展区 (对应 500~800)
+    y3: Math.round(phoneH * 0.859),   // 63~86% 自然热区 (对应 800~1100)
   };
 
   return { phoneW, phoneH, scale, contentW, colW, gutterW, marginW, gridUnit, spacing, thumbZones };
@@ -148,6 +148,8 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
 .proto-label{font-size:10px;color:var(--text-muted);text-align:center;letter-spacing:1px}
 .phone{width:${m.phoneW}px;height:${m.phoneH}px;background:var(--phone-bg);border:2.5px solid var(--phone-border);border-radius:16px;position:relative;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.1)}
 .phone .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:14px;background:var(--phone-bg);border-radius:0 0 9px 9px;z-index:20;border:1px solid var(--phone-border);border-top:none}
+.phone .mini-capsule{position:absolute;z-index:21;background:rgba(0,0,0,.15);border:1.5px dashed rgba(0,0,0,.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:6px;color:rgba(0,0,0,.35);pointer-events:none}
+.phone .mini-capsule::after{content:'胶囊';white-space:nowrap}
 
 /* ═══════════ 网格覆盖层 ═══════════ */
 .grid-overlay{position:absolute;inset:0;pointer-events:none;z-index:10}
@@ -241,10 +243,10 @@ ${rarityCardCSS(config)}
 .cbadge.dot{width:7px;height:7px;padding:0;border-radius:50%;background:var(--danger)}
 
 /* Toggle */
-.ctg{width:30px;height:16px;border-radius:8px;background:rgba(0,0,0,.1);position:relative;cursor:default}
+.ctg{width:${Math.round(m.phoneW*51/375)}px;height:${Math.round(m.phoneW*31/375)}px;border-radius:${Math.round(m.phoneW*16/375)}px;background:rgba(0,0,0,.1);position:relative;cursor:default}
 .ctg.on{background:var(--success)}
-.ctg::after{content:'';position:absolute;top:1.5px;left:1.5px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.ctg.on::after{left:15.5px}
+.ctg::after{content:'';position:absolute;top:${(m.phoneW*1.5/375).toFixed(1)}px;left:${(m.phoneW*1.5/375).toFixed(1)}px;width:${Math.round(m.phoneW*13/375)}px;height:${Math.round(m.phoneW*13/375)}px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.ctg.on::after{left:${(m.phoneW*15.5/375).toFixed(1)}px}
 
 /* Input */
 .cinp{width:130px;height:24px;background:var(--surface);border:1px solid var(--border-default);border-radius:3px;padding:0 6px;font-family:inherit;font-size:10px;color:var(--text-body);display:flex;align-items:center}
@@ -282,6 +284,16 @@ ${rarityCardCSS(config)}
 /* Footer */
 .spec-footer{margin-top:56px;padding-top:20px;border-top:2px solid var(--border-subtle);text-align:center;color:var(--text-muted);font-size:11px}
 
+/* 页签导航 */
+.page-tabs{display:flex;gap:0;border-bottom:2px solid var(--border-subtle);margin:32px 0 0;position:sticky;top:0;background:var(--page-bg);z-index:100;padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.page-tab{flex:1;text-align:center;padding:14px 8px;font-size:13px;color:var(--text-muted);border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all 0.2s;white-space:nowrap;user-select:none;min-width:fit-content}
+.page-tab:hover{color:var(--text-head);background:var(--surface)}
+.page-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.page-tab .tab-icon{display:block;font-size:18px;margin-bottom:2px}
+/* 页签面板 */
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+
 @media print{body{background:#fff;max-width:100%}.phone{box-shadow:none;border-color:#ccc}.spec-row{flex-direction:row}}
 </style>
 </head>
@@ -290,28 +302,65 @@ ${rarityCardCSS(config)}
 ${renderHeader(config, title)}
 ${renderTOC(sections)}
 
+<nav class="page-tabs">
+  <div class="page-tab on" data-tab="foundation"><span class="tab-icon">📐</span>基础信息</div>
+  <div class="page-tab" data-tab="visual"><span class="tab-icon">🎨</span>视觉规范</div>
+  <div class="page-tab" data-tab="layout"><span class="tab-icon">🧩</span>布局组件</div>
+  <div class="page-tab" data-tab="feedback"><span class="tab-icon">💫</span>交互反馈</div>
+  <div class="page-tab" data-tab="delivery"><span class="tab-icon">✅</span>交付标准</div>
+</nav>
+
+<div class="tab-panel on" id="tab-foundation">
 ${renderCanvasDemo(config, m)}
 ${renderThumbZoneDemo(config, m)}
-${renderGestureDemo()}
+${renderGestureDemo(config)}
 ${renderTouchSpec(config, m)}
+</div>
+
+<div class="tab-panel" id="tab-visual">
 ${renderGridDemo(config, m)}
-${renderLayoutTemplates(config, m)}
 ${renderColorPalette(config)}
 ${renderTypeScale()}
 ${renderSpacingScale(config, m)}
-${renderNavSystem()}
+</div>
+
+<div class="tab-panel" id="tab-layout">
+${renderLayoutTemplates(config, m)}
+${renderNavSystem(config)}
 ${renderDialogSystem(config)}
 ${renderComponentShowcase(config, m)}
+</div>
+
+<div class="tab-panel" id="tab-feedback">
 ${renderStateFeedback()}
 ${renderAnimTiming()}
-${renderChecklists(sections)}
+</div>
+
+<div class="tab-panel" id="tab-delivery">
+${renderChecklists(sections, config)}
 ${renderAppendix(config)}
+</div>
 
 <div class="spec-footer">
   <p>${esc(title)} v${esc(config.version)} · 生产线标准</p>
   <p style="margin-top:4px;">方法论：${esc(config.methodology)} · 标杆：${esc(config.benchmarks)}</p>
-  <p style="margin-top:8px;font-size:10px;">此文档由 <code>tools/build-interaction-spec.ts</code> 自动生成 · 数据源：对应 .md 规范文件</p>
+  <p style="margin-top:8px;font-size:10px;">此文档由 <code>projects/interaction-spec-system/tools/build-interaction-spec.ts</code> 自动生成 · 数据源：对应 .md 规范文件</p>
 </div>
+
+<script>
+(function(){
+  const tabs=document.querySelectorAll('.page-tab');
+  const panels=document.querySelectorAll('.tab-panel');
+  function switchTab(id){
+    tabs.forEach(t=>t.classList.toggle('on',t.dataset.tab===id));
+    panels.forEach(p=>p.classList.toggle('on',p.id==='tab-'+id));
+    if(window.location.hash!=='#'+id) history.replaceState(null,'','#'+id);
+  }
+  tabs.forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+  var hash=window.location.hash.replace('#','');
+  if(hash&&document.getElementById('tab-'+hash)) switchTab(hash);
+})();
+</script>
 
 </body>
 </html>`;
@@ -435,6 +484,7 @@ function renderCanvasDemo(config: SpecConfig, m: GridMetrics): string {
     <div class="proto-col">
       <div class="phone">
         <div class="notch"></div>
+        <div class="mini-capsule" style="top:${Math.round(saTop*0.5)}px;right:${Math.round(config.canvas_width*0.019*m.scale)}px;width:${Math.round(config.canvas_width*0.232*m.scale)}px;height:${Math.round(config.canvas_width*0.085*m.scale)}px;" title="微信小程序胶囊 · 约占屏宽23%"></div>
         <div class="sa-top" style="height:${saTop}px;">状态栏 ≥${config.safe_area_top}px</div>
         <div class="sa-content" style="top:${contentTop}px;bottom:${m.phoneH - contentBottom}px;">内容安全区 · 核心 UI 元素在此区域内</div>
         <div class="sa-bottom" style="bottom:0;height:${saBottom}px;">Home Indicator ≥${config.safe_area_bottom}px</div>
@@ -452,7 +502,9 @@ function renderCanvasDemo(config: SpecConfig, m: GridMetrics): string {
     <h3 style="margin-top:10px;">平台安全区</h3>
     <table class="tbl"><tr><th>平台</th><th>顶部</th><th>底部</th><th>左右</th></tr>
     <tr><td>iOS 刘海/灵动岛</td><td>≥44px</td><td>≥34px</td><td>≥16px</td></tr>
-    <tr><td>Android 全面屏</td><td>≥24px</td><td>导航栏</td><td>≥16px</td></tr></table>
+    <tr><td>Android 全面屏</td><td>≥24px</td><td>导航栏</td><td>≥16px</td></tr>
+    <tr><td>微信小程序</td><td>≥88px (避让右上胶囊)</td><td>≥34px</td><td>≥16px</td></tr></table>
+    <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">💊 微信小程序右上角胶囊约占屏宽 23%（720 画布约 167×61px），距右约 2%，导航栏内容需在胶囊左侧留 ≥10px 安全距离。</p>
   </div>
 </div>`;
 }
@@ -460,6 +512,7 @@ function renderCanvasDemo(config: SpecConfig, m: GridMetrics): string {
 // ═══════════ 拇指热区 ═══════════
 
 function renderThumbZoneDemo(config: SpecConfig, m: GridMetrics): string {
+  const t44 = Math.round(config.canvas_width * 44 / 375);
   const { thumbZones } = m;
   return `
 <h2 id="拇指热区"><span class="num">02</span> 拇指热区与操作布局</h2>
@@ -491,7 +544,7 @@ function renderThumbZoneDemo(config: SpecConfig, m: GridMetrics): string {
     <ul>
       <li><strong>主CTA：</strong>y&gt;1100，宽≥280px，高≥52px</li>
       <li><strong>次要操作：</strong>y:900~1100</li>
-      <li><strong>返回/关闭：</strong>左上/右上，热区≥44×44px</li>
+      <li><strong>返回/关闭：</strong>左上/右上，热区≥${t44}×${t44}px</li>
       <li><strong>危险操作：</strong>非热区+二次确认</li>
     </ul>
   </div>
@@ -500,7 +553,7 @@ function renderThumbZoneDemo(config: SpecConfig, m: GridMetrics): string {
 
 // ═══════════ 手势 ═══════════
 
-function renderGestureDemo(): string {
+function renderGestureDemo(config: SpecConfig): string {
   const gestures = [
     { ico: "👆", n: "单击 Tap", c: "<200ms" },
     { ico: "✊", n: "长按 Press", c: "≥500ms" },
@@ -533,25 +586,28 @@ function renderGestureDemo(): string {
 // ═══════════ 触控规格 ═══════════
 
 function renderTouchSpec(config: SpecConfig, m: GridMetrics): string {
-  const minTouch = Math.round(44 * m.scale);
+  const minTouch = Math.round(m.phoneW * 44 / 375);     // 44pt 1x → 画布比例
+  const iconBtn = Math.round(m.phoneW * 48 / 375);      // 48pt 1x
+  const canvas44 = Math.round(config.canvas_width * 44 / 375);
+  const canvas48 = Math.round(config.canvas_width * 48 / 375);
   return `
 <h2 id="触控规格"><span class="num">04</span> 触控规格</h2>
 <div class="spec-row">
   <div class="spec-visual">
     <div style="display:flex;align-items:center;gap:20px;">
-      <div style="background:var(--surface);border:2px dashed var(--danger);border-radius:50%;width:${minTouch}px;height:${minTouch}px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--danger);font-weight:600;">44×44</div>
+      <div style="background:var(--surface);border:2px dashed var(--danger);border-radius:50%;width:${minTouch}px;height:${minTouch}px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--danger);font-weight:600;">${canvas44}×${canvas44}</div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
-        <div style="background:var(--surface);border:2px solid var(--border-default);border-radius:6px;width:${Math.round(48*m.scale)}px;height:${Math.round(48*m.scale)}px;display:flex;align-items:center;justify-content:center;font-size:16px;">⚙</div>
-        <span class="proto-label">48×48 图标按钮</span>
+        <div style="background:var(--surface);border:2px solid var(--border-default);border-radius:6px;width:${iconBtn}px;height:${iconBtn}px;display:flex;align-items:center;justify-content:center;font-size:16px;">⚙</div>
+        <span class="proto-label">${canvas48}×${canvas48} 图标按钮</span>
       </div>
     </div>
   </div>
   <div class="spec-text">
     <table class="tbl"><tr><th>元素</th><th>最小</th><th>建议</th></tr>
-    <tr><td>按钮</td><td>44×44</td><td>52~56高，200~300宽</td></tr>
-    <tr><td>图标按钮</td><td>44×44</td><td>48×48</td></tr>
+    <tr><td>按钮</td><td>${canvas44}×${canvas44}</td><td>52~56高，200~300宽</td></tr>
+    <tr><td>图标按钮</td><td>${canvas44}×${canvas44}</td><td>${canvas48}×${canvas48}</td></tr>
     <tr><td>列表项</td><td>44高</td><td>56~72高</td></tr>
-    <tr><td>卡片</td><td>44×44</td><td>≥120×160</td></tr></table>
+    <tr><td>卡片</td><td>${canvas44}×${canvas44}</td><td>≥120×160</td></tr></table>
     <blockquote>触控容差：命中区域=视觉边界<strong>+4px</strong> | 相邻间距≥8px</blockquote>
     <p><strong>防误触：</strong>弹窗遮罩阻断下层 | 按钮300ms冷却 | 滑动中禁用点击 | 加载中全屏遮罩</p>
   </div>
@@ -722,7 +778,8 @@ function renderSpacingScale(config: SpecConfig, m: GridMetrics): string {
 
 // ═══════════ 导航 ═══════════
 
-function renderNavSystem(): string {
+function renderNavSystem(config: SpecConfig): string {
+  const t44 = Math.round(config.canvas_width * 44 / 375);
   return `
 <h2 id="导航系统"><span class="num">09</span> 导航系统</h2>
 <div class="spec-row">
@@ -734,7 +791,7 @@ L3以上不新开页面，用弹窗/BottomSheet
     <table class="tbl"><tr><th>模式</th><th>场景</th><th>位置</th><th>规格</th></tr>
     <tr><td><strong>底部Tab</strong></td><td>3~5顶级入口</td><td>屏幕底部</td><td>H:80~100, 图标24~28px</td></tr>
     <tr><td><strong>顶部Tab</strong></td><td>二级筛选</td><td>导航栏下</td><td>H:44, 支持左右滑</td></tr>
-    <tr><td><strong>返回按钮</strong></td><td>层级返回</td><td>左上角‹</td><td>热区≥44×44px</td></tr>
+    <tr><td><strong>返回按钮</strong></td><td>层级返回</td><td>左上角‹</td><td>热区≥${t44}×${t44}px</td></tr>
     <tr><td><strong>浮动按钮</strong></td><td>全局主操作</td><td>右下悬浮</td><td>距边16~24px</td></tr></table>
   </div>
 </div>`;
@@ -767,6 +824,8 @@ function renderDialogSystem(config: SpecConfig): string {
 // ═══════════ 组件展示 ═══════════
 
 function renderComponentShowcase(config: SpecConfig, m: GridMetrics): string {
+  const c44 = Math.round(config.canvas_width * 44 / 375);
+  const c48 = Math.round(config.canvas_width * 48 / 375);
   return `
 <h2 id="基础组件规范"><span class="num">11</span> 基础组件规范</h2>
 
@@ -786,7 +845,7 @@ function renderComponentShowcase(config: SpecConfig, m: GridMetrics): string {
     <tr><td>主按钮</td><td>280×52</td><td>200×44</td><td>品牌色+白字</td></tr>
     <tr><td>次按钮</td><td>200×44</td><td>160×40</td><td>白底+边框</td></tr>
     <tr><td>小按钮</td><td>120×36</td><td>88×36</td><td>灰底+深字</td></tr>
-    <tr><td>图标按钮</td><td>48×48</td><td>44×44</td><td>透明+图标</td></tr>
+    <tr><td>图标按钮</td><td>${c48}×${c48}</td><td>${c44}×${c44}</td><td>透明+图标</td></tr>
     <tr><td>危险按钮</td><td>同次按钮</td><td>—</td><td>浅红底+红字</td></tr></table>
     <p class="note">所有按钮覆盖4态：默认/按下/禁用/加载</p>
   </div>
@@ -854,7 +913,7 @@ function renderComponentShowcase(config: SpecConfig, m: GridMetrics): string {
   <div class="spec-text">
     <h3>Tab / 页签</h3><p>顶部Tab: H44 + 底部2px指示线 | 底部Tab: H80~100 + 图标24~28px</p>
     <h3>Badge / 标签</h3><p>品质标签(2×10px padding, 9~10px字号) | 状态标签 | 红点通知(8×8px)</p>
-    <h3>Toggle / 开关</h3><p>34×18px | 关闭=灰底白滑块 | 开启=绿色底</p>
+    <h3>Toggle / 开关</h3><p>${Math.round(m.phoneW*51/375)}×${Math.round(m.phoneW*31/375)}px | 关闭=灰底白滑块 | 开启=绿色底</p>
     <h3>Input / 输入框</h3><p>H28~36 | 默认白底+1px边框 | 聚焦品牌色边框</p>
   </div>
 </div>`;
@@ -863,53 +922,56 @@ function renderComponentShowcase(config: SpecConfig, m: GridMetrics): string {
 // ═══════════ 布局模板 ═══════════
 
 function renderLayoutTemplates(config: SpecConfig, m: GridMetrics): string {
+  // phoneW/320 ≈ 1.31x 缩放，确保文字在 420px 手机框内可读
+  const fs = (v: number) => Math.round(v * m.phoneW / 320);
+  const sp = (v: number) => Math.round(v * m.phoneW / 375);
   const templates = [
     {
       id: "A", name: "大厅/主界面",
       html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.13)}px;z-index:15;background:#fff;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;padding:${Math.round(5*m.scale)}px ${Math.round(8*m.scale)}px;">
-        <span style="font-size:7px;color:var(--text-muted);">⚜️ 资源栏</span>
-        <div style="display:flex;gap:4px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--success);"></span></div></div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.13)}px;left:0;right:0;height:${Math.round(m.phoneH*0.38)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;z-index:11;font-size:9px;color:var(--text-muted);">主视觉展示区</div>
+        <span style="font-size:${fs(7)}px;color:var(--text-muted);">⚜️ 资源栏</span>
+        <div style="display:flex;gap:${sp(4)}px;"><span style="width:${sp(6)}px;height:${sp(6)}px;border-radius:50%;background:var(--accent);"></span><span style="width:${sp(6)}px;height:${sp(6)}px;border-radius:50%;background:var(--success);"></span></div></div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.13)}px;left:0;right:0;height:${Math.round(m.phoneH*0.38)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;z-index:11;font-size:${fs(9)}px;color:var(--text-muted);">主视觉展示区</div>
         <div style="position:absolute;top:${Math.round(m.phoneH*0.51)}px;left:0;right:0;height:${Math.round(m.phoneH*0.30)}px;z-index:12;display:flex;flex-wrap:wrap;padding:${Math.round(5*m.scale)}px ${Math.round(12*m.scale)}px;gap:${Math.round(4*m.scale)}px;align-content:center;justify-content:center;">
-          ${Array.from({length:8}, () => `<div style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;background:rgba(0,0,0,.04);border-radius:4px;border:1px solid var(--border-subtle);"></div>`).join("")}</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:center;justify-content:space-around;padding-bottom:${Math.round(7*m.scale)}px;border-top:1px solid var(--border-subtle);font-size:7px;color:var(--text-muted);">
+          ${Array.from({length:8}, () => `<div style="width:${Math.round(m.phoneW*22/375)}px;height:${Math.round(m.phoneW*22/375)}px;background:rgba(0,0,0,.04);border-radius:${sp(4)}px;border:1px solid var(--border-subtle);"></div>`).join("")}</div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:center;justify-content:space-around;padding-bottom:${Math.round(7*m.scale)}px;border-top:1px solid var(--border-subtle);font-size:${fs(7)}px;color:var(--text-muted);">
           <span style="display:flex;flex-direction:column;align-items:center;color:var(--accent);">● 首页</span><span>○ 英雄</span><span>○ 背包</span><span>○ 设置</span></div>`,
     },
     {
       id: "B", name: "战斗界面",
-      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.09)}px;z-index:15;background:#f5f5f8;display:flex;align-items:center;justify-content:space-between;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:7px;color:var(--text-body);"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.09)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.16)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;z-index:11;font-size:9px;color:var(--text-muted);">战 场 区 域</div>
+      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.09)}px;z-index:15;background:#f5f5f8;display:flex;align-items:center;justify-content:space-between;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:${fs(7)}px;color:var(--text-body);"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.09)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.16)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;z-index:11;font-size:${fs(9)}px;color:var(--text-muted);">战 场 区 域</div>
         <div style="position:absolute;bottom:${Math.round(m.phoneH*0.05)}px;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;display:flex;align-items:center;justify-content:center;gap:${Math.round(6*m.scale)}px;">
-          ${Array.from({length:3}, () => `<div style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;background:rgba(0,0,0,.04);border-radius:6px;border:1px solid var(--border-subtle);"></div>`).join("")}</div>`,
+          ${Array.from({length:3}, () => `<div style="width:${Math.round(m.phoneW*22/375)}px;height:${Math.round(m.phoneW*22/375)}px;background:rgba(0,0,0,.04);border-radius:${sp(6)}px;border:1px solid var(--border-subtle);"></div>`).join("")}</div>`,
     },
     {
       id: "C", name: "列表/背包",
-      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:flex-end;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:8px;color:var(--text-head);font-weight:600;"><span style="font-size:10px;color:var(--text-muted);margin-right:6px;">‹</span>背 包</div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.11)}px;left:0;right:0;height:${Math.round(m.phoneH*0.06)}px;z-index:14;display:flex;align-items:center;font-size:7px;color:var(--text-muted);background:#f0f0f4;">
-          <span style="flex:1;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);padding:2px 0;">全部</span><span style="flex:1;text-align:center;">武器</span><span style="flex:1;text-align:center;">防具</span><span style="flex:1;text-align:center;">道具</span></div>
-        <div style="position:absolute;top:${Math.round(m.phoneH*0.17)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.11)}px;z-index:11;display:flex;flex-direction:column;gap:${Math.round(2*m.scale)}px;padding:${Math.round(4*m.scale)}px;"><span style="font-size:8px;color:var(--text-muted);text-align:center;margin-top:20px;">列表内容区 (可滚动)</span></div>
-        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:center;justify-content:space-around;font-size:7px;color:var(--text-body);"><span>排序</span><span>筛选</span><span>分解</span></div>`,
+      html: `<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:flex-end;padding:${Math.round(3*m.scale)}px ${Math.round(7*m.scale)}px;font-size:${fs(8)}px;color:var(--text-head);font-weight:600;"><span style="font-size:${fs(10)}px;color:var(--text-muted);margin-right:${sp(6)}px;">‹</span>背 包</div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.11)}px;left:0;right:0;height:${Math.round(m.phoneH*0.06)}px;z-index:14;display:flex;align-items:center;font-size:${fs(7)}px;color:var(--text-muted);background:#f0f0f4;">
+          <span style="flex:1;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);padding:${sp(2)}px 0;">全部</span><span style="flex:1;text-align:center;">武器</span><span style="flex:1;text-align:center;">防具</span><span style="flex:1;text-align:center;">道具</span></div>
+        <div style="position:absolute;top:${Math.round(m.phoneH*0.17)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.11)}px;z-index:11;display:flex;flex-direction:column;gap:${Math.round(2*m.scale)}px;padding:${Math.round(4*m.scale)}px;"><span style="font-size:${fs(8)}px;color:var(--text-muted);text-align:center;margin-top:${sp(20)}px;">列表内容区 (可滚动)</span></div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.11)}px;z-index:15;background:#fff;display:flex;align-items:center;justify-content:space-around;font-size:${fs(7)}px;color:var(--text-body);"><span>排序</span><span>筛选</span><span>分解</span></div>`,
     },
     {
       id: "D", name: "弹窗/对话框",
       html: `<div style="position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;align-items:center;justify-content:center;">
-        <div style="width:70%;background:#fff;border-radius:8px;border:1px solid var(--border-default);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.1);">
-          <div style="text-align:center;font-size:9px;font-weight:600;color:var(--text-head);padding:10px 0 5px;">确认删除</div>
-          <div style="padding:8px 12px;font-size:7px;color:var(--text-body);text-align:center;min-height:28px;display:flex;align-items:center;justify-content:center;">确定删除此项？此操作不可撤销。</div>
-          <div style="display:flex;border-top:1px solid var(--border-subtle);"><div style="flex:1;text-align:center;padding:7px 0;font-size:8px;color:var(--text-muted);border-right:1px solid var(--border-subtle);">取消</div><div style="flex:1;text-align:center;padding:7px 0;font-size:8px;color:var(--accent);font-weight:600;">确认</div></div>
+        <div style="width:70%;background:#fff;border-radius:${sp(8)}px;border:1px solid var(--border-default);overflow:hidden;box-shadow:0 ${sp(2)}px ${sp(12)}px rgba(0,0,0,.1);">
+          <div style="text-align:center;font-size:${fs(9)}px;font-weight:600;color:var(--text-head);padding:${sp(10)}px 0 ${sp(5)}px;">确认删除</div>
+          <div style="padding:${sp(8)}px ${sp(12)}px;font-size:${fs(7)}px;color:var(--text-body);text-align:center;min-height:${sp(28)}px;display:flex;align-items:center;justify-content:center;">确定删除此项？此操作不可撤销。</div>
+          <div style="display:flex;border-top:1px solid var(--border-subtle);"><div style="flex:1;text-align:center;padding:${sp(7)}px 0;font-size:${fs(8)}px;color:var(--text-muted);border-right:1px solid var(--border-subtle);">取消</div><div style="flex:1;text-align:center;padding:${sp(7)}px 0;font-size:${fs(8)}px;color:var(--accent);font-weight:600;">确认</div></div>
         </div></div>`,
     },
     {
       id: "E", name: "卡片选择",
       html: `<div style="position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(4*m.scale)}px;padding:${Math.round(14*m.scale)}px 0;">
-        <div style="font-size:9px;font-weight:700;color:var(--accent);">选择一张卡牌</div>
+        <div style="font-size:${fs(9)}px;font-weight:700;color:var(--accent);">选择一张卡牌</div>
         <div style="display:flex;flex-direction:column;gap:${Math.round(4*m.scale)}px;">
           ${Array.from({length:3}, (_, i) => `
-          <div style="width:${Math.round(115*m.scale)}px;padding:${Math.round(7*m.scale)}px ${Math.round(9*m.scale)}px;background:#fff;border:1.3px solid var(--border-default);border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:${Math.round(3*m.scale)}px;">
-            <div style="font-size:6px;padding:0 6px;border-radius:99px;background:rgba(0,0,0,.04);color:var(--text-muted);">品质</div>
-            <div style="width:20px;height:20px;background:rgba(0,0,0,.03);border-radius:3px;"></div>
-            <div style="font-size:8px;color:var(--text-head);">卡片 ${i+1}</div>
-            <div style="font-size:6px;padding:1px 12px;border-radius:99px;background:rgba(0,0,0,.04);color:var(--text-muted);">选择此卡</div>
+          <div style="width:${Math.round(115*m.scale)}px;padding:${Math.round(7*m.scale)}px ${Math.round(9*m.scale)}px;background:#fff;border:1.3px solid var(--border-default);border-radius:${sp(6)}px;display:flex;flex-direction:column;align-items:center;gap:${Math.round(3*m.scale)}px;">
+            <div style="font-size:${fs(6)}px;padding:0 ${sp(6)}px;border-radius:99px;background:rgba(0,0,0,.04);color:var(--text-muted);">品质</div>
+            <div style="width:${sp(20)}px;height:${sp(20)}px;background:rgba(0,0,0,.03);border-radius:${sp(3)}px;"></div>
+            <div style="font-size:${fs(8)}px;color:var(--text-head);">卡片 ${i+1}</div>
+            <div style="font-size:${fs(6)}px;padding:${sp(1)}px ${sp(12)}px;border-radius:99px;background:rgba(0,0,0,.04);color:var(--text-muted);">选择此卡</div>
           </div>`).join("")}
         </div>
       </div>`,
@@ -988,7 +1050,8 @@ Dismiss ↓ 上→下 模态关闭</pre></div>
 
 // ═══════════ 检查清单 ═══════════
 
-function renderChecklists(sections: SpecSection[]): string {
+function renderChecklists(sections: SpecSection[], config: SpecConfig): string {
+  const t44 = Math.round(config.canvas_width * 44 / 375);
   const checklistSection = sections.find(s => s.title === "交付检查清单");
   const a11ySection = sections.find(s => s.title === "可访问性清单");
 
@@ -999,7 +1062,7 @@ function renderChecklists(sections: SpecSection[]): string {
 <h2 id="可访问性清单"><span class="num">15</span> 可访问性清单</h2>
 <div class="spec-row">
   <div class="spec-visual">
-    <ul class="chk single">${a11yItems.length > 0 ? a11yItems.map(i => `<li>${esc(i.replace(/^\[.\] /, ""))}</li>`).join("") : "<li>最小触控热区 ≥44×44px</li><li>文字最小字号 ≥10px</li><li>正文对比度 ≥4.5:1</li><li>重要信息不只靠颜色区分</li><li>动效可关闭</li><li>音效独立开关</li><li>剧情字幕</li><li>操作可撤销</li>"}</ul>
+    <ul class="chk single">${a11yItems.length > 0 ? a11yItems.map(i => `<li>${esc(i.replace(/^\[.\] /, ""))}</li>`).join("") : "<li>最小触控热区 ≥${t44}×${t44}px</li><li>文字最小字号 ≥10px</li><li>正文对比度 ≥4.5:1</li><li>重要信息不只靠颜色区分</li><li>动效可关闭</li><li>音效独立开关</li><li>剧情字幕</li><li>操作可撤销</li>"}</ul>
   </div>
   <div class="spec-text">
     <p>支持系统字体缩放(≥120%)、色觉障碍辅助(品质=颜色+文字+边框)、合理Tab键导航顺序。</p>
@@ -1009,12 +1072,12 @@ function renderChecklists(sections: SpecSection[]): string {
 <h2 id="交付检查清单"><span class="num">16</span> 交付检查清单</h2>
 <div class="spec-row">
   <div class="spec-visual">
-    <ul class="chk single">${checkItems.length > 0 ? checkItems.map(i => `<li>${esc(i.replace(/^\[.\] /, ""))}</li>`).join("") : "<li>内容在安全区内</li><li>主CTA在底部 y&gt;1100</li><li>尺寸为网格基础单位整数倍</li><li>列栅格对齐</li><li>热区≥44×44px</li><li>按钮4态完整</li><li>卡片3态完整</li><li>品质=颜色+文字+边框</li><li>空/加载/错误态完整</li><li>转场≤300ms</li><li>对比度≥4.5:1</li>"}</ul>
+    <ul class="chk single">${checkItems.length > 0 ? checkItems.map(i => `<li>${esc(i.replace(/^\[.\] /, ""))}</li>`).join("") : "<li>内容在安全区内</li><li>主CTA在底部 y&gt;1100</li><li>尺寸为网格基础单位整数倍</li><li>列栅格对齐</li><li>热区≥${t44}×${t44}px</li><li>按钮4态完整</li><li>卡片3态完整</li><li>品质=颜色+文字+边框</li><li>空/加载/错误态完整</li><li>转场≤300ms</li><li>对比度≥4.5:1</li>"}</ul>
   </div>
   <div class="spec-text">
     <h3>布局</h3><ul class="chk"><li>内容在安全区内</li><li>主CTA在底部</li></ul>
     <h3>网格</h3><ul class="chk"><li>尺寸为网格单位整数倍</li><li>列栅格对齐</li></ul>
-    <h3>组件</h3><ul class="chk"><li>热区≥44px</li><li>按钮4态</li><li>卡片3态</li></ul>
+    <h3>组件</h3><ul class="chk"><li>热区≥${t44}px</li><li>按钮4态</li><li>卡片3态</li></ul>
     <h3>状态</h3><ul class="chk"><li>空/加载/错误态</li><li>数据为空不崩溃</li></ul>
   </div>
 </div>`;
@@ -1023,6 +1086,10 @@ function renderChecklists(sections: SpecSection[]): string {
 // ═══════════ 附录 ═══════════
 
 function renderAppendix(config: SpecConfig): string {
+  const c44 = Math.round(config.canvas_width * 44 / 375);
+  const c48 = Math.round(config.canvas_width * 48 / 375);
+  const tW = Math.round(config.canvas_width * 51 / 375);
+  const tH = Math.round(config.canvas_width * 31 / 375);
   return `
 <h2>附录 A：组件尺寸速查表</h2>
 <div class="spec-row"><div class="spec-visual"></div><div class="spec-text">
@@ -1030,12 +1097,12 @@ function renderAppendix(config: SpecConfig): string {
 <tr><td>主按钮</td><td>280×52</td><td>200×44</td></tr>
 <tr><td>次按钮</td><td>200×44</td><td>160×40</td></tr>
 <tr><td>小按钮</td><td>120×36</td><td>88×36</td></tr>
-<tr><td>图标按钮</td><td>48×48</td><td>44×44</td></tr>
+<tr><td>图标按钮</td><td>${c48}×${c48}</td><td>${c44}×${c44}</td></tr>
 <tr><td>选择卡片</td><td>200~240×220~260</td><td>160×180</td></tr>
 <tr><td>列表行</td><td>全宽×56~72</td><td>全宽×44</td></tr>
 <tr><td>居中弹窗</td><td>600~680×auto</td><td>560×auto</td></tr>
 <tr><td>槽位</td><td>72×72</td><td>48×48</td></tr>
-<tr><td>开关</td><td>34×18</td><td>—</td></tr>
+<tr><td>开关</td><td>${tW}×${tH}</td><td>—</td></tr>
 </table>
 </div></div>
 

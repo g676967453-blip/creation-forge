@@ -1,0 +1,15 @@
+{
+  "name": "game-lo-fi-prototype",
+  "version": "1.0.0",
+  "category": "Game UI / Prototyping",
+  "description": "游戏低保真交互原型 — 六步工作流从场景梳理到交互走查，输出可点击的 HTML/CSS 线框图。在进入高保真之前快速验证交互流。",
+  "homepage": "https://github.com/g676967453-blip/creation-forge",
+  "compat": ["claude-code"],
+  "author": "造化坊 (Creation Forge)",
+  "license": "Apache-2.0",
+  "metadata": {
+    "engine": "none",
+    "category": "workflows",
+    "difficulty": "beginner"
+  }
+}

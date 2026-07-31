@@ -70,7 +70,7 @@
 ### 3.1 触摸交互（竖版手游）
 
 - 所有可点击元素最小触控区域：**44×44px**（符合 iOS HIG / Android Material）
-- 高频按钮放在拇指热区（Y: 800~1334，参考 `projects/interaction-spec-system/specs/vertical-game-interaction-spec.md` 第二章）
+- 高频按钮放在拇指热区（Y: 800~1334，参考 `docs/specs/vertical-game-interaction-spec.md` 第二章）
 - 按钮间距 ≥ 16px，防止误触
 - 滑动操作注明方向和阈值（如「左滑 60px 删除」）
 

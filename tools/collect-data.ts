@@ -221,7 +221,7 @@ const SKILL_DESC_ZH: Record<string, string> = {
   // 项目自定义扁平 SKILL
   "git-commit": "Git 提交推送：检查变更 → 生成约定式提交 → 确认 → commit → push 到远程仓库",
   "new-post": "小红书帖子制作：works/ 选材 → 文案撰写 → HTML 排版 → Puppeteer 截图导出（6 PNG）→ Pixso 导入（可选）",
-  "update-dashboard": "仪表盘更新：检查数据源 → 更新脚本 → 生成 HTML 仪表盘（8 页签：系统总览/项目状态/工作流清单/近期动态/任务看板/目标计划/知识库/资产地址）",
+  "update-dashboard": "仪表盘更新：检查数据源 → 更新脚本 → 生成 HTML 仪表盘（7 页签：系统总览/项目状态/工作流/个人待办/目标计划/知识库/资产地址）",
   "item-icon": "游戏道具图标生产：道具清单 → Lovart AI 生成 → Photoshop 抠图 → 切片输出",
   "libtv": "LibTV 媒体生产集成：视频/音频/AI 内容生成，含命令、示例、模型 schema、节点类型",
   "router": "SKILL 路由引擎：根据用户请求匹配并路由到正确的游戏开发 SKILL",
@@ -422,18 +422,18 @@ export function collectData() {
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
   const projects = [
-    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~40%", output: "闭环完整+MCP在线+5层防御+15波+6功法+35/93任务✅+文档审计修复", blocker: "待祝福3选1UI+弟子接入主循环+旧模块删除" },
-    { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: "14 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: "—" },
+    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~70%", output: "闭环+MCP+5层防御+15波+6功法+35/93任务✅+文档修复+方向重构完成", blocker: "待祝福3选1UI+弟子接入主循环" },
+    { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: "15 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
     { name: "秦王殿奏对 (qin-court-audience)", engine: "HTML/CSS/JS", status: "active", statusText: "活跃", progress: "v1.0 已完成", output: "300 题库 + 10 分类 + 打字答题", blocker: "—" },
-    { name: "originals / sandbox", engine: "待定", status: "empty", statusText: "空白", progress: "—", output: "—", blocker: "—" },
+    { name: "交互规范系统 (interaction-spec-system)", engine: "TypeScript + HTML/CSS", status: "active", statusText: "活跃", progress: "v1.0", output: "MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成", blocker: "—" },
   ];
 
   const workflows = [
     { name: "Git-提交推送", version: "v1", skill: "/git-commit", project: "全局", status: "mature", category: "造化坊",
       desc: "将本地代码变更提交并推送到 GitHub 远程仓库", steps: "检查变更 → 生成约定式提交 → 用户确认 → commit → push", trigger: "/git-commit 或「提交代码」" },
     { name: "仪表盘更新", version: "v2", skill: "/update-dashboard", project: "全局", status: "mature", category: "造化坊",
-      desc: "重新生成造化坊 HTML 仪表盘（8 页签）", steps: "检查 collect-data.ts → 更新过时数据 → 生成 HTML → 用户验证", trigger: "/update-dashboard 或「更新仪表盘」" },
+      desc: "重新生成造化坊 HTML 仪表盘（7 页签）", steps: "检查 collect-data.ts → 更新过时数据 → 生成 HTML → 用户验证", trigger: "/update-dashboard 或「更新仪表盘」" },
     { name: "个人待办管理", version: "v1", skill: "/todo", project: "全局", status: "mature", category: "造化坊",
       desc: "管理 5 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
     { name: "功能开发-流水线", version: "v2", skill: "待建", project: "全局", status: "mature", category: "游戏开发",
@@ -466,9 +466,10 @@ export function collectData() {
   // 旧任务看板已合并入个人待办系统（docs/个人待办.md），此处不再维护
 
   const goalsUser = [
-    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏。7月已14期", priority: "🟡 持续", progress: 100, todos: 1 },
-    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证", priority: "🔴 P0", progress: 80, todos: 5 },
+    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏。7月已15期，8月目标：8期+", priority: "🟡 持续", progress: 90, todos: 1 },
+    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 70, todos: 5 },
     { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "等待 GAME-002 V0.1 稳定后提取道具清单，批量生产第一批图标", priority: "🟢 远期", progress: 20, todos: 1 },
+    { id: "U4", task: "造化坊仪表盘持续完善", detail: "8 大问题修复：数据同步、待办归档、页签重构、资产补全。保持仪表盘与项目状态实时一致", priority: "🟡 本周", progress: 0, todos: 0 },
   ];
 
   const goalsArchived = [
@@ -480,15 +481,15 @@ export function collectData() {
 
   const goalsIssues = [
     { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
-    { id: "I7", issue: "CODE_WIKI.md 已更新 V0.0→V0.1 过渡状态，数值总览已同步 CSV", source: "07-26 文档修复完成（1/3轮），第三轮归档标注待补充", severity: "🟢 跟踪" },
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
+    { id: "I8", issue: "仪表盘部分数据硬编码，未与实际文件系统同步", source: "仪表盘全局审查 07-31", severity: "🔴 本周" },
   ];
 
   const goalsAI = [
-    { id: "A1", suggestion: "Phase 3：祝福3选1 UI 面板制作 + 接入升级流程", detail: "旧代码已清理。下一步：创建独立祝福选择面板，DiscipleSquad 接入战斗循环。", priority: "🔴 优先" },
-    { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "14 期存量足够，按 /new-post 流程持续产出即可。重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
-    { id: "A4", suggestion: "目标管理体系已上线，建议 8 月做首次月度复盘 🆕", detail: "三个全局工作流+目标规划.md+仪表盘进度条全部就位。8月1日可做首次正式月度复盘，回顾 7 月成果。", priority: "🟡 建议" },
+    { id: "A1", suggestion: "Phase 3：祝福3选1 UI 面板制作 + 接入升级流程", detail: "旧代码已清理。下一步：创建独立祝福选择面板，DiscipleSquad 接入战斗循环。这是 V0.1 核心闭环的最后一块拼图。", priority: "🔴 优先" },
+    { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "15 期存量足够，按 /new-post 流程持续产出即可。8 月重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
+    { id: "A4", suggestion: "8月1日执行首次月度复盘 🆕", detail: "三个全局工作流+目标规划.md+仪表盘进度条全部就位。明天（8月1日）可做首次正式月度复盘，回顾 7 月成果并规划 8 月方向。", priority: "🔴 优先" },
   ];
 
   const toolGuides = [
@@ -497,25 +498,30 @@ export function collectData() {
     { tool: "Pixso", intro: "pixso-human-ai-collaboration.md", ops: "pixso-workflow-add-post.md", collab: "—", desc: "UI 设计工具，人机协作 + 导入流程", docs: 2 },
     { tool: "Claude Code Skills", intro: "game-dev-skills.md", ops: "—", collab: "—", desc: `标准 ${skillsCount.standard} + 扁平 ${skillsCount.flat} = ${skillsCount.total} 个技能（Godot/Phaser/Three.js 等）`, docs: skillsCount.total },
     { tool: "Claude Code 配置", intro: "—", ops: ".claude/settings.json", collab: "CLAUDE.md", desc: "权限/hooks/MCP/记忆", docs: 4 },
+    { tool: "个人工作记录", intro: "README.md", ops: "docs/personal-work-records/", collab: "—", desc: "7 大类工作文档：美术规范/团队管理/项目成本/任务规划/校企合作/行业认知/AI工具", docs: 31 },
   ];
 
   const assets = [
     { layer: "系统层", name: "CLAUDE.md", path: "CLAUDE.md", desc: "AI 行为规范（项目入口）" },
-    { layer: "系统层", name: "docs/workflows/", path: "docs/workflows/", desc: "标准化工作流（10 文档）" },
-    { layer: "系统层", name: "docs/tool-guides/", path: "docs/tool-guides/", desc: "工具知识库" },
+    { layer: "系统层", name: "docs/workflows/", path: "docs/workflows/", desc: `标准化工作流（${workflowCount} 文档）` },
+    { layer: "系统层", name: "docs/tool-guides/", path: "docs/tool-guides/", desc: `工具知识库（${guideCount} 文档）` },
+    { layer: "系统层", name: "docs/personal-work-records/", path: "docs/personal-work-records/", desc: "个人工作记录：美术规范/团队管理/项目成本/任务规划/校企合作/行业认知/AI工具" },
     { layer: "系统层", name: ".claude/skills/", path: ".claude/skills/", desc: "SKILL 定义文件（/xxx CLI 命令的底层实现）" },
     { layer: "系统层", name: "works/", path: "works/", desc: "工作日志（一事一记）" },
     { layer: "系统层", name: "reports/", path: "reports/", desc: "汇报仪表盘" },
-    { layer: "项目层", name: "GAME-002「开仙门」", path: "projects/GAME-002/", desc: "Godot 修仙 Roguelike 塔防" },
-    { layer: "项目层", name: "小红书自媒体", path: "projects/xiaohongshu/", desc: "AI 协作内容创作" },
+    { layer: "项目层", name: "GAME-002「开仙门」", path: "projects/GAME-002/", desc: "Godot 修仙 Roguelike 塔防 → 吸血鬼+放置" },
+    { layer: "项目层", name: "小红书自媒体", path: "projects/xiaohongshu/", desc: "AI 协作内容创作 — 15 期帖子" },
     { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标资产管线" },
+    { layer: "项目层", name: "秦王殿奏对", path: "projects/qin-court-audience/", desc: "HTML/CSS/JS 打字答题游戏 — 300 题库 + 10 分类" },
+    { layer: "项目层", name: "交互规范系统", path: "projects/interaction-spec-system/", desc: "MD 驱动游戏交互规范生产线 — 模板+生成器+技能包" },
     { layer: "—", name: "GitHub", path: "https://github.com/g676967453-blip/creation-forge", desc: "远程仓库" },
   ];
 
   const external = [
     { cat: "设计工具", name: "Pixso (MCP)", addr: "http://127.0.0.1:3667/mcp", desc: "UI 设计工具" },
     { cat: "代码仓库", name: "GitHub", addr: "main 分支 / g676967453-blip/creation-forge", desc: "远程仓库" },
-    { cat: "自媒体", name: "小红书", addr: "projects/xiaohongshu/", desc: "14 期帖子，/new-post SKILL" },
+    { cat: "自媒体", name: "小红书", addr: "projects/xiaohongshu/", desc: "15 期帖子，/new-post SKILL" },
+    { cat: "AI 图像", name: "Lovart", addr: "lovart.ai", desc: "AI 图像/视频/音频生成，道具图标+概念图" },
   ];
 
   // 个人待办数据
