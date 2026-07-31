@@ -1,11 +1,11 @@
 /**
  * 游戏交互规范 HTML 生成器
  *
- * 用法: npx tsx tools/build-interaction-spec.ts [md文件路径]
+ * 用法: npx tsx projects/interaction-spec-system/tools/build-interaction-spec.ts [md文件路径]
  *
  * 示例:
- *   npx tsx tools/build-interaction-spec.ts docs/specs/vertical-game-interaction-spec.md
- *   npx tsx tools/build-interaction-spec.ts docs/specs/_interaction-template.md
+ *   npx tsx projects/interaction-spec-system/tools/build-interaction-spec.ts projects/interaction-spec-system/specs/vertical-game-interaction-spec.md
+ *   npx tsx projects/interaction-spec-system/tools/build-interaction-spec.ts projects/interaction-spec-system/specs/_interaction-template.md
  *
  * 输出: MD 同目录下生成同名 .html 文件
  */
@@ -15,7 +15,7 @@ import * as path from "path";
 import { parseSpec } from "./lib/spec-parser";
 import { renderHTML } from "./lib/spec-renderer";
 
-const ROOT = path.resolve(__dirname, "..");
+const ROOT = path.resolve(__dirname, "..", "..", "..");
 
 function main(): void {
   const args = process.argv.slice(2);
@@ -24,10 +24,10 @@ function main(): void {
     console.log(`
 🧮 游戏交互规范 HTML 生成器
 
-用法: npx tsx tools/build-interaction-spec.ts <md文件路径>
+用法: npx tsx projects/interaction-spec-system/tools/build-interaction-spec.ts <md文件路径>
 
 示例:
-  npx tsx tools/build-interaction-spec.ts docs/specs/vertical-game-interaction-spec.md
+  npx tsx projects/interaction-spec-system/tools/build-interaction-spec.ts projects/interaction-spec-system/specs/vertical-game-interaction-spec.md
 
 说明:
   读取 MD 规范文件的 YAML frontmatter 和结构化章节，

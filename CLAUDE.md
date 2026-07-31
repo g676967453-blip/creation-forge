@@ -223,12 +223,12 @@ assets: 添加玩家精灵素材
 
 ### 创建交互规范文档
 
-使用 `docs/specs/_interaction-template.md` 模板创建新的游戏交互规范：
+使用 `projects/interaction-spec-system/specs/_interaction-template.md` 模板创建新的游戏交互规范：
 
-1. 复制模板：`cp docs/specs/_interaction-template.md docs/specs/<平台>-game-interaction-spec.md`
+1. 复制模板：`cp projects/interaction-spec-system/specs/_interaction-template.md projects/interaction-spec-system/specs/<平台>-game-interaction-spec.md`
 2. 编辑 YAML frontmatter（平台/画布/网格/色彩参数）
 3. 填写各章节内容（画布/热区/手势/触控/布局/组件/动效等）
-4. 生成 HTML：`npm run build-spec -- docs/specs/<平台>-game-interaction-spec.md`
+4. 生成 HTML：`npm run build-spec -- projects/interaction-spec-system/specs/<平台>-game-interaction-spec.md`
 5. 在浏览器中打开 HTML 验证视觉效果
 
 MD 为 AI 可读的单一数据源，HTML 由生成器自动渲染（网格可视化 + 组件陈列 + 手机原型标注）。

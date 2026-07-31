@@ -1,6 +1,5 @@
 # 游戏低保真交互原型 (Game Lo-Fi Interactive Prototype)
 
-> 📂 主副本位于 `projects/interaction-spec-system/skills/game-lo-fi-prototype/` — 此处为 Claude Code 运行时副本
 > 造化坊 (Creation Forge) — 独立游戏开发中的低保真交互原型技能
 
 ---

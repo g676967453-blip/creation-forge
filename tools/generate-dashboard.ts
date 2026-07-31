@@ -148,7 +148,6 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
   <button class="tab active" onclick="switchTab('overview',this)">系统总览</button>
   <button class="tab" onclick="switchTab('projects',this)">项目状态</button>
   <button class="tab" onclick="switchTab('workflows',this)">工作流</button>
-  <button class="tab" onclick="switchTab('activity',this)">近期动态</button>
   <button class="tab" onclick="switchTab('personal-tasks',this)">个人待办</button>
   <button class="tab" onclick="switchTab('goals',this)">目标计划</button>
   <button class="tab" onclick="switchTab('guides',this)">知识库</button>
@@ -159,10 +158,14 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
   <div class="credo"><p><strong>定一个项目 → 遇到问题 → 学需要的知识 → 解决问题 → 完成</strong> · 匠心造化，万物可成</p></div>
   <div class="cards" id="cards-overview"></div>
   <div class="tbl" id="tbl-overview-info"></div>
+  <div class="section-title">📰 近期动态</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div><div class="section-title" style="font-size:14px;margin-top:0">works/ 工作日志</div><div id="list-works"></div></div>
+    <div><div class="section-title" style="font-size:14px;margin-top:0">Git 提交历史</div><div id="list-commits"></div></div>
+  </div>
 </div>
 <div id="tab-projects" class="panel"><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('造化坊',this)">造化坊<span class="sub-count" id="wf-count-zaohuafang"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
-<div id="tab-activity" class="panel"><div class="section-title">works/ 工作日志</div><div id="list-works"></div><div class="section-title">Git 提交历史</div><div id="list-commits"></div></div>
 <div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 5 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button></div><div id="cards-personal-tasks" class="cards"></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">📌 活跃目标</div><div id="tbl-goals-user"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div><div class="section-title">🔍 系统问题（AI 诊断）</div><div id="tbl-goals-issues"></div><div class="section-title">💡 AI 大方向建议</div><div id="tbl-goals-ai"></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
@@ -317,14 +320,17 @@ function switchTab(name, el) {
     {label:'工具知识库',value:D.guideCount,detail:'操作指南'},
     {label:'works 日志',value:D.worksCount,detail:'一事一记'},
     {label:'Git 提交',value:D.commitCount,detail:'版本记录'},
-    {label:'活跃项目',value:'3',detail:'GAME-002 + 小红书 + asset-pipeline'},
+    {label:'活跃项目',value:D.projects.filter(function(p){return p.status==='active'}).length,detail:D.projects.filter(function(p){return p.status==='active'}).map(function(p){return p.name.split('（')[0].split('「')[0];}).join(' + ')},
   ].map(c=>'<div class="card"><div class="label">'+c.label+'</div><div class="value">'+c.value+'</div><div class="detail">'+c.detail+'</div></div>').join('');
 
   document.getElementById('tbl-overview-info').innerHTML =
     '<table class="tbl"><thead><tr><th>板块</th><th>内容</th></tr></thead><tbody>'+
     '<tr><td>AI 模式</td><td>协作者 · 导师 · 加速器</td></tr>'+
-    '<tr><td>SKILL</td><td>/new-post · /git-commit · /update-dashboard</td></tr>'+
+    '<tr><td>SKILL</td><td>/new-post · /git-commit · /update-dashboard · /todo · /goals</td></tr>'+
     '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>';
+  // 近期动态：works 日志 + Git 提交
+  document.getElementById('list-works').innerHTML=D.worksData.slice(0,10).map(function(w){return '<div class="log-item"><span class="log-date">'+w.date+'</span><span class="log-file">'+w.file+'</span><span class="log-desc">'+w.desc+'</span></div>';}).join('');
+  document.getElementById('list-commits').innerHTML=D.gitCommits.map(function(c){return '<div class="commit-item"><span class="log-date">'+c.date+'</span><span>'+c.msg+'</span><span class="hash">'+c.hash+'</span></div>';}).join('');
 })();
 (function(){
   const m={active:'badge-active',idle:'badge-idle',empty:'badge-empty'};
@@ -376,10 +382,6 @@ function switchTab(name, el) {
   document.getElementById('wf-count-zimeiti').textContent = '('+D.workflows.filter(function(w){return w.category==='自媒体';}).length+')';
   document.getElementById('wf-count-gamedev').textContent = '('+D.workflows.filter(function(w){return w.category==='游戏开发';}).length+')';
   document.getElementById('wf-count-skill').textContent = '('+D.skills.length+')';
-})();
-(function(){
-  document.getElementById('list-works').innerHTML=D.worksData.map(w=>'<div class="log-item"><span class="log-date">'+w.date+'</span><span class="log-file">'+w.file+'</span><span class="log-desc">'+w.desc+'</span></div>').join('');
-  document.getElementById('list-commits').innerHTML=D.gitCommits.map(c=>'<div class="commit-item"><span class="log-date">'+c.date+'</span><span>'+c.msg+'</span><span class="hash">'+c.hash+'</span></div>').join('');
 })();
 // 个人待办面板
 (function(){
