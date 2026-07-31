@@ -387,7 +387,7 @@ export function parseTitle(md: string): string {
 // ---- 主入口 ----
 
 export function parseSpec(filePath: string): ParsedSpec {
-  const content = readFileSync(filePath, "utf-8");
+  const content = readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n");
 
   // 分离 YAML frontmatter 和 Markdown body
   const fmMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);

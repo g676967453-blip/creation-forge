@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>挂件系统 — 功能策划案</title>
+<meta name="feat-name" content="挂件系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-p1 { background: rgba(204,170,68,0.15); color: var(--status-warning); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.trinket-slot { width: 64px; height: 64px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.trinket-slot.equipped { background: var(--bg-elevated); border: 2px solid var(--quality-rare); }
+.trinket-slot.empty { background: #1a1a1a; border: 1px dashed var(--border-subtle); }
+</style></head><body>
+<div class="page-header"><h1>挂件系统</h1><p class="subtitle">功能策划案 — 3槽即时装备 · 10种挂件 · 新替旧 · P1</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">挂件系统</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p1">P1</span></span></div></div>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 全屏战斗态 — 槽位显示在底部HUD</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 敌人系统 — 精英/Boss死亡掉落</span></p>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>精英/Boss掉落挂件，3槽(武器/防具/饰品)即时装备，改写攻击逻辑。新替旧，旧挂件消失。V0.1无背包，战斗结束不保留。</p>
+  </div>
+  <div class="section-card"><h3>不在范围内</h3>
+    <ul><li>挂件背包/存储 — V0.1 无背包，捡了就装，战斗结束销毁</li><li>挂件升级/合成 — V0.2+</li><li>挂件图鉴收集 — V0.2+</li><li>挂件在桌面态中的管理界面</li></ul>
+  </div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">挂件列表（10种）</div>
+  <table><tr><th>挂件</th><th>槽位</th><th>稀有度</th><th>效果</th><th>掉落来源</th></tr>
+    <tr><td>雷灵珠</td><td>武器</td><td><span style="color:var(--quality-rare);">稀有</span></td><td>10%麻痹0.5s</td><td>精英/Boss</td></tr>
+    <tr><td>火灵珠</td><td>武器</td><td><span style="color:var(--quality-rare);">稀有</span></td><td>3s DOT灼烧(5/s)</td><td>精英/Boss</td></tr>
+    <tr><td>冰灵珠</td><td>武器</td><td><span style="color:var(--quality-common);">普通</span></td><td>30%减速2s</td><td>精英</td></tr>
+    <tr><td>风灵珠</td><td>饰品</td><td><span style="color:var(--quality-common);">普通</span></td><td>攻速+30%</td><td>精英</td></tr>
+    <tr><td>土灵珠</td><td>防具</td><td><span style="color:var(--quality-epic);">史诗</span></td><td>护盾+20%HP</td><td>Boss</td></tr>
+    <tr><td>生命珠</td><td>防具</td><td><span style="color:var(--quality-common);">普通</span></td><td>HP上限+500</td><td>精英</td></tr>
+    <tr><td>暴击珠</td><td>饰品</td><td><span style="color:var(--quality-rare);">稀有</span></td><td>暴击率+15%</td><td>精英/Boss</td></tr>
+    <tr><td>吸灵珠</td><td>饰品</td><td><span style="color:var(--quality-common);">普通</span></td><td>拾取半径+50%</td><td>精英</td></tr>
+    <tr><td>反弹珠</td><td>防具</td><td><span style="color:var(--quality-epic);">史诗</span></td><td>受击反弹20%伤害</td><td>Boss</td></tr>
+    <tr><td>金灵珠</td><td>饰品</td><td><span style="color:var(--quality-common);">普通</span></td><td>击杀额外+5灵气</td><td>精英</td></tr></table>
+  <div class="sec-header">装备规则</div>
+  <div class="rule-l0">1.精英/Boss死亡→按概率掉落挂件（闪亮掉落物，自动吸入100px）</div>
+  <div class="rule-l0">2.挂件按槽位（武器/防具/饰品）自动装备到对应槽</div>
+  <div class="rule-l0">3.槽位已满→<span class="text-red">新替旧，旧挂件直接销毁</span>（V0.1无背包）</div>
+  <div class="rule-l0">4.挂件效果整局战斗持续，<span class="text-red">战斗结束全部销毁</span></div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 — 挂件槽位（战斗HUD右下角）</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+      <!-- 战场区域：器灵+敌人示意 -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(187,153,102,0.2);">📖</div>
+      <div style="position:absolute;top:80px;left:120px;width:10px;height:10px;background:var(--status-danger);border-radius:1px;opacity:0.4;"></div>
+      <div style="position:absolute;top:200px;right:100px;width:10px;height:10px;background:var(--status-danger);border-radius:1px;opacity:0.4;"></div>
+      <div style="position:absolute;top:140px;left:60px;width:10px;height:10px;background:var(--status-danger);border-radius:1px;opacity:0.4;"></div>
+      <!-- 顶部 HUD（半透明） -->
+      <div style="position:absolute;top:0;left:0;right:0;height:32px;background:linear-gradient(180deg, rgba(20,20,22,0.7) 0%, transparent 100%);display:flex;align-items:center;padding:0 12px;gap:12px;">
+        <span style="font-size:10px;color:var(--text-secondary);">第 5/15 波</span>
+        <span style="font-size:9px;color:var(--text-disabled);">击杀 127</span>
+      </div>
+      <!-- 底部 HUD — 左侧 HP+EXP，右侧挂件槽 -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:64px;background:linear-gradient(0deg, rgba(20,20,22,0.95) 0%, transparent 100%);display:flex;align-items:flex-end;padding:0 12px 6px 12px;gap:8px;">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;"><span style="font-size:8px;color:var(--text-secondary);">HP</span><div style="flex:1;height:8px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:1px;overflow:hidden;"><div style="width:68%;height:100%;background:linear-gradient(90deg, #ccaa44, #4ecca3);"></div></div><span style="font-size:8px;color:var(--text-primary);">1,360</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:7px;color:var(--text-disabled);">Lv.5</span><div style="flex:1;height:4px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:1px;overflow:hidden;"><div style="width:60%;height:100%;background:var(--status-success);"></div></div></div>
+        </div>
+        <!-- 挂件槽位 ×3 — 右下角横向排列 -->
+        <div style="display:flex;gap:4px;align-items:flex-end;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+            <div style="width:36px;height:36px;background:var(--bg-elevated);border:2px solid var(--quality-rare);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;">
+              ⚡<div style="position:absolute;top:1px;right:1px;width:3px;height:3px;background:var(--quality-rare);border-radius:50%;"></div>
+            </div><span style="font-size:6px;color:var(--quality-rare);">武器</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+            <div style="width:36px;height:36px;background:var(--bg-elevated);border:2px solid var(--quality-epic);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;">
+              🛡<div style="position:absolute;top:1px;right:1px;width:3px;height:3px;background:var(--quality-epic);border-radius:50%;"></div>
+            </div><span style="font-size:6px;color:var(--quality-epic);">防具</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+            <div style="width:36px;height:36px;background:#1a1a1a;border:1px dashed var(--border-subtle);border-radius:2px;display:flex;align-items:center;justify-content:center;">
+              <svg width="6" height="6" viewBox="0 0 12 12" fill="none" stroke="#333" stroke-width="1.5"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+            </div><span style="font-size:6px;color:var(--text-disabled);">饰品</span>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:6px;right:50px;width:16px;height:16px;border-radius:50%;background:var(--status-warning);color:#000;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+      </div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">挂件槽位×3（战斗HUD右下角）</span><div class="ud">武器/防具/饰品横向排列。位置：底部HUD右侧，HP/EXP条右方。有装备→图标+品质色边框+品质圆点。空槽→虚线框+加号。槽位标签在下方。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">替换规则</span><div class="ud">同槽新挂件替换旧挂件(0.3s过渡)。旧挂件直接消失，不可撤销。战斗结束全部销毁。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card"><h3>动态交互 — 挂件装备模拟（战斗HUD右下角）</h3>
+  <div class="interact-area" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+    <!-- 战场背景 -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);opacity:0.3;display:flex;align-items:center;justify-content:center;font-size:10px;">📖</div>
+    <!-- 底部HUD -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:56px;background:linear-gradient(0deg, rgba(20,20,22,0.95) 0%, transparent 100%);display:flex;align-items:flex-end;padding:0 12px 6px 12px;gap:8px;">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;"><span style="font-size:8px;color:var(--text-secondary);">HP</span><div style="flex:1;height:6px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:1px;overflow:hidden;"><div style="width:68%;height:100%;background:linear-gradient(90deg, #ccaa44, #4ecca3);"></div></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:7px;color:var(--text-disabled);">Lv.5</span><div style="flex:1;height:3px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:1px;overflow:hidden;"><div style="width:60%;height:100%;background:var(--status-success);"></div></div></div>
+      </div>
+      <div style="display:flex;gap:4px;align-items:flex-end;" id="slot-area">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+          <div style="width:36px;height:36px;background:var(--bg-elevated);border:2px solid var(--quality-rare);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;cursor:pointer;" id="slot-weapon" onclick="equipSlot('weapon')">
+            +<div style="position:absolute;top:1px;right:1px;width:3px;height:3px;background:var(--quality-rare);border-radius:50%;"></div>
+          </div><span style="font-size:6px;color:var(--quality-rare);" id="label-weapon">武器</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+          <div style="width:36px;height:36px;background:var(--bg-elevated);border:2px solid var(--quality-epic);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;cursor:pointer;" id="slot-armor" onclick="equipSlot('armor')">
+            +<div style="position:absolute;top:1px;right:1px;width:3px;height:3px;background:var(--quality-epic);border-radius:50%;"></div>
+          </div><span style="font-size:6px;color:var(--quality-epic);" id="label-armor">防具</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+          <div style="width:36px;height:36px;background:#1a1a1a;border:1px dashed var(--border-subtle);border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;" id="slot-accessory" onclick="equipSlot('accessory')">
+            <svg width="6" height="6" viewBox="0 0 12 12" fill="none" stroke="#333" stroke-width="1.5"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+          </div><span style="font-size:6px;color:var(--text-disabled);" id="label-accessory">饰品</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:12px;"><button class="interact-reset" onclick="resetSlots()">⟳ 重置</button></div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">U1</td><td>挂件槽位（空/装备）</td><td>控件</td><td>64×64</td><td>PNG</td><td>2</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">空槽=虚线框+加号。装备槽=暗底+品质色边框。</td></tr>
+    <tr><td class="mono">U2</td><td>10种挂件图标</td><td>图标</td><td>32×32</td><td>PNG</td><td>10</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">各灵珠像素图标。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>格式</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">V1</td><td>挂件掉落闪光</td><td>场景</td><td>—</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">掉落物闪光+旋转+光晕。</td></tr>
+    <tr><td class="mono">V2</td><td>拾取吸附粒子</td><td>场景</td><td>—</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">挂件飞向器灵拖尾粒子。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+const items={weapon:{icon:'⚡',name:'雷灵珠',color:'var(--quality-rare)'},armor:{icon:'🛡',name:'土灵珠',color:'var(--quality-epic)'},accessory:{icon:'💨',name:'风灵珠',color:'var(--quality-common)'}};
+function equipSlot(s){const el=document.getElementById('slot-'+s);const lb=document.getElementById('label-'+s);el.innerHTML=items[s].icon;el.style.background='var(--bg-elevated)';el.style.border='2px solid '+items[s].color;lb.textContent=items[s].name;lb.style.color=items[s].color;}
+function resetSlots(){['weapon','armor','accessory'].forEach(s=>{const el=document.getElementById('slot-'+s);el.innerHTML='+';el.style.background='var(--bg-elevated)';el.style.border='2px solid '+(s==='accessory'?'var(--border-subtle)':s==='weapon'?'var(--quality-rare)':'var(--quality-epic)');document.getElementById('label-'+s).textContent=s==='weapon'?'武器':s==='armor'?'防具':'饰品';document.getElementById('label-'+s).style.color=s==='weapon'?'var(--quality-rare)':s==='armor'?'var(--quality-epic)':'var(--text-disabled)';});}
+</script>
+</body></html>

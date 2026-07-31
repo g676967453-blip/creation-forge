@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>祝福系统 — 功能策划案</title>
+<meta name="feat-name" content="祝福系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; text-align: center; }
+.blessing-cards { display: flex; gap: 16px; }
+.b-card { width: 160px; padding: 20px 16px; border-radius: var(--radius-lg); background: var(--bg-surface); border: 1px solid var(--border-default); display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
+.b-card:hover { transform: scale(1.05); border-color: var(--quality-rare); }
+.b-card.picked { border-color: var(--quality-legendary); box-shadow: 0 0 16px rgba(187,153,102,0.4); }
+.b-card .b-icon { font-size: 28px; }
+.b-card .b-name { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 2px; }
+.b-card .b-effect { font-size: var(--fs-caption); color: var(--text-secondary); }
+.b-card .b-tier-dots { display: flex; gap: 3px; }
+.b-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border-subtle); }
+.b-dot.filled { background: var(--quality-rare); }
+</style></head><body>
+<div class="page-header"><h1>祝福系统</h1><p class="subtitle">功能策划案 — 战斗中升级→暂停→3选1 · 叠3升阶质变</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">祝福系统</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p0">P0</span></span></div></div>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 全屏战斗态 — 升级时触发</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 山峰修复 — 修复山峰解锁祝福线</span></p>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>战斗中升级暂停弹窗3选1祝福。3种类型×9条线×3层。同线叠满3张触发升阶质变（弹射→闪电网等），攻击形态肉眼可见变化。</p>
+  </div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">触发规则</div>
+  <div class="rule-l0">1.战斗中器灵升级→游戏<span class="text-red">暂停</span>→弹出3张祝福卡片</div>
+  <div class="rule-l0">2.开局首次进入战斗→固定弹一次祝福（V0.1开局不弹）</div>
+  <div class="rule-l0">3.每局约<span class="text-blue">10-15次</span>升级选择</div>
+  <div class="sec-header">祝福类型与升阶质变</div>
+  <table><tr><th>祝福线</th><th>类型</th><th>1级</th><th>2级</th><th>3级（质变）</th><th>前置山峰</th></tr>
+    <tr><td>弹射</td><td>弹道型</td><td>+1弹射</td><td>+2弹射</td><td><span class="text-blue">闪电网</span>（链式弹射）</td><td>剑峰</td></tr>
+    <tr><td>分裂</td><td>弹道型</td><td>+1分裂</td><td>+2分裂</td><td><span class="text-blue">扇形5发</span></td><td>法峰</td></tr>
+    <tr><td>穿透</td><td>弹道型</td><td>+1穿透</td><td>+2穿透</td><td><span class="text-blue">穿透翻倍+回旋</span></td><td>兽峰</td></tr>
+    <tr><td>攻速</td><td>数值型</td><td>+20%</td><td>+40%</td><td><span class="text-blue">双倍攻击间隔</span></td><td>—</td></tr>
+    <tr><td>伤害</td><td>数值型</td><td>+30%</td><td>+60%</td><td><span class="text-blue">暴击20%+200%暴伤</span></td><td>魂峰</td></tr>
+    <tr><td>范围</td><td>数值型</td><td>+15%</td><td>+30%</td><td><span class="text-blue">全屏覆盖</span></td><td>器峰</td></tr>
+    <tr><td>护盾</td><td>特殊型</td><td>+20%HP护盾</td><td>+40%HP护盾</td><td><span class="text-blue">破裂冲击波</span></td><td>佛峰</td></tr>
+    <tr><td>吸血</td><td>特殊型</td><td>5%吸血</td><td>10%吸血</td><td><span class="text-blue">过量→护盾</span></td><td>—</td></tr>
+    <tr><td>暴击</td><td>特殊型</td><td>10%暴击</td><td>20%暴击</td><td><span class="text-blue">暴击→闪电链</span></td><td>—</td></tr></table>
+  <div class="sec-header">抽卡规则</div>
+  <div class="rule-l0">1.祝福池由已修复山峰决定（修复越多→可选越多）</div>
+  <div class="rule-l0">2.每抽3张，按权重随机，不重复</div>
+  <div class="rule-l0">3.已叠满3张的祝福线<span class="text-red">从卡池移除</span></div>
+  <div class="rule-l0">4.可用池&lt;3→剩余空位补"灵气+50"万能卡</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 — 3选1祝福面板</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+      <!-- 底层：暂停的战斗场景（模糊暗示） -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);opacity:0.25;"></div>
+      <div style="position:absolute;top:60px;left:100px;width:8px;height:8px;background:var(--status-danger);border-radius:1px;opacity:0.15;"></div>
+      <div style="position:absolute;top:180px;right:120px;width:8px;height:8px;background:var(--status-danger);border-radius:1px;opacity:0.15;"></div>
+      <div style="position:absolute;top:120px;left:50px;width:8px;height:8px;background:var(--status-danger);border-radius:1px;opacity:0.15;"></div>
+      <!-- 中层：全屏遮罩 -->
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);"></div>
+      <!-- 顶层：3选1卡片 -->
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:48px;z-index:2;">
+        <div style="font-size:18px;color:var(--text-primary);font-weight:700;letter-spacing:6px;margin-bottom:20px;">Lv.5 选择祝福</div>
+        <div class="blessing-cards">
+          <div class="b-card picked">
+            <div class="b-icon">↗</div><div class="b-name">弹 射</div><div class="b-effect">+1 弹射次数</div>
+            <div style="font-size:9px;color:var(--quality-rare);">稀有·弹道型</div>
+            <div class="b-tier-dots"><div class="b-dot filled"></div><div class="b-dot"></div><div class="b-dot"></div></div>
+            <div style="font-size:8px;color:var(--text-disabled);">1/3</div>
+          </div>
+          <div class="b-card"><div class="b-icon">⚡</div><div class="b-name">迅 捷</div><div class="b-effect">攻速 +30%</div><div style="font-size:9px;color:var(--quality-common);">普通·数值型</div><div class="b-tier-dots"><div class="b-dot"></div><div class="b-dot"></div><div class="b-dot"></div></div><div style="font-size:8px;color:var(--text-disabled);">0/3</div></div>
+          <div class="b-card"><div class="b-icon">🛡</div><div class="b-name">金刚盾</div><div class="b-effect">护盾+20% HP</div><div style="font-size:9px;color:var(--quality-epic);">史诗·特殊型</div><div class="b-tier-dots"><div class="b-dot"></div><div class="b-dot"></div><div class="b-dot"></div></div><div style="font-size:8px;color:var(--text-disabled);">0/3</div></div>
+        </div>
+        <div style="font-size:10px;color:var(--text-disabled);">点击卡片选择 · 不可反悔</div>
+      </div></div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">战斗暂停 + 遮罩</span><div class="ud">底层：暂停的战斗场景（器灵+敌人半透明可见）。中层：rgba(0,0,0,0.65)全屏遮罩。顶层：卡片从下方滑入。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">三张卡片</span><div class="ud">每张显示：类型标签+图标+名称+效果+稀有度+堆叠进度点（●○○=1/3）。悬停放大1.05x。选中金色边框+发光。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">升阶提示</span><div class="ud">叠满3张时触发：全屏大字"升阶！闪电网"+金色粒子+音效+攻击形态视觉切换。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3>动态交互 — 3选1模拟</h3>
+  <div class="interact-area" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+    <!-- 暂停战斗背景 -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);opacity:0.2;"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);"></div>
+    <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;">
+    <div style="font-size:16px;color:var(--text-primary);font-weight:700;letter-spacing:4px;">Lv.5 选择祝福</div>
+    <div class="blessing-cards">
+      <div class="b-card" onclick="pickCard(this,'弹射+1 · 已选择！')"><div class="b-icon">↗</div><div class="b-name">弹 射</div><div class="b-effect">弹射+1</div><div class="b-tier-dots"><div class="b-dot filled"></div><div class="b-dot"></div><div class="b-dot"></div></div></div>
+      <div class="b-card" onclick="pickCard(this,'攻速+30% · 已选择！')"><div class="b-icon">⚡</div><div class="b-name">迅 捷</div><div class="b-effect">攻速+30%</div><div class="b-tier-dots"><div class="b-dot"></div><div class="b-dot"></div><div class="b-dot"></div></div></div>
+      <div class="b-card" onclick="pickCard(this,'护盾+20% HP · 已选择！')"><div class="b-icon">🛡</div><div class="b-name">金刚盾</div><div class="b-effect">护盾+20%</div><div class="b-tier-dots"><div class="b-dot"></div><div class="b-dot"></div><div class="b-dot"></div></div></div>
+    </div>
+    <span class="interact-msg" id="pick-msg"></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);"><button class="interact-reset" onclick="resetPick()">⟳ 重新选择</button></div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">U1</td><td>祝福卡片底板（普通/稀有/史诗）</td><td>控件</td><td>200×280</td><td>PNG</td><td>3</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗色卡片。普通=灰框/稀有=蓝框/史诗=紫框。选中态金色框+发光。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">V1</td><td>升阶质变全屏特效</td><td>全屏特效</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">金色粒子爆炸+大字"升阶！闪电网"。0.5s。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+function pickCard(el,msg){document.querySelectorAll('.b-card').forEach(c=>c.classList.remove('picked'));el.classList.add('picked');document.getElementById('pick-msg').textContent=msg;}
+function resetPick(){document.querySelectorAll('.b-card').forEach(c=>c.classList.remove('picked'));document.getElementById('pick-msg').textContent='';}
+</script>
+</body></html>

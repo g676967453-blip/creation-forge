@@ -173,7 +173,7 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
   <div class="section-card">
     <h3>不在范围内</h3>
     <ul>
-      <li>开场黑幕的逐段播放逻辑 → 见「开场黑幕」策划案</li>
+      <li>开场黑幕的逐段播放逻辑 → 见 §七 首次启动流程 + 界面 4</li>
       <li>器灵选择卡片的详细交互与美术 → 见「器灵选择」策划案</li>
       <li>存档数据结构的读写逻辑 → 见「存档系统」策划案</li>
       <li>离线收益的计算公式 → 见「存档系统」策划案</li>
@@ -236,9 +236,16 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
   <div class="rule-l1">2.主菜单中确认「新游戏」</div>
   <div class="rule-l0">二.流程步骤</div>
   <div class="rule-l1">1.开场黑幕（世界观叙事，逐段淡入淡出）</div>
-  <div class="rule-l2">1）纯黑背景，白色文字逐段呈现</div>
-  <div class="rule-l2">2）可点击/按键跳过，也可等待自动播放完毕</div>
-  <div class="rule-l2">3）详见「开场黑幕」策划案</div>
+  <div class="rule-l2">1）纯黑背景，白色文字逐段呈现，共 <span class="text-blue">4 段</span></div>
+  <div class="rule-l2">2）每段文字出现方式：<span class="text-blue">0.8s 淡入 → 停留 3s → 0.5s 淡出 → 0.3s 黑屏 → 下一段</span></div>
+  <div class="rule-l2">3）文字内容（GDD §四.1 世界观）：</div>
+  <div class="rule-l3">①「上古时代，仙界与凡间有仙门相连。仙人往来其间，两界共享太平。」</div>
+  <div class="rule-l3">②「仙门一夜崩塌。仙人陨落消散，至强法宝耗尽灵力，化为凡间荒山，陷入沉睡。」</div>
+  <div class="rule-l3">③「无数年后，荒山深处传来微弱的呼唤——是器灵苏醒了。」</div>
+  <div class="rule-l3">④「你听到了这跨越轮回的呼唤。修复神器，重开仙门——这是你的使命。」</div>
+  <div class="rule-l2">4）跳过机制：<span class="text-blue">任意键/点击</span> → 立即结束当前段 → 直接进入器灵选择</div>
+  <div class="rule-l2">5）跳过时：当前文字快速淡出（0.2s），不播放剩余段落</div>
+  <div class="rule-l2">6）全程无 UI 元素，仅文字 + 纯黑背景</div>
   <div class="rule-l1">2.黑幕结束 → 过渡 → 器灵选择界面</div>
   <div class="rule-l2">1）过渡方式：<span class="mark-yellow">0.5s 淡入淡出</span></div>
   <div class="rule-l2">2）V0.1 仅百世书可选（诛仙剑/神农鼎 V0.2+）</div>
@@ -275,7 +282,7 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
   <div class="rule-l1">2.过渡时长：<span class="text-blue">0.5s</span></div>
   <div class="rule-l1">3.过渡期间<span class="text-blue">不响应输入</span></div>
   <div class="rule-l0">二.例外</div>
-  <div class="rule-l1">1.开场黑幕内部逐段切换有自己的过渡逻辑（见对应策划案）</div>
+  <div class="rule-l1">1.开场黑幕内部逐段切换过渡逻辑见 §七.二.1（0.8s 淡入 → 3s 停留 → 0.5s 淡出 → 0.3s 黑屏 → 下一段）</div>
   <div class="rule-l1">2.设置弹窗不触发全屏过渡，仅弹窗本身淡入/淡出</div>
 </div></div>
 
@@ -377,6 +384,38 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
         <div class="ui-note"><span class="un">2</span><span class="ut">确定 / 取消</span><div class="ud">确定 — 红色按钮（危险操作），清档 → 首次流程。取消 — 灰色按钮，关闭弹窗回主菜单。两按钮并排，确定在左、取消在右。</div></div>
       </div>
     </div>
+  </div>
+
+  <!-- 界面4：开场黑幕 -->
+  <div class="section-card">
+    <h3 style="margin-bottom:var(--sp-md);">界面 4 — 开场黑幕（首次启动·世界观叙事）</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:#000; position:relative; overflow:hidden;">
+      <!-- 第3段文字示意（正在显示中） -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;">
+        <p style="font-family:var(--font-cn);font-size:16px;color:rgba(255,255,255,0.85);text-align:center;line-height:2;letter-spacing:2px;max-width:480px;">
+          无数年后，荒山深处传来<br>微弱的呼唤——<br>是器灵苏醒了。
+        </p>
+      </div>
+      <!-- 跳过提示（底部） -->
+      <div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:2;">
+        <p style="font-family:var(--font-cn);font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:2px;margin:0;">点击任意位置跳过</p>
+      </div>
+      <!-- 进度点（4段） -->
+      <div style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;">
+        <div style="width:4px;height:4px;background:rgba(255,255,255,0.4);border-radius:50%;"></div>
+        <div style="width:4px;height:4px;background:rgba(255,255,255,0.4);border-radius:50%;"></div>
+        <div style="width:4px;height:4px;background:rgba(255,255,255,0.7);border-radius:50%;"></div>
+        <div style="width:4px;height:4px;background:rgba(255,255,255,0.2);border-radius:50%;"></div>
+      </div>
+      <div style="position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--status-warning);color:#000;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;">1</div>
+      <div style="position:absolute;bottom:60px;left:50%;transform:translate(-50%,0);width:20px;height:20px;border-radius:50%;background:var(--status-warning);color:#000;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;">2</div>
+      <div style="position:absolute;bottom:30px;left:50%;transform:translate(-50%,0);width:20px;height:20px;border-radius:50%;background:var(--status-warning);color:#000;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;">3</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">世界观文字（4段逐段淡入）</span><div class="ud">GDD §四.1 故事原文：①仙门相连 → ②崩塌化山 → ③器灵苏醒 → ④呼唤使命。每段 0.8s 淡入→停留 3s→0.5s 淡出→下一段。全程纯黑背景，无 UI 元素。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">进度指示点</span><div class="ud">4 个圆点对应 4 段文字。当前段白色高亮，已播段浅灰，未播段暗灰。V0.1 可省略（极简美学）。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">跳过提示 + 机制</span><div class="ud">底部弱提示"点击任意位置跳过"。任意键/点击 → 当前段 0.2s 快速淡出 → 直接进入器灵选择。跳过时不播剩余段落。</div></div>
+    </div></div>
   </div>
 </div>
 
@@ -537,14 +576,29 @@ function confirmNewGame() {
   updateUI();
   var overlay = document.getElementById('interact-overlay');
   overlay.classList.add('on');
-  showMsg('跳过主菜单 → 开场黑幕 → 器灵选择…');
-  setTimeout(function(){
-    overlay.classList.remove('on');
-    showMsg('进入桌面放置态 ✓（首次）');
-    hasSave = true;
-    document.getElementById('save-status').textContent = '有存档';
-    updateUI();
-  }, 2500);
+  // 模拟开场黑幕的 4 段文字
+  var lines = [
+    '上古时代，仙界与凡间有仙门相连…',
+    '仙门崩塌，法宝化为荒山，陷入沉睡…',
+    '无数年后，器灵苏醒了…',
+    '修复神器，重开仙门——这是你的使命。'
+  ];
+  var i = 0;
+  function nextLine() {
+    if (i < lines.length) {
+      showMsg(lines[i]); i++;
+      setTimeout(nextLine, 1500);
+    } else {
+      showMsg('→ 器灵选择 → 桌面放置态 ✓（首次）');
+      setTimeout(function(){
+        overlay.classList.remove('on');
+        hasSave = true;
+        document.getElementById('save-status').textContent = '有存档';
+        updateUI();
+      }, 1500);
+    }
+  }
+  nextLine();
 }
 
 function simSettings() {

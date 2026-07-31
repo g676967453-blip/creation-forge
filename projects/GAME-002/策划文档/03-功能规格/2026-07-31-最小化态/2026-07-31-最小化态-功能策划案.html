@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>最小化态 — 功能策划案</title>
+<meta name="feat-name" content="最小化态"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: linear-gradient(180deg, #0a0c14 0%, #101218 40%, #141620 100%); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.mini-window { width: 100px; height: 100px; position: relative; cursor: pointer; }
+.mini-spirit { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 50% 40%, #1e1e22 0%, #141416 100%); border: 2px solid var(--quality-legendary); display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 0 16px rgba(187,153,102,0.25); margin: 0 auto; animation: breathe 2s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+</style></head><body>
+<div class="page-header"><h1>最小化态</h1><p class="subtitle">功能策划案 — 100×100悬浮器灵小窗 · 可拖动 · 呼吸动画 · 后台挂机</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">最小化态</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p0">P0</span></span></div></div>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 三态切换 — 桌面⇄小窗</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 桌面放置态 — 点击[_]进入</span></p>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>100×100px悬浮器灵小窗，可拖动到桌面任意位置。器灵Q版头像+呼吸动画。后台持续挂机累积灵气。点击展开回桌面态。</p>
+  </div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">窗口规则</div>
+  <div class="rule-l0">1.尺寸：<span class="text-blue">100×100 px</span></div>
+  <div class="rule-l0">2.初始位置：屏幕右下角（距右20px，距下40px）</div>
+  <div class="rule-l0">3.属性：无边框、<span class="text-blue">始终置顶</span>、可拖动</div>
+  <div class="rule-l0">4.拖动后位置：内存记忆（V0.1不写存档）</div>
+  <div class="sec-header">交互规则</div>
+  <div class="rule-l0">1.点击小窗 → <span class="text-blue">展开回桌面态</span>（区分拖动：移动&lt;5px=点击，&gt;5px=拖动）</div>
+  <div class="rule-l0">2.拖动到屏幕外 → clamp保留至少20px可见</div>
+  <div class="rule-l0">3.按住拖动时半透明（alpha 0.8）</div>
+  <div class="sec-header">显示内容（V0.1）</div>
+  <div class="rule-l0">1.器灵Q版头像（约80×80）—根据spirit_level显示对应形态</div>
+  <div class="rule-l0">2.呼吸动画：缩放1.0⇄1.05，周期2s</div>
+  <div class="rule-l0">3.V0.2扩展：灵气数字、buff图标</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 — 最小化悬浮窗</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame">
+      <!-- 桌面图标暗示 -->
+      <div style="position:absolute;top:40px;left:30px;opacity:0.05;"><div style="width:32px;height:32px;background:#fff;border-radius:6px;margin-bottom:8px;"></div><div style="width:32px;height:32px;background:#fff;border-radius:6px;"></div></div>
+      <!-- 拖动虚线提示 -->
+      <div style="position:absolute;top:40px;left:50%;transform:translateX(-50%);border:1px dashed rgba(255,255,255,0.05);border-radius:50%;width:80px;height:80px;pointer-events:none;"></div>
+      <p style="position:absolute;top:28px;left:50%;transform:translateX(-50%);font-size:7px;color:rgba(255,255,255,0.06);letter-spacing:1px;pointer-events:none;">可拖动到桌面任意位置</p>
+      <!-- 100×100 小窗 — 右下角 -->
+      <div style="position:absolute;bottom:30px;right:30px;">
+        <div class="mini-window">
+          <div class="mini-spirit">📖</div>
+          <div style="position:absolute;top:-14px;right:-4px;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:3px;padding:1px 5px;font-size:7px;color:var(--text-secondary);">💨1,280</div>
+        </div>
+        <div style="font-size:7px;color:var(--text-disabled);text-align:center;margin-top:4px;">100×100 · 点击展开</div>
+      </div>
+      <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text-disabled);letter-spacing:2px;">模拟桌面 — 100×100悬浮器灵小窗</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">器灵Q版头像</span><div class="ud">80×80圆形，金色边框+发光。根据spirit_level(0→6)切换形态。呼吸动画循环。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">灵气数字（可选）</span><div class="ud">V0.2扩展。小窗右上角浮动显示当前灵气数。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">点击/拖动区分</span><div class="ud">快速点击(&lt;5px移动)=展开回桌面。按住拖动(&gt;5px)=移动窗口位置。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card"><h3>动态交互 — 小窗位置模拟</h3>
+  <div class="interact-area" style="background:linear-gradient(180deg, #0a0c14 0%, #101218 40%, #141620 100%); position:relative;">
+    <!-- 桌面图标暗示 -->
+    <div style="position:absolute;top:20px;left:20px;opacity:0.06;"><div style="width:24px;height:24px;background:#fff;border-radius:4px;margin-bottom:6px;"></div><div style="width:24px;height:24px;background:#fff;border-radius:4px;"></div></div>
+    <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:20px;position:relative;z-index:2;">
+      <div style="text-align:center;padding:16px;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:var(--radius-lg);cursor:pointer;" onclick="this.style.borderColor='var(--quality-legendary)';this.style.boxShadow='0 0 12px rgba(187,153,102,0.3)';setTimeout(()=>{this.style.borderColor='var(--border-default)';this.style.boxShadow='none';},300);">
+        <div class="mini-spirit">📖</div>
+        <div style="font-size:10px;color:var(--text-secondary);margin-top:6px;">右下角（默认）</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:var(--radius-lg);cursor:pointer;" onclick="this.style.borderColor='var(--quality-legendary)';this.style.boxShadow='0 0 12px rgba(187,153,102,0.3)';setTimeout(()=>{this.style.borderColor='var(--border-default)';this.style.boxShadow='none';},300);">
+        <div class="mini-spirit">📖</div>
+        <div style="font-size:10px;color:var(--text-secondary);margin-top:6px;">左上角</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:var(--radius-lg);cursor:pointer;" onclick="this.style.borderColor='var(--quality-legendary)';this.style.boxShadow='0 0 12px rgba(187,153,102,0.3)';setTimeout(()=>{this.style.borderColor='var(--border-default)';this.style.boxShadow='none';},300);">
+        <div class="mini-spirit">📖</div>
+        <div style="font-size:10px;color:var(--text-secondary);margin-top:6px;">中央</div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:10px;color:var(--text-disabled);">点击模拟展开 · 80x80 头像 + 呼吸动画</p>
+  </div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">C1</td><td>百世书Q版头像（Lv0-6）</td><td>角色</td><td>80×80</td><td>PNG</td><td>7</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">Q版古书头像。Lv0=残破→Lv3=明亮→Lv6=金色符文环绕。像素风格。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th><th>说明</th></tr>
+    <tr><td class="mono">M1</td><td>呼吸动画</td><td>精灵表</td><td>80×80</td><td>4</td><td>8</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">微微缩放+微光浮动。循环。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+</script>
+</body></html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · Creation Forge</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f5;
+  --bg-elev:#fff;
+  --surface:#fff;
+  --surface-warm:#f5f0e8;
+  --surface-code:#f7f3ec;
+  --border:#ebe5db;
+  --border-strong:#d9d0c0;
+  --text:#2c2620;
+  --text-mid:#6b5d4f;
+  --text-dim:#9a8b7a;
+  --brand:#c8543a;
+  --brand-dim:rgba(200,84,58,.08);
+  --brand-soft:rgba(200,84,58,.15);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===== 导航 ===== */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(250,248,245,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  max-width:1080px;margin:0 auto;
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.logo-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.nav-links{display:flex;gap:32px}
+.nav-links a{
+  color:var(--text-mid);text-decoration:none;font-size:14px;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--brand)}
+.nav-links a.active{color:var(--brand);font-weight:600}
+.nav-cta{
+  padding:8px 18px;border-radius:6px;
+  background:var(--text);color:#fff;
+  font-size:13px;font-weight:600;text-decoration:none;
+  transition:all .2s;
+}
+.nav-cta:hover{background:var(--brand)}
+
+/* ===== Hero ===== */
+.hero{
+  max-width:1080px;margin:0 auto;
+  padding:96px 32px 72px;
+  text-align:center;
+}
+.hero-eyebrow{
+  font-size:13px;color:var(--brand);font-weight:600;
+  letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:18px;
+}
+.hero h1{
+  font-size:52px;font-weight:800;letter-spacing:-1px;
+  margin-bottom:24px;line-height:1.2;
+}
+.hero h1 .accent{color:var(--brand)}
+.hero .tagline{
+  font-size:18px;color:var(--text-mid);
+  max-width:580px;margin:0 auto 36px;
+  line-height:1.8;
+}
+.hero .tagline strong{color:var(--text);font-weight:600}
+.hero-actions{display:flex;gap:14px;justify-content:center}
+.btn-primary{
+  padding:13px 32px;border-radius:8px;
+  background:var(--brand);color:#fff;
+  font-size:14px;font-weight:600;text-decoration:none;
+  transition:all .2s;
+}
+.btn-primary:hover{background:#b8492f;transform:translateY(-2px);box-shadow:0 8px 20px rgba(200,84,58,.25)}
+.btn-ghost{
+  padding:13px 32px;border-radius:8px;
+  background:transparent;color:var(--text);
+  font-size:14px;font-weight:500;text-decoration:none;
+  border:1px solid var(--border-strong);
+  transition:all .2s;
+}
+.btn-ghost:hover{background:var(--surface-warm);border-color:var(--brand)}
+
+/* ===== 区块通用 ===== */
+.section{max-width:1080px;margin:0 auto;padding:72px 32px}
+.section-head{margin-bottom:48px}
+.section-head.center{text-align:center}
+.section-mark{
+  font-size:13px;color:var(--text-dim);
+  margin-bottom:10px;font-family:Georgia,serif;font-style:italic;
+}
+.section-head h2{font-size:32px;font-weight:800;margin-bottom:10px;letter-spacing:-.5px}
+.section-head .desc{font-size:15px;color:var(--text-mid);max-width:560px}
+.section-head.center .desc{margin:0 auto}
+.section-head .head-row{
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+.section-head .head-row .more{
+  font-size:13px;color:var(--brand);text-decoration:none;font-weight:600;
+}
+.section-head .head-row .more:hover{text-decoration:underline}
+
+/* ===== 游戏/项目展示 ===== */
+.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.project{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  text-decoration:none;color:inherit;
+  transition:all .25s;
+  display:flex;flex-direction:column;
+}
+.project:hover{
+  border-color:var(--brand);
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(200,84,58,.08);
+}
+.project-cover{
+  height:140px;border-radius:10px;
+  background:var(--surface-warm);
+  margin-bottom:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:48px;
+}
+.project-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.project-name{font-size:19px;font-weight:700}
+.project-status{
+  padding:3px 10px;border-radius:10px;
+  font-size:11px;font-weight:600;
+  background:var(--brand-dim);color:var(--brand);
+  white-space:nowrap;
+}
+.project-desc{font-size:14px;color:var(--text-mid);line-height:1.7;margin-bottom:14px;flex:1}
+.project-tags{display:flex;gap:8px;flex-wrap:wrap}
+.project-tag{
+  padding:3px 10px;border-radius:6px;
+  background:var(--surface-warm);color:var(--text-mid);
+  font-size:12px;
+}
+
+/* ===== SKILL 文档站 ===== */
+.skill-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  margin-bottom:32px;
+}
+.skill-stat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;padding:20px;text-align:center;
+}
+.skill-stat .num{font-size:30px;font-weight:800;color:var(--brand)}
+.skill-stat .label{font-size:13px;color:var(--text-dim);margin-top:4px}
+
+.skill-filter{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;
+}
+.filter-tag{
+  padding:6px 14px;border-radius:16px;
+  font-size:13px;cursor:pointer;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--text-mid);
+  transition:all .2s;
+}
+.filter-tag:hover{border-color:var(--brand);color:var(--brand)}
+.filter-tag.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+.skill-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+}
+.skill-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px;
+  text-decoration:none;color:inherit;
+  transition:all .2s;
+  display:block;
+}
+.skill-card:hover{
+  border-color:var(--brand);
+  background:var(--surface-warm);
+  transform:translateY(-2px);
+}
+.skill-card-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:8px;gap:8px;
+}
+.skill-name{font-size:14px;font-weight:600;color:var(--text)}
+.skill-type{
+  padding:2px 8px;border-radius:8px;
+  font-size:10px;font-weight:600;white-space:nowrap;
+}
+.skill-type-godot{background:rgba(76,175,80,.12);color:#4caf50}
+.skill-type-web{background:rgba(33,150,243,.12);color:#42a5f5}
+.skill-type-disc{background:rgba(200,84,58,.12);color:var(--brand)}
+.skill-type-genre{background:rgba(156,39,176,.12);color:#ce93d8}
+.skill-type-wf{background:rgba(255,152,0,.12);color:#ff9800}
+.skill-type-flat{background:var(--surface-warm);color:var(--text-dim)}
+.skill-desc{font-size:12px;color:var(--text-mid);line-height:1.6}
+.skill-path{
+  font-size:11px;color:var(--text-dim);
+  font-family:Consolas,monospace;margin-top:8px;
+  padding:4px 8px;background:var(--surface-code);border-radius:4px;
+  word-break:break-all;
+}
+
+/* ===== 关于 ===== */
+.about-box{
+  background:var(--surface-warm);
+  border-radius:20px;padding:48px;
+  text-align:center;
+}
+.about-box h3{font-size:24px;font-weight:800;margin-bottom:14px}
+.about-box p{font-size:15px;color:var(--text-mid);max-width:560px;margin:0 auto 24px;line-height:1.8}
+
+/* ===== 页脚 ===== */
+.footer{
+  border-top:1px solid var(--border);
+  padding:40px 32px 28px;text-align:center;
+}
+.footer-inner{max-width:1080px;margin:0 auto}
+.footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:18px}
+.footer-links a{color:var(--text-mid);text-decoration:none;font-size:14px}
+.footer-links a:hover{color:var(--brand)}
+.footer-credit{font-size:13px;color:var(--text-dim)}
+.footer-credit a{color:var(--text-mid);text-decoration:none}
+.footer-credit a:hover{color:var(--brand)}
+
+@media (max-width:768px){
+  .nav-links{display:none}
+  .hero{padding:60px 24px 40px}
+  .hero h1{font-size:34px}
+  .projects,.skill-grid{grid-template-columns:1fr}
+  .skill-stats{grid-template-columns:repeat(2,1fr)}
+  .section{padding:56px 24px}
+  .about-box{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">🏭</div>
+      <span>造化坊</span>
+    </div>
+    <div class="nav-links">
+      <a href="#games" class="active">游戏</a>
+      <a href="#skills">SKILL 仓库</a>
+      <a href="#about">关于</a>
+    </div>
+    <a href="https://github.com/g676967453-blip/creation-forge" target="_blank" class="nav-cta">GitHub</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">CREATION FORGE</div>
+  <h1>做游戏，<span class="accent">顺便分享</span><br>路上捡到的装备</h1>
+  <p class="tagline">
+    造化坊是一个独立游戏创造工坊。这里展示我做过的<strong>游戏项目</strong>，和我积累的 <strong>SKILL 技能仓库</strong>——每个都来自真实项目，能直接用。
+  </p>
+  <div class="hero-actions">
+    <a href="#games" class="btn-primary">看游戏项目</a>
+    <a href="#skills" class="btn-ghost">翻 SKILL 仓库</a>
+  </div>
+</section>
+
+<!-- 游戏项目 -->
+<section class="section" id="games">
+  <div class="section-head">
+    <div class="head-row">
+      <div>
+        <div class="section-mark">§ 游戏项目</div>
+        <h2>做出来的游戏</h2>
+        <p class="desc">每个项目都是真实交付，从原型到完整作品。</p>
+      </div>
+      <a href="#" class="more">全部项目 →</a>
+    </div>
+  </div>
+  <div class="projects">
+    <a href="#" class="project">
+      <div class="project-cover">🏯</div>
+      <div class="project-head">
+        <div class="project-name">开仙门</div>
+        <div class="project-status">开发中</div>
+      </div>
+      <p class="project-desc">修仙塔防游戏。六大山峰功法体系，从点击器原型演化到完整战斗系统。Godot 4 引擎，包含器灵、法宝、祝福、弟子等多系统。</p>
+      <div class="project-tags">
+        <span class="project-tag">Godot 4</span>
+        <span class="project-tag">塔防</span>
+        <span class="project-tag">修仙</span>
+      </div>
+    </a>
+    <a href="#" class="project">
+      <div class="project-cover">🎭</div>
+      <div class="project-head">
+        <div class="project-name">秦王殿奏对</div>
+        <div class="project-status">原型</div>
+      </div>
+      <p class="project-desc">朝堂对话互动原型。玩家扮演臣子在秦王殿前应对，探索权谋与口才的博弈。</p>
+      <div class="project-tags">
+        <span class="project-tag">HTML</span>
+        <span class="project-tag">对话</span>
+      </div>
+    </a>
+    <a href="#" class="project">
+      <div class="project-cover">📐</div>
+      <div class="project-head">
+        <div class="project-name">交互规范系统</div>
+        <div class="project-status">工具</div>
+      </div>
+      <p class="project-desc">把游戏交互设计规范系统化、工具化。自动解析 HTML 原型，生成可读的交互规范文档。</p>
+      <div class="project-tags">
+        <span class="project-tag">TypeScript</span>
+        <span class="project-tag">工具</span>
+      </div>
+    </a>
+    <a href="#" class="project">
+      <div class="project-cover">🎨</div>
+      <div class="project-head">
+        <div class="project-name">美术资产流水线</div>
+        <div class="project-status">工具</div>
+      </div>
+      <p class="project-desc">AI 辅助的美术资产生成与后处理流水线。Prompt 工程、切片脚本、质量验收一体化。</p>
+      <div class="project-tags">
+        <span class="project-tag">Python</span>
+        <span class="project-tag">AI 协作</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- SKILL 仓库 -->
+<section class="section" id="skills" style="background:var(--surface-warm)">
+  <div class="section-head center">
+    <div class="section-mark">§ SKILL 仓库</div>
+    <h2>路上捡到的装备</h2>
+    <p class="desc">每个项目做下来积累的可复用技能包。来自真实项目，能直接用。</p>
+  </div>
+
+  <div class="skill-stats">
+    <div class="skill-stat"><div class="num">15</div><div class="label">Godot 引擎</div></div>
+    <div class="skill-stat"><div class="num">6</div><div class="label">Web 引擎</div></div>
+    <div class="skill-stat"><div class="num">14</div><div class="label">开发学科</div></div>
+    <div class="skill-stat"><div class="num">9</div><div class="label">游戏类型</div></div>
+  </div>
+
+  <div class="skill-filter">
+    <span class="filter-tag active">全部</span>
+    <span class="filter-tag">Godot 引擎</span>
+    <span class="filter-tag">Web 引擎</span>
+    <span class="filter-tag">开发学科</span>
+    <span class="filter-tag">游戏类型</span>
+    <span class="filter-tag">工作流</span>
+  </div>
+
+  <div class="skill-grid">
+    <!-- Godot -->
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">godot-2d-movement</div>
+        <span class="skill-type skill-type-godot">Godot</span>
+      </div>
+      <p class="skill-desc">2D 角色移动：CharacterBody2D、move_and_slide、平台跳跃、俯视角八向移动、斜坡处理</p>
+      <div class="skill-path">.claude/skills/library/godot/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">godot-physics</div>
+        <span class="skill-type skill-type-godot">Godot</span>
+      </div>
+      <p class="skill-desc">物理系统：RigidBody、CharacterBody、碰撞层/掩码、射线检测、Area 检测</p>
+      <div class="skill-path">.claude/skills/library/godot/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">godot-shaders</div>
+        <span class="skill-type skill-type-godot">Godot</span>
+      </div>
+      <p class="skill-desc">着色器：ShaderMaterial、canvas_item/spatial/particles、uniform、顶点/片元</p>
+      <div class="skill-path">.claude/skills/library/godot/</div>
+    </a>
+
+    <!-- Web 引擎 -->
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">phaser-core</div>
+        <span class="skill-type skill-type-web">Web</span>
+      </div>
+      <p class="skill-desc">Phaser 3 核心：Game 配置、Scene 生命周期、资源加载、跨场景数据传递、摄像机跟随</p>
+      <div class="skill-path">.claude/skills/library/web-engines/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">threejs-scene-setup</div>
+        <span class="skill-type skill-type-web">Web</span>
+      </div>
+      <p class="skill-desc">Three.js 场景搭建：importmap、Scene+Camera+Renderer、动画循环、响应式、OrbitControls</p>
+      <div class="skill-path">.claude/skills/library/web-engines/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">pixijs-rendering</div>
+        <span class="skill-type skill-type-web">Web</span>
+      </div>
+      <p class="skill-desc">PixiJS 渲染：Application 初始化、容器/精灵/图形、DisplayObject 层级、批处理优化</p>
+      <div class="skill-path">.claude/skills/library/web-engines/</div>
+    </a>
+
+    <!-- 学科 -->
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">game-ai</div>
+        <span class="skill-type skill-type-disc">学科</span>
+      </div>
+      <p class="skill-desc">游戏 AI：有限状态机(FSM)、行为树(BT)、寻路(A*)、转向行为(seek/arrive/避障)</p>
+      <div class="skill-path">.claude/skills/library/disciplines/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">game-feel</div>
+        <span class="skill-type skill-type-disc">学科</span>
+      </div>
+      <p class="skill-desc">游戏手感：屏幕震动、暂停/缓冲帧、音效/粒子反馈、变速、缓慢时间、Coyote 时间</p>
+      <div class="skill-path">.claude/skills/library/disciplines/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">level-design</div>
+        <span class="skill-type skill-type-disc">学科</span>
+      </div>
+      <p class="skill-desc">关卡设计：灰盒搭建、引导线、节奏曲线、安全区/挑战区、流程测试、迭代反馈</p>
+      <div class="skill-path">.claude/skills/library/disciplines/</div>
+    </a>
+
+    <!-- 类型 -->
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">tower-defense</div>
+        <span class="skill-type skill-type-genre">类型</span>
+      </div>
+      <p class="skill-desc">塔防：路径/路线系统、塔位/升级、敌人波次、经济平衡、范围/射速/伤害三要素</p>
+      <div class="skill-path">.claude/skills/library/genres/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">roguelike</div>
+        <span class="skill-type skill-type-genre">类型</span>
+      </div>
+      <p class="skill-desc">Roguelike：程序化地图、永久死亡、回合制/即时行动、道具协同(Build)、meta 升级</p>
+      <div class="skill-path">.claude/skills/library/genres/</div>
+    </a>
+    <a href="#" class="skill-card">
+      <div class="skill-card-head">
+        <div class="skill-name">platformer</div>
+        <span class="skill-type skill-type-genre">类型</span>
+      </div>
+      <p class="skill-desc">平台跳跃：跑/跳物理、Coyote 时间/跳跃缓冲、可变跳高、单面平台、墙角修正</p>
+      <div class="skill-path">.claude/skills/library/genres/</div>
+    </a>
+  </div>
+
+  <div style="text-align:center;margin-top:32px">
+    <a href="#" class="btn-primary">看全部 44+ 个 SKILL</a>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section class="section" id="about">
+  <div class="about-box">
+    <div class="section-mark">§ 关于</div>
+    <h3>造化坊 · Creation Forge</h3>
+    <p>
+      一个独立游戏创造工坊。做游戏，顺便把路上捡到的装备分享出来。<br>
+      每个 SKILL 都来自真实项目，不是空谈理论。
+    </p>
+    <div class="hero-actions">
+      <a href="https://github.com/g676967453-blip/creation-forge" target="_blank" class="btn-primary">GitHub 看源码</a>
+    </div>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="#games">游戏</a>
+      <a href="#skills">SKILL 仓库</a>
+      <a href="#about">关于</a>
+      <a href="https://github.com/g676967453-blip/creation-forge" target="_blank">GitHub</a>
+    </div>
+    <div class="footer-credit">
+      造化坊 · Creation Forge · 
+      <a href="https://github.com/g676967453-blip/creation-forge" target="_blank">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 导航高亮
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{
+    if(window.scrollY>=s.offsetTop-100) current=s.id;
+  });
+  navLinks.forEach(l=>{
+    l.classList.toggle('active',l.getAttribute('href')==='#'+current);
+  });
+});
+
+// SKILL 筛选
+const filterTags=document.querySelectorAll('.filter-tag');
+filterTags.forEach(t=>{
+  t.addEventListener('click',()=>{
+    filterTags.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

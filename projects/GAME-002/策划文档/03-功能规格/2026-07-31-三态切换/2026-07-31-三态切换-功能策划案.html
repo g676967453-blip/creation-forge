@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>三态切换 — 功能策划案</title>
+<meta name="feat-name" content="三态切换"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.state-card { padding: 20px; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border-default); background: var(--bg-surface); cursor: pointer; transition: all 0.2s; }
+.state-card:hover { border-color: var(--quality-rare); }
+.state-card.active-state { border-color: var(--quality-legendary); box-shadow: 0 0 12px rgba(187,153,102,0.3); }
+</style></head><body>
+<div class="page-header"><h1>三态切换</h1><p class="subtitle">功能策划案 — 全屏战斗态 ⇄ 桌面放置态 ⇄ 最小化悬浮窗 · 0.3s过渡动画</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">三态切换</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p0">P0</span></span></div></div>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>游戏在三种窗口形态间无缝切换。全屏1280×720 ⇄ 桌面1280×120 ⇄ 小窗100×100。通过Godot Window API动态调整分辨率/位置/置顶。灵气累积在桌面态和最小化态持续，战斗态暂停。</p>
+  </div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">三态配置</div>
+  <table><tr><th>状态</th><th>分辨率</th><th>位置</th><th>置顶</th><th>无边框</th><th>灵气累积</th></tr>
+    <tr><td>全屏战斗态</td><td>1280×720</td><td>屏幕中央</td><td>否</td><td>否</td><td><span class="text-red">暂停</span></td></tr>
+    <tr><td>桌面放置态</td><td>1280×120</td><td>贴屏幕底部</td><td>是</td><td>是</td><td><span class="text-blue">实时</span></td></tr>
+    <tr><td>最小化态</td><td>100×100</td><td>上次拖动位置</td><td>是</td><td>是</td><td><span class="text-blue">实时</span></td></tr></table>
+  <div class="sec-header">切换规则</div>
+  <div class="rule-l0">1.桌面→战斗：点击[⚔挑战]→检查灵气≥100→切换全屏→3s倒计时</div>
+  <div class="rule-l0">2.战斗→桌面：结算完成→清理战场→切换1280×120贴底</div>
+  <div class="rule-l0">3.桌面⇄最小化：点击按钮↔点击小窗。灵气持续累积不停</div>
+  <div class="rule-l0">4.过渡动画：<span class="text-blue">0.3s</span>展开/收缩/缩放</div>
+  <div class="rule-l0">5.战斗中不可最小化（V0.1）</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 — 三态切换状态机</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #141416 0%, #1a1a1c 100%);">
+      <!-- 按真实 1/4 比例：战斗 320×180 / 桌面 320×30 / 小窗 25×25 -->
+      <div style="display:flex;align-items:center;gap:20px;">
+        <!-- 全屏战斗态 320×180 (16:9) -->
+        <div style="text-align:center;">
+          <div style="width:240px;height:135px;background:linear-gradient(180deg, #0d1018 0%, #121620 100%);border:2px solid var(--border-default);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-secondary);">1280×720<br>全屏战斗</div>
+          <div style="font-size:8px;color:var(--text-disabled);margin-top:3px;">有边框·非置顶</div>
+        </div>
+        <span style="font-size:16px;color:var(--status-success);">↔</span>
+        <!-- 桌面放置态 320×30 (10.67:1) — 极窄横条！ -->
+        <div style="text-align:center;">
+          <div style="width:280px;height:26px;background:linear-gradient(0deg, #1a1a1e 0%, #1e1e22 100%);border:2px solid var(--quality-legendary);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:7px;color:var(--quality-legendary);">🏔剑峰 📖百世书 🏔魂峰</div>
+          <div style="font-size:8px;color:var(--text-disabled);margin-top:3px;">1280×120 · 无边框·置顶</div>
+        </div>
+        <span style="font-size:16px;color:var(--status-success);">↔</span>
+        <!-- 最小化态 25×25 → 放大到 40×40 方便看清 -->
+        <div style="text-align:center;">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);display:flex;align-items:center;justify-content:center;font-size:14px;margin:0 auto;">📖</div>
+          <div style="font-size:8px;color:var(--text-disabled);margin-top:3px;">100×100小窗<br>可拖动·置顶</div>
+        </div>
+      </div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">Godot Window API</span><div class="ud">set_size()/set_position()/set_always_on_top() 动态切换。过渡动画0.3s。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">灵气累积状态</span><div class="ud">桌面态/最小化态→累积。战斗态→暂停。切换时不清零。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3>动态交互 — 三态切换示意</h3>
+  <div class="interact-area">
+    <div style="display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;">
+      <!-- 全屏战斗态 16:9 -->
+      <div class="state-card active-state" id="state-battle" onclick="switchState('battle')" style="width:160px;">
+        <div style="width:120px;height:68px;background:linear-gradient(180deg, #0d1018 0%, #121620 100%);border:2px solid var(--quality-legendary);border-radius:3px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:14px;">⚔</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-primary);">全屏战斗态</div><div style="font-size:8px;color:var(--text-disabled);">1280×720·16:9</div>
+      </div>
+      <!-- 桌面放置态 10.67:1 极窄 -->
+      <div class="state-card" id="state-desktop" onclick="switchState('desktop')" style="width:200px;">
+        <div style="width:180px;height:17px;background:linear-gradient(0deg, #1a1a1e 0%, #1e1e22 100%);border:2px solid var(--border-default);border-radius:2px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:7px;">🏔剑峰 📖百世书 🏔魂峰</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-primary);">桌面放置态</div><div style="font-size:8px;color:var(--text-disabled);">1280×120·10.7:1</div>
+      </div>
+      <!-- 最小化态 1:1 极小 -->
+      <div class="state-card" id="state-minimized" onclick="switchState('minimized')" style="width:100px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:14px;">📖</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-primary);">最小化态</div><div style="font-size:8px;color:var(--text-disabled);">100×100·1:1</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text-secondary);" id="state-desc">当前：全屏战斗态 — 灵气累积暂停</div>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:12px;"><button class="interact-reset" onclick="resetState()">⟳ 重置</button></div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-animation')">动作</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>优先级</th><th>说明</th></tr>
+    <tr><td class="mono">M1</td><td>展开过渡动画</td><td>UI动效</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">桌面→全屏：横条从底部向上展开。Tween 0.3s。</td></tr>
+    <tr><td class="mono">M2</td><td>收缩过渡动画</td><td>UI动效</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">全屏→桌面：从上下向中间收缩至横条。Tween 0.3s。</td></tr>
+    <tr><td class="mono">M3</td><td>缩放到小窗动画</td><td>UI动效</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">横条收缩+聚焦至器灵。Tween 0.3s。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+const descs={battle:'全屏战斗态 — 1280×720·灵气累积暂停·有边框',desktop:'桌面放置态 — 1280×120·灵气实时累积·无边框置顶',minimized:'最小化态 — 100×100·灵气实时累积·可拖动置顶'};
+function switchState(s){document.querySelectorAll('.state-card').forEach(c=>c.classList.remove('active-state'));document.getElementById('state-'+s).classList.add('active-state');document.getElementById('state-desc').textContent=descs[s];}
+function resetState(){switchState('battle');}
+</script>
+</body></html>

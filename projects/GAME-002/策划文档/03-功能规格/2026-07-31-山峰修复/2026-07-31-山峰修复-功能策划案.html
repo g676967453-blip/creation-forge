@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>山峰修复 — 功能策划案</title>
+<meta name="feat-name" content="山峰修复"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.mark-yellow { background: rgba(204,170,68,0.25); padding: 1px 4px; border-radius: 2px; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-sm); }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+.muted { color: var(--text-secondary); } .dim { color: var(--text-disabled); }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.rule-l2 { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); }
+.rule-ex { margin: var(--sp-2xs) 0 var(--sp-2xs) calc(var(--sp-lg) * 2); color: var(--text-disabled); font-size: var(--fs-caption); }
+.rule-ex::before { content: '示意：'; color: var(--quality-rare); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; }
+.interact-msg { font-size: var(--fs-h2); color: var(--quality-legendary); min-height: 28px; letter-spacing: 2px; text-align: center; transition: all 0.3s; }
+.repair-panel { width: 360px; padding: 32px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--radius-lg); }
+.repair-peak-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--bg-elevated); border: 2px solid var(--border-active); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.repair-btn { padding: 10px 32px; border-radius: var(--radius-md); border: none; background: var(--border-active); color: #000; font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); letter-spacing: 4px; cursor: pointer; }
+.repair-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.repair-cost-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--bg-elevated); border-radius: var(--radius-sm); margin-bottom: 6px; }
+</style></head><body>
+<div class="page-header"><h1>山峰修复</h1><p class="subtitle">功能策划案 — 六峰修复消耗 · 顺序规则 · 能力解锁</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">山峰修复</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p0">P0</span></span></div></div>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 桌面放置态 — 点击山峰触发修复</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 器灵系统 — 修复→升级+能力解锁</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 仓库 — 消耗灵气/女娲石/秘宝</span></p>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>消耗灵气或战斗材料修复六座山峰。剑峰首修（500灵气），其余5峰自由顺序（秘宝+女娲石+5千灵气）。每修复一座解锁器灵新能力。</p>
+  </div>
+  <div class="section-card"><h3>不在范围内</h3><ul><li>山峰升级（V0.1 仅修复/未修复二态）</li><li>程序生成山峰</li></ul></div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">修复消耗与能力映射</div>
+  <table><tr><th>山峰</th><th>消耗</th><th>顺序</th><th>解锁能力</th><th>效果</th></tr>
+    <tr><td>剑峰</td><td>灵气 500</td><td><span class="text-red">必须首修</span></td><td>弹射 +1</td><td>弹幕命中后弹向最近敌人</td></tr>
+    <tr><td>佛峰</td><td>佛峰秘宝×1 + 女娲石×1 + 灵气 5,000</td><td>自由</td><td>护盾</td><td>每 30s 生成 20% HP 护盾</td></tr>
+    <tr><td>法峰</td><td>法峰秘宝×1 + 女娲石×1 + 灵气 5,000</td><td>自由</td><td>分裂 +1</td><td>弹幕命中后分裂为 2 发</td></tr>
+    <tr><td>兽峰</td><td>兽峰秘宝×1 + 女娲石×1 + 灵气 5,000</td><td>自由</td><td>穿透 +1</td><td>弹幕穿透 1 个敌人</td></tr>
+    <tr><td>器峰</td><td>器峰秘宝×1 + 女娲石×1 + 灵气 5,000</td><td>自由</td><td>范围 +20%</td><td>弹幕大小/范围 +20%</td></tr>
+    <tr><td>魂峰</td><td>魂峰秘宝×1 + 女娲石×1 + 灵气 5,000</td><td>自由</td><td>伤害 +30%</td><td>所有弹幕伤害 +30%</td></tr></table>
+  <div class="sec-header">修复规则</div>
+  <div class="rule-l0">一.顺序约束</div>
+  <div class="rule-l1">1.剑峰<span class="text-red">必须第一个修复</span>（剑峰未修→其余山峰不可点击）</div>
+  <div class="rule-l1">2.剑峰修复后→其余5峰<span class="text-blue">自由选择</span>修复顺序</div>
+  <div class="rule-l0">二.消耗检查</div>
+  <div class="rule-l1">1.面板弹出时读取当前资源→按钮动态可用/置灰</div>
+  <div class="rule-l1">2.材料不足项<span class="text-red">红色标注</span></div>
+  <div class="rule-l0">三.修复效果</div>
+  <div class="rule-l1">1.山峰变亮+金色边框</div>
+  <div class="rule-l1">2.器灵等级 +1 → SpiritManager.level_up()</div>
+  <div class="rule-l1">3.器灵获得对应战斗能力</div>
+  <div class="rule-l1">4.祝福池扩充（该峰对应祝福线解锁）</div>
+  <div class="rule-l0">四.不可逆</div>
+  <div class="rule-l1">1.修复后<span class="text-red">不可撤销</span></div>
+  <div class="rule-l1">2.6座全修→无更多修复操作</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 — 修复确认面板</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #0d0d14 0%, #141416 100%); position:relative; overflow:hidden;">
+      <!-- 底层：桌面横条（变暗） -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:16.7%;background:linear-gradient(0deg, #1a1a1e 0%, #1e1e22 100%);border-top:1px solid var(--border-default);opacity:0.3;"></div>
+      <!-- 中层：全屏遮罩 -->
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+      <!-- 顶层：修复面板 -->
+      <div class="repair-panel" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <div class="repair-peak-icon">🏔</div>
+          <div><div style="font-size:18px;color:var(--text-primary);font-weight:700;letter-spacing:3px;">修复剑峰</div><div style="font-size:11px;color:var(--text-secondary);">解锁：弹射+1</div></div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div class="repair-cost-row"><span style="font-size:12px;color:var(--text-body);">💨 灵气消耗</span><span style="font-size:13px;color:var(--text-primary);font-weight:600;">500 <span style="font-size:10px;color:var(--status-success);">充足 (1,280)</span></span></div>
+          <div class="repair-cost-row"><span style="font-size:12px;color:var(--text-body);">🎯 解锁能力</span><span style="font-size:13px;color:var(--quality-legendary);font-weight:600;">弹射 +1</span></div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:flex-end;">
+          <button style="padding:8px 20px;background:transparent;border:1px solid var(--border-default);border-radius:3px;color:var(--text-secondary);font-family:var(--font-cn);font-size:12px;cursor:pointer;">取消</button>
+          <button class="repair-btn">确认修复</button>
+        </div>
+      </div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">山峰名+图标</span><div class="ud">显示山峰名称、图标、解锁能力。已修复的山峰图标亮色+金边。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">消耗列表</span><div class="ud">列出所有消耗项。足够→正常显示；不足→红色标注+按钮置灰。实时读取当前资源。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">确认/取消</span><div class="ud">确认→扣除资源→修复完成→面板关闭。取消→面板关闭不消耗。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card">
+  <h3>动态交互 — 修复流程模拟</h3>
+  <div class="interact-area" style="background:linear-gradient(180deg, #0d0d14 0%, #141416 85%, #1a1a1e 100%); position:relative; overflow:hidden;">
+    <!-- 桌面横条（底层） -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:16.7%;background:linear-gradient(0deg, #1a1a1e 0%, #1e1e22 100%);border-top:1px solid var(--border-default);opacity:0.3;"></div>
+    <!-- 遮罩 -->
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);"></div>
+    <!-- 修复面板 -->
+    <div class="repair-panel" style="position:relative;z-index:2;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <div class="repair-peak-icon" id="peak-icon">🏔</div>
+        <div><div style="font-size:18px;color:var(--text-primary);font-weight:700;letter-spacing:3px;" id="peak-name">修复剑峰</div><div style="font-size:11px;color:var(--text-secondary);" id="peak-ability">解锁：弹射+1</div></div>
+      </div>
+      <div style="margin-bottom:20px;"><div class="repair-cost-row"><span style="font-size:12px;color:var(--text-body);">💨 灵气消耗</span><span style="font-size:13px;color:var(--text-primary);font-weight:600;" id="cost-energy">500</span><span style="font-size:10px;color:var(--status-success);" id="cost-status"> 充足</span></div></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button style="padding:8px 20px;background:transparent;border:1px solid var(--border-default);border-radius:3px;color:var(--text-secondary);font-family:var(--font-cn);font-size:12px;cursor:pointer;" onclick="cancelRepair()">取消</button>
+        <button class="repair-btn" id="confirm-btn" onclick="confirmRepair()">确认修复</button>
+      </div>
+    </div>
+    <span class="interact-msg" id="repair-msg"></span>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:var(--sp-md);"><button class="interact-reset" onclick="resetRepair()">⟳ 重置</button></div>
+</div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">U1</td><td>修复确认面板底板</td><td>底板</td><td>420×300</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗色弹窗面板，金色镶边，半透明深色底。</td></tr>
+    <tr><td class="mono">U2</td><td>修复按钮（可用/禁用）</td><td>控件</td><td>140×40</td><td>PNG</td><td>2</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">金色可用 vs 灰色禁用。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">C1</td><td>六座山峰图标（各2态）</td><td>图标</td><td>56×56</td><td>PNG</td><td>12</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">剑/佛/法/兽/器/魂×已修复+未修复。像素中国风。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">V1</td><td>修复完成光效</td><td>场景特效</td><td>128×128</td><td>精灵表</td><td>1</td><td><span class="tag tag-p1">P1</span></td><td class="prompt-cell">金光从山峰底部升起扩散。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+function confirmRepair(){document.getElementById('repair-msg').textContent='✨ 剑峰修复完成！弹射+1 已解锁';document.getElementById('repair-msg').style.color='var(--quality-legendary)';document.getElementById('confirm-btn').disabled=true;document.getElementById('peak-icon').style.borderColor='var(--quality-legendary)';}
+function cancelRepair(){document.getElementById('repair-msg').textContent='已取消';document.getElementById('repair-msg').style.color='var(--text-disabled)';}
+function resetRepair(){document.getElementById('repair-msg').textContent='';document.getElementById('confirm-btn').disabled=false;document.getElementById('peak-icon').style.borderColor='var(--border-active)';}
+</script>
+</body></html>
