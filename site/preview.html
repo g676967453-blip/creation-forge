@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · Creation Forge</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;
+  --bg-elev:#141414;
+  --surface:#1a1a1a;
+  --surface-hover:#222;
+  --border:rgba(255,255,255,.08);
+  --border-strong:rgba(255,255,255,.14);
+  --text:#f5f5f5;
+  --text-mid:rgba(255,255,255,.7);
+  --text-dim:rgba(255,255,255,.45);
+  --text-faint:rgba(255,255,255,.3);
+  --brand:#ff6b6b;
+  --brand-dim:rgba(255,107,107,.12);
+  --brand-glow:rgba(255,107,107,.25);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===== 导航栏 ===== */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,10,10,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  max-width:1100px;margin:0 auto;
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--text)}
+.logo-mark{
+  width:28px;height:28px;border-radius:8px;
+  background:linear-gradient(135deg,var(--brand),#ff8e8e);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;
+}
+.nav-links{display:flex;gap:32px}
+.nav-links a{
+  color:var(--text-dim);text-decoration:none;font-size:14px;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--brand)}
+.nav-cta{
+  padding:8px 18px;border-radius:6px;
+  background:var(--brand);color:#fff;
+  font-size:13px;font-weight:600;text-decoration:none;
+  transition:all .2s;
+}
+.nav-cta:hover{background:#ff5555;transform:translateY(-1px)}
+
+/* ===== Hero 区 ===== */
+.hero{
+  max-width:1100px;margin:0 auto;
+  padding:120px 32px 100px;
+  text-align:center;
+  position:relative;
+}
+.hero::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,var(--brand-glow) 0%,transparent 60%);
+  opacity:.4;pointer-events:none;
+}
+.hero h1{
+  font-size:64px;font-weight:800;letter-spacing:-1px;
+  margin-bottom:24px;position:relative;
+}
+.hero h1 .accent{color:var(--brand)}
+.hero .tagline{
+  font-size:20px;color:var(--text-mid);
+  max-width:640px;margin:0 auto 40px;
+  line-height:1.7;position:relative;
+}
+.hero .tagline strong{color:var(--text);font-weight:600}
+.hero-actions{display:flex;gap:16px;justify-content:center;position:relative}
+.btn-primary{
+  padding:14px 32px;border-radius:8px;
+  background:var(--brand);color:#fff;
+  font-size:15px;font-weight:600;text-decoration:none;
+  transition:all .2s;border:none;cursor:pointer;
+}
+.btn-primary:hover{background:#ff5555;transform:translateY(-2px);box-shadow:0 8px 24px var(--brand-glow)}
+.btn-ghost{
+  padding:14px 32px;border-radius:8px;
+  background:transparent;color:var(--text);
+  font-size:15px;font-weight:500;text-decoration:none;
+  border:1px solid var(--border-strong);
+  transition:all .2s;
+}
+.btn-ghost:hover{background:var(--surface);border-color:var(--text-dim)}
+
+/* ===== 区块通用 ===== */
+.section{max-width:1100px;margin:0 auto;padding:80px 32px}
+.section-head{text-align:center;margin-bottom:56px}
+.section-head .eyebrow{
+  font-size:13px;color:var(--brand);font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.section-head h2{font-size:36px;font-weight:700;margin-bottom:12px}
+.section-head .desc{font-size:16px;color:var(--text-dim);max-width:560px;margin:0 auto}
+
+/* ===== 三大支柱 ===== */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.pillar{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:36px 28px;
+  transition:all .3s;
+  position:relative;overflow:hidden;
+}
+.pillar:hover{
+  border-color:var(--brand-glow);
+  transform:translateY(-4px);
+  background:var(--surface-hover);
+}
+.pillar-icon{
+  width:56px;height:56px;border-radius:14px;
+  background:var(--brand-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:20px;
+}
+.pillar h3{font-size:20px;font-weight:700;margin-bottom:12px}
+.pillar .credo{font-size:14px;color:var(--brand);font-weight:600;margin-bottom:16px;font-style:italic}
+.pillar p{font-size:14px;color:var(--text-mid);line-height:1.7;margin-bottom:16px}
+.pillar ul{list-style:none;font-size:13px;color:var(--text-dim)}
+.pillar ul li{padding:4px 0;padding-left:20px;position:relative}
+.pillar ul li::before{content:"✓";position:absolute;left:0;color:var(--brand)}
+
+/* ===== 项目制学习流程 ===== */
+.flow{
+  background:var(--bg-elev);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:48px;
+  margin-top:32px;
+}
+.flow-steps{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.flow-step{
+  flex:1;min-width:140px;text-align:center;
+  position:relative;
+}
+.flow-num{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--brand-dim);color:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;margin:0 auto 12px;
+  border:1px solid var(--brand-glow);
+}
+.flow-step h4{font-size:15px;font-weight:600;margin-bottom:6px}
+.flow-step p{font-size:12px;color:var(--text-dim)}
+.flow-arrow{
+  color:var(--text-faint);font-size:20px;
+  align-self:center;
+}
+
+/* ===== 三圈交集 ===== */
+.intersection{
+  background:linear-gradient(135deg,var(--brand-dim),rgba(255,107,107,.02));
+  border:1px solid var(--brand-glow);
+  border-radius:20px;
+  padding:48px;
+  text-align:center;
+}
+.intersection h3{font-size:22px;font-weight:700;margin-bottom:32px;color:var(--brand)}
+.circles{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.circle{
+  flex:1;min-width:180px;max-width:240px;
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--border);
+  border-radius:16px;padding:28px 20px;
+}
+.circle .emoji{font-size:36px;margin-bottom:12px}
+.circle h4{font-size:16px;font-weight:600;margin-bottom:8px}
+.circle p{font-size:13px;color:var(--text-mid)}
+.intersection-formula{
+  display:inline-block;
+  background:var(--brand);color:#fff;
+  padding:12px 32px;border-radius:8px;
+  font-size:16px;font-weight:600;
+}
+
+/* ===== 项目展示 ===== */
+.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.project-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:28px;
+  transition:all .2s;
+  text-decoration:none;color:inherit;
+  display:block;
+}
+.project-card:hover{border-color:var(--brand-glow);background:var(--surface-hover)}
+.project-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.project-name{font-size:18px;font-weight:700}
+.project-status{
+  padding:4px 12px;border-radius:12px;
+  font-size:11px;font-weight:600;
+  background:rgba(76,175,80,.15);color:#4caf50;
+}
+.project-desc{font-size:14px;color:var(--text-mid);line-height:1.6;margin-bottom:16px}
+.project-meta{display:flex;gap:16px;font-size:12px;color:var(--text-dim)}
+.project-meta span{display:flex;align-items:center;gap:4px}
+
+/* ===== 数据统计 ===== */
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  padding:48px 32px;
+  background:var(--bg-elev);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  max-width:1100px;margin:0 auto;border-radius:0;
+}
+.stat{text-align:center}
+.stat .num{font-size:40px;font-weight:800;color:var(--brand)}
+.stat .label{font-size:13px;color:var(--text-dim);margin-top:4px}
+
+/* ===== 页脚 ===== */
+.footer{
+  border-top:1px solid var(--border);
+  padding:48px 32px 32px;
+  text-align:center;
+}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:20px}
+.footer-links a{color:var(--text-dim);text-decoration:none;font-size:14px}
+.footer-links a:hover{color:var(--brand)}
+.footer-credit{font-size:13px;color:var(--text-faint)}
+.footer-credit a{color:var(--text-dim);text-decoration:none}
+.footer-credit a:hover{color:var(--brand)}
+
+/* ===== 响应式 ===== */
+@media (max-width:768px){
+  .nav-links{display:none}
+  .hero{padding:80px 24px 60px}
+  .hero h1{font-size:40px}
+  .hero .tagline{font-size:16px}
+  .pillars{grid-template-columns:1fr}
+  .projects{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .flow-steps{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+  .section{padding:60px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">🏭</div>
+      <span>造化坊</span>
+    </div>
+    <div class="nav-links">
+      <a href="#what" class="active">是什么</a>
+      <a href="#how">怎么做</a>
+      <a href="#projects">在做啥</a>
+      <a href="#knowledge">知识库</a>
+      <a href="#about">关于</a>
+    </div>
+    <a href="https://github.com/g676967453-blip/creation-forge" target="_blank" class="nav-cta">GitHub</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>造化坊<br><span class="accent">Creation Forge</span></h1>
+  <p class="tagline">
+    你不是来学知识的，你是来<strong>做游戏</strong>的。<br>
+    知识只是你在路上捡到的装备。
+  </p>
+  <div class="hero-actions">
+    <a href="#what" class="btn-primary">了解造化坊</a>
+    <a href="#projects" class="btn-ghost">看看在做啥</a>
+  </div>
+</section>
+
+<!-- 数据统计 -->
+<div class="stats">
+  <div class="stat"><div class="num">3</div><div class="label">核心支柱</div></div>
+  <div class="stat"><div class="num">2</div><div class="label">进行中项目</div></div>
+  <div class="stat"><div class="num">90+</div><div class="label">SKILL 仓库</div></div>
+  <div class="stat"><div class="num">∞</div><div class="label">可造之物</div></div>
+</div>
+
+<!-- 是什么：三大支柱 -->
+<section class="section" id="what">
+  <div class="section-head">
+    <div class="eyebrow">三大支柱</div>
+    <h2>造化坊是什么</h2>
+    <p class="desc">一个把"做中学"做到极致的独立游戏创造工坊。先做出来，在做的过程中学习。</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">🎯</div>
+      <h3>项目制学习</h3>
+      <div class="credo">完成比完美重要</div>
+      <p>定一个你想做的项目，遇到问题再学需要的知识。不是学完再做，是做完就算学会。</p>
+      <ul>
+        <li>每个项目有明确学习目标</li>
+        <li>难度循序渐进</li>
+        <li>先跑起来，再优化</li>
+        <li>结束写复盘</li>
+      </ul>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🤝</div>
+      <h3>人机协作</h3>
+      <div class="credo">人类创造，AI 加速</div>
+      <p>人类负责创意、决策、审美、最终判断；AI 负责加速、建议、检查、重复劳动。</p>
+      <ul>
+        <li>合作讨论模式</li>
+        <li>导师指导模式</li>
+        <li>快速执行模式</li>
+        <li>灵活切换</li>
+      </ul>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🎮</div>
+      <h3>独立游戏开发</h3>
+      <div class="credo">玩法大于画面</div>
+      <p>有趣比好看重要一百倍。快速迭代，两周出原型，完成发布胜过一百个未完成的宏伟构想。</p>
+      <ul>
+        <li>小即是美</li>
+        <li>控制 scope</li>
+        <li>快速迭代</li>
+        <li>完成发布</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 怎么做：项目制学习流程 -->
+<section class="section" id="how">
+  <div class="section-head">
+    <div class="eyebrow">方法论</div>
+    <h2>项目制学习怎么做</h2>
+    <p class="desc">传统学习是"学完再做"。我们反过来——先做再学，知识是项目留下的副作用。</p>
+  </div>
+  <div class="flow">
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <h4>定项目</h4>
+        <p>一个你想做的具体东西</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <h4>遇问题</h4>
+        <p>做到一半卡住了</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <h4>学知识</h4>
+        <p>只学解决这个问题需要的</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <h4>解决它</h4>
+        <p>AI 协作加速</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <h4>完成</h4>
+        <p>顺带学会一堆技能</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三圈交集 -->
+  <div class="intersection">
+    <h3>三圈交集 = 造化坊</h3>
+    <div class="circles">
+      <div class="circle">
+        <div class="emoji">🧠</div>
+        <h4>人类创造欲</h4>
+        <p>想做点东西出来的冲动</p>
+      </div>
+      <div class="circle">
+        <div class="emoji">🤖</div>
+        <h4>AI 加速能力</h4>
+        <p>把学习成本打到接近零</p>
+      </div>
+      <div class="circle">
+        <div class="emoji">📦</div>
+        <h4>具体项目</h4>
+        <p>一个真实要交付的东西</p>
+      </div>
+    </div>
+    <div class="intersection-formula">三者交集 = 造化坊</div>
+  </div>
+</section>
+
+<!-- 在做啥：项目展示 -->
+<section class="section" id="projects">
+  <div class="section-head">
+    <div class="eyebrow">实战项目</div>
+    <h2>正在做什么</h2>
+    <p class="desc">不是空谈理念，每个项目都是真实交付。下面是当前进行中的项目。</p>
+  </div>
+  <div class="projects">
+    <a href="#" class="project-card">
+      <div class="project-head">
+        <div class="project-name">开仙门</div>
+        <div class="project-status">开发中</div>
+      </div>
+      <p class="project-desc">修仙塔防游戏，六大山峰功法体系，Godot 引擎开发。从点击器原型到完整战斗系统。</p>
+      <div class="project-meta">
+        <span>🎮 Godot 4</span>
+        <span>📐 塔防 / 修仙</span>
+      </div>
+    </a>
+    <a href="#" class="project-card">
+      <div class="project-head">
+        <div class="project-name">交互规范系统</div>
+        <div class="project-status">规划中</div>
+      </div>
+      <p class="project-desc">把交互设计规范系统化、工具化，服务于美术外包协作与质量管控。</p>
+      <div class="project-meta">
+        <span>📝 规范 / 工具</span>
+        <span>🎨 美术支撑</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- 知识库 -->
+<section class="section" id="knowledge">
+  <div class="section-head">
+    <div class="eyebrow">SKILL 仓库</div>
+    <h2>路上捡到的装备</h2>
+    <p class="desc">每个项目做下来积累的可复用技能包。引擎、学科、类型、流程，90+ 个 SKILL。</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">⚙️</div>
+      <h3>引擎技能</h3>
+      <p>Godot / Phaser / PixiJS / Three.js 全栈覆盖，从 2D 移动到 3D 渲染。</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🎯</div>
+      <h3>开发学科</h3>
+      <p>物理调优、AI、着色器、关卡设计、游戏手感等引擎无关的通用能力。</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">📦</div>
+      <h3>游戏类型</h3>
+      <p>平台跳跃、Roguelike、塔防、RPG、视觉小说等品类的实战方法论。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section class="section" id="about">
+  <div class="section-head">
+    <div class="eyebrow">关于</div>
+    <h2>匠心造化，万物可成</h2>
+    <p class="desc">一个微小的火花，可以点燃整片草原。一个简单的游戏项目，可以开启一段创造之旅。</p>
+  </div>
+  <div class="intersection">
+    <h3>核心理念</h3>
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.9;max-width:640px;margin:0 auto 24px">
+      传统学习教你"学好了再去做"。现实世界告诉你——你永远学不完。<br>
+      AI 把"获取知识"这个瓶颈移除了，剩下唯一的瓶颈是：<strong style="color:var(--text)">你有没有开始在做一个具体的事</strong>。
+    </p>
+    <a href="https://github.com/g676967453-blip/creation-forge" target="_blank" class="btn-primary">在 GitHub 看源码</a>
+  </div>
+</section>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="#what">是什么</a>
+      <a href="#how">怎么做</a>
+      <a href="#projects">在做啥</a>
+      <a href="#knowledge">知识库</a>
+      <a href="#about">关于</a>
+    </div>
+    <div class="footer-credit">
+      造化坊 · Creation Forge · 
+      <a href="https://github.com/g676967453-blip/creation-forge" target="_blank">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 导航高亮
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{
+    if(window.scrollY>=s.offsetTop-100) current=s.id;
+  });
+  navLinks.forEach(l=>{
+    l.classList.toggle('active',l.getAttribute('href')==='#'+current);
+  });
+});
+</script>
+
+</body>
+</html>

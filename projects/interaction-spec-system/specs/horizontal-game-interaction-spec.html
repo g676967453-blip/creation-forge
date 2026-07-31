@@ -197,6 +197,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
 
 /* 稀有度 */
 
+	
 
 /* 进度条 */
 .bar-r{display:flex;align-items:center;gap:6px;margin:3px 0}
@@ -228,6 +229,55 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
 /* Input */
 .cinp{width:130px;height:24px;background:var(--surface);border:1px solid var(--border-default);border-radius:3px;padding:0 6px;font-family:inherit;font-size:10px;color:var(--text-body);display:flex;align-items:center}
 .cinp.ph{color:var(--text-muted)}
+
+/* ═══════════ 游戏专用组件 ═══════════ */
+.cav{position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.cav .av-img{width:100%;height:100%;background:var(--surface);display:flex;align-items:center;justify-content:center;border-radius:50%}
+.cav .av-lv{position:absolute;bottom:-2px;right:-2px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;border:1.5px solid #fff}
+.cav .av-dot{position:absolute;top:0;right:0;border-radius:50%;border:1.5px solid #fff}
+.cav .av-dot.on{background:var(--success)}
+.cav .av-dot.off{background:#aaa}
+.chc{border-radius:6px;border:2px solid;display:flex;flex-direction:column;overflow:hidden;position:relative;flex-shrink:0}
+.chc .hc-art{flex:0 0 55%;border-bottom:1px solid;display:flex;align-items:center;justify-content:center;color:var(--text-muted);position:relative}
+.chc .hc-rarity-badge{position:absolute;top:3px;left:3px;padding:0 5px;border-radius:99px;font-size:6px;font-weight:600}
+.chc .hc-elem{position:absolute;top:3px;right:3px;border-radius:50%;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center}
+.chc .hc-info{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 5px}
+.chc .hc-name{font-weight:700;color:var(--text-head)}
+.chc .hc-star-row{color:var(--accent);letter-spacing:1px}
+.chc .hc-stat-row{display:flex;align-items:center;gap:2px;width:100%}
+.chc .hc-stat-row .slbl{color:var(--text-muted);text-align:right;flex-shrink:0}
+.chc .hc-stat-row .strack{flex:1;height:4px;background:rgba(0,0,0,.05);border-radius:2px;overflow:hidden}
+.chc .hc-stat-row .sfill{height:100%;border-radius:2px}
+.chc.sel{box-shadow:0 0 8px rgba(200,150,74,.25)}
+.chc.lock{opacity:.35;border-style:dashed;filter:grayscale(.4)}
+.cif{display:flex;align-items:center;justify-content:center;position:relative;border-radius:5px;flex-shrink:0}
+.cif .if-icon{background:rgba(0,0,0,.03);display:flex;align-items:center;justify-content:center;border-radius:3px}
+.cif .if-qty{position:absolute;bottom:1px;right:1px;padding:0 2px;border-radius:99px;background:rgba(0,0,0,.55);color:#fff;font-weight:600;line-height:1.3}
+.cif .if-equipped{position:absolute;top:1px;left:1px;border-radius:2px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cif.emp{border-style:dashed;opacity:.4}
+.csf-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.ctt{border-radius:5px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.12);border:1px solid;flex-shrink:0}
+.ctt .tt-title{padding:3px 7px;color:#fff;font-weight:600}
+.ctt .tt-body{padding:5px 7px;color:var(--text-body);background:var(--surface);line-height:1.45}
+.ctt .tt-row{display:flex;justify-content:space-between;padding:2px 7px;background:var(--surface)}
+.ctt .tt-row .tt-k{color:var(--text-muted);flex-shrink:0}
+.ctt .tt-row .tt-v{font-weight:600;color:var(--text-head)}
+.ctt .tt-arrow{width:0;height:0;margin:0 auto;border-left:5px solid transparent;border-right:5px solid transparent}
+.cdlg-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:25;display:flex;align-items:center;justify-content:center}
+.cdlg-box{border-radius:6px;border:1px solid;overflow:hidden;background:var(--surface);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.cdlg-box .dg-title{text-align:center;font-weight:600;color:var(--text-head);padding:8px 0 5px}
+.cdlg-box .dg-body{padding:5px 10px;color:var(--text-body);text-align:center;min-height:22px;display:flex;align-items:center;justify-content:center}
+.cdlg-box .dg-actions{display:flex;border-top:1px solid var(--border-subtle)}
+.cdlg-box .dg-actions .dg-btn{flex:1;text-align:center;padding:5px 0;cursor:default}
+.cdlg-bs{position:absolute;bottom:0;left:0;right:0;z-index:25;background:var(--surface);border-radius:10px 10px 0 0;border-top:1px solid var(--border-default);padding-bottom:6px}
+.cdlg-bs .bs-handle{width:24px;height:3px;background:rgba(0,0,0,.1);border-radius:2px;margin:6px auto 8px}
+.cdlg-bs .bs-row{padding:6px 16px;border-bottom:1px solid var(--border-subtle);text-align:center}
+.cdlg-toast{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:25;padding:5px 14px;background:rgba(0,0,0,.75);color:#fff;border-radius:99px;white-space:nowrap}
+/* ═══════════ 排版标注 ═══════════ */
+.da-size-tag{position:absolute;pointer-events:none;z-index:30;font-weight:600;background:rgba(255,255,255,.9);border:1px solid var(--accent-bg-solid);border-radius:2px;white-space:nowrap}
+.da-gap-tag{position:absolute;pointer-events:none;z-index:30;font-weight:600;background:rgba(255,255,255,.9);color:var(--info);border:1px solid rgba(74,139,200,.2);border-radius:2px;white-space:nowrap;display:flex;align-items:center}
+.da-gap-tag .gap-line{height:1px;background:var(--info);flex-shrink:0}
+.da-type-tag{display:inline-block;font-weight:600;background:var(--accent-bg);border-radius:2px;white-space:normal;vertical-align:middle}
 
 /* 文字阶梯 */
 .ts-d{font-size:20px;font-weight:700;color:var(--text-head)}
@@ -397,6 +447,15 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
     <p><strong>防误触：</strong>弹窗遮罩阻断下层 | 按钮300ms冷却 | 滑动中禁用点击 | 加载中全屏遮罩</p>
   </div>
 </div>
+
+<h2 id="横竖屏切换"><span class="num">16</span> 横竖屏切换</h2>
+<div class="spec-row"><div class="spec-visual"><pre>方向策略：
+• 不强制锁定方向（核心玩法依赖除外）
+• 需要锁定则在设计文档中声明
+• 切换过渡 <=0.5s
+• 布局以中心锚点自适应</pre></div>
+<div class="spec-text"><p><strong>锁定场景：</strong>竖版跑酷/横版格斗等方向强依赖玩法可锁定。</p>
+<p><strong>适配策略：</strong>宽度统一 1334，保证横向布局不变；纵向以中心锚点拓展。</p></div></div>
 </div>
 
 <div class="tab-panel" id="tab-visual">
@@ -741,6 +800,123 @@ L3以上不新开页面，用弹窗/BottomSheet
     <h3>Input / 输入框</h3><p>H28~36 | 默认白底+1px边框 | 聚焦品牌色边框</p>
   </div>
 </div>
+
+<h2 id="游戏专用组件"><span class="num">12</span> 游戏专用组件</h2>
+
+<h3 id="玩家头像">12.1 玩家头像 (Player Avatar)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+<div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:46px;"></div><div class="grid-col" style="left:59px;width:46px;"></div><div class="grid-col" style="left:110px;width:46px;"></div><div class="grid-col" style="left:161px;width:46px;"></div><div class="grid-col" style="left:212px;width:46px;"></div><div class="grid-col" style="left:263px;width:46px;"></div><div class="grid-col" style="left:314px;width:46px;"></div><div class="grid-col" style="left:365px;width:46px;"></div></div>
+<div style="position:absolute;top:0;left:0;right:0;height:31px;z-index:15;background:var(--surface);display:flex;align-items:flex-end;padding:1px 2px;border-bottom:1px solid var(--border-subtle);">
+<div style="display:flex;align-items:center;gap:1px;"><div class="cav" style="width:23px;height:23px;border:1px solid var(--border-default);"><div class="av-img" style="font-size:16px;">A</div></div><div style="display:flex;flex-direction:column;gap:1px;"><span style="font-size:17px;font-weight:600;color:var(--text-head);">玩家名称</span><span style="font-size:12px;color:var(--text-muted);">Lv.42</span></div></div>
+<span class="da-type-tag" style="position:absolute;left:147px;top:9px;font-size:8px;color:var(--text-muted);padding:0 3px;z-index:30;">H2 / Caption</span>
+</div>
+<div style="position:absolute;top:83px;left:0;right:0;bottom:0;padding:1px;display:flex;flex-direction:column;gap:2px;">
+
+<div style="display:flex;align-items:center;gap:1px;position:relative;">
+<div style="position:relative;display:inline-flex;"><div class="cav" style="width:30px;height:30px;border:1px solid undefined;"><div class="av-img" style="font-size:21px;">A</div></div>
+<div class="av-lv" style="position:absolute;bottom:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;border:1.5px solid #fff;">99</div>
+<div class="av-dot on" style="position:absolute;top:0;right:0;width:4px;height:4px;border-radius:50%;border:1.5px solid #fff;"></div>
+<div class="da-size-tag" style="left:38px;top:0px;font-size:9px;color:var(--accent);padding:1px 3px;">96×96</div>
+</div><span style="font-size:16px;color:var(--text-body);">会长</span></div>
+<div class="da-gap-tag" style="left:25px;top:99px;font-size:8px;padding:0 2px;gap:2px;"><span style="font-size:9px;">↔</span><span class="gap-line" style="width:2px;"></span><span>md 5px</span></div>
+
+<div style="display:flex;align-items:center;gap:1px;position:relative;">
+<div style="position:relative;display:inline-flex;"><div class="cav" style="width:23px;height:23px;border:1px solid undefined;"><div class="av-img" style="font-size:16px;">A</div></div>
+<div class="av-lv" style="position:absolute;bottom:-2px;right:-2px;width:5px;height:5px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:9px;border:1.5px solid #fff;">78</div>
+<div class="av-dot on" style="position:absolute;top:0;right:0;width:3px;height:3px;border-radius:50%;border:1.5px solid #fff;"></div>
+
+</div><span style="font-size:16px;color:var(--text-body);">副会长</span></div>
+<div class="da-gap-tag" style="left:25px;top:120px;font-size:8px;padding:0 2px;gap:2px;"><span style="font-size:9px;">↔</span><span class="gap-line" style="width:2px;"></span><span>md 5px</span></div>
+
+<div style="display:flex;align-items:center;gap:1px;position:relative;">
+<div style="position:relative;display:inline-flex;"><div class="cav" style="width:15px;height:15px;border:1px solid var(--border-default);"><div class="av-img" style="font-size:11px;">A</div></div>
+<div class="av-lv" style="position:absolute;bottom:-2px;right:-2px;width:3px;height:3px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:6px;border:1.5px solid #fff;">42</div>
+<div class="av-dot off" style="position:absolute;top:0;right:0;width:2px;height:2px;border-radius:50%;border:1.5px solid #fff;"></div>
+
+</div><span style="font-size:16px;color:var(--text-body);">成员</span></div>
+
+
+</div></div><span class="proto-label">▲ 玩家头像 (大96 中72 小48 | 边框3px品质色 | 等级角标20px | 在线点10px | 行距md)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>尺寸</th><th>画布</th><th>展示</th><th>边框</th></tr>
+<tr><td>大</td><td>96×96</td><td>30×30</td><td>3px 品质色</td></tr>
+<tr><td>标准</td><td>72×72</td><td>23×23</td><td>2px 品质色</td></tr>
+<tr><td>小</td><td>48×48</td><td>15×15</td><td>2px</td></tr></table>
+<p class="note">头像框品质色与卡片/槽位品质系统一致。等级角标品牌色底白字，在线状态右上角圆点。</p></div></div>
+
+<h3 id="英雄卡牌">12.2 英雄卡牌 (Hero Card)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone" style="display:flex;align-items:center;justify-content:center;gap:1px;position:relative;">
+<div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:46px;"></div><div class="grid-col" style="left:59px;width:46px;"></div><div class="grid-col" style="left:110px;width:46px;"></div><div class="grid-col" style="left:161px;width:46px;"></div><div class="grid-col" style="left:212px;width:46px;"></div><div class="grid-col" style="left:263px;width:46px;"></div><div class="grid-col" style="left:314px;width:46px;"></div><div class="grid-col" style="left:365px;width:46px;"></div></div>
+<div style="position:absolute;inset:0;background:rgba(0,0,0,.3);z-index:20;"></div>
+<div style="position:relative;z-index:21;display:flex;align-items:center;justify-content:center;gap:1px;flex-wrap:wrap;"><div class="chc q-co sel" style="width:50px;height:69px;"><div class="hc-art" style="font-size:32px;">⚔</div><div class="hc-rarity-badge" style="font-size:12px;">普通</div><div class="hc-elem" style="width:7px;height:7px;font-size:13px;">🔥</div><div class="hc-info"><div class="hc-name" style="font-size:18px;">英雄</div><div class="hc-star-row" style="font-size:12px;">★★★★★</div><div class="hc-stat-row"><span class="slbl" style="width:8px;font-size:12px;">HP</span><div class="strack"><div class="sfill" style="width:90%;"></div></div><span style="font-size:11px;color:var(--text-muted);">90%</span></div><div class="hc-stat-row"><span class="slbl" style="width:8px;font-size:12px;">ATK</span><div class="strack"><div class="sfill" style="width:80%;background:var(--danger);"></div></div><span style="font-size:11px;color:var(--text-muted);">80%</span></div></div></div></div>
+<div class="da-size-tag" style="left:21px;top:59px;font-size:9px;color:var(--accent);padding:1px 3px;">160×220</div>
+<div class="da-gap-tag" style="left:92px;top:130px;font-size:8px;padding:0 2px;gap:2px;"><span style="font-size:9px;">↔</span><span class="gap-line" style="width:1px;"></span><span>md 5px</span></div>
+<span class="da-type-tag" style="position:absolute;left:34px;top:184px;font-size:8px;color:var(--text-muted);padding:0 3px;z-index:30;">H2 / Label / Caption</span>
+</div><span class="proto-label">▲ 英雄卡牌 (160×220 品质边框+立绘55%+HP/ATK条 | 星级+元素 | 选中金边glow | 间距md)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>属性</th><th>值</th></tr>
+<tr><td>卡牌尺寸</td><td>160×220 (展示 50×69)</td></tr>
+<tr><td>品质标签</td><td>左上角, 按品质着色</td></tr>
+<tr><td>选中态</td><td>金色边框+外发光</td></tr>
+<tr><td>锁定态</td><td>虚线+40%透明度</td></tr></table></div></div>
+
+<h3 id="道具框">12.3 道具框 (Item Frame)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+<div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:46px;"></div><div class="grid-col" style="left:59px;width:46px;"></div><div class="grid-col" style="left:110px;width:46px;"></div><div class="grid-col" style="left:161px;width:46px;"></div><div class="grid-col" style="left:212px;width:46px;"></div><div class="grid-col" style="left:263px;width:46px;"></div><div class="grid-col" style="left:314px;width:46px;"></div><div class="grid-col" style="left:365px;width:46px;"></div></div>
+<div style="position:absolute;top:0;left:0;right:0;height:31px;z-index:15;background:var(--surface);display:flex;align-items:flex-end;padding:1px;font-size:17px;font-weight:600;color:var(--text-head);border-bottom:1px solid var(--border-subtle);">背 包</div>
+<div style="position:absolute;top:31px;left:0;right:0;height:14px;z-index:14;display:flex;align-items:center;font-size:13px;color:var(--text-muted);background:var(--surface-hover);"><span style="flex:1;text-align:center;color:var(--accent);border-bottom:2px solid var(--accent);padding:1px 0;">全部</span><span style="flex:1;text-align:center;padding:1px 0;">武器</span><span style="flex:1;text-align:center;padding:1px 0;">防具</span><span style="flex:1;text-align:center;padding:1px 0;">道具</span></div>
+<div style="position:absolute;top:50px;left:0;right:0;bottom:24px;display:flex;flex-wrap:wrap;gap:1px;padding:1px;align-content:flex-start;"><div class="cif q-co emp" style="width:23px;height:23px;border-width:1px;position:relative;"><div class="if-icon" style="width:15px;height:15px;font-size:19px;"></div></div><div class="cif q-co emp" style="width:23px;height:23px;border-width:1px;position:relative;"><div class="if-icon" style="width:15px;height:15px;font-size:19px;"></div></div></div>
+<div class="da-size-tag" style="left:3px;top:52px;font-size:9px;color:var(--accent);padding:1px 3px;">72×72</div>
+<div class="da-gap-tag" style="left:25px;top:52px;font-size:8px;padding:0 2px;gap:2px;"><span style="font-size:9px;">↔</span><span class="gap-line" style="width:1px;"></span><span>sm 3px</span></div>
+<span class="da-type-tag" style="position:absolute;left:126px;top:33px;font-size:8px;color:var(--text-muted);padding:0 3px;z-index:30;">H2 / Body</span>
+<div style="position:absolute;bottom:0;left:0;right:0;height:24px;z-index:15;background:var(--surface);display:flex;align-items:center;justify-content:space-around;font-size:13px;color:var(--text-body);border-top:1px solid var(--border-subtle);"><span>排序</span><span>筛选</span><span>分解</span></div>
+</div><span class="proto-label">▲ 道具框 (72×72 品质边框2px+图标70%+数量角标 | E标 | 空槽虚线50% | 间距sm 8px)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>规格</th><th>尺寸</th><th>特征</th></tr>
+<tr><td>大框</td><td>96×96</td><td>3px 品质边框, 数量角标</td></tr>
+<tr><td>标准框</td><td>72×72</td><td>2px 品质边框, 数量角标</td></tr>
+<tr><td>小框</td><td>48×48</td><td>2px 品质边框, 无角标</td></tr>
+<tr><td>空槽位</td><td>—</td><td>虚线+50%透明度</td></tr></table></div></div>
+
+<h3 id="技能框">12.4 技能框 (Skill Frame)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+<div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:46px;"></div><div class="grid-col" style="left:59px;width:46px;"></div><div class="grid-col" style="left:110px;width:46px;"></div><div class="grid-col" style="left:161px;width:46px;"></div><div class="grid-col" style="left:212px;width:46px;"></div><div class="grid-col" style="left:263px;width:46px;"></div><div class="grid-col" style="left:314px;width:46px;"></div><div class="grid-col" style="left:365px;width:46px;"></div></div>
+<div style="position:absolute;top:0;left:0;right:0;height:21px;z-index:15;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:space-between;padding:1px 2px;font-size:13px;color:#fff;"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
+<div style="position:absolute;top:21px;left:0;right:0;bottom:43px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-muted);">战 场 区 域</div>
+<div style="position:absolute;bottom:12px;left:0;right:0;height:31px;z-index:15;display:flex;align-items:center;justify-content:center;gap:1px;padding:0 2px;"><div style="display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:23px;height:23px;border-radius:6px;border:1.8px solid #888;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(136,8,NaN,0.04);"><div style="width:15px;height:15px;background:rgba(0,0,0,.03);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:21px;">◆</div><div style="position:absolute;top:1px;left:1px;padding:0 3px;border-radius:99px;background:var(--info);color:#fff;font-weight:600;font-size:12px;">50</div></div><span style="font-size:13px;color:var(--text-body);text-align:center;">烈焰斩</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:23px;height:23px;border-radius:6px;border:1.8px solid #888;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(136,8,NaN,0.04);"><div style="width:15px;height:15px;background:rgba(0,0,0,.03);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:21px;">◆</div><div style="position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:21px;">12s</div><div style="position:absolute;top:1px;left:1px;padding:0 3px;border-radius:99px;background:var(--info);color:#fff;font-weight:600;font-size:12px;">30</div></div><span style="font-size:13px;color:var(--text-body);text-align:center;">冰霜箭</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:23px;height:23px;border-radius:6px;border:1.8px solid #888;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:rgba(136,8,NaN,0.04);"><div style="width:15px;height:15px;background:rgba(0,0,0,.03);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:21px;">◆</div><div style="position:absolute;top:1px;left:1px;padding:0 3px;border-radius:99px;background:var(--info);color:#fff;font-weight:600;font-size:12px;">20</div></div><span style="font-size:13px;color:var(--text-body);text-align:center;">技能</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px;"><div style="width:23px;height:23px;border-radius:6px;border:1.8px solid #888;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:.35;border-style:dashed;background:rgba(136,8,NaN,0.04);"><div style="width:15px;height:15px;background:rgba(0,0,0,.03);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:21px;">🔒</div></div><span style="font-size:13px;color:var(--text-body);text-align:center;">未解锁</span></div></div>
+<div class="da-size-tag" style="left:2px;top:196px;font-size:9px;color:var(--accent);padding:1px 3px;">72×72</div>
+<div class="da-gap-tag" style="left:92px;top:205px;font-size:8px;padding:0 2px;gap:2px;"><span style="font-size:9px;">↔</span><span class="gap-line" style="width:1px;"></span><span>lg 8px</span></div>
+<span class="da-type-tag" style="position:absolute;left:76px;top:215px;font-size:8px;color:var(--text-muted);padding:0 3px;z-index:30;">Caption</span>
+</div><span class="proto-label">▲ 技能框 (72×72 品质边框+能量角标 | 冷却遮罩50%+倒计时 | 锁定40%透明 | 间距lg)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>状态</th><th>特征</th></tr>
+<tr><td>可用</td><td>品质边框+图标, 左上角蓝底白字能量消耗</td></tr>
+<tr><td>冷却中</td><td>半透明黑遮罩+中央白色倒计时数字</td></tr>
+<tr><td>锁定</td><td>灰色+40%透明度+🔒</td></tr>
+<tr><td>空槽位</td><td>虚线+50%透明度</td></tr></table></div></div>
+
+<h3 id="tips浮窗">12.5 TIPS 浮窗 (Tooltip)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+<div class="grid-overlay"><div class="grid-margin" style="left:0;width:8px;"></div><div class="grid-margin" style="right:0;width:8px;"></div><div class="grid-col" style="left:8px;width:46px;"></div><div class="grid-col" style="left:59px;width:46px;"></div><div class="grid-col" style="left:110px;width:46px;"></div><div class="grid-col" style="left:161px;width:46px;"></div><div class="grid-col" style="left:212px;width:46px;"></div><div class="grid-col" style="left:263px;width:46px;"></div><div class="grid-col" style="left:314px;width:46px;"></div><div class="grid-col" style="left:365px;width:46px;"></div></div>
+<div style="position:absolute;top:0;left:0;right:0;height:31px;z-index:5;background:var(--surface);display:flex;align-items:flex-end;padding:1px;font-size:17px;font-weight:600;color:var(--text-head);border-bottom:1px solid var(--border-subtle);">装 备</div>
+<div style="position:absolute;top:35px;left:0;right:0;padding:2px;display:flex;flex-direction:column;gap:1px;"></div>
+<div style="position:absolute;top:83px;left:50%;transform:translateX(-50%);z-index:25;"><div class="ctt q-le" style="width:57px;border-color:#888;"><div class="tt-title" style="font-size:14px;background:#888;">龙焰之刃</div><div class="tt-body" style="font-size:13px;">传说中龙骑士的佩剑。</div><div class="tt-row" style="font-size:13px;"><span class="tt-k">ATK</span><span class="tt-v">+32~78</span></div><div class="tt-row" style="font-size:13px;"><span class="tt-k">暴击率</span><span class="tt-v">+15%</span></div><div class="tt-row" style="font-size:13px;"><span class="tt-k">特效</span><span class="tt-v">龙焰灼烧</span></div><div class="tt-arrow" style="border-top-color:#888;"></div></div></div>
+<div class="da-size-tag" style="left:147px;top:71px;font-size:9px;color:var(--accent);padding:1px 3px;">180w</div>
+<span class="da-type-tag" style="position:absolute;left:189px;top:86px;font-size:8px;color:var(--text-muted);padding:0 3px;z-index:30;">H2 / Body / Caption</span>
+</div><span class="proto-label">▲ TIPS 浮窗 (宽180px 品质标题栏+正文+属性行 | 三角箭头 | 长按>=500ms)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>属性</th><th>值</th></tr>
+<tr><td>最大宽度</td><td>240~300px (展示 57px)</td></tr>
+<tr><td>标题栏</td><td>品质色底+白字</td></tr>
+<tr><td>属性行</td><td>标签-数值 两端对齐</td></tr>
+<tr><td>触发</td><td>长按>=500ms触发, 松手消失</td></tr></table></div></div>
+
+<h3 id="弹窗可视化">12.6 弹窗可视化 (Dialog Visual)</h3>
+<div class="spec-row"><div class="spec-visual" style="flex-wrap:wrap;gap:10px;display:flex;justify-content:center;">
+<div class="proto-col"><div class="phone"><div class="cdlg-overlay"><div class="cdlg-box" style="width:294px;"><div class="dg-title" style="font-size:18px;">确认删除</div><div class="dg-body" style="font-size:14px;">确定删除此项？<br>此操作不可撤销。</div><div class="dg-actions"><div class="dg-btn" style="font-size:14px;color:var(--text-muted);border-right:1px solid var(--border-subtle);">取消</div><div class="dg-btn" style="font-size:14px;color:var(--accent);">确认</div></div></div></div><div class="da-size-tag" style="left:63px;top:71px;font-size:9px;color:var(--accent);padding:1px 3px;">W70%</div></div><span class="proto-label">Alert 对话框</span></div>
+<div class="proto-col"><div class="phone"><div class="cdlg-overlay"><div class="cdlg-bs"><div class="bs-handle"></div><div class="bs-row" style="font-size:16px;color:var(--text-head);">分享到</div><div class="bs-row" style="font-size:14px;">微信好友</div><div class="bs-row" style="font-size:14px;">朋友圈</div><div class="bs-row" style="font-size:14px;color:var(--text-muted);border-bottom:none;">取消</div></div></div><div class="da-size-tag" style="left:84px;top:165px;font-size:9px;color:var(--accent);padding:1px 3px;">W100% H≤45%</div></div><span class="proto-label">BottomSheet</span></div>
+<div class="proto-col"><div class="phone"><div class="cdlg-overlay"><div class="cdlg-box" style="width:344px;"><div class="dg-title" style="font-size:18px;display:flex;justify-content:space-between;padding-left:2px;padding-right:2px;">设置<span style="color:var(--text-muted);">✕</span></div><div style="padding:1px 2px;font-size:14px;color:var(--text-body);display:flex;flex-direction:column;gap:1px;"><div style="display:flex;justify-content:space-between;padding:1px 0;border-bottom:1px solid var(--border-subtle);"><span>音效音量</span><span style="color:var(--text-muted);">80%</span></div><div style="display:flex;justify-content:space-between;padding:1px 0;border-bottom:1px solid var(--border-subtle);"><span>音乐音量</span><span style="color:var(--text-muted);">60%</span></div><div style="display:flex;justify-content:space-between;padding:1px 0;"><span>画质</span><span style="color:var(--text-muted);">高</span></div></div></div></div><div class="da-size-tag" style="left:42px;top:83px;font-size:9px;color:var(--accent);padding:1px 3px;">W80% H≤60%</div></div><span class="proto-label">Modal 面板</span></div>
+<div class="proto-col"><div class="phone"><div class="cdlg-toast" style="font-size:13px;bottom:28px;">操作成功</div><div class="da-size-tag" style="left:147px;top:194px;font-size:9px;color:var(--accent);padding:1px 3px;">auto×26px</div></div><span class="proto-label">Toast 提示</span></div>
+</div><div class="spec-text"><table class="tbl"><tr><th>类型</th><th>尺寸</th><th>用途</th></tr>
+<tr><td>Alert</td><td>W70% H:auto</td><td>确认/二选一</td></tr>
+<tr><td>BottomSheet</td><td>W100% H<=45%</td><td>选项/分享</td></tr>
+<tr><td>Modal</td><td>W80% H<=60%</td><td>表单/多操作</td></tr>
+<tr><td>Toast</td><td>auto×24~28</td><td>轻量提示</td></tr></table><p class="note">遮罩透明度 45~60%, 弹窗 scale 0.9→1.0 + fade 0.2~0.3s。</p></div></div>
 </div>
 
 <div class="tab-panel" id="tab-feedback">
@@ -779,6 +955,21 @@ Dismiss ↓ 上→下 模态关闭</pre></div>
     <p><strong>原则：</strong>①时长≤400ms ②反馈&lt;100ms ③统一缓动 ④可关闭动效 ⑤首屏不延迟</p>
   </div>
 </div>
+
+<h2 id="音效规范"><span class="num">15</span> 音效规范</h2>
+<div class="spec-row"><div class="spec-visual"><div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;">
+<div class="tmr"><span class="tl">按钮点击</span><div class="tt"><div class="tf" style="width:18%;background:var(--info);"></div></div><span class="tv">&lt;200ms 清脆</span></div>
+<div class="tmr"><span class="tl">切换选择</span><div class="tt"><div class="tf" style="width:20%;background:var(--info);"></div></div><span class="tv">&lt;200ms 轻短</span></div>
+<div class="tmr"><span class="tl">操作成功</span><div class="tt"><div class="tf" style="width:25%;background:var(--success);"></div></div><span class="tv">&lt;300ms 上扬</span></div>
+<div class="tmr"><span class="tl">操作失败</span><div class="tt"><div class="tf" style="width:22%;background:var(--danger);"></div></div><span class="tv">&lt;300ms 低沉</span></div>
+<div class="tmr"><span class="tl">获得物品</span><div class="tt"><div class="tf" style="width:35%;background:var(--accent);"></div></div><span class="tv">&lt;400ms 叮咚</span></div>
+</div></div><div class="spec-text"><table class="tbl"><tr><th>类别</th><th>时长</th><th>特点</th></tr>
+<tr><td>按钮点击</td><td>&lt;200ms</td><td>短促清脆</td></tr>
+<tr><td>切换/选择</td><td>&lt;200ms</td><td>轻短确认感</td></tr>
+<tr><td>操作成功</td><td>&lt;300ms</td><td>明亮上扬</td></tr>
+<tr><td>操作失败</td><td>&lt;300ms</td><td>低沉短促</td></tr>
+<tr><td>获得物品</td><td>&lt;400ms</td><td>悦耳叮咚感</td></tr></table>
+<p><strong>规范：</strong>UI 音效 <=500ms。提供"关闭音效"和"关闭 UI 音效"两个独立开关。</p></div></div>
 </div>
 
 <div class="tab-panel" id="tab-delivery">

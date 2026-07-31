@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>敌人系统 — 功能策划案</title>
+<meta name="feat-name" content="敌人系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; }
+</style></head><body>
+<div class="page-header"><h1>敌人系统</h1><p class="subtitle">功能策划案 — 普通怪(7种) · 精英怪(4种+技能) · Boss三阶段</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">敌人系统</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p0">P0</span></span></div></div>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 全屏战斗态 — 波次刷怪</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 挂件系统 — 精英/Boss掉落</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 结算系统 — Boss死亡→胜利</span></p>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>全屏战斗中的敌方单位。普通怪7种(海量涌入)、精英怪4种(特殊技能+挂件)、Boss三阶段(入场→狂暴→濒死)。</p>
+  </div>
+  <div class="section-card"><h3>不在范围内</h3><ul><li>宝藏鼠 — GDD v3.0 砍掉，V0.2 可考虑作为稀有随机事件</li><li>幸运转盘 — GDD v3.0 砍掉</li></ul></div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">普通怪（7种）</div>
+  <table><tr><th>怪物</th><th>HP</th><th>伤害</th><th>速度</th><th>出现波次</th></tr>
+    <tr><td>冲锋兵</td><td>30</td><td>10</td><td>150</td><td>W1-5</td></tr>
+    <tr><td>侧袭兵</td><td>40</td><td>8</td><td>120</td><td>W1-8</td></tr>
+    <tr><td>巨力兵</td><td>80</td><td>20</td><td>80</td><td>W3-10</td></tr>
+    <tr><td>霜寒兽</td><td>60</td><td>12</td><td>130</td><td>W6-12</td></tr>
+    <tr><td>铁甲卫</td><td>120</td><td>15</td><td>90</td><td>W8-14</td></tr>
+    <tr><td>翼魔</td><td>35</td><td>10</td><td>180</td><td>W4-13</td></tr>
+    <tr><td>召魔师</td><td>50</td><td>8</td><td>100</td><td>W7-15</td></tr></table>
+  <div class="rule-l0">行为：朝器灵直线移动→碰触→攻城模式（每1s造成伤害，停在器灵身边）</div>
+  <div class="rule-l0">掉落：经验球（小）</div>
+  <div class="sec-header">精英怪（4种）</div>
+  <table><tr><th>精英</th><th>波次</th><th>HP</th><th>特殊技能</th><th>挂件掉落率</th></tr>
+    <tr><td>W5精英</td><td>W5</td><td>500</td><td><span class="text-blue">冲锋</span>：直线3x速</td><td>60%</td></tr>
+    <tr><td>W8精英</td><td>W8</td><td>800</td><td><span class="text-blue">远程弹幕</span>：3发扇形</td><td>60%</td></tr>
+    <tr><td>W11精英</td><td>W11</td><td>1,200</td><td>冲锋+远程</td><td>80%</td></tr>
+    <tr><td>W14精英</td><td>W14</td><td>1,500</td><td><span class="text-blue">震荡波</span>：全屏预警2s</td><td><span class="text-red">100%</span></td></tr></table>
+  <div class="sec-header">Boss（W15·三阶段）</div>
+  <table><tr><th>阶段</th><th>HP阈值</th><th>行为</th><th>视觉</th></tr>
+    <tr><td>入场</td><td>100%</td><td>从天而降+屏幕震动+红光</td><td>大字「天魔降临」</td></tr>
+    <tr><td>P1 标准</td><td>100%-50%</td><td>近战挥击+3发弹幕</td><td>正常色</td></tr>
+    <tr><td>P2 狂暴</td><td>50%-20%</td><td><span class="text-red">移速×1.5 攻频×1.5</span></td><td>变红+粒子</td></tr>
+    <tr><td>P3 濒死</td><td>&lt;20%</td><td>全屏震荡波→<span class="text-blue">虚弱3s（受伤×2）</span></td><td>闪烁+开裂</td></tr></table>
+  <div class="rule-l0">Boss基础属性：HP 5,000 · 伤害 50 · 速度 60</div>
+  <div class="rule-l0">掉落：女娲石×1 + 随机秘宝×1 + 大量灵气</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 — Boss战示意</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #0d1018 0%, #121620 100%);">
+      <div style="position:relative;width:100%;height:100%;">
+        <!-- 顶部信息栏（波次+击杀） -->
+        <div style="position:absolute;top:0;left:0;right:0;height:32px;background:linear-gradient(180deg, rgba(20,20,22,0.9) 0%, transparent 100%);display:flex;align-items:center;padding:0 12px;gap:16px;z-index:2;">
+          <span style="font-size:9px;color:var(--text-secondary);">第 15/15 波</span>
+          <span style="font-size:9px;color:var(--text-disabled);">击杀 312</span>
+          <span style="font-size:9px;color:var(--text-disabled);">祝福 11</span>
+        </div>
+        <!-- Boss 独立血条（顶部居中） -->
+        <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:3;">
+          <div style="width:280px;height:14px;background:#1a1a1a;border:1px solid var(--status-danger);border-radius:2px;overflow:hidden;">
+            <div style="width:65%;height:100%;background:linear-gradient(90deg, var(--status-danger), var(--status-warning));"></div>
+          </div>
+          <div style="font-size:9px;color:var(--status-danger);text-align:center;font-weight:700;letter-spacing:3px;margin-top:1px;">天 魔 · HP 3,250/5,000</div>
+        </div>
+        <!-- 器灵（远处，较小） -->
+        <div style="position:absolute;bottom:100px;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);display:flex;align-items:center;justify-content:center;font-size:10px;z-index:2;">📖</div>
+        <!-- Boss（中央，巨大） -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+          <div style="width:72px;height:72px;background:var(--bg-surface);border:3px solid var(--status-danger);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 20px rgba(204,68,68,0.3);">👹</div>
+        </div>
+        <!-- 阶段指示器 -->
+        <div style="position:absolute;bottom:45px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3;">
+          <span style="font-size:9px;color:var(--text-secondary);padding:3px 10px;background:var(--bg-surface);border-radius:var(--radius-full);">P1 标准</span>
+          <span style="font-size:9px;color:var(--status-warning);padding:3px 10px;background:rgba(204,170,68,0.1);border:1px solid var(--status-warning);border-radius:var(--radius-full);">P2 狂暴 ←</span>
+          <span style="font-size:9px;color:var(--text-disabled);padding:3px 10px;background:var(--bg-surface);border-radius:var(--radius-full);">P3 濒死</span>
+        </div>
+        <!-- 底部 HUD（半透明） -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(0deg, rgba(20,20,22,0.8) 0%, transparent 100%);display:flex;align-items:flex-end;padding:0 12px 4px 12px;gap:8px;">
+          <div style="flex:1;"><div style="display:flex;align-items:center;gap:4px;"><span style="font-size:7px;color:var(--text-secondary);">HP</span><div style="flex:1;height:6px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:1px;overflow:hidden;"><div style="width:55%;height:100%;background:var(--status-warning);"></div></div></div></div>
+        </div>
+        <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--status-warning);color:#000;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:4;">1</div>
+        <div style="position:absolute;top:62%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--status-warning);color:#000;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:4;">2</div>
+        <div style="position:absolute;bottom:50px;left:50%;transform:translate(-50%,50%);width:16px;height:16px;border-radius:50%;background:var(--status-warning);color:#000;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:4;">3</div>
+      </div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">Boss独立血条+顶部HUD</span><div class="ud">屏幕顶部居中：红色粗条+HP数值+阶段标记。顶部HUD显示波次(W15/15)、击杀数、已获祝福数。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">Boss vs 器灵位置关系</span><div class="ud">Boss占据中央，器灵在下方远处。体现"巨大Boss vs 渺小器灵"的压迫感。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">阶段指示器（P1→P2→P3）</span><div class="ud">底部横向排列。当前阶段高亮（黄色边框+背景），已完成灰色，未激活灰色。P2狂暴触发时切换。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card"><h3>动态交互 — 敌人类型参考</h3><div class="interact-area" style="flex-direction:row;flex-wrap:wrap;gap:12px;padding:20px;">
+  <div style="text-align:center;padding:12px;background:var(--bg-surface);border-radius:var(--radius-md);"><div style="width:24px;height:24px;background:var(--status-danger);border-radius:2px;margin:0 auto 4px;"></div><span style="font-size:10px;color:var(--text-secondary);">冲锋兵</span></div>
+  <div style="text-align:center;padding:12px;background:var(--bg-surface);border-radius:var(--radius-md);"><div style="width:28px;height:28px;background:var(--status-danger);opacity:0.7;border-radius:2px;margin:0 auto 4px;"></div><span style="font-size:10px;color:var(--text-secondary);">巨力兵</span></div>
+  <div style="text-align:center;padding:12px;background:var(--bg-surface);border-radius:var(--radius-md);"><div style="width:36px;height:36px;background:var(--status-warning);border:2px solid var(--quality-epic);border-radius:3px;margin:0 auto 4px;"></div><span style="font-size:10px;color:var(--quality-epic);">精英</span></div>
+  <div style="text-align:center;padding:12px;background:var(--bg-surface);border:1px solid var(--status-danger);border-radius:var(--radius-md);"><div style="width:48px;height:48px;background:var(--bg-surface);border:2px solid var(--status-danger);border-radius:6px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:20px;">👹</div><span style="font-size:10px;color:var(--status-danger);font-weight:700;">Boss</span></div>
+</div></div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-concept')">原画</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-animation')">动作</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">U1</td><td>Boss独立血条</td><td>控件</td><td>300×16</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">红色粗条，带阶段标记。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-concept"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">C1</td><td>7种普通怪精灵</td><td>角色</td><td>32×32</td><td>精灵表</td><td>7</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">像素小怪。冲锋兵=红/侧袭兵=橙/巨力兵=暗红/霜寒兽=蓝/铁甲卫=灰/翼魔=紫/召魔师=绿。</td></tr>
+    <tr><td class="mono">C2</td><td>Boss天魔精灵</td><td>角色</td><td>128×128</td><td>精灵表</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">巨大妖魔，中国风。三套视觉(正常/变红/开裂)。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-animation"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>帧数</th><th>FPS</th><th>优先级</th></tr>
+    <tr><td class="mono">M1</td><td>普通怪行走</td><td>精灵表</td><td>32×32</td><td>4</td><td>8</td><td><span class="tag tag-p0">P0</span></td></tr>
+    <tr><td class="mono">M2</td><td>Boss三阶段动画</td><td>精灵表</td><td>128×128</td><td>8</td><td>12</td><td><span class="tag tag-p0">P0</span></td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">V1</td><td>Boss入场特效</td><td>全屏</td><td>—</td><td>—</td><td>—</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">屏幕震动+红光边框+"天魔降临"大字。2s。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+</script>
+</body></html>

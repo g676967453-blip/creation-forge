@@ -220,6 +220,7 @@ blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;ba
 
 /* 稀有度 */
 ${rarityCardCSS(config)}
+	${rarityGameComponentCSS(config)}
 
 /* 进度条 */
 .bar-r{display:flex;align-items:center;gap:6px;margin:3px 0}
@@ -251,6 +252,55 @@ ${rarityCardCSS(config)}
 /* Input */
 .cinp{width:130px;height:24px;background:var(--surface);border:1px solid var(--border-default);border-radius:3px;padding:0 6px;font-family:inherit;font-size:10px;color:var(--text-body);display:flex;align-items:center}
 .cinp.ph{color:var(--text-muted)}
+
+/* ═══════════ 游戏专用组件 ═══════════ */
+.cav{position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.cav .av-img{width:100%;height:100%;background:var(--surface);display:flex;align-items:center;justify-content:center;border-radius:50%}
+.cav .av-lv{position:absolute;bottom:-2px;right:-2px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;border:1.5px solid #fff}
+.cav .av-dot{position:absolute;top:0;right:0;border-radius:50%;border:1.5px solid #fff}
+.cav .av-dot.on{background:var(--success)}
+.cav .av-dot.off{background:#aaa}
+.chc{border-radius:6px;border:2px solid;display:flex;flex-direction:column;overflow:hidden;position:relative;flex-shrink:0}
+.chc .hc-art{flex:0 0 55%;border-bottom:1px solid;display:flex;align-items:center;justify-content:center;color:var(--text-muted);position:relative}
+.chc .hc-rarity-badge{position:absolute;top:3px;left:3px;padding:0 5px;border-radius:99px;font-size:6px;font-weight:600}
+.chc .hc-elem{position:absolute;top:3px;right:3px;border-radius:50%;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center}
+.chc .hc-info{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 5px}
+.chc .hc-name{font-weight:700;color:var(--text-head)}
+.chc .hc-star-row{color:var(--accent);letter-spacing:1px}
+.chc .hc-stat-row{display:flex;align-items:center;gap:2px;width:100%}
+.chc .hc-stat-row .slbl{color:var(--text-muted);text-align:right;flex-shrink:0}
+.chc .hc-stat-row .strack{flex:1;height:4px;background:rgba(0,0,0,.05);border-radius:2px;overflow:hidden}
+.chc .hc-stat-row .sfill{height:100%;border-radius:2px}
+.chc.sel{box-shadow:0 0 8px rgba(200,150,74,.25)}
+.chc.lock{opacity:.35;border-style:dashed;filter:grayscale(.4)}
+.cif{display:flex;align-items:center;justify-content:center;position:relative;border-radius:5px;flex-shrink:0}
+.cif .if-icon{background:rgba(0,0,0,.03);display:flex;align-items:center;justify-content:center;border-radius:3px}
+.cif .if-qty{position:absolute;bottom:1px;right:1px;padding:0 2px;border-radius:99px;background:rgba(0,0,0,.55);color:#fff;font-weight:600;line-height:1.3}
+.cif .if-equipped{position:absolute;top:1px;left:1px;border-radius:2px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cif.emp{border-style:dashed;opacity:.4}
+.csf-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.ctt{border-radius:5px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.12);border:1px solid;flex-shrink:0}
+.ctt .tt-title{padding:3px 7px;color:#fff;font-weight:600}
+.ctt .tt-body{padding:5px 7px;color:var(--text-body);background:var(--surface);line-height:1.45}
+.ctt .tt-row{display:flex;justify-content:space-between;padding:2px 7px;background:var(--surface)}
+.ctt .tt-row .tt-k{color:var(--text-muted);flex-shrink:0}
+.ctt .tt-row .tt-v{font-weight:600;color:var(--text-head)}
+.ctt .tt-arrow{width:0;height:0;margin:0 auto;border-left:5px solid transparent;border-right:5px solid transparent}
+.cdlg-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:25;display:flex;align-items:center;justify-content:center}
+.cdlg-box{border-radius:6px;border:1px solid;overflow:hidden;background:var(--surface);box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.cdlg-box .dg-title{text-align:center;font-weight:600;color:var(--text-head);padding:8px 0 5px}
+.cdlg-box .dg-body{padding:5px 10px;color:var(--text-body);text-align:center;min-height:22px;display:flex;align-items:center;justify-content:center}
+.cdlg-box .dg-actions{display:flex;border-top:1px solid var(--border-subtle)}
+.cdlg-box .dg-actions .dg-btn{flex:1;text-align:center;padding:5px 0;cursor:default}
+.cdlg-bs{position:absolute;bottom:0;left:0;right:0;z-index:25;background:var(--surface);border-radius:10px 10px 0 0;border-top:1px solid var(--border-default);padding-bottom:6px}
+.cdlg-bs .bs-handle{width:24px;height:3px;background:rgba(0,0,0,.1);border-radius:2px;margin:6px auto 8px}
+.cdlg-bs .bs-row{padding:6px 16px;border-bottom:1px solid var(--border-subtle);text-align:center}
+.cdlg-toast{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:25;padding:5px 14px;background:rgba(0,0,0,.75);color:#fff;border-radius:99px;white-space:nowrap}
+/* ═══════════ 排版标注 ═══════════ */
+.da-size-tag{position:absolute;pointer-events:none;z-index:30;font-weight:600;background:rgba(255,255,255,.9);border:1px solid var(--accent-bg-solid);border-radius:2px;white-space:nowrap}
+.da-gap-tag{position:absolute;pointer-events:none;z-index:30;font-weight:600;background:rgba(255,255,255,.9);color:var(--info);border:1px solid rgba(74,139,200,.2);border-radius:2px;white-space:nowrap;display:flex;align-items:center}
+.da-gap-tag .gap-line{height:1px;background:var(--info);flex-shrink:0}
+.da-type-tag{display:inline-block;font-weight:600;background:var(--accent-bg);border-radius:2px;white-space:normal;vertical-align:middle}
 
 /* 文字阶梯 */
 .ts-d{font-size:20px;font-weight:700;color:var(--text-head)}
@@ -315,6 +365,7 @@ ${renderCanvasDemo(config, m)}
 ${renderThumbZoneDemo(config, m)}
 ${renderGestureDemo(config)}
 ${renderTouchSpec(config, m)}
+${renderOrientationSpec(config)}
 </div>
 
 <div class="tab-panel" id="tab-visual">
@@ -329,11 +380,13 @@ ${renderLayoutTemplates(config, m)}
 ${renderNavSystem(config)}
 ${renderDialogSystem(config)}
 ${renderComponentShowcase(config, m)}
+${renderGameComponents(config, m)}
 </div>
 
 <div class="tab-panel" id="tab-feedback">
 ${renderStateFeedback()}
 ${renderAnimTiming()}
+${renderSoundSpec(config)}
 </div>
 
 <div class="tab-panel" id="tab-delivery">
@@ -1168,4 +1221,243 @@ function renderBadgeDemos(config: SpecConfig): string {
     const c = cls[name] || name.substring(0, 2);
     return `<span class="cbadge" style="background:${hexToRGBA(hex, 0.08)};color:${hex};">${labels[name] || name}</span>`;
   }).join("") + `<span class="cbadge" style="background:rgba(200,72,72,0.08);color:var(--danger);">新</span><span class="cbadge dot"></span>`;
+}
+
+// ═══════════════════════════════════════════════
+const RARITY_LABELS: Record<string, string> = { common: "普通", rare: "稀有", epic: "史诗", legendary: "传说" };
+const RARITY_CLS: Record<string, string> = { common: "co", rare: "ra", epic: "ep", legendary: "le" };
+
+function rarityGameComponentCSS(config: SpecConfig): string {
+  let css = "";
+  for (const [name, hex] of Object.entries(config.rarity_colors)) {
+    const c = RARITY_CLS[name] || name.substring(0, 2);
+    css += `
+.chc.q-${c}{border-color:${hex};background:${hexToRGBA(hex,0.03)}}
+.chc.q-${c} .hc-rarity-badge{background:${hexToRGBA(hex,0.12)};color:${hex}}
+.chc.q-${c} .hc-art{border-bottom-color:${hexToRGBA(hex,0.15)}}
+.chc.q-${c} .hc-stat-row .sfill{background:${hex}}
+.cif.q-${c}{border-color:${hex};background:${hexToRGBA(hex,0.04)}}
+.ctt.q-${c}{border-color:${hex}}
+.ctt.q-${c} .tt-title{background:${hex}}
+.ctt.q-${c} .tt-arrow{border-top-color:${hex}}
+`;
+  }
+  return css;
+}
+
+function fs2(v: number, m: { phoneW: number }) { return Math.round(v * m.phoneW / 320); }
+function daSize(x: number, y: number, label: string, m: GridMetrics): string {
+  return `<div class="da-size-tag" style="left:${x}px;top:${y}px;font-size:${fs2(7,m)}px;color:var(--accent);padding:1px 3px;">${label}</div>`;
+}
+function daGap(x: number, y: number, w: number, token: string, m: GridMetrics): string {
+  return `<div class="da-gap-tag" style="left:${x}px;top:${y}px;font-size:${fs2(6,m)}px;padding:0 2px;gap:2px;"><span style="font-size:${fs2(7,m)}px;">↔</span><span class="gap-line" style="width:${w}px;"></span><span>${token}</span></div>`;
+}
+function daType(x: number, y: number, level: string, m: GridMetrics): string {
+  return `<span class="da-type-tag" style="position:absolute;left:${x}px;top:${y}px;font-size:${fs2(6,m)}px;color:var(--text-muted);padding:0 3px;z-index:30;">${level}</span>`;
+}
+
+// ── 12.1 玩家头像 ──
+function renderPlayerAvatarShowcase(config: SpecConfig, m: GridMetrics): string {
+  const entries = Object.entries(config.rarity_colors);
+  const hexes = entries.map(([,h])=>h);
+  const topH = Math.round(m.phoneH*0.13);
+  const listTop = Math.round(m.phoneH*0.35);
+  const rowGap = Math.round(5*m.scale);
+  const cav = (cw: number, hex?: string) => {
+    const w = Math.round(cw*m.scale), bw = Math.round(cw*0.03*m.scale)||1;
+    return `<div class="cav" style="width:${w}px;height:${w}px;border:${bw}px solid ${hex||'var(--border-default)'};"><div class="av-img" style="font-size:${fs2(cw*0.17,m)}px;">A</div></div>`;
+  };
+  const items = [[96,"会长",99,true,hexes[0]],[72,"副会长",78,true,hexes[1]],[48,"成员",42,false,""]] as const;
+  return `
+<h3 id="玩家头像">12.1 玩家头像 (Player Avatar)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+${renderGridOverlay(config, m)}
+<div style="position:absolute;top:0;left:0;right:0;height:${topH}px;z-index:15;background:var(--surface);display:flex;align-items:flex-end;padding:${Math.round(3*m.scale)}px ${Math.round(5*m.scale)}px;border-bottom:1px solid var(--border-subtle);">
+<div style="display:flex;align-items:center;gap:${Math.round(3*m.scale)}px;">${cav(72,hexes[1])}<div style="display:flex;flex-direction:column;gap:1px;"><span style="font-size:${fs2(13,m)}px;font-weight:600;color:var(--text-head);">玩家名称</span><span style="font-size:${fs2(9,m)}px;color:var(--text-muted);">Lv.42</span></div></div>
+${daType(Math.round(m.phoneW*0.35), Math.round(topH*0.3), "H2 / Caption", m)}
+</div>
+<div style="position:absolute;top:${listTop}px;left:0;right:0;bottom:0;padding:${Math.round(4*m.scale)}px;display:flex;flex-direction:column;gap:${rowGap}px;">
+${items.map(([cw,label,lv,on,h],i)=>`
+<div style="display:flex;align-items:center;gap:${Math.round(3*m.scale)}px;position:relative;">
+<div style="position:relative;display:inline-flex;">${cav(Number(cw),String(h)||undefined)}
+<div class="av-lv" style="position:absolute;bottom:-2px;right:-2px;width:${Math.round(Number(cw)*0.22*m.scale)}px;height:${Math.round(Number(cw)*0.22*m.scale)}px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${fs2(Number(cw)*0.09,m)}px;border:1.5px solid #fff;">${lv}</div>
+<div class="av-dot ${on?'on':'off'}" style="position:absolute;top:0;right:0;width:${Math.round(Number(cw)*0.13*m.scale)}px;height:${Math.round(Number(cw)*0.13*m.scale)}px;border-radius:50%;border:1.5px solid #fff;"></div>
+${i===0?daSize(Math.round(Number(cw)*m.scale)+8, 0, cw+'×'+cw, m):''}
+</div><span style="font-size:${fs2(12,m)}px;color:var(--text-body);">${label}</span></div>
+${i<items.length-1?daGap(Math.round(80*m.scale), Math.round(listTop+(i+0.5)*(Number(cw)*m.scale+rowGap)), rowGap, 'md '+Math.round(16*m.scale)+'px', m):''}
+`).join("")}
+</div></div><span class="proto-label">▲ 玩家头像 (大96 中72 小48 | 边框3px品质色 | 等级角标20px | 在线点10px | 行距md)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>尺寸</th><th>画布</th><th>展示</th><th>边框</th></tr>
+<tr><td>大</td><td>96×96</td><td>${Math.round(96*m.scale)}×${Math.round(96*m.scale)}</td><td>3px 品质色</td></tr>
+<tr><td>标准</td><td>72×72</td><td>${Math.round(72*m.scale)}×${Math.round(72*m.scale)}</td><td>2px 品质色</td></tr>
+<tr><td>小</td><td>48×48</td><td>${Math.round(48*m.scale)}×${Math.round(48*m.scale)}</td><td>2px</td></tr></table>
+<p class="note">头像框品质色与卡片/槽位品质系统一致。等级角标品牌色底白字，在线状态右上角圆点。</p></div></div>`;
+}
+
+// ── 12.2 英雄卡牌 ──
+function renderHeroCardShowcase(config: SpecConfig, m: GridMetrics): string {
+  const cw=160,ch=220,w=Math.round(cw*m.scale),h=Math.round(ch*m.scale),gap=Math.round(4*m.scale);
+  const entries=Object.entries(config.rarity_colors);
+  const card=(name:string,rk:string,hp:number,atk:number,stars:number,sel?:boolean)=>{
+    const c=RARITY_CLS[rk]||rk.substring(0,2);
+    return `<div class="chc q-${c}${sel?' sel':''}" style="width:${w}px;height:${h}px;"><div class="hc-art" style="font-size:${fs2(24,m)}px;">⚔</div><div class="hc-rarity-badge" style="font-size:${fs2(9,m)}px;">${RARITY_LABELS[rk]||rk}</div><div class="hc-elem" style="width:${Math.round(22*m.scale)}px;height:${Math.round(22*m.scale)}px;font-size:${fs2(10,m)}px;">🔥</div><div class="hc-info"><div class="hc-name" style="font-size:${fs2(14,m)}px;">${name}</div><div class="hc-star-row" style="font-size:${fs2(9,m)}px;">${'★'.repeat(stars)}${'☆'.repeat(Math.max(0,5-stars))}</div><div class="hc-stat-row"><span class="slbl" style="width:${Math.round(24*m.scale)}px;font-size:${fs2(9,m)}px;">HP</span><div class="strack"><div class="sfill" style="width:${hp}%;"></div></div><span style="font-size:${fs2(8,m)}px;color:var(--text-muted);">${hp}%</span></div><div class="hc-stat-row"><span class="slbl" style="width:${Math.round(24*m.scale)}px;font-size:${fs2(9,m)}px;">ATK</span><div class="strack"><div class="sfill" style="width:${atk}%;background:var(--danger);"></div></div><span style="font-size:${fs2(8,m)}px;color:var(--text-muted);">${atk}%</span></div></div></div>`;
+  };
+  const ns=["铁卫","游侠","术士","龙骑"];
+  return `
+<h3 id="英雄卡牌">12.2 英雄卡牌 (Hero Card)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone" style="display:flex;align-items:center;justify-content:center;gap:${gap}px;position:relative;">
+${renderGridOverlay(config, m)}
+<div style="position:absolute;inset:0;background:rgba(0,0,0,.3);z-index:20;"></div>
+<div style="position:relative;z-index:21;display:flex;align-items:center;justify-content:center;gap:${gap}px;flex-wrap:wrap;">${entries.map(([k],i)=>card(ns[i]||k,k,[90,75,60,95][i],[80,95,65,70][i],[5,4,3,5][i])).join("")}${card("英雄",entries[0]?.[0]||"common",90,80,5,true)}</div>
+${daSize(Math.round(m.phoneW*0.05), Math.round(m.phoneH*0.25), cw+'×'+ch, m)}
+${daGap(Math.round(m.phoneW*0.22), Math.round(m.phoneH*0.55), gap, 'md '+Math.round(16*m.scale)+'px', m)}
+${daType(Math.round(m.phoneW*0.08), Math.round(m.phoneH*0.78), 'H2 / Label / Caption', m)}
+</div><span class="proto-label">▲ 英雄卡牌 (160×220 品质边框+立绘55%+HP/ATK条 | 星级+元素 | 选中金边glow | 间距md)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>属性</th><th>值</th></tr>
+<tr><td>卡牌尺寸</td><td>160×220 (展示 ${w}×${h})</td></tr>
+<tr><td>品质标签</td><td>左上角, 按品质着色</td></tr>
+<tr><td>选中态</td><td>金色边框+外发光</td></tr>
+<tr><td>锁定态</td><td>虚线+40%透明度</td></tr></table></div></div>`;
+}
+
+// ── 12.3 道具框 ──
+function renderItemFrameShowcase(config: SpecConfig, m: GridMetrics): string {
+  const entries=Object.entries(config.rarity_colors);
+  const cw=72,tabH=Math.round(m.phoneH*0.06),gridTop=Math.round(m.phoneH*0.21),gap=Math.round(3*m.scale);
+  const frame=(rk:string,qty:number|null,equipped?:boolean,empty?:boolean)=>{
+    const c=RARITY_CLS[rk]||rk.substring(0,2),w=Math.round(cw*m.scale),iconS=Math.round(cw*0.67*m.scale),bw=Math.round(cw*0.03*m.scale)||1;
+    return `<div class="cif q-${c}${empty?' emp':''}" style="width:${w}px;height:${w}px;border-width:${bw}px;position:relative;"><div class="if-icon" style="width:${iconS}px;height:${iconS}px;font-size:${fs2(cw*0.2,m)}px;">${empty?'':'◆'}</div>${qty!==null?`<div class="if-qty" style="font-size:${fs2(cw*0.1,m)}px;">x${qty}</div>`:''}${equipped?`<div class="if-equipped" style="width:${Math.round(cw*0.2*m.scale)}px;height:${Math.round(cw*0.2*m.scale)}px;font-size:${fs2(cw*0.1,m)}px;">E</div>`:''}</div>`;
+  };
+  const items=entries.map(([k],i)=>({key:k,qty:[99,1,null,5][i] as number|null,eq:i===0}));
+  return `
+<h3 id="道具框">12.3 道具框 (Item Frame)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+${renderGridOverlay(config, m)}
+<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.13)}px;z-index:15;background:var(--surface);display:flex;align-items:flex-end;padding:${Math.round(4*m.scale)}px;font-size:${fs2(13,m)}px;font-weight:600;color:var(--text-head);border-bottom:1px solid var(--border-subtle);">背 包</div>
+<div style="position:absolute;top:${Math.round(m.phoneH*0.13)}px;left:0;right:0;height:${tabH}px;z-index:14;display:flex;align-items:center;font-size:${fs2(10,m)}px;color:var(--text-muted);background:var(--surface-hover);">${["全部","武器","防具","道具"].map((t,i)=>`<span style="flex:1;text-align:center;${i===0?'color:var(--accent);border-bottom:2px solid var(--accent);':''}padding:${Math.round(2*m.scale)}px 0;">${t}</span>`).join("")}</div>
+<div style="position:absolute;top:${gridTop}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.1)}px;display:flex;flex-wrap:wrap;gap:${gap}px;padding:${Math.round(4*m.scale)}px;align-content:flex-start;">${[...items,...items].slice(0,10).map((it,i)=>frame(it.key,it.qty,it.eq&&i===0,false)).join("")}${frame("common",null,false,true)}${frame("common",null,false,true)}</div>
+${daSize(Math.round(10*m.scale), gridTop+Math.round(5*m.scale), cw+'×'+cw, m)}
+${daGap(Math.round(80*m.scale), gridTop+Math.round(5*m.scale), gap, 'sm '+Math.round(8*m.scale)+'px', m)}
+${daType(Math.round(m.phoneW*0.3), Math.round(m.phoneH*0.14), 'H2 / Body', m)}
+<div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(m.phoneH*0.1)}px;z-index:15;background:var(--surface);display:flex;align-items:center;justify-content:space-around;font-size:${fs2(10,m)}px;color:var(--text-body);border-top:1px solid var(--border-subtle);">${["排序","筛选","分解"].map(s=>`<span>${s}</span>`).join("")}</div>
+</div><span class="proto-label">▲ 道具框 (72×72 品质边框2px+图标70%+数量角标 | E标 | 空槽虚线50% | 间距sm 8px)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>规格</th><th>尺寸</th><th>特征</th></tr>
+<tr><td>大框</td><td>96×96</td><td>3px 品质边框, 数量角标</td></tr>
+<tr><td>标准框</td><td>72×72</td><td>2px 品质边框, 数量角标</td></tr>
+<tr><td>小框</td><td>48×48</td><td>2px 品质边框, 无角标</td></tr>
+<tr><td>空槽位</td><td>—</td><td>虚线+50%透明度</td></tr></table></div></div>`;
+}
+
+// ── 12.4 技能框 ──
+function renderSkillFrameShowcase(config: SpecConfig, m: GridMetrics): string {
+  const ci=72,iconW=Math.round(ci*m.scale),iconInner=Math.round(ci*0.67*m.scale),gap=Math.round(4*m.scale);
+  const entries=Object.entries(config.rarity_colors);
+  const skill=(name:string,rk:string,energy:number,cdSec:number|null,locked?:boolean,empty?:boolean)=>{
+    const hex=config.rarity_colors[rk]||"#888";
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:${Math.round(2*m.scale)}px;"><div style="width:${iconW}px;height:${iconW}px;border-radius:6px;border:1.8px solid ${hex};position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;${locked||empty?'opacity:.35;border-style:dashed;':''}background:${empty?'transparent':hexToRGBA(hex,0.04)};"><div style="width:${iconInner}px;height:${iconInner}px;background:rgba(0,0,0,.03);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:${fs2(16,m)}px;">${locked?'🔒':empty?'':'◆'}</div>${cdSec!==null?`<div style="position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:${fs2(16,m)}px;">${cdSec}s</div>`:''}${!locked&&!empty?`<div style="position:absolute;top:1px;left:1px;padding:0 3px;border-radius:99px;background:var(--info);color:#fff;font-weight:600;font-size:${fs2(9,m)}px;">${energy}</div>`:''}</div><span style="font-size:${fs2(10,m)}px;color:var(--text-body);text-align:center;">${locked?'未解锁':empty?'空':name}</span></div>`;
+  };
+  const skills=[{n:"烈焰斩",k:entries[3]?.[0]||"legendary",e:50,c:null},{n:"冰霜箭",k:entries[2]?.[0]||"epic",e:30,c:12},{n:"技能",k:entries[1]?.[0]||"rare",e:20,c:null},{n:"技能",k:entries[0]?.[0]||"common",e:0,c:null,l:true}] as const;
+  return `
+<h3 id="技能框">12.4 技能框 (Skill Frame)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+${renderGridOverlay(config, m)}
+<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.09)}px;z-index:15;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:space-between;padding:${Math.round(3*m.scale)}px ${Math.round(5*m.scale)}px;font-size:${fs2(10,m)}px;color:#fff;"><span>W3/15</span><span>敌×5</span><span>⏱ 02:15</span></div>
+<div style="position:absolute;top:${Math.round(m.phoneH*0.09)}px;left:0;right:0;bottom:${Math.round(m.phoneH*0.18)}px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:${fs2(14,m)}px;color:var(--text-muted);">战 场 区 域</div>
+<div style="position:absolute;bottom:${Math.round(m.phoneH*0.05)}px;left:0;right:0;height:${Math.round(m.phoneH*0.13)}px;z-index:15;display:flex;align-items:center;justify-content:center;gap:${gap}px;padding:0 ${Math.round(5*m.scale)}px;">${skills.map(s=>skill(s.n,s.k,s.e,s.c??null,(s as any).l)).join("")}</div>
+${daSize(Math.round(5*m.scale), Math.round(m.phoneH*0.83), ci+'×'+ci, m)}
+${daGap(Math.round(m.phoneW*0.22), Math.round(m.phoneH*0.87), gap, 'lg '+Math.round(24*m.scale)+'px', m)}
+${daType(Math.round(m.phoneW*0.18), Math.round(m.phoneH*0.91), 'Caption', m)}
+</div><span class="proto-label">▲ 技能框 (72×72 品质边框+能量角标 | 冷却遮罩50%+倒计时 | 锁定40%透明 | 间距lg)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>状态</th><th>特征</th></tr>
+<tr><td>可用</td><td>品质边框+图标, 左上角蓝底白字能量消耗</td></tr>
+<tr><td>冷却中</td><td>半透明黑遮罩+中央白色倒计时数字</td></tr>
+<tr><td>锁定</td><td>灰色+40%透明度+🔒</td></tr>
+<tr><td>空槽位</td><td>虚线+50%透明度</td></tr></table></div></div>`;
+}
+
+// ── 12.5 TIPS ──
+function renderTooltipShowcase(config: SpecConfig, m: GridMetrics): string {
+  const w=Math.round(180*m.scale),entries=Object.entries(config.rarity_colors);
+  const tt=(rk:string,title:string,desc:string,stats:[string,string][])=>{
+    const c=RARITY_CLS[rk]||rk.substring(0,2),hex=config.rarity_colors[rk]||"#888";
+    return `<div class="ctt q-${c}" style="width:${w}px;border-color:${hex};"><div class="tt-title" style="font-size:${fs2(11,m)}px;background:${hex};">${title}</div><div class="tt-body" style="font-size:${fs2(10,m)}px;">${desc}</div>${stats.map(([k,v])=>`<div class="tt-row" style="font-size:${fs2(10,m)}px;"><span class="tt-k">${k}</span><span class="tt-v">${v}</span></div>`).join("")}<div class="tt-arrow" style="border-top-color:${hex};"></div></div>`;
+  };
+  const titles:Record<string,string>={common:"铁剑",rare:"秘银弓",epic:"暗影法杖",legendary:"龙焰之刃"};
+  const descs:Record<string,string>={common:"一把普通的铁剑。",rare:"精灵工匠打造的银弓。",epic:"蕴含暗影之力的法杖。",legendary:"传说中龙骑士的佩剑。"};
+  const ttTop=Math.round(m.phoneH*0.35);
+  return `
+<h3 id="tips浮窗">12.5 TIPS 浮窗 (Tooltip)</h3>
+<div class="spec-row"><div class="spec-visual"><div class="proto-col"><div class="phone">
+${renderGridOverlay(config, m)}
+<div style="position:absolute;top:0;left:0;right:0;height:${Math.round(m.phoneH*0.13)}px;z-index:5;background:var(--surface);display:flex;align-items:flex-end;padding:${Math.round(4*m.scale)}px;font-size:${fs2(13,m)}px;font-weight:600;color:var(--text-head);border-bottom:1px solid var(--border-subtle);">装 备</div>
+<div style="position:absolute;top:${Math.round(m.phoneH*0.15)}px;left:0;right:0;padding:${Math.round(5*m.scale)}px;display:flex;flex-direction:column;gap:${Math.round(4*m.scale)}px;">${entries.map(([k])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:${Math.round(3*m.scale)}px 0;border-bottom:1px solid var(--border-subtle);"><span style="font-size:${fs2(11,m)}px;color:var(--text-body);">${titles[k]||k}</span><span style="font-size:${fs2(10,m)}px;color:var(--text-muted);">长按查看 ›</span></div>`).join("")}</div>
+<div style="position:absolute;top:${ttTop}px;left:50%;transform:translateX(-50%);z-index:25;">${tt(entries[3]?.[0]||"legendary",titles[entries[3]?.[0]||"legendary"]||"",descs[entries[3]?.[0]||"legendary"]||"",[["ATK","+32~78"],["暴击率","+15%"],["特效","龙焰灼烧"]])}</div>
+${daSize(Math.round(m.phoneW*0.35), ttTop-12, '180w', m)}
+${daType(Math.round(m.phoneW*0.45), ttTop+Math.round(10*m.scale), 'H2 / Body / Caption', m)}
+</div><span class="proto-label">▲ TIPS 浮窗 (宽180px 品质标题栏+正文+属性行 | 三角箭头 | 长按>=500ms)</span></div></div>
+<div class="spec-text"><table class="tbl"><tr><th>属性</th><th>值</th></tr>
+<tr><td>最大宽度</td><td>240~300px (展示 ${w}px)</td></tr>
+<tr><td>标题栏</td><td>品质色底+白字</td></tr>
+<tr><td>属性行</td><td>标签-数值 两端对齐</td></tr>
+<tr><td>触发</td><td>长按>=500ms触发, 松手消失</td></tr></table></div></div>`;
+}
+
+// ── 12.6 弹窗可视化 ──
+function renderDialogVisualShowcase(config: SpecConfig, m: GridMetrics): string {
+  return `
+<h3 id="弹窗可视化">12.6 弹窗可视化 (Dialog Visual)</h3>
+<div class="spec-row"><div class="spec-visual" style="flex-wrap:wrap;gap:10px;display:flex;justify-content:center;">
+<div class="proto-col"><div class="phone"><div class="cdlg-overlay"><div class="cdlg-box" style="width:${Math.round(m.phoneW*0.7)}px;"><div class="dg-title" style="font-size:${fs2(14,m)}px;">确认删除</div><div class="dg-body" style="font-size:${fs2(11,m)}px;">确定删除此项？<br>此操作不可撤销。</div><div class="dg-actions"><div class="dg-btn" style="font-size:${fs2(11,m)}px;color:var(--text-muted);border-right:1px solid var(--border-subtle);">取消</div><div class="dg-btn" style="font-size:${fs2(11,m)}px;color:var(--accent);">确认</div></div></div></div>${daSize(Math.round(m.phoneW*0.15), Math.round(m.phoneH*0.3), 'W70%', m)}</div><span class="proto-label">Alert 对话框</span></div>
+<div class="proto-col"><div class="phone"><div class="cdlg-overlay"><div class="cdlg-bs"><div class="bs-handle"></div><div class="bs-row" style="font-size:${fs2(12,m)}px;color:var(--text-head);">分享到</div><div class="bs-row" style="font-size:${fs2(11,m)}px;">微信好友</div><div class="bs-row" style="font-size:${fs2(11,m)}px;">朋友圈</div><div class="bs-row" style="font-size:${fs2(11,m)}px;color:var(--text-muted);border-bottom:none;">取消</div></div></div>${daSize(Math.round(m.phoneW*0.2), Math.round(m.phoneH*0.7), 'W100% H≤45%', m)}</div><span class="proto-label">BottomSheet</span></div>
+<div class="proto-col"><div class="phone"><div class="cdlg-overlay"><div class="cdlg-box" style="width:${Math.round(m.phoneW*0.82)}px;"><div class="dg-title" style="font-size:${fs2(14,m)}px;display:flex;justify-content:space-between;padding-left:${Math.round(5*m.scale)}px;padding-right:${Math.round(5*m.scale)}px;">设置<span style="color:var(--text-muted);">✕</span></div><div style="padding:${Math.round(4*m.scale)}px ${Math.round(6*m.scale)}px;font-size:${fs2(11,m)}px;color:var(--text-body);display:flex;flex-direction:column;gap:${Math.round(3*m.scale)}px;"><div style="display:flex;justify-content:space-between;padding:${Math.round(2*m.scale)}px 0;border-bottom:1px solid var(--border-subtle);"><span>音效音量</span><span style="color:var(--text-muted);">80%</span></div><div style="display:flex;justify-content:space-between;padding:${Math.round(2*m.scale)}px 0;border-bottom:1px solid var(--border-subtle);"><span>音乐音量</span><span style="color:var(--text-muted);">60%</span></div><div style="display:flex;justify-content:space-between;padding:${Math.round(2*m.scale)}px 0;"><span>画质</span><span style="color:var(--text-muted);">高</span></div></div></div></div>${daSize(Math.round(m.phoneW*0.1), Math.round(m.phoneH*0.35), 'W80% H≤60%', m)}</div><span class="proto-label">Modal 面板</span></div>
+<div class="proto-col"><div class="phone"><div class="cdlg-toast" style="font-size:${fs2(10,m)}px;bottom:${Math.round(m.phoneH*0.12)}px;">操作成功</div>${daSize(Math.round(m.phoneW*0.35), Math.round(m.phoneH*0.82), 'auto×26px', m)}</div><span class="proto-label">Toast 提示</span></div>
+</div><div class="spec-text"><table class="tbl"><tr><th>类型</th><th>尺寸</th><th>用途</th></tr>
+<tr><td>Alert</td><td>W70% H:auto</td><td>确认/二选一</td></tr>
+<tr><td>BottomSheet</td><td>W100% H<=45%</td><td>选项/分享</td></tr>
+<tr><td>Modal</td><td>W80% H<=60%</td><td>表单/多操作</td></tr>
+<tr><td>Toast</td><td>auto×24~28</td><td>轻量提示</td></tr></table><p class="note">遮罩透明度 45~60%, 弹窗 scale 0.9→1.0 + fade 0.2~0.3s。</p></div></div>`;
+}
+
+// ── 总入口 ──
+function renderGameComponents(config: SpecConfig, m: GridMetrics): string {
+  return `
+<h2 id="游戏专用组件"><span class="num">12</span> 游戏专用组件</h2>
+${renderPlayerAvatarShowcase(config, m)}
+${renderHeroCardShowcase(config, m)}
+${renderItemFrameShowcase(config, m)}
+${renderSkillFrameShowcase(config, m)}
+${renderTooltipShowcase(config, m)}
+${renderDialogVisualShowcase(config, m)}`;
+}
+
+// ── 音效规范 ──
+function renderSoundSpec(config: SpecConfig): string {
+  return `
+<h2 id="音效规范"><span class="num">15</span> 音效规范</h2>
+<div class="spec-row"><div class="spec-visual"><div style="display:flex;flex-direction:column;gap:6px;width:100%;max-width:280px;">
+<div class="tmr"><span class="tl">按钮点击</span><div class="tt"><div class="tf" style="width:18%;background:var(--info);"></div></div><span class="tv">&lt;200ms 清脆</span></div>
+<div class="tmr"><span class="tl">切换选择</span><div class="tt"><div class="tf" style="width:20%;background:var(--info);"></div></div><span class="tv">&lt;200ms 轻短</span></div>
+<div class="tmr"><span class="tl">操作成功</span><div class="tt"><div class="tf" style="width:25%;background:var(--success);"></div></div><span class="tv">&lt;300ms 上扬</span></div>
+<div class="tmr"><span class="tl">操作失败</span><div class="tt"><div class="tf" style="width:22%;background:var(--danger);"></div></div><span class="tv">&lt;300ms 低沉</span></div>
+<div class="tmr"><span class="tl">获得物品</span><div class="tt"><div class="tf" style="width:35%;background:var(--accent);"></div></div><span class="tv">&lt;400ms 叮咚</span></div>
+</div></div><div class="spec-text"><table class="tbl"><tr><th>类别</th><th>时长</th><th>特点</th></tr>
+<tr><td>按钮点击</td><td>&lt;200ms</td><td>短促清脆</td></tr>
+<tr><td>切换/选择</td><td>&lt;200ms</td><td>轻短确认感</td></tr>
+<tr><td>操作成功</td><td>&lt;300ms</td><td>明亮上扬</td></tr>
+<tr><td>操作失败</td><td>&lt;300ms</td><td>低沉短促</td></tr>
+<tr><td>获得物品</td><td>&lt;400ms</td><td>悦耳叮咚感</td></tr></table>
+<p><strong>规范：</strong>UI 音效 <=500ms。提供"关闭音效"和"关闭 UI 音效"两个独立开关。</p></div></div>`;
+}
+
+// ── 横竖屏切换 ──
+function renderOrientationSpec(config: SpecConfig): string {
+  return `
+<h2 id="横竖屏切换"><span class="num">16</span> 横竖屏切换</h2>
+<div class="spec-row"><div class="spec-visual"><pre>方向策略：
+• 不强制锁定方向（核心玩法依赖除外）
+• 需要锁定则在设计文档中声明
+• 切换过渡 <=0.5s
+• 布局以中心锚点自适应</pre></div>
+<div class="spec-text"><p><strong>锁定场景：</strong>竖版跑酷/横版格斗等方向强依赖玩法可锁定。</p>
+<p><strong>适配策略：</strong>宽度统一 ${config.canvas_width}，保证横向布局不变；纵向以中心锚点拓展。</p></div></div>`;
 }

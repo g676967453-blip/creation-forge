@@ -238,6 +238,8 @@ export interface PersonalTask {
   task: string;
   status: string;
   statusText: string;
+  abc: string;          // A/B/C 分类（高能要事）
+  energy: string;       // 高能/中能/低能
   priority: string;
   deadline: string;
   note: string;
@@ -368,14 +370,25 @@ export function loadPersonalTasks(): PersonalTasksData {
             else if (statusRaw.includes("取消")) status = "cancelled";
             else status = "pending";
 
+            // 检测表格格式：通过数据行列数判断（8 列=新格式含 ABC+能量，6 列=旧格式）
+            // 注意：表头在分隔符之前，tableColumns 在旧代码中永远检测不到，改用 cells.length
+            const isNewFormat = cells.length >= 8;
+            const abc = isNewFormat ? (cells[3] || "—") : "—";
+            const energy = isNewFormat ? (cells[4] || "—") : "—";
+            const prioIdx = isNewFormat ? 5 : 3;
+            const deadlineIdx = isNewFormat ? 6 : 4;
+            const noteIdx = isNewFormat ? 7 : 5;
+
             currentCategory.tasks.push({
               id: cells[0],
               task: cells[1] || "",
               status,
               statusText: statusText || "📋 待办",
-              priority: cells[3] || "🟡 中",
-              deadline: cells[4] || "—",
-              note: cells[5] || "—",
+              abc,
+              energy,
+              priority: cells[prioIdx] || "🟡 中",
+              deadline: cells[deadlineIdx] || "—",
+              note: cells[noteIdx] || "—",
             });
           }
         }
@@ -466,11 +479,44 @@ export function collectData() {
   // 旧任务看板已合并入个人待办系统（docs/个人待办.md），此处不再维护
 
   const goalsUser = [
-    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏。7月已15期，8月目标：8期+", priority: "🟡 持续", progress: 90, todos: 1 },
-    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 70, todos: 5 },
-    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "等待 GAME-002 V0.1 稳定后提取道具清单，批量生产第一批图标", priority: "🟢 远期", progress: 20, todos: 1 },
-    { id: "U4", task: "造化坊仪表盘持续完善", detail: "8 大问题修复：数据同步、待办归档、页签重构、资产补全。保持仪表盘与项目状态实时一致", priority: "🟡 本周", progress: 0, todos: 0 },
+    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏。7月已15期，8月目标：8期+", priority: "🟡 持续", progress: 90, todos: 1,
+      pnas: { picture: "打开小红书创作者后台 → 本周已发布 1-2 篇笔记 → 每篇都是一个「和 AI 协作解决具体问题」的真实故事 → 评论区有人问「怎么用 AI 做到的？」→ 简介里写着造化坊理念。",
+              noun: "works/ 工作日志（素材源）、Claude Code（AI 协作伙伴）、/new-post SKILL（生产流程）、Puppeteer（截图导出）、造化坊仪表盘（发布追踪）",
+              activities: "我从 works/ 选材（每周至少一次），我提炼三幕故事结构，我用 AI 生成文案和排版 HTML，我用 Puppeteer 导出 6 张卡片截图，我发布到小红书并记录到仪表盘",
+              sequence: "① 浏览本周 works/ 日志 → ② 选出最有「问题→AI解决」亮点的素材 → ③ 用 /new-post 生成帖子 → ④ Puppeteer 导出截图 → ⑤ 发布 → ⑥ 更新仪表盘" } },
+    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 70, todos: 5,
+      pnas: { picture: "打开 Godot，点「运行」→ 出现门派经营界面 → 点击「出战」→ 进入战斗场景 → 弟子自动战斗 → 胜利弹窗显示掉落 → 回到经营界面。整个过程无报错，帧率稳定，体验流畅。",
+              noun: "Godot 4.7 引擎、祝福 3 选 1 UI 场景（.tscn）、BlessingManager 数据层、DiscipleSquad 模块、战斗结算模块、旧代码残余引用",
+              activities: "我创建祝福选择场景（.tscn），我实现三选一点选→确认→应用祝福逻辑，我连接 BlessingManager 数据层，我将 DiscipleSquad 接入主战斗场景，我删除旧 card_manager/summons/upgrades 残余引用，我手动跑通完整一局验证闭环",
+              sequence: "① 创建祝福选择场景 → ② 实现三选一交互逻辑 → ③ 连接 BlessingManager 数据层 → ④ DiscipleSquad 接入战斗循环 → ⑤ 删除旧模块残余引用 → ⑥ 手动跑通完整一局（经营→战斗→结算）验证闭环" } },
+    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "等待 GAME-002 V0.1 稳定后提取道具清单，批量生产第一批图标", priority: "🟢 远期", progress: 20, todos: 1,
+      pnas: { picture: "打开 GAME-002 的道具背包界面 → 每件装备旁边显示一枚精致的图标（法器/丹药/秘籍各有独特视觉风格）→ 图标风格统一、尺寸一致、在游戏引擎中显示清晰。",
+              noun: "GAME-002 道具清单、Lovart AI（图像生成）、Photoshop（抠图+切片）、道具视觉风格参考（修仙题材）、交付规格标准（256px/格式/命名）",
+              activities: "我从 GAME-002 提取道具清单，我定义视觉风格参考（法器/丹药/秘籍三类），我用 Lovart 生成第一批道具图标（5-10 个），我用 PS 抠图 + 256px 切片，我导入 GAME-002 项目验证效果",
+              sequence: "① 等待 GAME-002 V0.1 稳定 → ② 提取道具清单（名称/稀有度/尺寸）→ ③ 定义视觉风格参考 → ④ Lovart 批量生成 → ⑤ PS 抠图+切片 → ⑥ 导入 GAME-002 验证" } },
+    { id: "U4", task: "造化坊仪表盘持续完善", detail: "8 大问题修复：数据同步、待办归档、页签重构、资产补全。保持仪表盘与项目状态实时一致", priority: "🟡 本周", progress: 0, todos: 0,
+      pnas: { picture: "", noun: "", activities: "", sequence: "" } },
   ];
+
+  const longTermGoals = {
+    dimensions: [
+      { dim: "🎓 学习成长", vision: "通过独立游戏开发掌握 Godot 全栈能力 + AI 协作方法论", status: "GAME-002 推进中" },
+      { dim: "💼 事业发展", vision: "主美岗位稳定产出 + AI 工具链赋能团队", status: "美术审查系统运转中" },
+      { dim: "💰 财富健康", vision: "—", status: "未设定" },
+      { dim: "👨‍👩‍👧 家庭社交", vision: "—", status: "未设定" },
+      { dim: "⚙️ 效能系统", vision: "造化坊基础设施自运转（工作流/SKILL/仪表盘闭环）", status: "16 工作流 + 11 SKILL" },
+      { dim: "🚀 体验突破", vision: "完成至少 1 个可发布的独立游戏", status: "GAME-002 冲刺 V0.1" },
+      { dim: "🎨 休闲娱乐", vision: "—", status: "未设定" },
+      { dim: "🤝 人际关系", vision: "—", status: "未设定" },
+    ],
+    intersection: {
+      happy: "做游戏、写代码、看到东西跑起来",
+      advantage: "美术审美 + AI 工具驾驭 + 快速原型",
+      meaningful: "证明「AI 时代做中学」可行，影响更多人",
+      core: "用 AI 协作做独立游戏，并把过程变成内容",
+    },
+    formula: "R = E × T（结果 = 效能 × 时间）—— 不是做更多事，而是在高能时段做要事。",
+  };
 
   const goalsArchived = [
     { task: "完善造化坊「目标计划」板块", detail: "3 个全局工作流 + 目标规划.md + 仪表盘进度条+待办数。端到端流程跑通", completedDate: "2026-07-30" },
@@ -531,7 +577,7 @@ export function collectData() {
     today, worksData, gitCommits, commitCount,
     skillCount, skillStandard: skillsCount.standard, skillFlat: skillsCount.flat,
     workflowCount, guideCount, worksCount: worksFiles.length,
-    projects, workflows, skills, goalsUser, goalsArchived, goalsIssues, goalsAI,
+    projects, workflows, skills, goalsUser, longTermGoals, goalsArchived, goalsIssues, goalsAI,
     toolGuides, assets, external,
     personalTasks,
   };

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>结算系统 — 功能策划案</title>
+<meta name="feat-name" content="结算系统"><meta name="feat-version" content="v0.1"><meta name="feat-date" content="2026-07-31"><meta name="feat-author" content="AI协作"><meta name="feat-status" content="策划中">
+<style>
+:root {
+  --bg-black: #0a0a0f; --bg-primary: #141416; --bg-surface: #1a1a1e; --bg-elevated: #222228;
+  --text-primary: #e8e8f0; --text-body: #c0c0cc; --text-secondary: #8888a0; --text-disabled: #555568;
+  --border-active: #d0d0d8; --border-default: #3a3a48; --border-subtle: #2a2a36;
+  --quality-common: #8888a0; --quality-rare: #6699bb; --quality-epic: #9977bb; --quality-legendary: #bb9966;
+  --status-success: #4ecca3; --status-warning: #ccaa44; --status-danger: #cc4444;
+  --fs-display: 32px; --fs-h1: 28px; --fs-h2: 20px; --fs-body: 14px; --fs-label: 12px; --fs-caption: 11px; --fs-small: 10px;
+  --fw-bold: 700; --fw-semibold: 600; --fw-regular: 400;
+  --sp-2xs: 4px; --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px;
+  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px; --radius-full: 999px;
+  --font-cn: 'Noto Sans SC','Alibaba PuHuiTi 55R',sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg-black); color: var(--text-body); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-regular); line-height: 1.7; max-width: 1100px; margin: 0 auto; padding: var(--sp-3xl) var(--sp-xl); }
+.page-header { margin-bottom: var(--sp-xl); }
+.page-header h1 { font-size: var(--fs-display); color: var(--text-primary); font-weight: var(--fw-bold); letter-spacing: 6px; margin-bottom: var(--sp-2xs); }
+.page-header .subtitle { color: var(--text-secondary); font-size: var(--fs-body); }
+.tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--border-subtle); margin-bottom: var(--sp-xl); position: sticky; top: 0; background: var(--bg-black); z-index: 10; padding-top: var(--sp-sm); flex-wrap: wrap; }
+.tab-nav-btn { padding: var(--sp-sm) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-bold); cursor: pointer; letter-spacing: 2px; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-nav-btn:hover { color: var(--text-primary); }
+.tab-nav-btn.active { color: var(--text-primary); border-bottom-color: var(--border-active); }
+.tab-panel { display: none; } .tab-panel.active { display: block; }
+.text-blue { color: #6699bb; } .text-red { color: #cc6666; font-weight: var(--fw-bold); }
+.section-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: var(--sp-xl); margin-bottom: var(--sp-lg); }
+.section-card h3 { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-semibold); letter-spacing: 2px; margin: 0 0 var(--sp-md) 0; }
+.info-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; }
+.info-item { display: flex; flex-direction: column; gap: var(--sp-2xs); min-width: 120px; }
+.info-item .label { font-size: var(--fs-caption); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 1px; }
+.info-item .value { font-size: var(--fs-body); color: var(--text-primary); font-weight: var(--fw-semibold); }
+.tag { display: inline-block; padding: 2px 10px; border-radius: var(--radius-full); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.tag-p0 { background: rgba(204,68,68,0.15); color: var(--status-danger); }
+.tag-csv { background: rgba(102,153,187,0.12); color: var(--quality-rare); font-family: 'SF Mono','Consolas',monospace; }
+table { width: 100%; border-collapse: collapse; margin: var(--sp-sm) 0 var(--sp-lg) 0; }
+th, td { padding: var(--sp-sm) var(--sp-md); text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: var(--fs-body); vertical-align: top; }
+th { color: var(--text-secondary); font-size: var(--fs-caption); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 1px; background: var(--bg-primary); white-space: nowrap; }
+hr { border: none; border-top: 1px solid var(--border-subtle); margin: var(--sp-lg) 0; }
+.sec-header { font-size: var(--fs-h2); color: var(--text-primary); font-weight: var(--fw-bold); border-bottom: 1.5px solid var(--status-success); padding-bottom: var(--sp-2xs); margin: var(--sp-xl) 0 var(--sp-md) 0; }
+.sec-header::before { content: '● '; color: var(--status-success); font-size: 14px; }
+.rule-l0 { margin: var(--sp-sm) 0; padding-left: 0; }
+.rule-l1 { margin: var(--sp-xs) 0 var(--sp-xs) var(--sp-lg); }
+.ui-desc { display: flex; gap: var(--sp-xl); align-items: flex-start; }
+.ui-desc-left { flex: 0 0 640px; }
+.ui-desc-left .ui-frame { width: 100%; aspect-ratio: 16/9; background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.ui-desc-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); min-width: 260px; }
+.ui-note { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--sp-md); }
+.ui-note .un { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--status-warning); color: #000; font-size: var(--fs-small); font-weight: var(--fw-bold); margin-right: var(--sp-xs); flex-shrink: 0; }
+.ui-note .ut { font-size: var(--fs-label); color: var(--text-primary); font-weight: var(--fw-bold); }
+.ui-note .ud { font-size: var(--fs-caption); color: var(--text-secondary); margin-top: var(--sp-2xs); }
+.sub-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
+.sub-tab-btn { padding: var(--sp-xs) var(--sp-lg); background: none; border: none; color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-body); font-weight: var(--fw-semibold); cursor: pointer; letter-spacing: 2px; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--text-primary); border-bottom-color: var(--quality-rare); }
+.sub-tab-panel { display: none; } .sub-tab-panel.active { display: block; }
+.asset-table { font-size: var(--fs-caption); } .asset-table th { font-size: var(--fs-small); } .asset-table td { font-size: var(--fs-caption); }
+.asset-table .prompt-cell { font-size: var(--fs-small); color: var(--text-disabled); font-family: 'SF Mono','Consolas',monospace; max-width: 300px; word-break: break-word; }
+.interact-area { background: var(--bg-primary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-lg); position: relative; overflow: hidden; }
+.interact-reset { padding: var(--sp-xs) var(--sp-lg); background: transparent; border: 1px solid var(--border-default); border-radius: var(--radius-md); color: var(--text-secondary); font-family: var(--font-cn); font-size: var(--fs-caption); cursor: pointer; }
+.settlement-panel { width: 400px; padding: 40px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--radius-lg); text-align: center; }
+</style></head><body>
+<div class="page-header"><h1>结算系统</h1><p class="subtitle">功能策划案 — 胜利：材料+加速buff · 免死：无惩罚回桌面 · 战斗统计</p></div>
+<div class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchMainTab(event,'tab-overview')">功能简介</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-rules')">功能规则</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-ui-desc')">界面说明</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-interact')">动态交互</button>
+  <button class="tab-nav-btn" onclick="switchMainTab(event,'tab-assets')">资产需求</button>
+</div>
+<div class="tab-panel active" id="tab-overview">
+  <div class="section-card"><h3>文档信息</h3>
+    <div class="info-row"><div class="info-item"><span class="label">功能名称</span><span class="value">结算系统</span></div><div class="info-item"><span class="label">版本</span><span class="value">v0.1</span></div><div class="info-item"><span class="label">日期</span><span class="value">2026-07-31</span></div><div class="info-item"><span class="label">优先级</span><span class="value"><span class="tag tag-p0">P0</span></span></div></div>
+    <hr><h4>关联系统</h4>
+    <p><span class="tag tag-csv">📄 全屏战斗态 — 战斗结束→结算</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 桌面放置态 — 结算后返回</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 仓库 — 奖励入库</span></p><p style="margin-top:8px;"><span class="tag tag-csv">📄 器灵系统 — 免死触发</span></p>
+  </div>
+  <div class="section-card"><h3>功能定位</h3>
+    <p><strong>一句话：</strong>战斗结束后的结算流程。胜利→获得女娲石+秘宝+灵气+30min加速buff。免死→无惩罚回桌面。结算后回到桌面放置态。</p>
+  </div>
+</div>
+<div class="tab-panel" id="tab-rules"><div class="section-card">
+  <div class="sec-header">胜利结算</div>
+  <div class="rule-l0">1.触发：Boss死亡→清完15波</div>
+  <div class="rule-l0">2.奖励：</div>
+  <div class="rule-l1">① <span class="text-blue">女娲石 ×1</span>（山峰修复通用材料）</div>
+  <div class="rule-l1">② <span class="text-blue">流派秘宝 ×1</span>（6种随机）</div>
+  <div class="rule-l1">③ <span class="text-blue">灵气 +击杀数</span>（击杀数×1）</div>
+  <div class="rule-l1">④ <span class="text-blue">挂机加速 buff</span>：灵气产出速率×1.5，持续30分钟</div>
+  <div class="rule-l0">3.显示战斗统计：波次15/15、击杀数、时长、祝福数</div>
+  <div class="sec-header">免死结算（百世书）</div>
+  <div class="rule-l0">1.触发：战斗中器灵HP归零→SpiritManager免死</div>
+  <div class="rule-l0">2.动画：1.5s百世书虚影+金光+"百世轮回，护你真灵不灭"</div>
+  <div class="rule-l0">3.结果：<span class="text-red">无惩罚</span>—不掉材料、不掉灵气。已消耗的100灵气不返还</div>
+  <div class="sec-header">加速buff管理</div>
+  <div class="rule-l0">1.胜利后桌面态显示⚡加速图标+倒计时</div>
+  <div class="rule-l0">2.离线期间buff时间照常流逝</div>
+  <div class="rule-l0">3.再次胜利→刷新buff时长（重新30min，不叠加）</div>
+</div></div>
+<div class="tab-panel" id="tab-ui-desc">
+  <div class="section-card"><h3>界面 1 — 胜利结算（战斗结束后弹出）</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+      <!-- 底层：战斗结束场景 -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);opacity:0.2;"></div>
+      <!-- 遮罩 -->
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);"></div>
+      <!-- 结算面板 -->
+      <div class="settlement-panel" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div style="font-size:24px;font-weight:700;color:var(--quality-legendary);letter-spacing:8px;">仙 门 大 开 ！</div>
+        <div style="width:48px;height:2px;background:var(--quality-legendary);opacity:0.5;margin:12px auto;"></div>
+        <div style="display:flex;justify-content:center;gap:20px;margin-bottom:20px;">
+          <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">15/15</div><div style="font-size:8px;color:var(--text-disabled);">波次</div></div>
+          <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">347</div><div style="font-size:8px;color:var(--text-disabled);">击杀</div></div>
+          <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">8:42</div><div style="font-size:8px;color:var(--text-disabled);">时长</div></div>
+          <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">12</div><div style="font-size:8px;color:var(--text-disabled);">祝福</div></div>
+        </div>
+        <div style="background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:4px;padding:14px;margin-bottom:16px;">
+          <div style="font-size:9px;color:var(--text-secondary);letter-spacing:2px;margin-bottom:8px;">获 得 奖 励</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-body);"><span>⛰ 女娲石</span><span style="color:var(--quality-legendary);font-weight:700;">×1</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-body);"><span>📜 法峰秘宝</span><span style="color:var(--quality-legendary);font-weight:700;">×1</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-body);"><span>💨 灵气</span><span style="color:var(--status-success);font-weight:700;">+347</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-body);"><span>⚡ 挂机加速</span><span style="color:var(--quality-epic);font-weight:700;">30min ×1.5</span></div>
+          </div>
+        </div>
+        <button style="padding:8px 32px;border-radius:3px;border:none;background:var(--border-active);color:#000;font-family:var(--font-cn);font-size:13px;font-weight:700;letter-spacing:4px;cursor:pointer;">返 回 宗 门</button>
+      </div>
+      <div style="position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--status-warning);color:#000;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;">1</div>
+      <div style="position:absolute;top:58%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--status-warning);color:#000;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;">2</div>
+      <div style="position:absolute;top:74%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--status-warning);color:#000;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;">3</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">标题+战斗统计</span><div class="ud">金色"仙门大开！"+4项统计（波次/击杀/时长/祝福）。</div></div>
+      <div class="ui-note"><span class="un">2</span><span class="ut">奖励列表</span><div class="ud">女娲石→秘宝→灵气→加速buff 逐条弹出（间隔0.3s）。</div></div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">返回宗门</span><div class="ud">点击→奖励入库→切换到桌面放置态。</div></div>
+    </div></div>
+  </div>
+  <div class="section-card"><h3>界面 2 — 免死结算（百世书·战斗中HP归零）</h3>
+    <div class="ui-desc"><div class="ui-desc-left"><div class="ui-frame" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+      <!-- 底层：战斗场景 -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);opacity:0.15;"></div>
+      <!-- 金光遮罩（免死特效暗示） -->
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center, rgba(187,153,102,0.15) 0%, rgba(0,0,0,0.7) 70%);"></div>
+      <!-- 百世书虚影 -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:200px;border:2px solid rgba(187,153,102,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;z-index:2;">
+        <span style="font-size:64px;opacity:0.4;">📖</span>
+      </div>
+      <!-- 文字 -->
+      <div style="position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);z-index:3;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--text-secondary);letter-spacing:6px;">百 世 轮 回</div>
+        <div style="font-size:12px;color:var(--quality-legendary);margin-top:6px;letter-spacing:3px;">护你真灵不灭</div>
+      </div>
+      <!-- 底部按钮 -->
+      <div style="position:absolute;bottom:50px;left:50%;transform:translateX(-50%);z-index:3;">
+        <button style="padding:8px 32px;border-radius:3px;border:1px solid var(--border-default);background:rgba(255,255,255,0.05);color:var(--text-secondary);font-family:var(--font-cn);font-size:13px;font-weight:600;letter-spacing:4px;cursor:pointer;">返 回 宗 门</button>
+      </div>
+      <p style="position:absolute;bottom:25px;left:50%;transform:translateX(-50%);z-index:3;font-size:9px;color:var(--text-disabled);margin:0;">无惩罚 · 不损失灵气和材料</p>
+      <div style="position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:var(--status-warning);color:#000;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:4;">1</div>
+    </div></div>
+    <div class="ui-desc-right">
+      <div class="ui-note"><span class="un">1</span><span class="ut">百世书虚影+金光</span><div class="ud">HP归零瞬间 → 1.5s动画：百世书虚影展开包裹器灵 → 金光一闪 → 文字"百世轮回，护你真灵不灭"。战斗结束，无惩罚回桌面。</div></div>
+    </div></div>
+  </div>
+      <div class="ui-note"><span class="un">3</span><span class="ut">返回宗门</span><div class="ud">点击→奖励入库→切换到桌面态。</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-interact"><div class="section-card"><h3>动态交互 — 胜利 vs 免死 结算切换</h3><div class="interact-area" style="background:linear-gradient(180deg, #0d1018 0%, #121620 50%, #0d1018 100%); position:relative; overflow:hidden;">
+  <!-- 战斗背景暗示 -->
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--bg-surface);border:2px solid var(--quality-legendary);opacity:0.15;"></div>
+  <div id="settle-mask" style="position:absolute;inset:0;background:rgba(0,0,0,0.6);"></div>
+  <div class="settlement-panel" style="position:relative;z-index:2;">
+    <div style="font-size:22px;font-weight:700;letter-spacing:6px;margin-bottom:10px;" id="settle-title">仙 门 大 开 ！</div>
+    <div style="width:40px;height:2px;background:var(--quality-legendary);opacity:0.5;margin:0 auto 16px;"></div>
+    <div style="display:flex;justify-content:center;gap:20px;margin-bottom:16px;">
+      <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">15/15</div><div style="font-size:8px;color:var(--text-disabled);">波次</div></div>
+      <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">347</div><div style="font-size:8px;color:var(--text-disabled);">击杀</div></div>
+      <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">8:42</div><div style="font-size:8px;color:var(--text-disabled);">时长</div></div>
+      <div style="text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--text-primary);">12</div><div style="font-size:8px;color:var(--text-disabled);">祝福</div></div>
+    </div>
+    <div id="settle-rewards" style="background:var(--bg-primary);border:1px solid var(--border-subtle);border-radius:3px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:9px;color:var(--text-secondary);margin-bottom:6px;">获得奖励</div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <div style="display:flex;justify-content:space-between;font-size:10px;"><span>⛰ 女娲石</span><span style="color:var(--quality-legendary);">×1</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;"><span>📜 法峰秘宝</span><span style="color:var(--quality-legendary);">×1</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;"><span>💨 灵气</span><span style="color:var(--status-success);">+347</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;"><span>⚡ 加速buff</span><span style="color:var(--quality-epic);">30min</span></div>
+      </div>
+    </div>
+    <div id="settle-hint" style="font-size:9px;color:var(--text-disabled);margin-bottom:12px;"></div>
+    <button style="padding:8px 24px;border-radius:3px;border:none;background:var(--border-active);color:#000;font-family:var(--font-cn);font-size:13px;font-weight:700;letter-spacing:4px;cursor:pointer;" onclick="toggleSettle()">切换：免死结算</button>
+  </div>
+</div></div></div>
+<div class="tab-panel" id="tab-assets"><div class="section-card">
+  <h3 style="margin-bottom:var(--sp-md);">美术资产需求</h3>
+  <div class="sub-tab-bar">
+    <button class="sub-tab-btn active" onclick="switchSubTab(event,'sub-ui')">UI</button>
+    <button class="sub-tab-btn" onclick="switchSubTab(event,'sub-vfx')">特效</button>
+  </div>
+  <div class="sub-tab-panel active" id="sub-ui"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>规格</th><th>格式</th><th>数量</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">U1</td><td>结算面板底板</td><td>底板</td><td>480×500</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">暗色弹窗，金色镶边。</td></tr>
+    <tr><td class="mono">U2</td><td>返回按钮</td><td>控件</td><td>200×48</td><td>PNG</td><td>1</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">金色按钮"返回宗门"。</td></tr>
+  </table></div>
+  <div class="sub-tab-panel" id="sub-vfx"><table class="asset-table"><tr><th>编号</th><th>名称</th><th>类别</th><th>优先级</th><th>Prompt方向</th></tr>
+    <tr><td class="mono">V1</td><td>免死动画（百世书虚影）</td><td>全屏特效</td><td><span class="tag tag-p0">P0</span></td><td class="prompt-cell">百世书虚影展开+金光+文字。1.5s。</td></tr>
+  </table></div>
+</div></div>
+
+<script>
+function switchMainTab(e,id){document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function switchSubTab(e,id){const bar=e.target.closest('.sub-tab-bar');bar.querySelectorAll('.sub-tab-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');const card=e.target.closest('.section-card');card.querySelectorAll('.sub-tab-panel').forEach(p=>p.classList.remove('active'));card.querySelector('#'+id).classList.add('active');}
+let isVictory=true;
+function toggleSettle(){isVictory=!isVictory;const t=document.getElementById('settle-title');const r=document.getElementById('settle-rewards');const h=document.getElementById('settle-hint');const m=document.getElementById('settle-mask');
+if(isVictory){t.textContent='仙 门 大 开 ！';t.style.color='var(--quality-legendary)';r.style.display='block';h.textContent='';m.style.background='rgba(0,0,0,0.6)';}else{t.textContent='百 世 轮 回';t.style.color='var(--text-secondary)';r.style.display='none';h.textContent='无惩罚 · 不损失灵气和材料';m.style.background='radial-gradient(ellipse at center, rgba(187,153,102,0.15) 0%, rgba(0,0,0,0.7) 70%)';}
+event.target.textContent=isVictory?'切换：免死结算':'切换：胜利结算';}
+</script>
+</body></html>
