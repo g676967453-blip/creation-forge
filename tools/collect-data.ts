@@ -425,6 +425,7 @@ export function collectData() {
     { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~40%", output: "闭环完整+MCP在线+5层防御+15波+6功法+35/93任务✅+文档审计修复", blocker: "待祝福3选1UI+弟子接入主循环+旧模块删除" },
     { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: "14 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
+    { name: "秦王殿奏对 (qin-court-audience)", engine: "HTML/CSS/JS", status: "active", statusText: "活跃", progress: "v1.0 已完成", output: "300 题库 + 10 分类 + 打字答题", blocker: "—" },
     { name: "originals / sandbox", engine: "待定", status: "empty", statusText: "空白", progress: "—", output: "—", blocker: "—" },
   ];
 
