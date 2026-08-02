@@ -226,10 +226,10 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
   <div class="cards" id="cards-overview"></div>
   <div class="tbl" id="tbl-overview-info"></div>
 </div>
-<div id="tab-projects" class="panel"><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-projects"></div></div>
+<div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 5 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button></div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
-<div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
+<div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
 
@@ -515,10 +515,35 @@ function renderGoalCards(goals) {
     '<table class="tbl"><thead><tr><th>板块</th><th>内容</th></tr></thead><tbody>'+
     '<tr><td>AI 模式</td><td>协作者 · 导师 · 加速器</td></tr>'+
     '<tr><td>SKILL</td><td>/new-post · /git-commit · /update-dashboard · /todo · /goals</td></tr>'+
-    '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>';
+    '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>'+
+    '<div class="section-title" style="margin-top:24px">🚀 活跃项目速览</div>'+
+    '<table class="tbl"><thead><tr><th>项目</th><th>引擎</th><th>进度</th><th>状态</th></tr></thead><tbody>'+
+    D.projects.map(function(p){
+      var sb = p.status==='active'?'badge-active':'badge-idle';
+      var st = p.status==='active'?'🟢 活跃':'🟡 暂停';
+      return '<tr><td><strong>'+p.name+'</strong></td><td>'+p.engine+'</td><td>'+p.progress+'</td><td><span class="badge '+sb+'">'+st+'</span></td></tr>';
+    }).join('')+'</tbody></table>';
 })();
+// 项目卡片渲染：引擎 + 状态 + 进度 + 产出 + 阻塞
+function renderProjectCards(projects) {
+  var ps = {active:'badge-active',idle:'badge-idle',done:'badge-done'};
+  var pst = {active:'🟢 活跃',idle:'🟡 暂停',done:'✅ 完成'};
+  return projects.map(function(p) {
+    return '<div class="goal-card">'+
+      '<div class="goal-header">'+
+        '<span class="goal-name">'+p.name+'</span>'+
+        '<span class="badge '+(ps[p.status]||'badge-empty')+'">'+(pst[p.status]||p.statusText)+'</span>'+
+      '</div>'+
+      '<div class="goal-detail">'+p.engine+' · '+p.progress+'</div>'+
+      '<div style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:8px;line-height:1.5">'+
+        '<div>📦 <strong>产出：</strong>'+p.output+'</div>'+
+        (p.blocker !== '—' ? '<div style="margin-top:4px">⚠️ <strong>阻塞：</strong>'+p.blocker+'</div>' : '')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
 (function(){
-  document.getElementById('tbl-projects').innerHTML=renderGoalCards(D.goalsUser);
+  document.getElementById('tbl-projects').innerHTML=renderProjectCards(D.projects);
 })();
 (function(){
   const sm={mature:'badge-mature',testing:'badge-testing',ongoing:'badge-ongoing'};
@@ -744,6 +769,7 @@ function renderGoalCards(goals) {
 (function(){
   const rt=(d,c)=>'<table class="tbl"><thead><tr>'+c.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+d.map(r=>'<tr>'+r.map((v,i)=>i===c.length-1?'<td><span class="badge '+(pm[v]||'')+'">'+v+'</span></td>':'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
   document.getElementById('tbl-longterm').innerHTML=renderLongTermGoals(D.longTermGoals);
+  document.getElementById('tbl-quarterly-goals').innerHTML=renderGoalCards(D.goalsUser);
   document.getElementById('tbl-goals-archived').innerHTML=D.goalsArchived.map(g=>
     '<div class="goal-card" style="opacity:.6">'+
       '<div class="goal-header">'+
