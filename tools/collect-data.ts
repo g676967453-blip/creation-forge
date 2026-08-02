@@ -276,6 +276,7 @@ export function loadPersonalTasks(): PersonalTasksData {
     "📱": { key: "X", label: "小红书", emoji: "📱", color: "#ff9800" },
     "🎮": { key: "G", label: "游戏开发", emoji: "🎮", color: "#42a5f5" },
     "🔧": { key: "F", label: "造化坊", emoji: "🔧", color: "#ce93d8" },
+    "🏠": { key: "L", label: "日常管理", emoji: "🏠", color: "#78909c" },
   };
 
   const categories: PersonalTasksData["categories"] = [];
@@ -424,6 +425,14 @@ export function loadPersonalTasks(): PersonalTasksData {
 }
 
 export function collectData() {
+  /**
+   * ⚠️ 硬编码数据同步规则：
+   * - goalsUser[] ↔ docs/目标规划.md「季度项目」
+   * - longTermGoals ↔ docs/目标规划.md「长期目标」
+   * - goalsIssues[] / goalsAI[] ↔ 由 /goals SKILL 维护
+   * - projects[] ↔ 项目实际状态（人工审查）
+   * - 仪表盘是视图，不是编辑口 —— docs/目标规划.md 是权威数据源
+   */
   const today = new Date().toLocaleDateString("zh-CN");
   const worksFiles = listWorks();
   const worksData = worksFiles.map(f => ({ date: f.substring(0, 10), file: f, desc: autoDesc(f) }));
@@ -435,7 +444,7 @@ export function collectData() {
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
   const projects = [
-    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~70%", output: "闭环+MCP+5层防御+15波+6功法+35/93任务✅+文档修复+方向重构完成", blocker: "待祝福3选1UI+弟子接入主循环" },
+    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~80%", output: "闭环+MCP+5层防御+15波+6功法+35/93任务✅+文档修复+方向重构完成", blocker: "待祝福3选1UI+弟子接入主循环" },
     { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: "15 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: "—" },
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
     { name: "秦王殿奏对 (qin-court-audience)", engine: "HTML/CSS/JS", status: "active", statusText: "活跃", progress: "v1.0 已完成", output: "300 题库 + 10 分类 + 打字答题", blocker: "—" },
@@ -448,7 +457,7 @@ export function collectData() {
     { name: "仪表盘更新", version: "v2", skill: "/update-dashboard", project: "全局", status: "mature", category: "造化坊",
       desc: "重新生成造化坊 HTML 仪表盘（7 页签）", steps: "检查 collect-data.ts → 更新过时数据 → 生成 HTML → 用户验证", trigger: "/update-dashboard 或「更新仪表盘」" },
     { name: "个人待办管理", version: "v1", skill: "/todo", project: "全局", status: "mature", category: "造化坊",
-      desc: "管理 5 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
+      desc: "管理 6 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
     { name: "功能开发-流水线", version: "v2", skill: "待建", project: "全局", status: "mature", category: "游戏开发",
       desc: "通用 4 阶段 + 数据原则 + 实现后步骤：策划→需求→UI交互→美术资产→(实现：代码+测试+文档同步)", steps: "功能策划(01) → 功能需求(02) → 界面交互UI(03) → 美术资产(04) → 进入实现", trigger: "待建" },
     { name: "小红书-制作帖子", version: "v3", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
@@ -484,7 +493,7 @@ export function collectData() {
               noun: "works/ 工作日志（素材源）、Claude Code（AI 协作伙伴）、/new-post SKILL（生产流程）、Puppeteer（截图导出）、造化坊仪表盘（发布追踪）",
               activities: "我从 works/ 选材（每周至少一次），我提炼三幕故事结构，我用 AI 生成文案和排版 HTML，我用 Puppeteer 导出 6 张卡片截图，我发布到小红书并记录到仪表盘",
               sequence: "① 浏览本周 works/ 日志 → ② 选出最有「问题→AI解决」亮点的素材 → ③ 用 /new-post 生成帖子 → ④ Puppeteer 导出截图 → ⑤ 发布 → ⑥ 更新仪表盘" } },
-    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 70, todos: 5,
+    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 80, todos: 5,
       pnas: { picture: "打开 Godot，点「运行」→ 出现门派经营界面 → 点击「出战」→ 进入战斗场景 → 弟子自动战斗 → 胜利弹窗显示掉落 → 回到经营界面。整个过程无报错，帧率稳定，体验流畅。",
               noun: "Godot 4.7 引擎、祝福 3 选 1 UI 场景（.tscn）、BlessingManager 数据层、DiscipleSquad 模块、战斗结算模块、旧代码残余引用",
               activities: "我创建祝福选择场景（.tscn），我实现三选一点选→确认→应用祝福逻辑，我连接 BlessingManager 数据层，我将 DiscipleSquad 接入主战斗场景，我删除旧 card_manager/summons/upgrades 残余引用，我手动跑通完整一局验证闭环",
@@ -494,8 +503,6 @@ export function collectData() {
               noun: "GAME-002 道具清单、Lovart AI（图像生成）、Photoshop（抠图+切片）、道具视觉风格参考（修仙题材）、交付规格标准（256px/格式/命名）",
               activities: "我从 GAME-002 提取道具清单，我定义视觉风格参考（法器/丹药/秘籍三类），我用 Lovart 生成第一批道具图标（5-10 个），我用 PS 抠图 + 256px 切片，我导入 GAME-002 项目验证效果",
               sequence: "① 等待 GAME-002 V0.1 稳定 → ② 提取道具清单（名称/稀有度/尺寸）→ ③ 定义视觉风格参考 → ④ Lovart 批量生成 → ⑤ PS 抠图+切片 → ⑥ 导入 GAME-002 验证" } },
-    { id: "U4", task: "造化坊仪表盘持续完善", detail: "8 大问题修复：数据同步、待办归档、页签重构、资产补全。保持仪表盘与项目状态实时一致", priority: "🟡 本周", progress: 0, todos: 0,
-      pnas: { picture: "", noun: "", activities: "", sequence: "" } },
   ];
 
   const longTermGoals = {
@@ -508,9 +515,9 @@ export function collectData() {
           { name: "asset-pipeline", tag: "🔵 待启动", note: "等 GAME-002 稳定" },
         ]
       },
-      { dim: "📡 内容与影响力", vision: "通过自媒体建立受众和分发渠道，开发过程即内容", status: "14 期 / 16 粉丝",
+      { dim: "📡 内容与影响力", vision: "通过自媒体建立受众和分发渠道，开发过程即内容", status: "15 期 / 16 粉丝",
         items: [
-          { name: "小红书", tag: "破局之剑", note: "14 期 · 16 粉丝 · 100 赞藏" },
+          { name: "小红书", tag: "破局之剑", note: "15 期 · 16 粉丝 · 100 赞藏" },
           { name: "内容定位", tag: "", note: "AI 协作做独立游戏，每天解决一个真问题" },
         ]
       },
@@ -565,7 +572,7 @@ export function collectData() {
   const goalsAI = [
     { id: "A1", suggestion: "Phase 3：祝福3选1 UI 面板制作 + 接入升级流程", detail: "旧代码已清理。下一步：创建独立祝福选择面板，DiscipleSquad 接入战斗循环。这是 V0.1 核心闭环的最后一块拼图。", priority: "🔴 优先" },
     { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "15 期存量足够，按 /new-post 流程持续产出即可。8 月重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
-    { id: "A4", suggestion: "8月1日执行首次月度复盘 🆕", detail: "三个全局工作流+目标规划.md+仪表盘进度条全部就位。明天（8月1日）可做首次正式月度复盘，回顾 7 月成果并规划 8 月方向。", priority: "🔴 优先" },
+    { id: "A4", suggestion: "8月初执行首次月度复盘", detail: "三个全局工作流+目标规划.md+仪表盘全部就位。本周抽时间回顾 7 月成果，用 /goals 做首次正式月度复盘，检查目标进度偏差。", priority: "🔴 优先" },
   ];
 
   const toolGuides = [
