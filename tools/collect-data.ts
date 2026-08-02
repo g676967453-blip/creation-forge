@@ -567,12 +567,20 @@ export function collectData() {
     { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
     { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
     { id: "I8", issue: "仪表盘部分数据硬编码，未与实际文件系统同步", source: "仪表盘全局审查 07-31", severity: "🔴 本周" },
+    { id: "I9", issue: "工作流计数不一致 —— 宣称 16 个，实际定义 20 个，仪表盘 countFiles() 把 README/变更日志/改进追踪也计入", source: "全盘检查 08-02", severity: "🟡 累积" },
+    { id: "I10", issue: "仪表盘注释/标题过时 —— 注释写「8 Tab」实为 7，页签标题「5 分类」已扩至 6", source: "全盘检查 08-02", severity: "🟡 累积" },
+    { id: "I11", issue: "SKILL 数量声明偏差 —— CLAUDE.md 称「11 SKILL + library」，实际含 library 共 ~50 个", source: "全盘检查 08-02", severity: "🟢 远期" },
+    { id: "I12", issue: ".ai-locks/ .lobster/ .trea/ 未加入 .gitignore，出现在 untracked files 中", source: "全盘检查 08-02", severity: "🟢 远期" },
   ];
 
   const goalsAI = [
-    { id: "A1", suggestion: "Phase 3：祝福3选1 UI 面板制作 + 接入升级流程", detail: "旧代码已清理。下一步：创建独立祝福选择面板，DiscipleSquad 接入战斗循环。这是 V0.1 核心闭环的最后一块拼图。", priority: "🔴 优先" },
-    { id: "A3", suggestion: "小红书保持节奏，不追求完美", detail: "15 期存量足够，按 /new-post 流程持续产出即可。8 月重点从数量转向质量 —— 每期一个真问题。", priority: "🟡 建议" },
-    { id: "A4", suggestion: "8月初执行首次月度复盘", detail: "三个全局工作流+目标规划.md+仪表盘全部就位。本周抽时间回顾 7 月成果，用 /goals 做首次正式月度复盘，检查目标进度偏差。", priority: "🔴 优先" },
+    { id: "A1", suggestion: "【P0 本周】推 GAME-002 M1 祝福3选1面板", detail: "P0 卡在 ~80% 已有一段时间。这是最小交付单元：创建 .tscn 场景 → 三选一交互 → 连接 BlessingManager。每天推 1 个待办，不要等大块时间。", priority: "🔴 优先" },
+    { id: "A2", suggestion: "【P0 本周】暂停新增工作流/SKILL，专注执行", detail: "16 workflows + 205 skills 已足够支撑全部产出。继续基建是「为系统建系统」。把精力转向用现有系统推 GAME-002 V0.1 完成。", priority: "🔴 优先" },
+    { id: "A3", suggestion: "【内容】调参工具 → 小红书新帖", detail: "今天（8/2）完工的调参工具就是最佳素材：一个滑块写实切Q版。三幕结构已写好，/new-post 生成，明天发。8 月不能断档。", priority: "🟡 建议" },
+    { id: "A4", suggestion: "【内容】选题从「做了什么」→「学到了什么」", detail: "当前 16 粉丝不急着追量。每期提炼一个金句（来自宣言或工作日志），侧重「解决问题的过程」而非「交付了什么」。这才是造化坊的差异化内容。", priority: "🟡 建议" },
+    { id: "A5", suggestion: "【系统】暂搁 .lobster / .trea 多 AI 编排", detail: "框架已搭好但实际利用率存疑。维护多 AI 协作协议会吃掉执行时间。当前单 Claude + 16 workflows 已很强。等 GAME-002 V0.1 交付后再启动多 AI。", priority: "🟢 长期" },
+    { id: "A6", suggestion: "【系统】设定 asset-pipeline 明确解锁条件", detail: "当前解锁条件模糊（「等 V0.1 稳定」）。建议改为：主战斗场景可运行即可解锁 asset-pipeline M1（提取道具清单+风格参考），不必等到全部 bug 修完。", priority: "🟢 长期" },
+    { id: "A7", suggestion: "【复盘】8月首周执行首次月度复盘", detail: "7 月是造化坊基建月（16 workflows + 仪表盘 + 多 AI 协议）。用 /goals 做首次正式月度复盘：检查 7 月成果、Q3 目标进度偏差、8 月重点（从基建转向产品交付）。", priority: "🔴 优先" },
   ];
 
   const toolGuides = [
