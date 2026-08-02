@@ -1,0 +1,17 @@
+{
+  "name": "game-hifi-prototype",
+  "version": "2.0.0",
+  "description": "制作游戏高保真交互原型 — 基于组件库快速组装可点击的多屏手机游戏原型。五步工作流：选择平台 → 配置屏幕 → 组装组件 → 生成原型 → 走查清单。输出可交互的 720×1280 手机端 HTML 原型。",
+  "author": "造化坊",
+  "license": "Apache-2.0",
+  "category": "Game UI / Prototyping",
+  "tags": ["hifi", "prototype", "interactive", "mobile-game", "720x1280"],
+  "compatibility": {
+    "engine": "none",
+    "output": "HTML/CSS/JS (zero-dependency, browser-runnable)"
+  },
+  "metadata": {
+    "difficulty": "intermediate",
+    "status": "active"
+  }
+}

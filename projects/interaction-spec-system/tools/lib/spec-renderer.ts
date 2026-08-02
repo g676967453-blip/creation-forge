@@ -5,6 +5,7 @@
  */
 
 import type { SpecConfig, SpecSection, Principle, ParsedSpec } from "./spec-parser";
+import { getTokenCSS, type TokenOverrides, hexToRGBA } from "./shared/tokens";
 
 // ═══════════════════════════════════════════════
 // 网格计算引擎
@@ -397,7 +398,9 @@ ${renderAppendix(config)}
 <div class="spec-footer">
   <p>${esc(title)} v${esc(config.version)} · 生产线标准</p>
   <p style="margin-top:4px;">方法论：${esc(config.methodology)} · 标杆：${esc(config.benchmarks)}</p>
-  <p style="margin-top:8px;font-size:10px;">此文档由 <code>projects/interaction-spec-system/tools/build-interaction-spec.ts</code> 自动生成 · 数据源：对应 .md 规范文件</p>
+  <p style="margin-top:8px;font-size:10px;">此文档由 <code>projects/interaction-spec-system/tools/build-interaction-spec.ts</code> 自动生成 · 数据源：对应 .md 规范文件 · Design Token：<code>tokens/base.css</code></p>
+  <p style="margin-top:4px;font-size:10px;">📦 完整组件代码库：<code>components/*.md</code>（规格+代码）→ 运行 <code>npx tsx tools/build-component-lib.ts</code> 生成组件展示页</p>
+  <p style="margin-top:4px;font-size:10px;">📱 可交互原型生成器：<code>npx tsx tools/build-prototype.ts --demo</code></p>
 </div>
 
 <script>
@@ -425,9 +428,24 @@ ${renderAppendix(config)}
 
 function generateCSS(config: SpecConfig, m: GridMetrics): string {
   const gu = m.gridUnit;
+
+  // 从 tokens/base.css 加载基础 CSS
+  const tokenOverrides: TokenOverrides = {
+    color_primary: config.color_primary,
+    color_success: config.color_success,
+    color_warning: config.color_warning,
+    color_danger: config.color_danger,
+    color_info: config.color_info,
+    rarity_colors: config.rarity_colors as Record<string, string>,
+  };
+  const baseTokens = getTokenCSS(tokenOverrides);
+
   return `
+/* ═══════ 基础 Design Token (from tokens/base.css) ═══════ */
+${baseTokens}
+
+/* ═══════ 文档页专用变量 (spec 渲染器) ═══════ */
 :root {
-  /* 基础色 */
   --page-bg: #fafafc;
   --surface: #fff;
   --surface-hover: #f5f6f8;
@@ -437,21 +455,7 @@ function generateCSS(config: SpecConfig, m: GridMetrics): string {
   --text-body: #3a3d48;
   --text-muted: #8b8f9a;
   --code-bg: #f4f5f7;
-
-  /* 功能色 */
-  --accent: ${config.color_primary};
-  --accent-bg: ${hexToRGBA(config.color_primary, 0.08)};
   --accent-bg-solid: ${hexToRGBA(config.color_primary, 0.22)};
-  --success: ${config.color_success};
-  --warning: ${config.color_warning};
-  --danger: ${config.color_danger};
-  --info: ${config.color_info};
-
-  /* 品质色 */
-  --q-common: ${config.rarity_colors.common || "#8888a0"};
-  --q-rare: ${config.rarity_colors.rare || "#6699bb"};
-  --q-epic: ${config.rarity_colors.epic || "#9977bb"};
-  --q-legendary: ${config.rarity_colors.legendary || "#bb9966"};
 
   /* 手机框 */
   --phone-bg: #e8e8ec;
@@ -463,7 +467,7 @@ function generateCSS(config: SpecConfig, m: GridMetrics): string {
   --sa-top-color: rgba(200,60,60,0.16);
   --sa-bottom-color: rgba(200,160,40,0.16);
 
-  /* 间距 */
+  /* 间距 (渲染器专用 — 缩放到展示尺寸) */
   --sp-xs: ${m.spacing.xs}px;
   --sp-sm: ${m.spacing.sm}px;
   --sp-md: ${m.spacing.md}px;
@@ -482,7 +486,6 @@ function generateCSS(config: SpecConfig, m: GridMetrics): string {
   /* 手机框尺寸 */
   --phone-w: ${m.phoneW}px;
   --phone-h: ${m.phoneH}px;
-
 }
 `;
 }
@@ -1174,12 +1177,7 @@ function renderAppendix(config: SpecConfig): string {
 // 辅助渲染函数
 // ═══════════════════════════════════════════════
 
-function hexToRGBA(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
+// hexToRGBA 从 shared/tokens.ts 导入，见文件顶部 import
 
 function rarityCardCSS(config: SpecConfig): string {
   const colors = config.rarity_colors;

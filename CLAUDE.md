@@ -244,3 +244,30 @@ MD 为 AI 可读的单一数据源，HTML 由生成器自动渲染（网格可�
 > 📌 **当前阶段：** 游戏交互规范生成系统 v1.0 — MD 驱动 HTML 的交互规范生产线
 > 📌 **状态：** 已完成核心工具链（2026-07-30）
 > 📌 **最新完成：** 创建 spec-parser + spec-renderer + build-spec 工具链，重构竖版交互规范为 MD 驱动
+
+---
+
+## 多 AI 协作
+
+本项目同时由多个 AI 助手协作（Claude / TREA / LobsterAl）。
+所有 AI 遵守 [AI_COLLABORATION.md](./AI_COLLABORATION.md) 定义的共享协议。
+
+### 本 AI 身份
+
+| 属性 | 值 |
+|------|-----|
+| 标签 | `[claude]` |
+| 工作记录前缀 | `works/YYYY-MM-DD-[claude]-*.md` |
+| 提交签名 | `Co-Authored-By: Claude <noreply@anthropic.com>` |
+
+### 操作前检查
+
+- 修改共享状态文件前，检查 [.ai-locks/](./.ai-locks/) 是否有对应锁文件
+- 获取锁 → 修改 → 释放锁
+- 需要锁的文件：`docs/目标规划.md`、`docs/个人待办.md`、`tools/collect-data.ts`、`CLAUDE.md`、`AI_COLLABORATION.md`、`memory/` 下文件
+
+### 跨 AI 共享记忆
+
+- 每次会话开始时，读取 [memory/MEMORY.md](./memory/MEMORY.md) 了解项目当前状态
+- 每次会话结束时，如有值得跨 AI 共享的发现，写入 [memory/](./memory/) 目录
+- Claude Code 的专属记忆仍在 `.claude/projects/` 下，与 `memory/` 互不干扰

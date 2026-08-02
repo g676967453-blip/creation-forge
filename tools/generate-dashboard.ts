@@ -101,22 +101,39 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 .credo p{font-size:14px;color:rgba(255,255,255,.7);line-height:1.8}
 .credo strong{color:#ff6b6b}
 
-/* 长期目标：八大关注维度网格 */
-.lt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
-.lt-dim-card{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:14px 16px}
-.lt-dim-icon{font-size:20px;margin-bottom:2px}
-.lt-dim-label{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
-.lt-dim-vision{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:6px}
-.lt-dim-status{font-size:11px;color:rgba(255,255,255,.3);background:rgba(255,255,255,.04);display:inline-block;padding:2px 8px;border-radius:10px}
+/* 长期目标：AI原生五维 — 横板全宽 · 左右构图 */
+.lt-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.lt-dim-card{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:16px 20px;display:flex;gap:20px;align-items:stretch}
+/* 左栏：图标 + 名称 + 说明（上中下） */
+.lt-left{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;flex-shrink:0;width:72px;text-align:center;padding-top:2px}
+.lt-dim-icon{font-size:24px;line-height:1}
+.lt-dim-label{font-size:13px;font-weight:600;color:#fff;margin:4px 0}
+.lt-dim-vision{font-size:10px;color:rgba(255,255,255,.35);line-height:1.4}
+/* 右栏：虚线分割列表 */
+.lt-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
+.lt-dim-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.06)}
+.lt-dim-item:last-child{border-bottom:none}
+.lt-item-name{color:rgba(255,255,255,.7);white-space:nowrap}
+.lt-item-tag{font-size:10px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.05);padding:1px 7px;border-radius:8px;white-space:nowrap}
+.lt-item-note{font-size:10px;color:rgba(255,255,255,.25);margin-left:auto;text-align:right}
+/* 右栏顶部状态行 */
+.lt-right-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.lt-dim-status{font-size:10px;color:rgba(255,255,255,.3);background:rgba(255,255,255,.04);padding:1px 8px;border-radius:10px}
 
-/* 三圈交集 */
-.intersection-box{background:linear-gradient(135deg,rgba(255,107,107,.08),rgba(255,107,107,.02));border:1px solid rgba(255,107,107,.12);border-radius:10px;padding:18px;margin-bottom:20px}
-.intersection-title{font-size:15px;font-weight:600;color:#ff6b6b;margin-bottom:12px}
-.intersection-circles{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-.icircle{flex:1;min-width:140px;background:rgba(0,0,0,.2);border-radius:8px;padding:12px;text-align:center}
+/* 战略定位三角 */
+.st-box{background:linear-gradient(135deg,rgba(66,165,245,.08),rgba(66,165,245,.02));border:1px solid rgba(66,165,245,.12);border-radius:10px;padding:20px;margin-bottom:20px}
+.st-title{font-size:15px;font-weight:600;color:#42a5f5;margin-bottom:14px}
+.st-circles{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.scircle{flex:1;min-width:160px;background:rgba(0,0,0,.2);border-radius:8px;padding:14px;text-align:center}
 .ic-emoji{font-size:24px;margin-bottom:4px}
 .ic-label{font-size:12px;font-weight:600;color:#fff;margin-bottom:4px}
 .ic-text{font-size:12px;color:rgba(255,255,255,.5);line-height:1.4}
+.st-formula{font-size:12px;color:rgba(255,255,255,.35);font-style:italic}
+/* 保留 icircle 用于向后兼容 */
+.icircle{flex:1;min-width:140px;background:rgba(0,0,0,.2);border-radius:8px;padding:12px;text-align:center}
+.intersection-box{background:linear-gradient(135deg,rgba(255,107,107,.08),rgba(255,107,107,.02));border:1px solid rgba(255,107,107,.12);border-radius:10px;padding:18px;margin-bottom:20px}
+.intersection-title{font-size:15px;font-weight:600;color:#ff6b6b;margin-bottom:12px}
+.intersection-circles{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .intersection-core{font-size:14px;color:#fff;margin-bottom:8px;padding:10px;background:rgba(255,107,107,.1);border-radius:6px}
 .intersection-formula{font-size:12px;color:rgba(255,255,255,.35);font-style:italic}
 
@@ -212,7 +229,7 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 <div id="tab-projects" class="panel"><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 5 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button></div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
-<div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — 八大关注</div><div id="tbl-longterm"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
+<div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
 
@@ -405,28 +422,46 @@ function switchTab(name, el) {
 // 全局：优先级徽章映射
 const pm={"🔴 紧急":"badge-active-task","🔴 阻塞":"badge-active-task","🔴 优先":"badge-active-task","🔴 P0":"badge-active-task","🟡 本周":"badge-idle","🟡 持续":"badge-idle","🟡 累积":"badge-idle","🟡 便利性":"badge-idle","🟡 建议":"badge-idle","🟢 远期":"badge-empty","🔴 本周":"badge-active-task","✅ 已完成":"badge-done"};
 
-// 长期目标渲染：八大关注维度 + 三圈交集
+// 长期目标渲染：AI原生五维关注 + 战略定位三角
 function renderLongTermGoals(ltg) {
   var dims = ltg.dimensions.map(function(d) {
+    // 右栏：虚线分割的条目列表
+    var itemsHtml = '';
+    if (d.items && d.items.length) {
+      itemsHtml = d.items.map(function(it) {
+        var tagHtml = it.tag ? '<span class="lt-item-tag">'+it.tag+'</span>' : '';
+        var noteHtml = it.note ? '<span class="lt-item-note">'+it.note+'</span>' : '';
+        return '<div class="lt-dim-item">'+
+          '<span class="lt-item-name">'+it.name+'</span>'+tagHtml+noteHtml+
+        '</div>';
+      }).join('');
+    }
     return '<div class="lt-dim-card">'+
-      '<div class="lt-dim-icon">'+d.dim.substring(0,2)+'</div>'+
-      '<div class="lt-dim-label">'+d.dim.substring(2)+'</div>'+
-      '<div class="lt-dim-vision">'+(d.vision === '—' ? '<span style="color:rgba(255,255,255,.2)">未设定</span>' : d.vision)+'</div>'+
-      '<div class="lt-dim-status">'+d.status+'</div>'+
+      // 左栏：图标 + 名称 + 说明（上中下）
+      '<div class="lt-left">'+
+        '<div class="lt-dim-icon">'+d.dim.substring(0,2)+'</div>'+
+        '<div class="lt-dim-label">'+d.dim.substring(2)+'</div>'+
+        '<div class="lt-dim-vision">'+d.vision+'</div>'+
+      '</div>'+
+      // 右栏：状态头 + 虚线列表
+      '<div class="lt-right">'+
+        '<div class="lt-right-header"><div></div><div class="lt-dim-status">'+d.status+'</div></div>'+
+        itemsHtml +
+      '</div>'+
     '</div>';
   }).join('');
-  var intersection =
-    '<div class="intersection-box">'+
-      '<div class="intersection-title">🎯 三圈交集</div>'+
-      '<div class="intersection-circles">'+
-        '<div class="icircle"><div class="ic-emoji">😊</div><div class="ic-label">快乐</div><div class="ic-text">'+ltg.intersection.happy+'</div></div>'+
-        '<div class="icircle"><div class="ic-emoji">💪</div><div class="ic-label">优势</div><div class="ic-text">'+ltg.intersection.advantage+'</div></div>'+
-        '<div class="icircle"><div class="ic-emoji">🎯</div><div class="ic-label">有意义</div><div class="ic-text">'+ltg.intersection.meaningful+'</div></div>'+
+  var st = ltg.strategicTriangle;
+  var strategy =
+    '<div class="st-box">'+
+      '<div class="st-title">🧭 战略定位三角</div>'+
+      '<div class="st-circles">'+
+        '<div class="scircle"><div class="ic-emoji">🎯</div><div class="ic-label">价值主张</div><div class="ic-text">'+st.valueProposition+'</div></div>'+
+        '<div class="scircle"><div class="ic-emoji">⚡</div><div class="ic-label">核心差异</div><div class="ic-text">'+st.differentiation+'</div></div>'+
+        '<div class="scircle"><div class="ic-emoji">📈</div><div class="ic-label">增长引擎</div><div class="ic-text">'+st.growthEngine+'</div></div>'+
       '</div>'+
-      '<div class="intersection-core">✨ <strong>交集：</strong>'+ltg.intersection.core+'</div>'+
-      '<div class="intersection-formula">'+ltg.formula+'</div>'+
+      '<div class="st-formula">'+ltg.formula+'</div>'+
     '</div>';
-  return '<div class="lt-grid">'+dims+'</div>'+intersection;
+  return '<div class="lt-grid">'+dims+'</div>'+strategy;
 }
 
 // 目标卡片渲染：进度条 + 待办数 + PNAS 折叠
