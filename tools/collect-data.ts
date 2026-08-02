@@ -500,22 +500,52 @@ export function collectData() {
 
   const longTermGoals = {
     dimensions: [
-      { dim: "🎓 学习成长", vision: "通过独立游戏开发掌握 Godot 全栈能力 + AI 协作方法论", status: "GAME-002 推进中" },
-      { dim: "💼 事业发展", vision: "主美岗位稳定产出 + AI 工具链赋能团队", status: "美术审查系统运转中" },
-      { dim: "💰 财富健康", vision: "—", status: "未设定" },
-      { dim: "👨‍👩‍👧 家庭社交", vision: "—", status: "未设定" },
-      { dim: "⚙️ 效能系统", vision: "造化坊基础设施自运转（工作流/SKILL/仪表盘闭环）", status: "16 工作流 + 11 SKILL" },
-      { dim: "🚀 体验突破", vision: "完成至少 1 个可发布的独立游戏", status: "GAME-002 冲刺 V0.1" },
-      { dim: "🎨 休闲娱乐", vision: "—", status: "未设定" },
-      { dim: "🤝 人际关系", vision: "—", status: "未设定" },
+      { dim: "🎮 产品", vision: "造化坊对外交付的软件产品，包括独立游戏和开发工具", status: "4 个产品",
+        items: [
+          { name: "开仙门（GAME-002）", tag: "🟡 开发中", note: "Godot 4.7 · V0.1 ~80%" },
+          { name: "秦王殿奏对", tag: "🟢 已完成", note: "HTML5 · 300 题 10 分类" },
+          { name: "交互规范系统", tag: "🟢 运转中", note: "TypeScript · 20 组件" },
+          { name: "asset-pipeline", tag: "🔵 待启动", note: "等 GAME-002 稳定" },
+        ]
+      },
+      { dim: "📡 内容与影响力", vision: "通过自媒体建立受众和分发渠道，开发过程即内容", status: "14 期 / 16 粉丝",
+        items: [
+          { name: "小红书", tag: "破局之剑", note: "14 期 · 16 粉丝 · 100 赞藏" },
+          { name: "内容定位", tag: "", note: "AI 协作做独立游戏，每天解决一个真问题" },
+        ]
+      },
+      { dim: "💰 可持续", vision: "当前主美岗位支撑，逐步建立独立收入线", status: "主美月薪稳定",
+        items: [
+          { name: "主美岗位", tag: "🟢 当前基础", note: "月薪覆盖日常开销" },
+          { name: "游戏销售", tag: "🔵 规划中", note: "Steam/itch.io，待可发布" },
+          { name: "自媒体变现", tag: "🔵 规划中", note: "待粉丝量达标" },
+          { name: "工具/SaaS", tag: "⚪ 远期", note: "交互规范系统产品化" },
+        ]
+      },
+      { dim: "⚙️ 系统", vision: "AI 协作基础设施，让组织能力沉淀为可复用系统", status: "16 workflows",
+        items: [
+          { name: "工作流体系", tag: "16 个", note: "覆盖游戏/自媒体/工具链" },
+          { name: "SKILL 执行层", tag: "11 + library", note: "AI 指令自动化执行" },
+          { name: "仪表盘", tag: "7 页签", note: "collect→generate→serve 全自动" },
+          { name: "AI 行为模式", tag: "3 模式", note: "协作者/导师/加速器" },
+          { name: "MCP 工具链", tag: "3 工具", note: "Pixso / Godot / Lovart" },
+        ]
+      },
+      { dim: "🤖 AI进化", vision: "人机协作深度提升——别人复制不了我们与 AI 协作的方式", status: "深度协作中",
+        items: [
+          { name: "AI 自主任务", tag: "", note: "当前：人类触发+监督 → 目标：80% 自主完成" },
+          { name: "工作流自动化", tag: "", note: "当前：16 个标准化 → 目标：端到端一键" },
+          { name: "AI Agent 编排", tag: "", note: "当前：单 Agent → 目标：多 Agent 并行+验证" },
+          { name: "AI 原生开发", tag: "", note: "探索中 → 目标：设计→开发→发布 AI 驱动" },
+        ]
+      },
     ],
-    intersection: {
-      happy: "做游戏、写代码、看到东西跑起来",
-      advantage: "美术审美 + AI 工具驾驭 + 快速原型",
-      meaningful: "证明「AI 时代做中学」可行，影响更多人",
-      core: "用 AI 协作做独立游戏，并把过程变成内容",
+    strategicTriangle: {
+      valueProposition: "用 AI 协作做独立游戏和工具，把过程变成内容 —— 证明「AI 时代做中学」可行，影响更多人",
+      differentiation: "AI 原生协作能力：不是用 AI 辅助，而是与 AI 共创。人定义方向，AI 加速执行。每个工作流都是人机协作的产物",
+      growthEngine: "内容（小红书/金句）→ 影响力（粉丝/口碑）→ 产品（游戏/工具）→ 可持续收入（正向循环）",
     },
-    formula: "R = E × T（结果 = 效能 × 时间）—— 不是做更多事，而是在高能时段做要事。",
+    formula: "R = E × T（结果 = 效能 × 时间）—— 不是做更多事，而是在高能时段做要事。效能来自方向正确 + 能量匹配。",
   };
 
   const goalsArchived = [

@@ -1,3 +1,11 @@
+---
+date: YYYY-MM-DD
+ai: <身份标签>    # claude / trea / lobster — 必填
+type: <类型>       # 功能开发 / 问题修复 / 学习笔记 / 设计 / 交付
+status: <状态>     # 完成 / 进行中 / 待验证
+tags: []
+---
+
 # [YYYY-MM-DD] 问题标题
 
 ---

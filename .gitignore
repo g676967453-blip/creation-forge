@@ -17,6 +17,9 @@ export/
 .libtv/
 _*_output/
 
+# 多 AI 协作锁文件（不提交到仓库）
+.ai-locks/*.lock
+
 # IDE
 .idea/
 *.swp

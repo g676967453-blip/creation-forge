@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏交互原型 · 造化坊</title>
+<style>
+/* ═══════════ TOKEN PLACEHOLDER ═══════════ */
+/* __TOKENS_CSS__ */
+
+/* ═══════════ ALL COMPONENT CSS ═══════════ */
+/* __COMPONENTS_CSS__ */
+
+/* ═══════════ PROTOTYPE SHELL ═══════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Phone Frame — 缩放至浏览器可视 */
+.phone-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+.phone {
+  width: 420px; /* display width, fixed */
+  height: 747px; /* 420 * 1280/720 */
+  background: var(--bg);
+  border: 5px solid var(--ink-2);
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-xl), 0 0 0 2px var(--bg-4), 0 0 0 4px var(--ink-2);
+}
+.phone-notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 28px;
+  background: var(--ink-2);
+  border-radius: 0 0 18px 18px;
+  z-index: 1000;
+}
+.phone-screen {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.phone-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Status Bar */
+.status-bar {
+  height: 28px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  flex-shrink: 0;
+  z-index: 500;
+}
+
+/* Screen Container */
+.screen-area {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  flex-direction: column;
+  background: var(--bg);
+}
+.screen.active { display: flex; }
+.screen::-webkit-scrollbar { width: 0; }
+
+/* Fade transition */
+.screen.fade-in { animation: fadeIn var(--dur-fast) var(--ease-out); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Dialog Layer — absolute over screens */
+.dialog-layer {
+  position: absolute; inset: 0;
+  z-index: var(--z-modal);
+  pointer-events: none;
+}
+.dialog-layer.active { pointer-events: auto; }
+
+/* __SCREENS_HTML__ */
+
+</style>
+</head>
+<body>
+
+<div class="phone-wrapper">
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-screen" id="phoneScreen">
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <span>📶 🔋</span>
+      </div>
+
+      <!-- HUD (optional per screen) -->
+      <!-- __HUD_HTML__ -->
+
+      <!-- Screen Area -->
+      <div class="screen-area">
+        <!-- __SCREENS_HTML__ -->
+      </div>
+
+      <!-- Dock (optional) -->
+      <!-- __DOCK_HTML__ -->
+
+      <!-- Dialog Layer -->
+      <div class="dialog-layer" id="dialogLayer"></div>
+
+    </div>
+  </div>
+  <span class="phone-label">720×1280 · 点击 Dock 切换屏幕</span>
+</div>
+
+<script>
+/* ═══════════ ROUTER ═══════════ */
+(function() {
+  const screens = document.querySelectorAll('.screen');
+  const dockItems = document.querySelectorAll('[data-screen]');
+
+  function switchScreen(name) {
+    screens.forEach(s => { s.classList.remove('active', 'fade-in'); });
+    const target = document.querySelector('[data-screen-id="' + name + '"]');
+    if (target) {
+      target.classList.add('active', 'fade-in');
+    }
+
+    dockItems.forEach(d => {
+      d.classList.toggle('active', d.dataset.screen === name);
+    });
+
+    // 关闭弹窗
+    document.getElementById('dialogLayer').classList.remove('active');
+    document.getElementById('dialogLayer').innerHTML = '';
+
+    // 可选 HUD 切换
+    const hud = document.getElementById('protoHud');
+    if (hud) {
+      const showHud = target ? target.dataset.showHud !== 'false' : true;
+      hud.style.display = showHud ? 'flex' : 'none';
+    }
+  }
+
+  // Dock click
+  dockItems.forEach(item => {
+    item.addEventListener('click', () => switchScreen(item.dataset.screen));
+  });
+
+  // In-screen navigation (buttons with data-goto attribute)
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-goto]');
+    if (btn) {
+      e.preventDefault();
+      switchScreen(btn.dataset.goto);
+    }
+  });
+
+  // Dialog helpers
+  window.showDialog = function(html) {
+    const layer = document.getElementById('dialogLayer');
+    layer.innerHTML = html;
+    layer.classList.add('active');
+  };
+  window.closeDialog = function() {
+    const layer = document.getElementById('dialogLayer');
+    layer.classList.remove('active');
+    layer.innerHTML = '';
+  };
+
+  // Close dialog on overlay click
+  document.getElementById('dialogLayer').addEventListener('click', function(e) {
+    if (e.target === this) closeDialog();
+  });
+})();
+</script>
+
+</body>
+</html>
