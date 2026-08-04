@@ -32,6 +32,7 @@ description: 创建项目：确定方向 → 选择类型和技术栈（4类：�
 ### 3. 项目初始化
 - Phaser：`npm run scaffold`（需确认脚手架是否适配扁平 projects/ 结构）
 - 其他类型：手动创建目录结构，复制参考项目的 CLAUDE.md 模板
+- **必须**：从 `templates/PROGRESS.md` 复制进度表模板，填写初始状态
 
 ### 4. 注册到体系
 - `tools/collect-data.ts` projects[] 追加条目
