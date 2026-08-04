@@ -424,15 +424,23 @@ export function loadPersonalTasks(): PersonalTasksData {
   return { categories, archives, stats };
 }
 
+// Scan projects/*/PROGRESS.md for progress metadata
+export function loadProjectProgress(projectDir: string): { progress: string; blocker: string; phase: string } | null {
+  // 轻型 PROGRESS.md
+  const progressFile = path.join(ROOT, "projects", projectDir, "PROGRESS.md");
+  try {
+    const content = fs.readFileSync(progressFile, "utf-8");
+    const phase = (content.match(/\*\*阶段\*\*[：:]\s*(.+)/) || [])[1] || "";
+    const progress = (content.match(/\*\*进度\*\*[：:]\s*(.+)/) || [])[1] || "";
+    const blocker = (content.match(/\*\*阻塞\*\*[：:]\s*(.+)/) || [])[1] || "无";
+    return { progress: progress || "—", blocker: blocker === "无" ? "—" : blocker, phase };
+  } catch { return null; }
+}
+
 export function collectData() {
-  /**
-   * ⚠️ 硬编码数据同步规则：
-   * - goalsUser[] ↔ docs/目标规划.md「季度项目」
-   * - longTermGoals ↔ docs/目标规划.md「长期目标」
-   * - goalsIssues[] / goalsAI[] ↔ 由 /goals SKILL 维护
-   * - projects[] ↔ 项目实际状态（人工审查）
-   * - 仪表盘是视图，不是编辑口 —— docs/目标规划.md 是权威数据源
-   */
+  // Data sync rules: goalsUser[] <-> docs/目标规划.md, longTermGoals <-> docs/目标规划.md
+  // goalsIssues[]/goalsAI[] <-> /goals SKILL, projects[].progress/blocker <-> PROGRESS.md
+  // Dashboard is a view. docs/目标规划.md is the authoritative source.
   const today = new Date().toLocaleDateString("zh-CN");
   const worksFiles = listWorks();
   const worksData = worksFiles.map(f => ({ date: f.substring(0, 10), file: f, desc: autoDesc(f) }));
@@ -443,12 +451,18 @@ export function collectData() {
   const workflowCount = countFiles(path.join(ROOT, "docs/workflows"));
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
+  // 从各项目 PROGRESS.md 读取动态进度（无 PROGRESS.md 则用硬编码默认值）
+  const pp = (dir: string) => loadProjectProgress(dir);
+  const p1 = pp("xiaohongshu");        // 小红书
+  const p2 = pp("asset-pipeline");      // asset-pipeline
+  const p3 = pp("interaction-spec-system"); // 交互规范系统
+
   const projects = [
     { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~80%", output: "闭环+MCP+5层防御+15波+6功法+35/93任务✅+文档修复+方向重构完成", blocker: "待祝福3选1UI+弟子接入主循环" },
-    { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: "15 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: "—" },
-    { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: "3 风格已验证", output: "道具图标工作流固化", blocker: "—" },
+    { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: p1?.progress || "15 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: p1?.blocker || "—" },
+    { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: p2?.progress || "3 风格已验证", output: "道具图标工作流固化", blocker: p2?.blocker || "—" },
     { name: "秦王殿奏对 (qin-court-audience)", engine: "HTML/CSS/JS", status: "active", statusText: "活跃", progress: "v1.0 已完成", output: "300 题库 + 10 分类 + 打字答题", blocker: "—" },
-    { name: "交互规范系统 (interaction-spec-system)", engine: "TypeScript + HTML/CSS", status: "active", statusText: "活跃", progress: "v1.0", output: "MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成", blocker: "—" },
+    { name: "交互规范系统 (interaction-spec-system)", engine: "TypeScript + HTML/CSS", status: "active", statusText: "活跃", progress: p3?.progress || "v1.0", output: "MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成", blocker: p3?.blocker || "—" },
   ];
 
   const workflows = [
