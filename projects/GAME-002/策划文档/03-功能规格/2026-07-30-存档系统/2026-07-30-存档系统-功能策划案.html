@@ -159,11 +159,11 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
   <div class="rule-l2">1）<span class="text-blue">spirit_id</span>（string）：绑定器灵 ID（V0.1="baishishu"）</div>
   <div class="rule-l2">2）<span class="text-blue">spirit_level</span>（int）：器灵等级（= 已修复山峰数，0-6）</div>
   <div class="rule-l1">3.山峰数据</div>
-  <div class="rule-l2">1）<span class="text-blue">peaks</span>（object）：{ "jianfeng": true, "fofeng": false, ... } 每座峰已修复/未修复</div>
+  <div class="rule-l2">1）<span class="text-blue">peaks</span>（object）：{ "peak_sword": true, "peak_buddha": false, ... } 每座峰已修复/未修复</div>
   <div class="rule-l1">4.资源数据</div>
   <div class="rule-l2">1）<span class="text-blue">spirit_energy</span>（int）：灵气数量</div>
   <div class="rule-l2">2）<span class="text-blue">nuwa_stone</span>（int）：女娲石数量</div>
-  <div class="rule-l2">3）<span class="text-blue">secret_treasures</span>（object）：{ "jianfeng": 0, "fofeng": 0, ... } 各流派秘宝数量</div>
+  <div class="rule-l2">3）<span class="text-blue">secret_treasures</span>（object）：{ "peak_sword": 0, "peak_buddha": 0, ... } 各流派秘宝数量</div>
   <div class="rule-l1">5.进度数据</div>
   <div class="rule-l2">1）<span class="text-blue">clear_count</span>（int）：通关次数（解锁诛仙剑/神农鼎用）</div>
   <div class="rule-l1">6.设置数据</div>
@@ -197,7 +197,7 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
   <div class="sec-header">四、离线收益</div>
   <div class="rule-l0">一.计算公式</div>
   <div class="rule-l1">1.离线灵气 = <span class="text-blue">离线时长（秒）× 基础灵气速率</span></div>
-  <div class="rule-l2">1）基础灵气速率：<span class="mark-yellow">待定（建议 1 灵气/秒）</span></div>
+  <div class="rule-l2">1）基础灵气速率：<span class="text-blue">10 灵气/秒</span></div>
   <div class="rule-l2">2）器灵加成：<span class="mark-yellow">待定</span>（随山峰修复提升速率？）</div>
   <div class="rule-l0">二.上限</div>
   <div class="rule-l1">1.离线收益上限：<span class="text-blue">24 小时</span>（86400 秒）</div>
@@ -207,7 +207,7 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
   <div class="rule-l1">1.读档成功后弹出离线收益弹窗</div>
   <div class="rule-l1">2.文案：「你离开了 X 小时 X 分，器灵修炼获得 💨 +N 灵气」</div>
   <div class="rule-l1">3.玩家点击「确认」关闭，<span class="mark-yellow">或 3 秒后自动关闭</span></div>
-  <div class="rule-ex">离线 3 小时 20 分 → "你离开了 3 小时 20 分，器灵修炼获得 💨 +12,000 灵气"</div>
+  <div class="rule-ex">离线 3 小时 20 分 → "你离开了 3 小时 20 分，器灵修炼获得 💨 +120,000 灵气"</div>
 
   <div class="sec-header">五、存储实现</div>
   <div class="rule-l0">一.文件格式</div>
@@ -231,7 +231,7 @@ ul, ol { padding-left: var(--sp-lg); color: var(--text-secondary); }
             <div class="offline-card">
               <div class="off-title">器灵修炼归来</div>
               <div class="off-time">你离开了 3 小时 20 分</div>
-              <div class="off-reward">💨 +12,800 灵气</div>
+              <div class="off-reward">💨 +128,000 灵气</div>
               <button class="off-btn">确 认</button>
             </div>
             <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--status-warning);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
@@ -334,7 +334,7 @@ function switchSubTab(event, tabId) {
   bar.parentElement.querySelector('#' + tabId).classList.add('active');
 }
 
-var rate = 1; // 灵气/秒
+var rate = 10; // 灵气/秒
 var maxSeconds = 86400; // 24h
 
 function updateOfflineLabel() {
