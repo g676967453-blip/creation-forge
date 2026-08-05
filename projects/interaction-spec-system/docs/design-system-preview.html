@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>通用竖版手游 UI 设计系统</title>
+  <style>
+    :root {
+      --ink: #111418;
+      --ink-soft: #343a40;
+      --text-sub: #646b73;
+      --line: #cfd3d7;
+      --canvas: #f1f2f3;
+      --surface: #ffffff;
+      --surface-soft: #e8ebed;
+      --success: #2b8a3e;
+      --warning: #e67700;
+      --danger: #c92a2a;
+      --info: #1864ab;
+      --mono: Consolas, "SFMono-Regular", monospace;
+      --body: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      --display: Arial, "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--body); line-height: 1.55; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .wrap { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+
+    .hero { padding: 64px 0 52px; border-bottom: 2px solid var(--ink); background: var(--ink); color: var(--surface); }
+    .hero h1 { margin: 0; font-family: var(--display); font-size: 48px; line-height: 1.06; }
+    .hero p { max-width: 700px; margin: 18px 0 0; color: #c9cdd0; font-size: 15px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 30px; color: #aeb5ba; font-family: var(--mono); font-size: 11px; }
+    .hero-meta b { color: var(--surface); }
+
+    .toc { position: sticky; z-index: 10; top: 0; border-bottom: 1px solid var(--ink); background: rgba(255,255,255,.97); }
+    .toc-inner { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0; }
+    .toc label { padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; font-family: var(--mono); font-size: 11px; cursor: pointer; }
+    .toc label:hover { border-color: var(--ink); background: var(--ink); color: var(--surface); }
+    .tab-state, .sub-state { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    #tab-system:checked ~ .toc label[for="tab-system"], #tab-instruction:checked ~ .toc label[for="tab-instruction"], #tab-components:checked ~ .toc label[for="tab-components"], #tab-grid:checked ~ .toc label[for="tab-grid"], #tab-templates:checked ~ .toc label[for="tab-templates"], #tab-assets:checked ~ .toc label[for="tab-assets"], #tab-collaboration:checked ~ .toc label[for="tab-collaboration"] { border-color: var(--ink); background: var(--ink); color: var(--surface); }
+
+    section { padding-top: 48px; scroll-margin-top: 64px; }
+    .tab-panel { display: none; }
+    .sub-tabs { position: fixed; z-index: 8; top: 468px; left: max(12px, calc(50% - 710px)); display: flex; width: 108px; max-height: calc(100vh - 484px); flex-direction: column; gap: 7px; overflow-y: auto; padding: 8px; border: 1px solid var(--ink); border-radius: 4px; background: rgba(255,255,255,.97); box-shadow: 4px 4px 0 var(--ink); }
+    .sub-tabs label { padding: 6px 8px; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); color: var(--text-sub); font-family: var(--mono); font-size: 10px; line-height: 1.35; cursor: pointer; }
+    .sub-tabs label:hover { border-color: var(--ink); color: var(--ink); }
+    #sub-system-intro:checked ~ main label[for="sub-system-intro"], #sub-instruction-color:checked ~ main label[for="sub-instruction-color"], #sub-instruction-type:checked ~ main label[for="sub-instruction-type"], #sub-instruction-spacing:checked ~ main label[for="sub-instruction-spacing"], #sub-instruction-canvas:checked ~ main label[for="sub-instruction-canvas"], #sub-instruction-grid:checked ~ main label[for="sub-instruction-grid"], #sub-instruction-shape:checked ~ main label[for="sub-instruction-shape"], #sub-instruction-shadow:checked ~ main label[for="sub-instruction-shadow"], #sub-instruction-motion:checked ~ main label[for="sub-instruction-motion"], #sub-components-button:checked ~ main label[for="sub-components-button"], #sub-components-badge:checked ~ main label[for="sub-components-badge"], #sub-components-toggle:checked ~ main label[for="sub-components-toggle"], #sub-components-tab:checked ~ main label[for="sub-components-tab"], #sub-components-progress:checked ~ main label[for="sub-components-progress"], #sub-components-input:checked ~ main label[for="sub-components-input"], #sub-components-notification:checked ~ main label[for="sub-components-notification"], #sub-grid-framework:checked ~ main label[for="sub-grid-framework"], #sub-template-main:checked ~ main label[for="sub-template-main"], #sub-template-fullscreen:checked ~ main label[for="sub-template-fullscreen"], #sub-template-dialog:checked ~ main label[for="sub-template-dialog"], #sub-template-tips:checked ~ main label[for="sub-template-tips"], #sub-template-status:checked ~ main label[for="sub-template-status"], #sub-assets-management:checked ~ main label[for="sub-assets-management"], #sub-collaboration-flow:checked ~ main label[for="sub-collaboration-flow"] { border-color: var(--ink); background: var(--ink); color: var(--surface); }
+    .sub-panel { display: none; }
+    #tab-system:checked ~ main #system, #tab-instruction:checked ~ main #instruction, #tab-components:checked ~ main #components, #tab-grid:checked ~ main #grid, #tab-templates:checked ~ main #templates, #tab-assets:checked ~ main #assets, #tab-collaboration:checked ~ main #collaboration { display: block; }
+    #sub-system-intro:checked ~ main #system-intro, #sub-instruction-color:checked ~ main #instruction-color, #sub-instruction-type:checked ~ main #instruction-type, #sub-instruction-spacing:checked ~ main #instruction-spacing, #sub-instruction-canvas:checked ~ main #instruction-canvas, #sub-instruction-grid:checked ~ main #instruction-grid, #sub-instruction-shape:checked ~ main #instruction-shape, #sub-instruction-shadow:checked ~ main #instruction-shadow, #sub-instruction-motion:checked ~ main #instruction-motion, #sub-components-button:checked ~ main #components-button, #sub-components-badge:checked ~ main #components-badge, #sub-components-toggle:checked ~ main #components-toggle, #sub-components-tab:checked ~ main #components-tab, #sub-components-progress:checked ~ main #components-progress, #sub-components-input:checked ~ main #components-input, #sub-components-notification:checked ~ main #components-notification, #sub-grid-framework:checked ~ main #grid-framework, #sub-template-main:checked ~ main #template-main, #sub-template-fullscreen:checked ~ main #template-fullscreen, #sub-template-dialog:checked ~ main #template-dialog, #sub-template-tips:checked ~ main #template-tips, #sub-template-status:checked ~ main #template-status, #sub-assets-management:checked ~ main #assets-management, #sub-collaboration-flow:checked ~ main #collaboration-flow { display: grid; }
+    .section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 22px; }
+    .section-num { color: var(--text-sub); font-family: var(--mono); font-size: 12px; font-weight: 700; }
+    .section-head h2 { margin: 0; font-family: var(--display); font-size: 29px; letter-spacing: 0; }
+    .section-note { margin: -9px 0 20px 31px; color: var(--text-sub); font-size: 13px; }
+    .spec-row { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); border-top: 1px solid var(--line); border-bottom: 2px solid var(--ink); }
+    .showcase { display: flex; min-width: 0; min-height: 646px; align-items: center; justify-content: center; padding: 42px 24px; border-right: 1px solid var(--line); background: #e9ecee; }
+    .spec { min-width: 0; padding: 40px 44px; background: var(--surface); }
+    .label { display: block; margin-bottom: 7px; color: var(--text-sub); font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .spec h3 { margin: 0 0 11px; font-family: var(--display); font-size: 19px; }
+    .spec p { margin: 8px 0; font-size: 13px; }
+    .spec ul { margin: 13px 0 0; padding: 0; list-style: none; }
+    .spec li { position: relative; margin: 7px 0; padding-left: 15px; font-size: 13px; }
+    .spec li::before { position: absolute; left: 0; color: var(--text-sub); content: "-"; }
+    .note { color: var(--text-sub); font-size: 12px !important; }
+    .table { width: 100%; margin: 13px 0; border-collapse: collapse; font-family: var(--mono); font-size: 11px; }
+    .table th { padding: 7px 8px; background: var(--ink); color: var(--surface); font-weight: 500; text-align: left; }
+    .table td { padding: 7px 8px; border: 1px solid var(--line); vertical-align: top; }
+    .sub-row { margin-top: 26px; }
+
+    /* 1080 x 1920 原型画板：仅保留内容边界，不使用设备外壳。 */
+    .phone { position: relative; width: 310px; aspect-ratio: 9 / 16; overflow: hidden; border: 2px solid var(--ink); border-radius: 0; background: var(--surface); box-shadow: none; }
+    .phone::before, .phone::after { display: none; }
+    .screen { display: flex; height: 100%; flex-direction: column; padding: 18px 13px 16px; background: var(--surface); }
+    .screen-tag { margin-bottom: 8px; color: var(--text-sub); font-family: var(--mono); font-size: 8px; letter-spacing: .06em; }
+    .game-top { display: flex; min-height: 37px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; }
+    .game-top .dot { display: inline-block; width: 13px; height: 13px; margin-right: 4px; border-radius: 50%; background: var(--warning); vertical-align: -2px; }
+    .game-top .counter { font-family: var(--mono); font-size: 9px; }
+    .scene { position: relative; display: flex; min-height: 170px; flex: 1; align-items: center; justify-content: center; margin: 10px 0; border: 1px solid var(--ink); background: var(--surface-soft); }
+    .scene::before { position: absolute; inset: 15px; border: 1px dashed #9ba1a6; content: ""; }
+    .scene b { position: relative; z-index: 1; padding: 8px 10px; border: 1px solid var(--ink); background: var(--surface); font-family: var(--mono); font-size: 9px; }
+    .entry-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .entry { min-height: 43px; padding: 8px; border: 1px solid var(--ink); background: var(--surface); font-size: 9px; font-weight: 700; }
+    .entry small { display: block; margin-top: 3px; color: var(--text-sub); font-size: 8px; font-weight: 400; }
+    .bottom-nav { display: grid; grid-template-columns: repeat(4,1fr); margin-top: 10px; border-top: 1px solid var(--ink); font-family: var(--mono); font-size: 8px; text-align: center; }
+    .bottom-nav b, .bottom-nav span { padding: 9px 2px; }
+    .bottom-nav b { background: var(--ink); color: var(--surface); }
+    .bottom-bar { display: flex; min-height: 42px; align-items: center; justify-content: space-between; margin-top: auto; border-top: 1px solid var(--ink); font-family: var(--mono); font-size: 9px; }
+    .back { align-self: stretch; display: flex; align-items: center; padding: 0 8px; border-right: 1px solid var(--ink); font-weight: 700; }
+    .tabs { display: flex; align-items: center; gap: 5px; margin-left: auto; padding-right: 6px; }
+    .tabs b, .tabs span { padding: 5px 6px; border: 1px solid var(--line); }
+    .tabs b { border-color: var(--ink); background: var(--ink); color: var(--surface); }
+
+    .swatches { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .swatch { overflow: hidden; border: 1px solid var(--ink); }
+    .swatch i { display: block; height: 31px; }
+    .swatch b { display: block; padding: 4px; font-family: var(--mono); font-size: 7px; }
+    .type-line { display: flex; align-items: baseline; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--line); }
+    .type-line span { color: var(--text-sub); font-family: var(--mono); font-size: 8px; }
+    .space-bars { display: flex; align-items: end; justify-content: space-around; height: 64px; margin-top: 12px; }
+    .space-bars i { display: block; width: 15px; background: var(--ink); }
+    .space-bars span { color: var(--text-sub); font-family: var(--mono); font-size: 7px; text-align: center; }
+
+    .component-stack { display: grid; gap: 8px; }
+    .ui-button { min-height: 29px; padding: 0 8px; border: 1px solid var(--ink); background: var(--surface); font-size: 9px; font-weight: 700; }
+    .ui-button.primary { background: var(--ink); color: var(--surface); }
+    .ui-button.danger { border-color: var(--danger); background: var(--danger); color: var(--surface); }
+    .ui-button.disabled { border-color: var(--line); background: #e4e6e7; color: #989ea3; }
+    .button-set { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .input-demo { display: flex; height: 29px; align-items: center; justify-content: space-between; padding: 0 8px; border: 1px solid var(--ink); color: var(--text-sub); font-size: 8px; }
+    .segmented { display: grid; grid-template-columns: repeat(3,1fr); overflow: hidden; border: 1px solid var(--ink); font-size: 8px; text-align: center; }
+    .segmented span { padding: 7px 2px; border-right: 1px solid var(--line); }
+    .segmented b { padding: 7px 2px; background: var(--ink); color: var(--surface); }
+    .check-row { display: flex; align-items: center; gap: 6px; font-size: 8px; }
+    .check { display: grid; width: 15px; height: 15px; place-items: center; border: 1px solid var(--ink); font-size: 9px; }
+    .check.on { background: var(--ink); color: var(--surface); }
+    .mini-progress { height: 8px; overflow: hidden; border: 1px solid var(--ink); }
+    .mini-progress i { display: block; width: 68%; height: 100%; background: var(--ink); }
+
+    .card-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .mini-card { min-height: 62px; border: 1px solid var(--ink); background: var(--surface); }
+    .mini-card i { display: block; height: 38px; background: var(--surface-soft); }
+    .mini-card b { display: block; padding: 4px; font-size: 7px; }
+    .list-row { display: grid; grid-template-columns: 26px 1fr auto; gap: 7px; align-items: center; min-height: 43px; padding: 6px; border: 1px solid var(--ink); font-size: 8px; }
+    .list-row i { display: block; width: 26px; height: 26px; background: var(--surface-soft); }
+    .list-row small { color: var(--text-sub); font-size: 7px; }
+    .list-row b:last-child { padding: 4px; border: 1px solid var(--ink); font-size: 7px; }
+
+    .grid-guide { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; height: 270px; padding: 22px 10px 10px; border: 1px solid var(--ink); background: #fafafa; }
+    .grid-guide b { position: absolute; margin: -15px 0 0 2px; font-family: var(--mono); font-size: 7px; }
+    .grid-guide i { border: 1px dashed #979da2; background: repeating-linear-gradient(45deg,#fff,#fff 5px,#f0f1f2 5px,#f0f1f2 10px); }
+
+    .dialog-overlay { display: flex; flex: 1; align-items: center; justify-content: center; margin: 8px 0; padding: 12px; background: #dfe3e5; }
+    .dialog { width: 172px; padding: 12px; border: 1px solid var(--ink); background: var(--surface); box-shadow: 4px 4px 0 var(--ink); }
+    .dialog h4 { margin: 0 0 5px; font-size: 10px; }
+    .dialog p { margin: 0 0 10px; color: var(--text-sub); font-size: 8px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 5px; }
+    .dialog-actions b { padding: 5px 6px; border: 1px solid var(--ink); font-size: 7px; }
+    .dialog-actions b:last-child { background: var(--ink); color: var(--surface); }
+    .tips-target { position: relative; display: flex; flex: 1; align-items: center; justify-content: center; margin: 12px 0; border: 1px dashed #9ba1a6; }
+    .tips-target b { padding: 7px 9px; border: 2px solid var(--ink); background: var(--surface); font-size: 8px; }
+    .tip-box { position: absolute; top: 26px; right: 12px; width: 128px; padding: 7px; border: 1px solid var(--ink); background: var(--surface); box-shadow: 3px 3px 0 var(--ink); font-size: 8px; }
+    .toast-demo { display: flex; align-items: center; gap: 7px; padding: 7px; border: 1px solid var(--ink); background: var(--surface); font-size: 8px; }
+    .toast-demo i { display: grid; width: 17px; height: 17px; place-items: center; border-radius: 50%; background: var(--success); color: var(--surface); font-style: normal; }
+    .notice-bar { margin-top: 8px; padding: 7px; border: 1px solid var(--ink); font-family: var(--mono); font-size: 8px; }
+
+    .asset-tree { flex: 1; padding: 10px; border: 1px solid var(--ink); background: var(--surface); color: var(--text-sub); font-family: var(--mono); font-size: 8px; line-height: 1.8; }
+    .asset-tree b { color: var(--ink); }
+    .flow { display: grid; grid-template-columns: repeat(5,1fr); gap: 4px; margin-top: 10px; font-family: var(--mono); font-size: 7px; text-align: center; }
+    .flow b { padding: 7px 2px; border: 1px solid var(--ink); background: var(--surface); }
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; }
+    .role { padding: 9px; border: 1px solid var(--ink); background: var(--surface); font-size: 8px; }
+    .role b { display: block; margin-bottom: 3px; }
+
+    footer { margin-top: 48px; padding: 28px 0; border-top: 2px solid var(--ink); background: var(--surface); color: var(--text-sub); font-family: var(--mono); font-size: 11px; }
+
+    @media (max-width: 980px) {
+      .wrap { width: min(100% - 28px, 620px); }
+      .hero { padding: 48px 0 40px; }
+      .hero h1 { font-size: 36px; }
+      .spec-row { grid-template-columns: 1fr; }
+      .showcase { min-height: 600px; padding: 34px 16px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .spec { padding: 30px 22px; }
+      .toc-inner { flex-wrap: nowrap; overflow-x: auto; }
+      .toc label { white-space: nowrap; }
+      .sub-tabs { position: static; width: auto; max-height: none; flex-direction: row; flex-wrap: nowrap; margin: -4px 0 20px 31px; overflow-x: auto; overflow-y: visible; box-shadow: none; }
+      .sub-tabs label { white-space: nowrap; }
+    }
+
+    @media (min-width: 981px) and (max-height: 760px) {
+      .sub-tabs { top: 240px; max-height: calc(100vh - 256px); }
+    }
+  </style>
+</head>
+<body>
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-system" checked>
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-instruction">
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-components">
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-grid">
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-templates">
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-assets">
+  <input class="tab-state" type="radio" name="primary-tab" id="tab-collaboration">
+  <input class="sub-state" type="radio" name="system-tab" id="sub-system-intro" checked>
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-color" checked>
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-type">
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-spacing">
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-canvas">
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-grid">
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-shape">
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-shadow">
+  <input class="sub-state" type="radio" name="instruction-tab" id="sub-instruction-motion">
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-button" checked>
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-badge">
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-toggle">
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-tab">
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-progress">
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-input">
+  <input class="sub-state" type="radio" name="components-tab" id="sub-components-notification">
+  <input class="sub-state" type="radio" name="grid-tab" id="sub-grid-framework" checked>
+  <input class="sub-state" type="radio" name="templates-tab" id="sub-template-main" checked>
+  <input class="sub-state" type="radio" name="templates-tab" id="sub-template-fullscreen">
+  <input class="sub-state" type="radio" name="templates-tab" id="sub-template-dialog">
+  <input class="sub-state" type="radio" name="templates-tab" id="sub-template-tips">
+  <input class="sub-state" type="radio" name="templates-tab" id="sub-template-status">
+  <input class="sub-state" type="radio" name="assets-tab" id="sub-assets-management" checked>
+  <input class="sub-state" type="radio" name="collaboration-tab" id="sub-collaboration-flow" checked>
+  <header class="hero">
+    <div class="wrap">
+      <h1>通用竖版手游<br>UI 设计系统</h1>
+      <p>以 `1080 x 1920` 手机原型为唯一生产基准。左侧展示完整游戏界面，右侧说明可追溯的规则、尺寸、状态与验收要求。</p>
+      <div class="hero-meta"><span>CANVAS <b>1080 x 1920</b></span><span>LAYOUT <b>PROTOTYPE / SPEC</b></span><span>GRID <b>4 COLUMN</b></span><span>VERSION <b>1.0.0</b></span></div>
+    </div>
+  </header>
+
+  <nav class="toc"><div class="wrap toc-inner"><label for="tab-system">01 系统说明</label><label for="tab-instruction">02 设计指令</label><label for="tab-components">03 组件规范</label><label for="tab-grid">04 网格与框架</label><label for="tab-templates">05 界面模板</label><label for="tab-assets">06 资源管理</label><label for="tab-collaboration">07 协作说明</label></div></nav>
+
+  <main class="wrap">
+    <section id="system" class="tab-panel">
+      <div class="section-head"><span class="section-num">01</span><h2>系统说明</h2></div>
+      <nav class="sub-tabs"><label for="sub-system-intro">系统说明</label></nav>
+      <div id="system-intro" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">1080 x 1920 / MAIN PROTOTYPE</span><div class="game-top"><span><i class="dot"></i>12,450</span><b>主界面</b><span class="counter">24/50</span></div><div class="scene"><b>主视觉场景 / 当前进度</b></div><div class="entry-row"><div class="entry">主要内容<small>当前可进行</small></div><div class="entry">事件入口<small>限时状态</small></div></div><div class="bottom-nav"><b>首页</b><span>内容</span><span>活动</span><span>更多</span></div></div></div></div>
+        <div class="spec"><span class="label">System overview</span><h3>所有规则都从完整手机原型开始</h3><ul><li>页面、组件、文字尺寸、间距、栅格与标注均以 <b>1080 x 1920px</b> 为唯一生产基准。</li><li>左侧展示完整手机原型，包含顶部、中心内容与底部关系；不展示脱离页面的散点组件。</li><li>右侧只说明与当前原型对应的结构、尺寸、状态、交互与验收规则。</li><li>主题可替换背景、材质与插画，但不改变热区、状态语义、安全区和信息层级。</li></ul><p class="note">设备适配通过安全区、固定区和中心内容区处理，不通过缩小热区或字号处理。</p></div>
+      </div>
+    </section>
+
+    <section id="instruction" class="tab-panel">
+      <div class="section-head"><span class="section-num">02</span><h2>设计指令</h2></div>
+      <p class="section-note">每一项设计基础独立说明，并在左侧以完整 `1080 x 1920` 原型承载其使用位置。</p>
+      <nav class="sub-tabs"><label for="sub-instruction-color">色彩系统</label><label for="sub-instruction-type">字体系统</label><label for="sub-instruction-spacing">间距系统</label><label for="sub-instruction-canvas">界面画布</label><label for="sub-instruction-grid">网格系统</label><label for="sub-instruction-shape">形状语言</label><label for="sub-instruction-shadow">阴影系统</label><label for="sub-instruction-motion">动效系统</label></nav>
+      <div id="instruction-color" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 01 / COLOR</span><div class="game-top"><b>颜色</b><span class="counter">COLOR</span></div><div class="swatches" style="margin-top:14px"><div class="swatch"><i style="background:#111418"></i><b>INK</b></div><div class="swatch"><i style="background:#f1f2f3"></i><b>CANVAS</b></div><div class="swatch"><i style="background:#fff"></i><b>SURFACE</b></div><div class="swatch"><i style="background:#2b8a3e"></i><b>SUCCESS</b></div><div class="swatch"><i style="background:#e67700"></i><b>WARNING</b></div><div class="swatch"><i style="background:#c92a2a"></i><b>DANGER</b></div></div><div class="scene" style="min-height:155px"><b>颜色只表达层级与状态</b></div></div></div></div>
+        <div class="spec"><span class="label">Instruction 01 / color</span><h3>色彩系统</h3><table class="table"><tr><th>层级</th><th>色值</th><th>生产用途</th></tr><tr><td>中性色</td><td>#FFFFFF / #F8F9FA / #F1F3F5 / #E9ECEF / #868E96 / #212529</td><td>背景、表面、悬浮、辅助文字与强文字。</td></tr><tr><td>语义色</td><td>#2B8A3E / #E67700 / #C92A2A / #1864AB</td><td>成功、警告、危险与信息。</td></tr><tr><td>品质色</td><td>#868E96 / #1864AB / #6741D9 / #E67700 / #C92A2A</td><td>普通、稀有、史诗、传说、神话。</td></tr></table><ul><li>中性色承担页面结构；语义色表达业务状态；品质色只表达稀有度。</li><li>状态必须同时使用颜色、图标、文案或位置表达。</li><li>主题只替换背景、材质、插画和品牌强调，不改变状态语义。</li></ul></div>
+      </div>
+      <div id="instruction-type" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 02 / TYPE</span><div class="game-top"><b>字体</b><span class="counter">TYPE</span></div><div class="type-line" style="margin-top:15px"><b style="font-size:17px">页面主标题</b><span>64 / 76</span></div><div class="type-line"><b style="font-size:14px">页面标题</b><span>48 / 60</span></div><div class="type-line"><b style="font-size:12px">区块标题</b><span>40 / 52</span></div><div class="type-line"><b style="font-size:10px">正文与关键数值 1,250</b><span>28 / 40</span></div><div class="type-line"><b style="font-size:8px">说明、时间与单位</b><span>24 / 32</span></div><div class="scene" style="min-height:120px"><b>名称单行省略 / 说明限行</b></div></div></div></div>
+        <div class="spec"><span class="label">Instruction 02 / type</span><h3>字体系统</h3><table class="table"><tr><th>用途</th><th>字族</th><th>规则</th></tr><tr><td>标题 / 按钮</td><td>几何无衬线、粗体</td><td>参考命名 --font-heading。</td></tr><tr><td>正文 / 标签</td><td>中性无衬线</td><td>参考命名 --font-body。</td></tr><tr><td>数值 / 单位</td><td>等宽字形</td><td>参考命名 --font-mono。</td></tr><tr><td>数量 / 时间</td><td>等宽字形</td><td>12,450、24 / 50、02:14:32 同屏统一。</td></tr></table><ul><li>按钮文案不超过 6 个汉字；名称单行省略，说明限定最大行数。</li><li>数值增减同时使用正负号、语义色和文字含义。</li><li>长文本采用省略、分组、详情或 Tips，不缩小字号与热区。</li></ul></div>
+      </div>
+      <div id="instruction-grid" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 05 / GRID</span><div class="game-top"><b>网格系统</b><span class="counter">4 COL</span></div><div class="grid-guide" style="margin-top:14px"><b>48px 边距 / 20px 沟槽 / 4 列</b><i></i><i></i><i></i><i></i></div><div class="scene" style="min-height:120px"><b>固定区 + 唯一主滚动区</b></div></div></div></div>
+        <div class="spec"><span class="label">Instruction 05 / grid</span><h3>网格系统</h3><table class="table"><tr><th>分类</th><th>规则</th></tr><tr><td>内容宽度</td><td>左右边距 48px，得到 984px 内容宽度。</td></tr><tr><td>四列栅格</td><td>列宽 231px，沟槽 20px；按 1、2、3、4 列占位。</td></tr><tr><td>页面框架</td><td>顶部固定区 + 中心内容区 + 底部固定区。</td></tr></table><ul><li>中心区为页面唯一主滚动容器。</li><li>长屏只增加中心区可视范围，窄屏折叠次要信息。</li><li>同一页面只使用一套内容边距与栅格。</li></ul></div>
+      </div>
+      <div id="instruction-spacing" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 03 / SPACING</span><div class="game-top"><b>间距系统</b><span class="counter">4PX BASE</span></div><div class="space-bars"><span><i style="height:4px"></i>4</span><span><i style="height:8px"></i>8</span><span><i style="height:13px"></i>12</span><span><i style="height:18px"></i>16</span><span><i style="height:27px"></i>24</span><span><i style="height:36px"></i>32</span><span><i style="height:52px"></i>48</span></div><div class="scene"><b>组件内基准 8 / 区块间 24</b></div></div></div></div><div class="spec"><span class="label">Instruction 03 / spacing</span><h3>间距系统</h3><table class="table"><tr><th>基础</th><th>数值</th><th>用途</th></tr><tr><td>间距阶梯</td><td>4 / 8 / 12 / 16 / 24 / 32 / 48 / 64</td><td>所有间距为 4 的倍数。</td></tr><tr><td>组件内部</td><td>8</td><td>图标、文案、控件内部基准。</td></tr><tr><td>页面区块</td><td>24 / 32 / 48</td><td>列表、卡片和模块分隔。</td></tr></table><ul><li>同一类组件采用相同的内边距和间距层级。</li><li>状态文字增加时优先换行或限行，不挤压热区。</li></ul></div></div>
+      <div id="instruction-canvas" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 04 / CANVAS</span><div class="game-top"><b>界面画布</b><span class="counter">9 : 16</span></div><div class="scene"><b>1080 x 1920</b></div><div class="entry-row"><div class="entry">顶部安全区<small>88px</small></div><div class="entry">底部安全区<small>120px</small></div></div></div></div></div><div class="spec"><span class="label">Instruction 04 / canvas</span><h3>界面画布</h3><table class="table"><tr><th>项目</th><th>规格</th></tr><tr><td>生产基准</td><td>1080 x 1920px，竖版 9:16。</td></tr><tr><td>顶部安全区</td><td>基准 88px，按系统避让区增加。</td></tr><tr><td>底部安全区</td><td>基准 120px，手势条上保留 32px。</td></tr><tr><td>触控热区</td><td>普通操作不小于 88 x 88px。</td></tr></table><ul><li>刘海、手势条、键盘和系统按钮以真实避让区为准。</li><li>不得通过缩小字号或热区解决设备适配。</li></ul></div></div>
+      <div id="instruction-shape" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 06 / SHAPE</span><div class="game-top"><b>形状语言</b><span class="counter">2 / 4 / 8 / 12</span></div><div class="component-stack" style="margin-top:16px"><div class="ui-button">2px 角标</div><div class="input-demo">4px 输入框</div><div class="entry">8px 卡片</div><div class="dialog">12px 弹层</div></div></div></div></div><div class="spec"><span class="label">Instruction 06 / shape</span><h3>形状语言</h3><table class="table"><tr><th>规格</th><th>使用场景</th></tr><tr><td>2px</td><td>状态角标、微型标签。</td></tr><tr><td>4px</td><td>按钮、输入框、内容格。</td></tr><tr><td>8px</td><td>卡片、列表、普通面板。</td></tr><tr><td>12px</td><td>弹窗、大型内容面板。</td></tr><tr><td>9999px</td><td>头像、开关、胶囊选择。</td></tr></table><ul><li>同一类组件只使用一个圆角等级。</li><li>圆角不可作为状态或优先级的唯一表达。</li></ul></div></div>
+      <div id="instruction-shadow" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 07 / SHADOW</span><div class="game-top"><b>阴影系统</b><span class="counter">6 LEVELS</span></div><div class="entry" style="margin-top:16px">XS / SM<small>把手与按钮默认态</small></div><div class="dialog" style="margin:24px auto">MD / LG</div><div class="dialog-overlay"><div class="dialog">XL / MODAL</div></div></div></div></div><div class="spec"><span class="label">Instruction 07 / shadow</span><h3>阴影系统</h3><table class="table"><tr><th>层级</th><th>适用场景</th></tr><tr><td>XS / SM</td><td>开关把手、按钮默认态、底部导航主入口。</td></tr><tr><td>MD / LG</td><td>卡片悬浮、下拉菜单、Toast、Tooltip。</td></tr><tr><td>XL / Modal</td><td>内容弹窗、全屏弹窗、最高层级遮罩。</td></tr></table><ul><li>阴影越深，层级越高；不替代描边和信息层级。</li><li>同屏只允许一个最高视觉层级的模态弹层。</li></ul></div></div>
+      <div id="instruction-motion" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INSTRUCTION 08 / MOTION</span><div class="game-top"><b>动效系统</b><span class="counter">100 / 200 / 300 / 500</span></div><div class="component-stack" style="margin-top:16px"><div class="entry">Instant<small>100ms · 按下 / 开关</small></div><div class="entry">Fast / Base<small>200 / 300ms · 显隐 / 弹层</small></div><div class="entry">Slow<small>500ms · 关键演出</small></div></div></div></div></div><div class="spec"><span class="label">Instruction 08 / motion</span><h3>动效系统</h3><table class="table"><tr><th>层级</th><th>时长</th><th>规则</th></tr><tr><td>Instant</td><td>100ms</td><td>按钮按下、开关切换。</td></tr><tr><td>Fast</td><td>200ms</td><td>Hover 反馈、元素显隐。</td></tr><tr><td>Base</td><td>300ms</td><td>弹窗进出、页面路由过渡。</td></tr><tr><td>Slow</td><td>500ms</td><td>关键结算、获得演出。</td></tr></table><ul><li>动效服务功能反馈，不拖慢操作节奏。</li><li>同一屏持续动效不超过三处。</li></ul></div></div>
+    </section>
+
+    <section id="components" class="tab-panel">
+      <div class="section-head"><span class="section-num">03</span><h2>组件规范</h2></div>
+      <p class="section-note">每个母版均需交付用途、结构、尺寸、变体、适用状态、命名、长文本、交互与验收。</p>
+      <nav class="sub-tabs"><label for="sub-components-button">按钮 Button</label><label for="sub-components-badge">徽章 Badge</label><label for="sub-components-toggle">开关 &amp; 滑块</label><label for="sub-components-tab">页签 Tab</label><label for="sub-components-progress">进度条 Progress</label><label for="sub-components-input">输入框 Input</label><label for="sub-components-notification">Toast / 红点</label></nav>
+      <div id="components-button" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">ACTION / INPUT / SELECT</span><div class="game-top"><b>操作与输入</b><span class="counter">DEFAULT</span></div><div class="component-stack" style="margin-top:12px"><div class="button-set"><button class="ui-button primary">主要操作</button><button class="ui-button">次要操作</button><button class="ui-button danger">危险操作</button><button class="ui-button disabled">不可用</button></div><div class="input-demo"><span>输入或搜索内容</span><b>×</b></div><div class="segmented"><b>全部</b><span>选项 A</span><span>选项 B</span></div><div class="check-row"><i class="check on">✓</i><b>已选项目</b><i class="check" style="margin-left:12px"></i><span>可选项目</span></div><div class="mini-progress"><i></i></div></div></div></div></div>
+        <div class="spec"><span class="label">Component 01 / button</span><h3>按钮 Button</h3><table class="table"><tr><th>变体</th><th>推荐尺寸</th><th>必备状态</th></tr><tr><td>主按钮</td><td>360 x 104</td><td>默认、按下、禁用、加载、资源不足。</td></tr><tr><td>次按钮</td><td>280 x 88</td><td>默认、按下、禁用。</td></tr><tr><td>危险按钮</td><td>360 x 96</td><td>默认、按下、禁用、确认中。</td></tr><tr><td>文字 / 图标</td><td>高 88；72 / 88 方形</td><td>默认、按下、红点、禁用。</td></tr></table><ul><li>同一决策区只能有一个主按钮。</li><li>按下态在 100ms 内出现；请求期间显示加载并阻止重复提交。</li><li>按钮文案不超过 6 字，长文本不改变热区。</li></ul></div>
+      </div>
+      <div id="components-badge" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">INFO / CONTAINER / OVERLAY</span><div class="game-top"><b>信息与容器</b><span class="counter">STATUS</span></div><div class="toast-demo" style="margin-top:11px"><i>✓</i><span><b>内容已更新</b><br><small>可继续当前操作</small></span></div><div class="card-grid" style="margin-top:11px"><div class="mini-card"><i></i><b>内容入口</b></div><div class="mini-card"><i></i><b>当前状态</b></div><div class="mini-card"><i></i><b>新内容</b></div></div><div class="list-row" style="margin-top:10px"><i></i><span><b>列表标题</b><br><small>说明与当前状态</small></span><b>前往</b></div><div class="dialog-overlay"><div class="dialog"><h4>确认当前操作</h4><p>说明本次操作结果与影响。</p><div class="dialog-actions"><b>取消</b><b>确认</b></div></div></div></div></div></div>
+        <div class="spec"><span class="label">Component 02 / badge</span><h3>徽章 Badge</h3><table class="table"><tr><th>类型</th><th>推荐尺寸</th><th>规则</th></tr><tr><td>文本徽章</td><td>高 32 - 48</td><td>分类或状态文案最长 4 字。</td></tr><tr><td>数量角标</td><td>20 - 32</td><td>超过 99 显示 99+，处理后立即更新。</td></tr><tr><td>状态徽章</td><td>高 32 - 48</td><td>颜色必须配合图标、文案或位置表达。</td></tr></table><ul><li>徽章不遮挡核心内容和操作热区。</li><li>状态变化不改变卡片、列表项或内容格尺寸。</li></ul></div>
+      </div>
+      <div id="components-toggle" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">COMPONENT 03 / TOGGLE &amp; SLIDER</span><div class="game-top"><b>开关与滑块</b><span class="counter">VALUE</span></div><div class="component-stack" style="margin-top:18px"><div class="segmented"><b>开启</b><span>关闭</span><span>禁用</span></div><div class="entry">音量 <small>当前值 68 / 100</small><div class="mini-progress" style="margin-top:10px"><i></i></div></div></div></div></div></div><div class="spec"><span class="label">Component 03 / toggle &amp; slider</span><h3>开关 &amp; 滑块 Toggle &amp; Slider</h3><table class="table"><tr><th>组件</th><th>尺寸</th><th>状态</th></tr><tr><td>开关</td><td>112 x 56</td><td>开、关、禁用、加载。</td></tr><tr><td>滑块</td><td>高 56</td><td>默认、拖动、禁用、范围错误。</td></tr></table><ul><li>开关状态须搭配文字，不只依赖圆点位置。</li><li>滑块实时显示当前值、最小值和最大值。</li></ul></div></div>
+      <div id="components-tab" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">COMPONENT 04 / TAB</span><div class="game-top"><b>页签</b><span class="counter">2 - 5 ITEMS</span></div><div class="segmented" style="margin-top:18px"><b>当前</b><span>选项 A</span><span>选项 B</span></div><div class="scene"><b>同层内容原位切换</b></div></div></div></div><div class="spec"><span class="label">Component 04 / tab</span><h3>页签 Tab</h3><table class="table"><tr><th>组件</th><th>尺寸</th><th>状态</th></tr><tr><td>标签页</td><td>高 80</td><td>默认、选中、禁用、红点。</td></tr><tr><td>分段切换</td><td>高 72</td><td>默认、选中、禁用。</td></tr></table><ul><li>仅用于同层内容切换，不用于页面栈返回。</li><li>分段切换限制在 2 至 5 项互斥选择。</li></ul></div></div>
+      <div id="components-progress" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">COMPONENT 05 / PROGRESS</span><div class="game-top"><b>进度条</b><span class="counter">24 / 50</span></div><div class="entry" style="margin-top:18px">当前进度<div class="mini-progress" style="margin-top:10px"><i></i></div><small>24 / 50</small></div><div class="entry" style="margin-top:12px">处理中<div class="mini-progress" style="margin-top:10px"><i style="width:45%"></i></div><small>状态未知</small></div></div></div></div><div class="spec"><span class="label">Component 05 / progress</span><h3>进度条 Progress</h3><table class="table"><tr><th>类型</th><th>尺寸</th><th>规则</th></tr><tr><td>确定进度</td><td>高 24 / 32 / 48</td><td>显示当前值 / 总量。</td></tr><tr><td>不确定进度</td><td>高 24 / 32 / 48</td><td>使用循环提示，完成后原位替换。</td></tr></table><ul><li>进度变化不改变容器尺寸和相邻内容位置。</li><li>进度颜色不单独承担完成、错误或锁定语义。</li></ul></div></div>
+      <div id="components-input" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">COMPONENT 06 / INPUT</span><div class="game-top"><b>输入框</b><span class="counter">FOCUS</span></div><div class="component-stack" style="margin-top:18px"><div class="input-demo"><span>输入内容</span><b>×</b></div><div class="input-demo"><span>搜索内容</span><b>⌕</b></div><div class="button-set"><button class="ui-button">-</button><button class="ui-button">数值 24</button></div></div></div></div></div><div class="spec"><span class="label">Component 06 / input</span><h3>输入框 Input</h3><table class="table"><tr><th>类型</th><th>尺寸</th><th>状态</th></tr><tr><td>文本输入</td><td>高 88；多行最小高 152</td><td>默认、聚焦、填写、错误、禁用。</td></tr><tr><td>搜索输入</td><td>高 88</td><td>默认、搜索中、无结果、错误。</td></tr><tr><td>数值输入</td><td>高 88</td><td>默认、最小、最大、满容量、错误。</td></tr></table><ul><li>标签常驻，错误文案置于控件下方。</li><li>数值增减热区不小于 72 x 72；键盘弹出后提交仍可见。</li></ul></div></div>
+      <div id="components-notification" class="spec-row sub-row sub-panel"><div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">COMPONENT 07 / NOTIFICATION</span><div class="game-top"><b>通知</b><span class="counter">99+</span></div><div class="toast-demo" style="margin-top:18px"><i>✓</i><span><b>操作完成</b><br><small>内容已同步</small></span></div><div class="notice-bar">NOTICE · 全局通知内容</div><div class="card-grid" style="margin-top:18px"><div class="mini-card"><i></i><b>入口 99+</b></div><div class="mini-card"><i></i><b>状态</b></div><div class="mini-card"><i></i><b>新内容</b></div></div></div></div></div><div class="spec"><span class="label">Component 07 / notification</span><h3>Toast / 红点 Notification</h3><table class="table"><tr><th>组件</th><th>尺寸</th><th>规则</th></tr><tr><td>Toast</td><td>宽 560 - 760</td><td>HUD 下方，同一时刻只显示一条，显示 2 - 4 秒。</td></tr><tr><td>红点</td><td>20 - 32</td><td>数量超过 99 显示 99+，处理后立即更新。</td></tr><tr><td>跑马灯</td><td>高 64 - 80</td><td>时效全局信息，可关闭，不覆盖主要操作。</td></tr></table><ul><li>成功、提醒、错误和信息同时使用颜色、图标与文案。</li><li>错误与断线状态不自动掩盖。</li></ul></div></div>
+    </section>
+
+    <section id="grid" class="tab-panel">
+      <div class="section-head"><span class="section-num">04</span><h2>网格与框架</h2></div>
+      <nav class="sub-tabs"><label for="sub-grid-framework">画布、栅格与框架</label></nav>
+      <div id="grid-framework" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">1080 x 1920 / 4 COLUMN GRID</span><div class="game-top"><b>页面框架</b><span class="counter">984px</span></div><div class="grid-guide" style="margin-top:11px"><b>48px 边距 / 20px 沟槽 / 4 列</b><i></i><i></i><i></i><i></i></div></div></div></div>
+        <div class="spec"><span class="label">Grid & framework</span><h3>画布先定框架，再放入游戏内容</h3><table class="table"><tr><th>区域</th><th>基准尺寸</th><th>规则</th></tr><tr><td>顶部安全区</td><td>88px</td><td>状态、标题与 HUD 不进入系统遮挡区。</td></tr><tr><td>内容区</td><td>左右 48px</td><td>可用宽度 984px；四列各 231px，沟槽 20px。</td></tr><tr><td>中心区</td><td>自适应</td><td>页面唯一主滚动容器，承载场景或内容。</td></tr><tr><td>底部安全区</td><td>120px</td><td>底部导航或主要操作与手势条留 32px 缓冲。</td></tr></table><ul><li>顶部 HUD、中心内容、底部导航或主要操作构成页面三段框架。</li><li>长屏只增加中心内容可视范围，不放大字号、图标、按钮或固定区。</li><li>窄屏折叠次要信息，不缩小正文与热区；键盘弹出时保持输入和提交可见。</li></ul></div>
+      </div>
+    </section>
+
+    <section id="templates" class="tab-panel">
+      <div class="section-head"><span class="section-num">05</span><h2>界面模板</h2></div>
+      <p class="section-note">模板按 UI 承载类型划分。游戏场景、内容选择和结果等，归入对应承载类型中。</p>
+      <nav class="sub-tabs"><label for="sub-template-main">主界面与导航栏</label><label for="sub-template-fullscreen">全屏窗口</label><label for="sub-template-dialog">弹窗 / 设计弹窗</label><label for="sub-template-tips">Tips</label><label for="sub-template-status">状态通知</label></nav>
+      <div id="template-main" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">TEMPLATE 01 / MAIN & NAV</span><div class="game-top"><span><i class="dot"></i>12,450</span><b>游戏主界面</b><span class="counter">24/50</span></div><div class="scene"><b>主视觉场景 / 当前内容</b></div><div class="entry-row"><div class="entry">主要入口<small>可进行</small></div><div class="entry">事件入口<small>限时中</small></div></div><div class="bottom-nav"><b>首页</b><span>内容</span><span>活动</span><span>更多</span></div></div></div></div>
+        <div class="spec"><span class="label">01 Main & navigation</span><h3>主界面与导航栏</h3><p>参考 HUD + Dock 组合：顶部承载玩家身份、资源项和活动入口，中心承载主场景、快捷入口与任务内容，底部承载一级导航。</p><table class="table"><tr><th>区域</th><th>参考结构</th><th>规则</th></tr><tr><td>HUD 资源条</td><td>图标 + 数值 + 可选加号</td><td>资源不足时以危险色和提示表达。</td></tr><tr><td>中心区域</td><td>主场景、快捷入口、任务 / 活动</td><td>优先展示游戏内容，不以纯列表替代。</td></tr><tr><td>底部 Dock</td><td>固定图标 + 文字入口，中间 CTA 可突出</td><td>当前项、红点和锁定状态清晰表达。</td></tr></table><ul><li>同屏只有一个视觉最强的主要操作。</li><li>资源单项支持紧凑与展开两种密度。</li><li>返回主界面后恢复用户之前的位置与状态。</li></ul></div>
+      </div>
+      <div id="template-fullscreen" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">TEMPLATE 02 / FULLSCREEN</span><div class="game-top"><b>模式选择 / 内容预览</b><span class="counter">1 / 3</span></div><div class="scene"><b>独立内容或沉浸式场景</b></div><div class="card-grid"><div class="mini-card"><i></i><b>内容 A</b></div><div class="mini-card"><i></i><b>内容 B</b></div><div class="mini-card"><i></i><b>内容 C</b></div></div><div class="bottom-bar"><span class="back">返回</span><div class="tabs"><b>规则</b><span>预览</span><span>进入</span></div></div></div></div></div>
+        <div class="spec"><span class="label">02 Fullscreen window</span><h3>全屏窗口</h3><p>参考稿将角色养成、角色仓库、商店和任务作为全屏窗口的典型结构。</p><table class="table"><tr><th>窗口</th><th>中心内容</th><th>稳定区域</th></tr><tr><td>角色养成</td><td>属性、装备、符文、升星</td><td>返回 + 页签。</td></tr><tr><td>角色仓库</td><td>分类与角色横向列表</td><td>标题、容量、返回。</td></tr><tr><td>商店</td><td>商品、价格与购买</td><td>资源、返回 + 页签。</td></tr><tr><td>任务</td><td>每日、周常、成就列表</td><td>进度、返回 + 页签。</td></tr></table><ul><li>主界面 Dock 隐藏，使用窗口专属返回路径。</li><li>底部返回固定左对齐，页签组固定右侧。</li><li>中心内容可以滚动，底部返回、页签或主操作保持稳定。</li></ul></div>
+      </div>
+      <div id="template-dialog" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">TEMPLATE 03 / DIALOG</span><div class="game-top"><b>来源页面</b><span class="counter">ACTIVE</span></div><div class="scene"><b>来源场景保持可见</b></div><div class="dialog-overlay"><div class="dialog"><h4>确认当前操作</h4><p>展示简短结果、获得内容或操作影响。</p><div class="dialog-actions"><b>取消</b><b>确认</b></div></div></div><div class="bottom-nav"><b>首页</b><span>内容</span><span>活动</span><span>更多</span></div></div></div></div>
+        <div class="spec"><span class="label">03 Dialog</span><h3>弹窗 / 设计弹窗</h3><table class="table"><tr><th>参考类型</th><th>触发与内容</th><th>关闭规则</th></tr><tr><td>活动弹窗</td><td>登录后自动出现；主视觉、CTA、今日不再显示。</td><td>多弹窗按优先级排队，不可叠加。</td></tr><tr><td>确认弹窗</td><td>普通、危险、消费三种确认色。</td><td>取消、关闭和系统返回结果一致。</td></tr><tr><td>奖励弹窗</td><td>获得内容、品质表现、确认或继续。</td><td>关闭后恢复来源页面状态。</td></tr></table><ul><li>内容复杂时改为全屏窗口。</li><li>同时最多一层普通弹窗和一层其上的确认弹窗。</li><li>不可逆操作不允许仅点遮罩关闭。</li></ul></div>
+      </div>
+      <div id="template-tips" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">TEMPLATE 04 / TIPS</span><div class="game-top"><b>对象详情</b><span class="counter">?</span></div><div class="tips-target"><b>高亮目标</b><div class="tip-box">这是单一对象的短说明。<br><b>了解</b></div></div><div class="bottom-bar"><span class="back">返回</span><div class="tabs"><b>信息</b><span>规则</span></div></div></div></div></div>
+        <div class="spec"><span class="label">04 Tips</span><h3>Tips</h3><p>参考稿提供物品提示框、新手引导遮罩与系统通知三种形态。</p><table class="table"><tr><th>类型</th><th>参考规则</th></tr><tr><td>物品提示框</td><td>深色背景、白色文字、箭头指向触发对象；长内容改详情。</td></tr><tr><td>新手引导遮罩</td><td>遮罩高亮单一目标，只解释当前一步。</td></tr><tr><td>系统通知</td><td>Toast、顶部公告条或模块内状态条。</td></tr></table><ul><li>Tips 自动避开屏幕边缘、手势区和主要操作。</li><li>多条 Tips 不并发显示。</li><li>不使用 Tips 承载复杂选择或危险确认。</li></ul></div>
+      </div>
+      <div id="template-status" class="spec-row sub-row sub-panel">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">TEMPLATE 05 / STATUS</span><div class="game-top"><b>当前页面</b><span class="counter">ONLINE</span></div><div class="toast-demo" style="margin-top:12px"><i>✓</i><span><b>获得内容已更新</b><br><small>当前数量已同步</small></span></div><div class="notice-bar">NOTICE · 限时内容将在 02:14:32 后结束</div><div class="scene"><b>页面上下文保持不变</b></div><div class="bottom-nav"><b>首页</b><span>内容</span><span>活动</span><span>更多</span></div></div></div></div>
+        <div class="spec"><span class="label">05 Status notification</span><h3>状态通知</h3><p>参考稿覆盖空状态、骨架屏、错误状态与关键反馈。</p><table class="table"><tr><th>状态</th><th>内容</th><th>规则</th></tr><tr><td>空状态</td><td>图标、标题、说明、CTA</td><td>说明为空原因并引导下一步。</td></tr><tr><td>骨架屏</td><td>按最终布局占位</td><td>原位替换内容，避免闪烁。</td></tr><tr><td>错误状态</td><td>错误图标、说明、重试</td><td>保留页面上下文。</td></tr><tr><td>关键反馈</td><td>恭喜获得、战斗胜利、等级提升</td><td>主视觉、品质表现、奖励与下一步操作。</td></tr></table><ul><li>Toast、公告条与局部状态条不改变页面栈。</li><li>成功、提醒、错误和信息同时使用颜色、图标与文案。</li><li>断线和长时间加载时阻止重复提交。</li></ul></div>
+      </div>
+    </section>
+
+    <section id="assets" class="tab-panel">
+      <div class="section-head"><span class="section-num">06</span><h2>资源管理</h2></div>
+      <nav class="sub-tabs"><label for="sub-assets-management">资源管理</label></nav>
+      <div id="assets-management" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">ASSET / EXPORT / VERSION</span><div class="game-top"><b>资源浏览</b><span class="counter">v1.0</span></div><div class="asset-tree" style="margin-top:12px"><b>/assets</b><br>├─ /icons<br>&nbsp;&nbsp;├─ ui_navigation_home_default_72@2x<br>&nbsp;&nbsp;└─ ui_action_close_default_72@2x<br>├─ /components<br>&nbsp;&nbsp;└─ ui_button_primary_default@2x<br>├─ /media<br>&nbsp;&nbsp;└─ ui_page_main_scene@2x<br>└─ /fonts<br>&nbsp;&nbsp;└─ ui_regular.ttf</div></div></div></div>
+        <div class="spec"><span class="label">Asset management</span><h3>资源可命名、可导出、可追溯</h3><table class="table"><tr><th>类别</th><th>规则</th></tr><tr><td>图标 / 组件图片</td><td>`ui_模块_名称_状态_尺寸@2x`。</td></tr><tr><td>页面媒体</td><td>使用页面、区域、用途和尺寸命名。</td></tr><tr><td>导出倍率</td><td>按工程要求交付 @1x / @2x / @3x。</td></tr><tr><td>可拉伸背景</td><td>使用 .9.png 并标注可拉伸区域。</td></tr><tr><td>变更</td><td>说明影响页面、替代方案、状态变化和验收条件。</td></tr></table><ul><li>每个页面交付主稿、状态稿、栅格与安全区标注、资源清单和长文本规则。</li><li>废弃组件保留两个版本周期，并提供迁移方式。</li><li>字体需标明字重、授权状态与应用层级。</li></ul></div>
+      </div>
+    </section>
+
+    <section id="collaboration" class="tab-panel">
+      <div class="section-head"><span class="section-num">07</span><h2>协作说明</h2></div>
+      <nav class="sub-tabs"><label for="sub-collaboration-flow">协作流程</label></nav>
+      <div id="collaboration-flow" class="spec-row sub-panel default">
+        <div class="showcase"><div class="phone"><div class="screen"><span class="screen-tag">COLLABORATION / REVIEW</span><div class="game-top"><b>生产协作</b><span class="counter">READY</span></div><div class="role-grid" style="margin-top:12px"><div class="role"><b>视觉设计</b>颜色、字体、组件外观与主题边界。</div><div class="role"><b>交互设计</b>状态、路径、反馈、异常与恢复。</div><div class="role"><b>界面生产</b>引用母版、内容填充、资源标注。</div><div class="role"><b>评审验收</b>画布、状态、适配、返回与资源。</div></div><div class="flow"><b>需求</b><b>生产</b><b>评审</b><b>修改</b><b>交付</b></div></div></div></div>
+        <div class="spec"><span class="label">Collaboration</span><h3>先引用规则，再讨论差异</h3><table class="table"><tr><th>阶段</th><th>输入</th><th>产出</th></tr><tr><td>需求确认</td><td>页面目标、内容优先级、用户动作</td><td>页面框架与状态范围。</td></tr><tr><td>界面生产</td><td>组件母版、栅格、资源要求</td><td>1080 x 1920 原型与标注。</td></tr><tr><td>评审</td><td>默认、异常、长文本与适配稿</td><td>问题清单与修改结论。</td></tr><tr><td>交付</td><td>确认页面、资源清单、变更记录</td><td>可追溯的生产版本。</td></tr></table><ul><li>新页面先指定使用的组件母版和界面模板，再开始视觉细化。</li><li>任何组件修改必须说明影响范围、替换方案、状态变化与验收方式。</li><li>评审以 1080 x 1920 为主稿，并抽查长屏、窄屏、刘海与手势设备。</li></ul></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const targetByControl = {
+        'tab-system': 'system',
+        'tab-instruction': 'instruction',
+        'tab-components': 'components',
+        'tab-grid': 'grid',
+        'tab-templates': 'templates',
+        'tab-assets': 'assets',
+        'tab-collaboration': 'collaboration',
+        'sub-system-intro': 'system-intro',
+        'sub-instruction-color': 'instruction-color',
+        'sub-instruction-type': 'instruction-type',
+        'sub-instruction-spacing': 'instruction-spacing',
+        'sub-instruction-canvas': 'instruction-canvas',
+        'sub-instruction-grid': 'instruction-grid',
+        'sub-instruction-shape': 'instruction-shape',
+        'sub-instruction-shadow': 'instruction-shadow',
+        'sub-instruction-motion': 'instruction-motion',
+        'sub-components-button': 'components-button',
+        'sub-components-badge': 'components-badge',
+        'sub-components-toggle': 'components-toggle',
+        'sub-components-tab': 'components-tab',
+        'sub-components-progress': 'components-progress',
+        'sub-components-input': 'components-input',
+        'sub-components-notification': 'components-notification',
+        'sub-grid-framework': 'grid-framework',
+        'sub-template-main': 'template-main',
+        'sub-template-fullscreen': 'template-fullscreen',
+        'sub-template-dialog': 'template-dialog',
+        'sub-template-tips': 'template-tips',
+        'sub-template-status': 'template-status',
+        'sub-assets-management': 'assets-management',
+        'sub-collaboration-flow': 'collaboration-flow'
+      };
+
+      const sectionForPrimary = (primary) => primary.id.replace('tab-', '');
+      const selectedSub = (section) => document.querySelector(`.sub-state[name="${section}-tab"]:checked`);
+
+      function scrollToControl(controlId, behavior) {
+        const target = document.getElementById(targetByControl[controlId]);
+        const navigation = document.querySelector('.toc');
+        if (!target || !navigation) return;
+
+        requestAnimationFrame(() => {
+          const top = target.getBoundingClientRect().top + window.scrollY - navigation.offsetHeight - 24;
+          window.scrollTo({ top: Math.max(0, top), behavior });
+        });
+      }
+
+      function writeLocation(push) {
+        const primary = document.querySelector('.tab-state:checked');
+        if (!primary) return;
+
+        const section = sectionForPrimary(primary);
+        const sub = selectedSub(section);
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', section);
+        if (sub) url.searchParams.set('sub', sub.id.replace(`sub-${section}-`, ''));
+        else url.searchParams.delete('sub');
+        window.history[push ? 'pushState' : 'replaceState']({}, '', url);
+      }
+
+      function selectFromLocation(shouldScroll) {
+        const url = new URL(window.location.href);
+        const section = url.searchParams.get('tab');
+        const sub = url.searchParams.get('sub');
+        const primary = section && document.getElementById(`tab-${section}`);
+        if (!primary) return;
+
+        primary.checked = true;
+        const secondary = sub && document.getElementById(`sub-${section}-${sub}`);
+        if (secondary) secondary.checked = true;
+        if (shouldScroll) scrollToControl(secondary ? secondary.id : primary.id, 'auto');
+      }
+
+      document.querySelectorAll('.tab-state, .sub-state').forEach((control) => {
+        control.addEventListener('change', () => {
+          writeLocation(true);
+          scrollToControl(control.id, 'smooth');
+        });
+      });
+
+      window.addEventListener('popstate', () => selectFromLocation(true));
+      selectFromLocation(false);
+      writeLocation(false);
+    })();
+  </script>
+  <footer><div class="wrap">通用竖版手游 UI 设计系统 · 静态审阅版 · 2026.08<br><span style="display:block;margin-top:7px">1080 x 1920 手机原型 · 左侧展示 / 右侧规格 · 七个模块与 Markdown 主文档同步</span></div></footer>
+</body>
+</html>

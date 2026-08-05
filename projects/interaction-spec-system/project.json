@@ -1,0 +1,35 @@
+{
+  "id": "idle-rpg-mobile-design-system",
+  "name": "通用竖版手游 UI 设计系统",
+  "description": "面向竖版移动端游戏的通用 UI 设计系统文档、组件详规与可浏览预览页。",
+  "type": "support",
+  "status": "active",
+  "stage": "specification",
+  "progress": 100,
+  "owner": "美术支持",
+  "collaborators": [],
+  "department": "美术支持",
+  "createdBy": "系统",
+  "updatedBy": "系统",
+  "stack": [
+    "Markdown",
+    "JSON"
+  ],
+  "createdAt": "2026-08-03T06:01:22.691Z",
+  "updatedAt": "2026-08-03T06:12:00.000Z",
+  "latestOutput": "完成通用竖版手游 UI 系统重构，覆盖基础、组件、页面、状态与交互规范",
+  "nextAction": "基于文档在 Figma 中建立变量、样式和组件库",
+  "blocker": "",
+  "blockerOwner": "",
+  "path": "projects/idle-rpg-mobile-design-system",
+  "workflowIds": [],
+  "tags": [
+    "design-system",
+    "mobile-game",
+    "mobile-game",
+    "game-ui",
+    "portrait"
+  ],
+  "visibility": "team",
+  "contacts": []
+}
