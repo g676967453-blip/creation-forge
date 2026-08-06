@@ -463,6 +463,7 @@ export function collectData() {
     { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: p2?.progress || "3 风格已验证", output: "道具图标工作流固化", blocker: p2?.blocker || "—" },
     { name: "秦王殿奏对 (qin-court-audience)", engine: "HTML/CSS/JS", status: "active", statusText: "活跃", progress: "v1.0 已完成", output: "300 题库 + 10 分类 + 打字答题", blocker: "—" },
     { name: "交互规范系统 (interaction-spec-system)", engine: "TypeScript + HTML/CSS", status: "active", statusText: "活跃", progress: p3?.progress || "v1.0", output: "MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成", blocker: p3?.blocker || "—" },
+    { name: "游戏美术部门AI协作中台 (art-ai-collab-platform)", engine: "待定", status: "planned", statusText: "已规划", progress: "0%", output: "—", blocker: "待技术选型与架构设计" },
   ];
 
   const workflows = [
@@ -507,7 +508,7 @@ export function collectData() {
               noun: "works/ 工作日志（素材源）、Claude Code（AI 协作伙伴）、/new-post SKILL（生产流程）、Puppeteer（截图导出）、造化坊仪表盘（发布追踪）",
               activities: "我从 works/ 选材（每周至少一次），我提炼三幕故事结构，我用 AI 生成文案和排版 HTML，我用 Puppeteer 导出 6 张卡片截图，我发布到小红书并记录到仪表盘",
               sequence: "① 浏览本周 works/ 日志 → ② 选出最有「问题→AI解决」亮点的素材 → ③ 用 /new-post 生成帖子 → ④ Puppeteer 导出截图 → ⑤ 发布 → ⑥ 更新仪表盘" } },
-    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 80, todos: 5,
+    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 80, todos: 0,
       pnas: { picture: "打开 Godot，点「运行」→ 出现门派经营界面 → 点击「出战」→ 进入战斗场景 → 弟子自动战斗 → 胜利弹窗显示掉落 → 回到经营界面。整个过程无报错，帧率稳定，体验流畅。",
               noun: "Godot 4.7 引擎、祝福 3 选 1 UI 场景（.tscn）、BlessingManager 数据层、DiscipleSquad 模块、战斗结算模块、旧代码残余引用",
               activities: "我创建祝福选择场景（.tscn），我实现三选一点选→确认→应用祝福逻辑，我连接 BlessingManager 数据层，我将 DiscipleSquad 接入主战斗场景，我删除旧 card_manager/summons/upgrades 残余引用，我手动跑通完整一局验证闭环",
@@ -521,12 +522,13 @@ export function collectData() {
 
   const longTermGoals = {
     dimensions: [
-      { dim: "🎮 产品", vision: "造化坊对外交付的软件产品，包括独立游戏和开发工具", status: "4 个产品",
+      { dim: "🎮 产品", vision: "造化坊对外交付的软件产品，包括独立游戏和开发工具", status: "5 个产品",
         items: [
           { name: "开仙门（GAME-002）", tag: "🟡 开发中", note: "Godot 4.7 · V0.1 ~80%" },
           { name: "秦王殿奏对", tag: "🟢 已完成", note: "HTML5 · 300 题 10 分类" },
           { name: "交互规范系统", tag: "🟢 运转中", note: "TypeScript · 20 组件" },
           { name: "asset-pipeline", tag: "🔵 待启动", note: "等 GAME-002 稳定" },
+          { name: "美术AI协作中台", tag: "📋 已规划", note: "美术部门 AI 协作平台" },
         ]
       },
       { dim: "📡 内容与影响力", vision: "通过自媒体建立受众和分发渠道，开发过程即内容", status: "15 期 / 16 粉丝",
@@ -619,6 +621,7 @@ export function collectData() {
     { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标资产管线" },
     { layer: "项目层", name: "秦王殿奏对", path: "projects/qin-court-audience/", desc: "HTML/CSS/JS 打字答题游戏 — 300 题库 + 10 分类" },
     { layer: "项目层", name: "交互规范系统", path: "projects/interaction-spec-system/", desc: "MD 驱动游戏交互规范生产线 — 模板+生成器+技能包" },
+    { layer: "项目层", name: "美术AI协作中台", path: "projects/游戏美术部门AI协作中台/", desc: "美术部门 AI 协作平台 — 资产管理+AI生成+管线集成（已规划）" },
     { layer: "—", name: "GitHub", path: "https://github.com/g676967453-blip/creation-forge", desc: "远程仓库" },
   ];
 

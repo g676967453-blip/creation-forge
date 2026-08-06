@@ -4,5 +4,10 @@
 
 - `component-spec.md`：操作、输入、选择、信息、容器、弹层的母版详规与状态矩阵。
 - `screen-patterns.md`：首页、列表、网格、详情、筛选、全屏页、弹层和异常状态的页面模式。
+- `game-screen-patterns.md`：游戏场景界面模式库，按场景（加载、大厅、关卡、战斗、布阵、结算、养成、个人主页）给出分区结构范式，基于上线产品界面分析抽象（v2.1 新增）。
+- `page-content-templates.md`：页面内容字段模板，覆盖主界面、列表、网格、详情、筛选、弹窗和状态页，每类含内容字段、必要状态、长文本规则和交付说明（v2.1 新增）。
 - `interaction-guidelines.md`：手势、L1-L4 反馈、页面栈、提交、弱网恢复、动效与验收规则。
-- `design-system-preview.html`：与 Markdown 章节同步的可浏览预览页，使用左侧样例、右侧规格版式。
+- `design-system-preview.html`：与 Markdown 章节同步的可浏览预览页，使用左侧样例、右侧规格版式；资源管理包含出图安全区、全屏背景、资源包命名、按钮命名、多语言和交付变更。
+- `v2.1-production-plan.md`：v2.1 内容补完计划，拆分 Figma 组件化、页面内容模板和工程交接规范。
+- `figma/`：Figma 变量、样式、组件和资产建库清单。
+- `engineering/`：资源命名、切图尺寸、安全区、导出倍率和工程交付清单。
