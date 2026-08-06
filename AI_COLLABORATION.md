@@ -84,6 +84,7 @@ ceshi/
 | Claude | `[claude]` | `Co-Authored-By: Claude <noreply@anthropic.com>` | [CLAUDE.md](./CLAUDE.md) | `works/YYYY-MM-DD-[claude]-*.md` |
 | 字节 TREA | `[trea]` | `Co-Authored-By: TREA <noreply@bytedance.com>` | [.trea/config.md](./.trea/config.md) | `works/YYYY-MM-DD-[trea]-*.md` |
 | LobsterAl | `[lobster]` | `Co-Authored-By: LobsterAl <noreply@lobster.ai>` | [.lobster/config.md](./.lobster/config.md) | `works/YYYY-MM-DD-[lobster]-*.md` |
+| Codex | `[codex]` | `Co-Authored-By: Codex <noreply@openai.com>` | Codex Desktop / CLI 会话配置 | `works/YYYY-MM-DD-[codex]-*.md` |
 
 > 💡 新增 AI 助手时，在此表追加一行，并创建对应的配置文件。
 
@@ -149,6 +150,7 @@ works/YYYY-MM-DD-[身份标签]-简短描述.md
 示例：
 - `works/2026-08-03-[claude]-重构spec渲染器.md`
 - `works/2026-08-03-[trea]-设计新关卡.md`
+- `works/2026-08-06-[codex]-添加协作身份.md`
 
 ### 5.2 Frontmatter 格式
 
