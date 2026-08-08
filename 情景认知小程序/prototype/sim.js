@@ -19,7 +19,7 @@ function newState() {
   const s = {
     cash: 5000000, stable: 0, growth: 0, property: 0, debt: 0,
     expense: 10000, income: 8000, scam: false, locked: false, concentrate: false,
-    hits: {}
+    hits: {}, badChoices: []
   };
   ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'].forEach(p => s.hits[p] = { good: 0, bad: 0 });
   return s;
@@ -362,6 +362,7 @@ function run(policy, rng, log) {
       const opt = pickOption(s, ev, policy, rng);
       (opt.g || []).forEach(p => mark(s, p, true));
       (opt.b || []).forEach(p => mark(s, p, false));
+      if ((opt.b || []).length) s.badChoices.push({ ev: ev.name, opt: opt.t, b: opt.b });
       opt.f(s);
       if (log) log.push({ y, name: ev.name, opt: opt.t, cash: Math.round(s.cash), nw: Math.round(netWorth(s)) });
     }
@@ -419,3 +420,18 @@ for (let seed = 0; seed < 5000; seed++) {
 console.log('\n=== 最差稳健局(seed=' + worst.seed + ', 结局:' + worst.tier + ', 净资产:' + Math.round(worst.nw) + ') ===');
 worst.log.forEach(l => console.log('第' + String(l.y).padStart(2) + '年 ' + l.name.padEnd(6) + ' → ' + l.opt + ' | 现金:' + l.cash + ' 净资产:' + l.nw));
 console.log('原则命中:' + JSON.stringify(worst.hits));
+
+// 大众新手样本局:真实复盘输入(坏选择记录)
+const lg3 = [];
+const r3 = run('naive', mulberry32(2026), lg3);
+console.log('\n=== 大众新手样本局(seed=2026, 结局:' + r3.tier + ', 净资产:' + Math.round(r3.nw) + ') ===');
+lg3.forEach(l => console.log('第' + String(l.y).padStart(2) + '年 ' + l.name.padEnd(6) + ' → ' + l.opt));
+console.log('原则命中:' + JSON.stringify(r3.s.hits));
+console.log('坏选择:' + JSON.stringify(r3.s.badChoices, null, 1));
+
+// 导出样本局 JSON(供复盘提示词文档使用)
+const fs = require('fs');
+fs.writeFileSync('sample_run.json', JSON.stringify({
+  seed: 2026, tier: r3.tier, nw: Math.round(r3.nw), hits: r3.s.hits, badChoices: r3.s.badChoices, log: lg3
+}, null, 1), 'utf8');
+console.log('sample_run.json written');
