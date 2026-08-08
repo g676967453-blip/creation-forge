@@ -1,0 +1,66 @@
+name: 仪表盘自动部署
+
+on:
+  schedule:
+    # 每天北京时间 9:00 (UTC+8 = UTC 1:00)
+    - cron: '0 1 * * *'
+  workflow_dispatch:  # 允许手动触发
+  push:
+    branches: [main]
+    paths:
+      - 'tools/collect-data.ts'
+      - 'tools/generate-dashboard.ts'
+      - 'docs/个人待办.md'
+      - 'docs/目标规划.md'
+      - '.github/workflows/deploy-dashboard.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 需要完整 git 历史（collect-data.ts 用 git log）
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 生成仪表盘
+        run: npx tsx tools/generate-dashboard.ts
+
+      - name: 复制到 docs/ 并修复路径
+        run: |
+          cp reports/造化坊仪表盘.html docs/index.html
+          sed -i 's|../docs/workflows/变更日志.md|workflows/变更日志.md|g' docs/index.html
+
+      - name: 提交并推送
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html reports/造化坊仪表盘.html
+          git diff --staged --quiet || git commit -m "chore: 仪表盘自动更新 [skip ci]
+
+          Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          git push
+
+      - name: 部署到 GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: 上传 Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: 发布
+        uses: actions/deploy-pages@v4
