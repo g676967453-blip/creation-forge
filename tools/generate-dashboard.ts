@@ -633,7 +633,10 @@ function renderProjectCards(projects) {
       const sha = fileData.sha;
 
       // 2. 找到任务行并替换状态
-      const lines = content.split('\n');
+      const NL = String.fromCharCode(10);
+      const CR = String.fromCharCode(13);
+      // 统一换行符：去掉 CR，按 LF 分割
+      const lines = content.split(CR).join('').split(NL);
       let found = false;
       for (let i = 0; i < lines.length; i++) {
         // 匹配表格行: | ID | 任务 | 状态 | ...
@@ -650,7 +653,7 @@ function renderProjectCards(projects) {
         }
       }
       if (!found) { toast('未找到任务 ' + taskId, 'err'); return false; }
-      const newContent = lines.join('\n');
+      const newContent = lines.join(NL);
 
       // 3. PUT 更新
       const putBody = {
@@ -801,8 +804,8 @@ function renderProjectCards(projects) {
         var actions = '';
         if (t.status === 'pending' || t.status === 'active') {
           actions = '<div class="task-actions">'+
-            '<button class="task-btn done" onclick="completeTask(\''+t.id+'\',\''+r.cat.key+'\',this)" title="完成">✓</button>'+
-            '<button class="task-btn cancel" onclick="cancelTask(\''+t.id+'\',\''+r.cat.key+'\',this)" title="取消">✗</button>'+
+            '<button class="task-btn done" onclick="completeTask(&quot;'+t.id+'&quot;,&quot;'+r.cat.key+'&quot;,this)" title="完成">✓</button>'+
+            '<button class="task-btn cancel" onclick="cancelTask(&quot;'+t.id+'&quot;,&quot;'+r.cat.key+'&quot;,this)" title="取消">✗</button>'+
           '</div>';
         } else {
           actions = '<span style="color:rgba(255,255,255,.15);font-size:11px">—</span>';
