@@ -424,6 +424,216 @@ export function loadPersonalTasks(): PersonalTasksData {
   return { categories, archives, stats };
 }
 
+/** 简单 YAML frontmatter 解析器：提取 --- 之间的 key: value 对 */
+function parseYamlFrontmatter(content: string): Record<string, string> {
+  const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!m) return {};
+  const result: Record<string, string> = {};
+  for (const line of m[1].split("\n")) {
+    const kv = line.match(/^(\w+):\s*(.+)/);
+    if (kv) result[kv[1]] = kv[2].trim();
+  }
+  return result;
+}
+
+/** 从 docs/workflows/*.md 的 YAML frontmatter 加载工作流列表 */
+export interface WorkflowDef {
+  name: string; version: string; skill: string; project: string;
+  status: string; category: string; desc: string; steps: string; trigger: string;
+}
+export function loadWorkflowsFromDocs(): WorkflowDef[] {
+  const wfDir = path.join(ROOT, "docs", "workflows");
+  // 排除非工作流文件（README、变更日志、改进追踪、模板子目录）
+  const exclude = new Set(["README.md", "变更日志.md", "改进追踪.md"]);
+  const workflows: WorkflowDef[] = [];
+  try {
+    for (const f of fs.readdirSync(wfDir)) {
+      if (!f.endsWith(".md") || exclude.has(f)) continue;
+      const full = path.join(wfDir, f);
+      if (fs.statSync(full).isDirectory()) continue;
+      const fm = parseYamlFrontmatter(fs.readFileSync(full, "utf-8"));
+      if (!fm.name) continue; // 无 frontmatter → 不是工作流定义
+      workflows.push({
+        name: fm.name, version: fm.version || "—", skill: fm.skill || "—",
+        project: fm.project || "全局", status: fm.status || "active",
+        category: fm.category || "造化坊", desc: fm.desc || "—",
+        steps: fm.steps || "—", trigger: fm.trigger || "—",
+      });
+    }
+  } catch {}
+  return workflows;
+}
+
+/** 项目注册表接口 */
+export interface ProjectDef {
+  name: string; engine: string; status: string; statusText: string;
+  progress: string; output: string; blocker: string; sortOrder: number;
+}
+/** 从 projects 目录下各子项目的 project.json 加载项目列表，结合 PROGRESS.md 读取进度 */
+export function loadProjectsFromJson(): ProjectDef[] {
+  const projectsDir = path.join(ROOT, "projects");
+  const projects: ProjectDef[] = [];
+  try {
+    for (const dir of fs.readdirSync(projectsDir)) {
+      const jsonPath = path.join(projectsDir, dir, "project.json");
+      if (!fs.existsSync(jsonPath)) continue;
+      try {
+        const meta = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+        const prog = loadProjectProgress(dir);
+        const statusText = meta.status === "active" ? "活跃" : meta.status === "planned" ? "已规划" : "已完成";
+        projects.push({
+          name: meta.name || dir,
+          engine: meta.engine || "—",
+          status: meta.status || "active",
+          statusText: meta.statusText || statusText,
+          progress: prog?.progress || meta.progress || "—",
+          output: meta.output || "—",
+          blocker: prog?.blocker || meta.blocker || "—",
+          sortOrder: meta.sortOrder || 99,
+        });
+      } catch {}
+    }
+  } catch {}
+  return projects.sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+/** 解析 docs/目标规划.md 中的季度目标（goalsUser） */
+export function loadGoalsFromMarkdown(): {
+  goalsUser: any[]; longTermGoals: any; goalsArchived: any[];
+} {
+  const filePath = path.join(ROOT, "docs", "目标规划.md");
+  const defaults = { goalsUser: [] as any[], longTermGoals: null as any, goalsArchived: [] as any[] };
+  try {
+    const content = fs.readFileSync(filePath, "utf-8");
+
+    // --- 解析长期目标（AI原生五维）---
+    const ltgSection = content.match(/## 长期目标[\s\S]*?(?=## |$)/);
+    const dimensions: any[] = [];
+    if (ltgSection) {
+      const dimRegex = /### (🎮|📡|💰|⚙️|🤖) (.+?)\n[\s\S]*?(?=### |\n---\n|\n## |$)/g;
+      let dm;
+      while ((dm = dimRegex.exec(ltgSection[0])) !== null) {
+        const block = dm[0];
+        // 提取栏目说明
+        const vision = (block.match(/> \*\*栏目说明：\*\*\s*(.+)/) || [])[1] || "";
+        // 提取状态标签
+        const statusLine = block.match(/\n> (.+?)(?:\n|$)/);
+        const status = statusLine ? statusLine[1].replace(/^[^：:]+[：:]\s*/, "").trim() : "";
+        // 解析表格行
+        const items: any[] = [];
+        const tableRegex = /\| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|/g;
+        let tr;
+        while ((tr = tableRegex.exec(block)) !== null) {
+          const name = tr[1].trim();
+          if (name === "产品名称" || name === "平台" || name === "收入来源" || name === "系统模块" || name === "能力维度") continue;
+          items.push({ name, tag: tr[3].trim(), note: tr[4].trim() });
+        }
+        dimensions.push({ dim: dm[1] + " " + dm[2], vision: vision || dm[2], status, items });
+      }
+    }
+
+    // --- 解析战略定位三角 ---
+    let strategicTriangle = { valueProposition: "", differentiation: "", growthEngine: "" };
+    let formula = "";
+    if (ltgSection) {
+      const stTable = ltgSection[0].match(/### 战略定位三角[\s\S]*?(?=### |\n---\n|\n## |$)/);
+      if (stTable) {
+        const rows = stTable[0].match(/\| (🎯|⚡|📈) \| ([^|]+) \| ([^|]+) \|/g);
+        if (rows) {
+          for (const row of rows) {
+            const cells = row.split("|").map(c => c.trim()).filter(Boolean);
+            if (cells[0] === "🎯") strategicTriangle.valueProposition = cells[2] || "";
+            else if (cells[0] === "⚡") strategicTriangle.differentiation = cells[2] || "";
+            else if (cells[0] === "📈") strategicTriangle.growthEngine = cells[2] || "";
+          }
+        }
+      }
+      const fmMatch = ltgSection[0].match(/### 成功公式[\s\S]*?\*\*R = E × T\*\*[（(]结果 = 效能 × 时间[)）]\s*>\s*\n>\s*\*\*(.+?)\*\*/);
+      if (!fmMatch) {
+        const fmMatch2 = ltgSection[0].match(/### 成功公式[\s\S]*?\*\*R = E × T\*\*[（(][^)）]+[)）]\s*>\s*\n>\s*\*\*(.+?)\*\*/);
+        formula = fmMatch2 ? fmMatch2[1].trim() : "R = E × T（结果 = 效能 × 时间）—— 不是做更多事，而是在高能时段做要事。";
+      } else {
+        formula = fmMatch[1].trim();
+      }
+    }
+    const longTermGoals = dimensions.length > 0 ? { dimensions, strategicTriangle, formula } : null;
+
+    // --- 解析季度目标 ---
+    const goalsUser: any[] = [];
+    const qSection = content.match(/## 季度项目[\s\S]*?(?=## 已完成目标|$)/);
+    if (qSection) {
+      const goalRegex = /### (\d+)\. (.+?)\n([\s\S]*?)(?=### \d+\. |\n---\n\n## |$)/g;
+      let gm;
+      while ((gm = goalRegex.exec(qSection[0])) !== null) {
+        const gBlock = gm[0];
+        const priority = (gBlock.match(/\| 优先级 \| ([^|]+) \|/) || [])[1]?.trim() || "—";
+        const progressStr = (gBlock.match(/\| 进度 \| ([^|]+) \|/) || [])[1]?.trim() || "0%";
+        const progress = parseInt(progressStr.replace(/[%~\s]/g, ""), 10) || 0;
+        const detail = (gBlock.match(/\| 描述 \| ([^|]+) \|/) || [])[1]?.trim() || "";
+
+        // PNAS
+        let pnas = null;
+        if (gBlock.includes("**🖼️ PNAS")) {
+          const picture = (gBlock.match(/\|\s*\*\*P\*\* 画面\s*\| (.+?) \|/) || [])[1]?.trim() || "";
+          const noun = (gBlock.match(/\|\s*\*\*N\*\* 要素\s*\| (.+?) \|/) || [])[1]?.trim() || "";
+          const activities = (gBlock.match(/\|\s*\*\*A\*\* 行动\s*\| (.+?) \|/) || [])[1]?.trim() || "";
+          const sequence = (gBlock.match(/\|\s*\*\*S\*\* 序列\s*\| (.+?) \|/) || [])[1]?.trim() || "";
+          if (picture) pnas = { picture, noun, activities, sequence };
+        }
+        goalsUser.push({
+          id: `U${gm[1]}`, task: gm[2].trim(), detail, priority,
+          progress: Math.min(100, Math.max(0, progress)), todos: 0, pnas,
+        });
+      }
+    }
+
+    // --- 解析已完成目标 ---
+    const goalsArchived: any[] = [];
+    const archSection = content.match(/## 已完成目标[\s\S]*?(?=## 复盘记录|$)/);
+    if (archSection) {
+      const archRegex = /\| ([^|]+) \| ([^|]+) \| ([^|]+) \| (.+?) \|/g;
+      let ar;
+      while ((ar = archRegex.exec(archSection[0])) !== null) {
+        if (ar[1].trim() === "目标") continue;
+        goalsArchived.push({ task: ar[1].trim(), detail: ar[4].trim(), completedDate: ar[3].trim() });
+      }
+    }
+
+    return { goalsUser, longTermGoals, goalsArchived };
+  } catch {
+    return defaults;
+  }
+}
+
+/** 当 docs/目标规划.md 不可用时的默认季度目标 */
+function defaultGoalsUser(): any[] {
+  return [
+    { id: "U1", task: "GAME-002 V0.1 核心循环", detail: "见 docs/目标规划.md", priority: "🔴 P0", progress: 80, todos: 0, pnas: null },
+    { id: "U2", task: "小红书持续内容产出", detail: "见 docs/目标规划.md", priority: "🟡 持续", progress: 90, todos: 1, pnas: null },
+    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "见 docs/目标规划.md", priority: "🟢 远期", progress: 20, todos: 1, pnas: null },
+  ];
+}
+/** 当 docs/目标规划.md 不可用时的默认长期目标 */
+function defaultLongTermGoals(): any {
+  return {
+    dimensions: [
+      { dim: "🎮 产品", vision: "见 docs/目标规划.md", status: "—", items: [] },
+      { dim: "📡 内容与影响力", vision: "见 docs/目标规划.md", status: "—", items: [] },
+      { dim: "💰 可持续", vision: "见 docs/目标规划.md", status: "—", items: [] },
+      { dim: "⚙️ 系统", vision: "见 docs/目标规划.md", status: "—", items: [] },
+      { dim: "🤖 AI进化", vision: "见 docs/目标规划.md", status: "—", items: [] },
+    ],
+    strategicTriangle: { valueProposition: "见 docs/目标规划.md", differentiation: "见 docs/目标规划.md", growthEngine: "见 docs/目标规划.md" },
+    formula: "R = E × T",
+  };
+}
+/** 当 docs/目标规划.md 不可用时的默认已归档目标 */
+function defaultGoalsArchived(): any[] {
+  return [
+    { task: "完善造化坊「目标计划」板块", detail: "见 docs/目标规划.md", completedDate: "2026-07-30" },
+  ];
+}
+
 // Scan projects/*/PROGRESS.md for progress metadata
 export function loadProjectProgress(projectDir: string): { progress: string; blocker: string; phase: string } | null {
   // 轻型 PROGRESS.md
@@ -438,9 +648,7 @@ export function loadProjectProgress(projectDir: string): { progress: string; blo
 }
 
 export function collectData() {
-  // Data sync rules: goalsUser[] <-> docs/目标规划.md, longTermGoals <-> docs/目标规划.md
-  // goalsIssues[]/goalsAI[] <-> /goals SKILL, projects[].progress/blocker <-> PROGRESS.md
-  // Dashboard is a view. docs/目标规划.md is the authoritative source.
+  // 仪表盘是视图。Markdown 文件是权威数据源。
   const today = new Date().toLocaleDateString("zh-CN");
   const worksFiles = listWorks();
   const worksData = worksFiles.map(f => ({ date: f.substring(0, 10), file: f, desc: autoDesc(f) }));
@@ -448,135 +656,26 @@ export function collectData() {
   const commitCount = gitCommitCount();
   const skillsCount = countSkills(path.join(ROOT, ".claude/skills"));
   const skillCount = skillsCount.total;
-  const workflowCount = countFiles(path.join(ROOT, "docs/workflows"));
+
+  // 项目：从 projects/*/project.json + PROGRESS.md 动态加载
+  const projects = loadProjectsFromJson();
+
+  // 工作流：从 docs/workflows/*.md 的 YAML frontmatter 动态加载
+  const workflows = loadWorkflowsFromDocs();
+  const workflowCount = workflows.length; // 修复 I9：只计数有效工作流
+
   const guideCount = countFiles(path.join(ROOT, "docs/tool-guides"));
 
-  // 从各项目 PROGRESS.md 读取动态进度（无 PROGRESS.md 则用硬编码默认值）
-  const pp = (dir: string) => loadProjectProgress(dir);
-  const p1 = pp("xiaohongshu");        // 小红书
-  const p2 = pp("asset-pipeline");      // asset-pipeline
-  const p3 = pp("interaction-spec-system"); // 交互规范系统
-
-  const projects = [
-    { name: "GAME-002「开仙门」", engine: "Godot 4.7", status: "active", statusText: "活跃", progress: "V0.1 ~80%", output: "闭环+MCP+5层防御+15波+6功法+35/93任务✅+文档修复+方向重构完成", blocker: "待祝福3选1UI+弟子接入主循环" },
-    { name: "小红书自媒体", engine: "HTML/CSS + Puppeteer", status: "active", statusText: "活跃", progress: p1?.progress || "15 期帖子", output: "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选", blocker: p1?.blocker || "—" },
-    { name: "asset-pipeline", engine: "Lovart + Photoshop", status: "active", statusText: "活跃", progress: p2?.progress || "3 风格已验证", output: "道具图标工作流固化", blocker: p2?.blocker || "—" },
-    { name: "秦王殿奏对 (qin-court-audience)", engine: "HTML/CSS/JS", status: "active", statusText: "活跃", progress: "v1.0 已完成", output: "300 题库 + 10 分类 + 打字答题", blocker: "—" },
-    { name: "交互规范系统 (interaction-spec-system)", engine: "TypeScript + HTML/CSS", status: "active", statusText: "活跃", progress: p3?.progress || "v1.0", output: "MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成", blocker: p3?.blocker || "—" },
-    { name: "游戏美术部门AI协作中台 (art-ai-collab-platform)", engine: "待定", status: "planned", statusText: "已规划", progress: "0%", output: "—", blocker: "待技术选型与架构设计" },
-  ];
-
-  const workflows = [
-    { name: "Git-提交推送", version: "v1", skill: "/git-commit", project: "全局", status: "mature", category: "造化坊",
-      desc: "将本地代码变更提交并推送到 GitHub 远程仓库", steps: "检查变更 → 生成约定式提交 → 用户确认 → commit → push", trigger: "/git-commit 或「提交代码」" },
-    { name: "仪表盘更新", version: "v2", skill: "/update-dashboard", project: "全局", status: "mature", category: "造化坊",
-      desc: "重新生成造化坊 HTML 仪表盘（7 页签）", steps: "检查 collect-data.ts → 更新过时数据 → 生成 HTML → 用户验证", trigger: "/update-dashboard 或「更新仪表盘」" },
-    { name: "个人待办管理", version: "v1", skill: "/todo", project: "全局", status: "mature", category: "造化坊",
-      desc: "管理 6 分类个人任务：手动添加 / 扫描提取 / 确认导入 / 周度归档", steps: "添加任务 → 列出待办 → 完成/取消 → 扫描提取(三步确认) → 周度归档", trigger: "/todo 或「添加任务」「我的待办」「扫描待办」「归档」" },
-    { name: "功能开发-流水线", version: "v2", skill: "待建", project: "全局", status: "mature", category: "游戏开发",
-      desc: "通用 4 阶段 + 数据原则 + 实现后步骤：策划→需求→UI交互→美术资产→(实现：代码+测试+文档同步)", steps: "功能策划(01) → 功能需求(02) → 界面交互UI(03) → 美术资产(04) → 进入实现", trigger: "待建" },
-    { name: "小红书-制作帖子", version: "v3", skill: "/new-post", project: "小红书", status: "mature", category: "自媒体",
-      desc: "从 works/ 日志选题，制作 6 卡图文帖子：文案→HTML→Puppeteer逐卡截图→6 PNG导出", steps: "works/ 选材 → 文案撰写 → HTML 排版 → Puppeteer 截图导出(6 PNG) → Pixso 导入（可选）", trigger: "/new-post 或「制作帖子」" },
-    { name: "Pixso-导入操作", version: "v1", skill: "—", project: "小红书", status: "mature", category: "自媒体",
-      desc: "将 HTML 帖子导入 Pixso 进行设计精调（可选步骤，主截图已由 Puppeteer 完成）", steps: "打开 Pixso → 取消画布选中 → code_to_design 导入 HTML → 重命名 frame → 手动调整", trigger: "纯人工操作，无对应 SKILL" },
-    { name: "道具图标-生产", version: "v1", skill: "/item-icon", project: "asset-pipeline", status: "mature", category: "游戏开发",
-      desc: "游戏道具图标批量生产：Lovart AI 生成 → Photoshop 抠图 → 256px 切片", steps: "道具清单 → Lovart 生成(多模型可选) → PS 抠图 → 切片输出", trigger: "/item-icon 或「生成图标」" },
-    { name: "工作日志记录", version: "v1", skill: "/write-log", project: "全局", status: "mature", category: "造化坊",
-      desc: "回顾当日工作 → 按 works/_template.md 生成日志 → 写入 works/ 目录", steps: "回顾会话 → 确认标题 → 生成(问题日志+视频草案) → 写入文件", trigger: "/write-log 或「记录日志」「总结今天」" },
-    { name: "文件梳理", version: "v1", skill: "/organize-files", project: "全局", status: "mature", category: "造化坊",
-      desc: "全项目目录扫描 → 诊断三级问题 → 用户确认 → 执行整理 → 同步仪表盘", steps: "扫描分析 → 诊断报告 → 方案确认 → 执行修改 → 同步仪表盘", trigger: "/organize-files 或「梳理文件」「整理文件夹」" },
-    { name: "美术任务表审查", version: "v1", skill: "/art-review", project: "主美工作", status: "active", category: "主美工作",
-      desc: "连接飞书美术排期表 → 4目标分析（基础状况/风险逾期/信息规范/综合建议）→ 输出审查报告", steps: "选定审查范围 → 飞书读取数据 → 4目标分析 → 生成报告 → 存档", trigger: "/art-review 或「审查美术」「美术review」" },
-    { name: "写策划案-HTML-v0.1", version: "v0.1", skill: "待建", project: "全局", status: "active", category: "游戏开发",
-      desc: "🆕 轻量级策划案工作流。一份 HTML = 完整策划案，5 页签（简介/规则/界面说明/动态交互/资产需求），中小功能适用", steps: "复制模板 → AI 读上下文 → 逐 tab 协作填充 → 浏览器验证 → 定稿", trigger: "待建" },
-    { name: "创建项目", version: "v1", skill: "/new-project", project: "全局", status: "active", category: "造化坊",
-      desc: "标准化项目创建：4 类项目模型（游戏/自媒体/管线/其他），7 步从模糊想法到仪表盘注册", steps: "确定方向 → 确定类型和技术栈 → 项目初始化 → 注册到体系 → 创建CLAUDE.md → 第一份工作记录 → 同步仪表盘", trigger: "/new-project 或「新建项目」「创建项目」" },
-    { name: "创建工作流", version: "v1", skill: "/new-workflow", project: "全局", status: "active", category: "造化坊",
-      desc: "🏭 元工作流：用工作流定义工作流自身。发现重复模式 → 提炼标准步骤 → 生成文档+SKILL → 注册三大索引", steps: "发现与识别 → 提炼标准步骤 → 编写知识层文档 → 创建SKILL → 注册到体系 → 验证", trigger: "/new-workflow 或「建立新工作流」「标准化流程」" },
-    { name: "目标管理", version: "v1", skill: "/goals", project: "全局", status: "active", category: "造化坊",
-      desc: "SMART 化目标设定 → 三层拆解（目标→里程碑→行动项）→ 月度复盘。上限 3 个活跃目标", steps: "定义目标 → 拆解为可执行步骤 → 写入体系 → 关联项目和工作流 → 进展追踪 → 复盘", trigger: "/goals 或「定目标」「做规划」「复盘」" },
-  ];
+  // 技能：从 .claude/skills/ 目录扫描
   const skillsDir = path.join(ROOT, ".claude/skills");
   const skillsRaw = listSkills(skillsDir);
   const skills = skillsRaw.map(s => ({ ...s, linkedWorkflow: linkSkillToWorkflow(s.name) }));
 
-  // 旧任务看板已合并入个人待办系统（docs/个人待办.md），此处不再维护
-
-  const goalsUser = [
-    { id: "U1", task: "小红书持续内容产出", detail: "基于 works/ 日志提炼选题，保持每周发布节奏。7月已15期，8月目标：8期+", priority: "🟡 持续", progress: 90, todos: 1,
-      pnas: { picture: "打开小红书创作者后台 → 本周已发布 1-2 篇笔记 → 每篇都是一个「和 AI 协作解决具体问题」的真实故事 → 评论区有人问「怎么用 AI 做到的？」→ 简介里写着造化坊理念。",
-              noun: "works/ 工作日志（素材源）、Claude Code（AI 协作伙伴）、/new-post SKILL（生产流程）、Puppeteer（截图导出）、造化坊仪表盘（发布追踪）",
-              activities: "我从 works/ 选材（每周至少一次），我提炼三幕故事结构，我用 AI 生成文案和排版 HTML，我用 Puppeteer 导出 6 张卡片截图，我发布到小红书并记录到仪表盘",
-              sequence: "① 浏览本周 works/ 日志 → ② 选出最有「问题→AI解决」亮点的素材 → ③ 用 /new-post 生成帖子 → ④ Puppeteer 导出截图 → ⑤ 发布 → ⑥ 更新仪表盘" } },
-    { id: "U2", task: "GAME-002 V0.1 核心循环", detail: "M1: 祝福3选1UI → M2: 弟子接入战斗 → M3: 旧模块清理+验证。方向重构（塔防→吸血鬼+放置）已完成", priority: "🔴 P0", progress: 80, todos: 0,
-      pnas: { picture: "打开 Godot，点「运行」→ 出现门派经营界面 → 点击「出战」→ 进入战斗场景 → 弟子自动战斗 → 胜利弹窗显示掉落 → 回到经营界面。整个过程无报错，帧率稳定，体验流畅。",
-              noun: "Godot 4.7 引擎、祝福 3 选 1 UI 场景（.tscn）、BlessingManager 数据层、DiscipleSquad 模块、战斗结算模块、旧代码残余引用",
-              activities: "我创建祝福选择场景（.tscn），我实现三选一点选→确认→应用祝福逻辑，我连接 BlessingManager 数据层，我将 DiscipleSquad 接入主战斗场景，我删除旧 card_manager/summons/upgrades 残余引用，我手动跑通完整一局验证闭环",
-              sequence: "① 创建祝福选择场景 → ② 实现三选一交互逻辑 → ③ 连接 BlessingManager 数据层 → ④ DiscipleSquad 接入战斗循环 → ⑤ 删除旧模块残余引用 → ⑥ 手动跑通完整一局（经营→战斗→结算）验证闭环" } },
-    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "等待 GAME-002 V0.1 稳定后提取道具清单，批量生产第一批图标", priority: "🟢 远期", progress: 20, todos: 1,
-      pnas: { picture: "打开 GAME-002 的道具背包界面 → 每件装备旁边显示一枚精致的图标（法器/丹药/秘籍各有独特视觉风格）→ 图标风格统一、尺寸一致、在游戏引擎中显示清晰。",
-              noun: "GAME-002 道具清单、Lovart AI（图像生成）、Photoshop（抠图+切片）、道具视觉风格参考（修仙题材）、交付规格标准（256px/格式/命名）",
-              activities: "我从 GAME-002 提取道具清单，我定义视觉风格参考（法器/丹药/秘籍三类），我用 Lovart 生成第一批道具图标（5-10 个），我用 PS 抠图 + 256px 切片，我导入 GAME-002 项目验证效果",
-              sequence: "① 等待 GAME-002 V0.1 稳定 → ② 提取道具清单（名称/稀有度/尺寸）→ ③ 定义视觉风格参考 → ④ Lovart 批量生成 → ⑤ PS 抠图+切片 → ⑥ 导入 GAME-002 验证" } },
-  ];
-
-  const longTermGoals = {
-    dimensions: [
-      { dim: "🎮 产品", vision: "造化坊对外交付的软件产品，包括独立游戏和开发工具", status: "5 个产品",
-        items: [
-          { name: "开仙门（GAME-002）", tag: "🟡 开发中", note: "Godot 4.7 · V0.1 ~80%" },
-          { name: "秦王殿奏对", tag: "🟢 已完成", note: "HTML5 · 300 题 10 分类" },
-          { name: "交互规范系统", tag: "🟢 运转中", note: "TypeScript · 20 组件" },
-          { name: "asset-pipeline", tag: "🔵 待启动", note: "等 GAME-002 稳定" },
-          { name: "美术AI协作中台", tag: "📋 已规划", note: "美术部门 AI 协作平台" },
-        ]
-      },
-      { dim: "📡 内容与影响力", vision: "通过自媒体建立受众和分发渠道，开发过程即内容", status: "15 期 / 16 粉丝",
-        items: [
-          { name: "小红书", tag: "破局之剑", note: "15 期 · 16 粉丝 · 100 赞藏" },
-          { name: "内容定位", tag: "", note: "AI 协作做独立游戏，每天解决一个真问题" },
-        ]
-      },
-      { dim: "💰 可持续", vision: "当前主美岗位支撑，逐步建立独立收入线", status: "主美月薪稳定",
-        items: [
-          { name: "主美岗位", tag: "🟢 当前基础", note: "月薪覆盖日常开销" },
-          { name: "游戏销售", tag: "🔵 规划中", note: "Steam/itch.io，待可发布" },
-          { name: "自媒体变现", tag: "🔵 规划中", note: "待粉丝量达标" },
-          { name: "工具/SaaS", tag: "⚪ 远期", note: "交互规范系统产品化" },
-        ]
-      },
-      { dim: "⚙️ 系统", vision: "AI 协作基础设施，让组织能力沉淀为可复用系统", status: "16 workflows",
-        items: [
-          { name: "工作流体系", tag: "16 个", note: "覆盖游戏/自媒体/工具链" },
-          { name: "SKILL 执行层", tag: "11 + library", note: "AI 指令自动化执行" },
-          { name: "仪表盘", tag: "7 页签", note: "collect→generate→serve 全自动" },
-          { name: "AI 行为模式", tag: "3 模式", note: "协作者/导师/加速器" },
-          { name: "MCP 工具链", tag: "3 工具", note: "Pixso / Godot / Lovart" },
-        ]
-      },
-      { dim: "🤖 AI进化", vision: "人机协作深度提升——别人复制不了我们与 AI 协作的方式", status: "深度协作中",
-        items: [
-          { name: "AI 自主任务", tag: "", note: "当前：人类触发+监督 → 目标：80% 自主完成" },
-          { name: "工作流自动化", tag: "", note: "当前：16 个标准化 → 目标：端到端一键" },
-          { name: "AI Agent 编排", tag: "", note: "当前：单 Agent → 目标：多 Agent 并行+验证" },
-          { name: "AI 原生开发", tag: "", note: "探索中 → 目标：设计→开发→发布 AI 驱动" },
-        ]
-      },
-    ],
-    strategicTriangle: {
-      valueProposition: "用 AI 协作做独立游戏和工具，把过程变成内容 —— 证明「AI 时代做中学」可行，影响更多人",
-      differentiation: "AI 原生协作能力：不是用 AI 辅助，而是与 AI 共创。人定义方向，AI 加速执行。每个工作流都是人机协作的产物",
-      growthEngine: "内容（小红书/金句）→ 影响力（粉丝/口碑）→ 产品（游戏/工具）→ 可持续收入（正向循环）",
-    },
-    formula: "R = E × T（结果 = 效能 × 时间）—— 不是做更多事，而是在高能时段做要事。效能来自方向正确 + 能量匹配。",
-  };
-
-  const goalsArchived = [
-    { task: "完善造化坊「目标计划」板块", detail: "3 个全局工作流 + 目标规划.md + 仪表盘进度条+待办数。端到端流程跑通", completedDate: "2026-07-30" },
-    { task: "GAME-002 全面诊断 + 文档修复", detail: "godot-master框架诊断（3高优修复项）+118份文档审计", completedDate: "2026-07-28" },
-    { task: "GAME-002 V0.1 核心架构搭建", detail: "7 新模块（SpiritSeat/Disciple/BlessingManager+3 Data类）+ GameManager 集成", completedDate: "2026-07-27" },
-    { task: "GAME-002 设计决策确认（9/19）", detail: "集中确认 Tier 1-2 共 9 项 + Tier 3 默认值", completedDate: "2026-07-26" },
-  ];
+  // 目标：从 docs/目标规划.md 动态解析
+  const goalsData = loadGoalsFromMarkdown();
+  const goalsUser = goalsData.goalsUser.length > 0 ? goalsData.goalsUser : defaultGoalsUser();
+  const longTermGoals = goalsData.longTermGoals || defaultLongTermGoals();
+  const goalsArchived = goalsData.goalsArchived.length > 0 ? goalsData.goalsArchived : defaultGoalsArchived();
 
   const goalsIssues = [
     { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },

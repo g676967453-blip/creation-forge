@@ -1,3 +1,15 @@
+---
+name: Git-提交推送
+version: v1
+skill: /git-commit
+project: 全局
+status: mature
+category: 造化坊
+desc: 将本地代码变更提交并推送到 GitHub 远程仓库
+steps: 检查变更 → 生成约定式提交 → 用户确认 → commit → push
+trigger: /git-commit 或「提交代码」
+---
+
 # Git 提交推送
 
 > 版本：v1 | 最后更新：2026-07-21 | 对应 SKILL：`/git-commit`

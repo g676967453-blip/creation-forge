@@ -1,3 +1,15 @@
+---
+name: 写策划案-HTML-v0.1
+version: v0.1
+skill: 待建
+project: 全局
+status: active
+category: 游戏开发
+desc: 🆕 轻量级策划案工作流。一份 HTML = 完整策划案，5 页签
+steps: 复制模板 → AI 读上下文 → 逐 tab 协作填充 → 浏览器验证 → 定稿
+trigger: 待建
+---
+
 # 写策划案 — HTML 格式 v0.1
 
 > **定位**：轻量级功能策划案工作流。一份 HTML = 完整策划案，替代重流程的 4 份 Markdown。

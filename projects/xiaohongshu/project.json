@@ -1,0 +1,7 @@
+{
+  "name": "小红书自媒体",
+  "engine": "HTML/CSS + Puppeteer",
+  "status": "active",
+  "output": "v3 工作流：Puppeteer 截图导出 6 PNG + Pixso 可选",
+  "sortOrder": 2
+}

@@ -1,32 +1,7 @@
 {
-  "id": "art-ai-collab-platform",
-  "name": "游戏美术部门 AI 协作中台",
-  "description": "面向游戏美术部门的 AI 协作中台，用于美术资产的协作管理、AI 辅助生成与管线集成，连接美术团队、AI 工具链与游戏项目。",
-  "type": "platform",
+  "name": "游戏美术部门AI协作中台 (art-ai-collab-platform)",
+  "engine": "待定",
   "status": "planned",
-  "stage": "inception",
-  "progress": 0,
-  "owner": "美术支持",
-  "collaborators": [],
-  "department": "美术部门",
-  "createdBy": "Claude",
-  "updatedBy": "Claude",
-  "stack": [],
-  "createdAt": "2026-08-06T00:00:00.000Z",
-  "updatedAt": "2026-08-06T00:00:00.000Z",
-  "latestOutput": "",
-  "nextAction": "确定技术方案与架构设计",
-  "blocker": "",
-  "blockerOwner": "",
-  "path": "projects/游戏美术部门AI协作中台",
-  "workflowIds": [],
-  "tags": [
-    "art-pipeline",
-    "ai-collaboration",
-    "asset-management",
-    "game-art",
-    "middle-platform"
-  ],
-  "visibility": "team",
-  "contacts": []
+  "output": "—",
+  "sortOrder": 6
 }

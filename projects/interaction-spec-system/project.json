@@ -1,34 +1,7 @@
 {
-  "id": "interaction-spec-system",
-  "name": "通用竖版手游 UI 设计系统",
-  "description": "面向竖版移动端游戏的通用 UI 设计系统文档、组件详规与可浏览预览页。",
-  "type": "support",
+  "name": "交互规范系统 (interaction-spec-system)",
+  "engine": "TypeScript + HTML/CSS",
   "status": "active",
-  "stage": "specification",
-  "progress": 100,
-  "owner": "美术支持",
-  "collaborators": [],
-  "department": "美术支持",
-  "createdBy": "系统",
-  "updatedBy": "拾一",
-  "stack": [
-    "Markdown",
-    "JSON"
-  ],
-  "createdAt": "2026-08-03T06:01:22.691Z",
-  "updatedAt": "2026-08-06T07:32:57.000Z",
-  "latestOutput": "完成页面内容字段模板（主界面/列表/网格/详情/筛选/弹窗/状态页），覆盖内容字段、必要状态、长文本规则和交付说明",
-  "nextAction": "补充 Figma 组件与变体清单；同步页面内容字段模板与场景模式库至 HTML 预览页",
-  "blocker": "",
-  "blockerOwner": "",
-  "path": "projects/interaction-spec-system",
-  "workflowIds": [],
-  "tags": [
-    "design-system",
-    "mobile-game",
-    "game-ui",
-    "portrait"
-  ],
-  "visibility": "team",
-  "contacts": []
+  "output": "MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成",
+  "sortOrder": 5
 }

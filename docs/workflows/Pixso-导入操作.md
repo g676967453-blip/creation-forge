@@ -1,3 +1,15 @@
+---
+name: Pixso-导入操作
+version: v1
+skill: —
+project: 小红书
+status: mature
+category: 自媒体
+desc: 将 HTML 帖子导入 Pixso 进行设计精调
+steps: 打开 Pixso → 取消画布选中 → code_to_design 导入 HTML → 重命名 frame → 手动调整
+trigger: 纯人工操作，无对应 SKILL
+---
+
 # Pixso 导入操作
 
 > 版本：v1 | 最后更新：2026-07-21 | 对应 SKILL：无（纯人工操作）
