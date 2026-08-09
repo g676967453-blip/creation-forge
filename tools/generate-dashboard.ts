@@ -244,7 +244,7 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 </div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
-<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px;margin-left:6px" title="设置 GitHub Token 以启用网页端任务操作">⚙️ 设置</button></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px;margin-left:6px" title="设置 GitHub Token 以启用网页端任务操作">⚙️ 设置</button></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div style="margin-bottom:8px"><button class="btn" onclick="archiveTasks(this)" style="font-size:11px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档</button></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
@@ -719,6 +719,132 @@ function renderProjectCards(projects) {
       toast('❌ ' + taskId + ' 已取消', 'ok');
       document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable(currentPtFilter);
       refreshTaskCards();
+    }
+  };
+
+  // --- 周度归档 ---
+  window.archiveTasks = async function(btn) {
+    const token = getToken();
+    if (!token) { showTokenSetup(); toast('请先设置 GitHub Token', 'err'); return; }
+    if (!confirm('将当前所有 ✅ 完成 / ❌ 已取消 的任务移至本周归档？')) return;
+    if (btn) { btn.disabled = true; btn.textContent = '归档中...'; }
+
+    const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
+    try {
+      // 1. GET 文件
+      const getRes = await fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
+      if (!getRes.ok) throw new Error('GET failed: ' + getRes.status);
+      const fileData = await getRes.json();
+      const content = fromBase64(fileData.content);
+      const sha = fileData.sha;
+      const CR = String.fromCharCode(13);
+      const NL = String.fromCharCode(10);
+      const lines = content.split(CR).join('').split(NL);
+
+      // 2. 收集已完成/已取消的任务，并移除
+      const archived = [];
+      const newLines = [];
+      let inArchive = false;
+      let inTable = false;
+      let currentCat = '';
+      const today = new Date().toLocaleDateString('zh-CN').split('/').join('-');
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        // 检测进入归档区
+        if (trimmed.startsWith('## 📦')) { inArchive = true; inTable = false; }
+        if (inArchive) { newLines.push(line); continue; }
+
+        // 检测分类标题
+        if (trimmed.startsWith('## ')) { currentCat = trimmed.replace(/^## /, '').trim(); inTable = false; newLines.push(line); continue; }
+
+        // 检测表格开始
+        if (trimmed.match(/^\|[-|\s]+\|$/)) { inTable = true; newLines.push(line); continue; }
+
+        // 表格行
+        if (inTable && trimmed.startsWith('|') && !trimmed.match(/^\|[-|\s]+\|$/)) {
+          const cells = trimmed.split('|').map(c => c.trim()).filter(Boolean);
+          if (cells.length >= 3 && (cells[2].includes('✅') || cells[2].includes('❌'))) {
+            // 归档此行
+            const emoji = currentCat.substring(0, 2); // 取分类 emoji
+            archived.push({ source: emoji + ' ' + currentCat.replace(emoji, '').trim(), id: cells[0], task: cells[1], date: today, result: cells[2] });
+            continue; // 跳过此行（不加入输出）
+          }
+        }
+
+        newLines.push(line);
+      }
+
+      if (archived.length === 0) {
+        if (btn) { btn.disabled = false; btn.textContent = '📦 执行周度归档'; }
+        toast('没有需要归档的任务', '');
+        return;
+      }
+
+      // 3. 生成归档条目，追加到归档区
+      const now = new Date();
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - now.getDay() + 1); // 周一
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6); // 周日
+      const fmt = (d) => (d.getMonth() + 1) + '/' + d.getDate();
+      const weekLabel = '第' + Math.ceil((now.getDate() + (new Date(now.getFullYear(), now.getMonth(), 1).getDay() || 7) - 1) / 7) + '周（' + fmt(weekStart) + ' ~ ' + fmt(weekEnd) + '）';
+
+      // 找到归档区 ## 📦 之后的 ### 或直接追加
+      let archiveIdx = -1;
+      for (let i = 0; i < newLines.length; i++) {
+        if (newLines[i].trim().startsWith('## 📦')) { archiveIdx = i; break; }
+      }
+      if (archiveIdx === -1) {
+        // 没有归档区，创建
+        newLines.push('', '---', '', '## 📦 周度归档', '');
+        archiveIdx = newLines.length - 1;
+      }
+
+      // 检查当前周是否已有归档
+      let weekIdx = -1;
+      for (let i = archiveIdx; i < newLines.length; i++) {
+        if (newLines[i].trim().startsWith('### ') && newLines[i].includes(weekLabel)) {
+          weekIdx = i; break;
+        }
+      }
+
+      if (weekIdx === -1) {
+        // 插入新周
+        const insertAt = archiveIdx + 1;
+        newLines.splice(insertAt, 0, '', '### ' + weekLabel, '', '| 来源 | ID | 任务 | 完成日 | 结果 |', '|------|----|------|--------|------|');
+      }
+
+      // 追加归档条目
+      for (const a of archived) {
+        newLines.push('| ' + a.source + ' | ' + a.id + ' | ' + a.task + ' | ' + a.date + ' | ' + a.result + ' |');
+      }
+
+      const newContent = newLines.join(NL);
+
+      // 4. PUT
+      const putBody = {
+        message: '📦 周度归档 — ' + archived.length + ' 条',
+        content: toBase64(newContent),
+        sha: sha,
+        branch: 'main'
+      };
+      const putRes = await fetch(url, {
+        method: 'PUT',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', Accept: 'application/vnd.github+json' },
+        body: JSON.stringify(putBody)
+      });
+      if (!putRes.ok) throw new Error('PUT failed: ' + putRes.status);
+
+      toast('✅ 已归档 ' + archived.length + ' 条任务', 'ok');
+      if (btn) { btn.disabled = false; btn.textContent = '📦 执行周度归档'; }
+      // 刷新页面以显示最新数据
+      setTimeout(() => location.reload(), 1500);
+    } catch(e) {
+      toast('归档失败: ' + e.message, 'err');
+      if (btn) { btn.disabled = false; btn.textContent = '📦 执行周度归档'; }
     }
   };
 
