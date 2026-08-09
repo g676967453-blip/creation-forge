@@ -735,6 +735,7 @@ function renderProjectCards(projects) {
     document.getElementById('token-setup-row').style.display = 'flex';
     document.getElementById('token-help').style.display = 'block';
   }
+  window.showTokenSetup = showTokenSetup;
 
   function refreshTaskCards() {
     // 简单刷新：重新计算活跃数
