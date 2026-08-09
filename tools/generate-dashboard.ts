@@ -192,6 +192,22 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 .sub-tab.active{color:#ff6b6b;background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25)}
 .sub-count{font-size:10px;color:rgba(255,255,255,.25);margin-left:2px}
 .sub-tab.active .sub-count{color:rgba(255,107,107,.5)}
+
+/* 任务操作按钮 */
+.task-actions{display:flex;gap:4px;white-space:nowrap}
+.task-btn{padding:2px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid transparent;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-family:inherit;transition:all .15s}
+.task-btn:hover{border-color:rgba(255,255,255,.15);color:#fff}
+.task-btn.done:hover{background:rgba(76,175,80,.15);border-color:rgba(76,175,80,.3);color:#4caf50}
+.task-btn.cancel:hover{background:rgba(244,67,54,.12);border-color:rgba(244,67,54,.3);color:#ef5350}
+.task-btn.loading{opacity:.4;pointer-events:none}
+
+/* PAT 设置面板 */
+.token-setup{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(255,107,107,.04);border:1px dashed rgba(255,107,107,.15);border-radius:8px;font-size:12px;color:rgba(255,255,255,.45)}
+.token-setup input{flex:1;padding:6px 10px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#e0e0e0;font-size:12px;font-family:inherit}
+.token-setup button{padding:6px 12px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid rgba(255,107,107,.2);background:rgba(255,107,107,.1);color:#ff6b6b;font-family:inherit;white-space:nowrap}
+.token-setup button:hover{background:rgba(255,107,107,.2)}
+.token-help{font-size:10px;color:rgba(255,255,255,.25);margin-bottom:12px}
+.token-help a{color:rgba(255,255,255,.4)}
 </style>
 </head>
 <body>
@@ -228,7 +244,7 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 </div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
-<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button></div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px;margin-left:6px" title="设置 GitHub Token 以启用网页端任务操作">⚙️ 设置</button></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter')saveToken()"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
@@ -595,6 +611,137 @@ function renderProjectCards(projects) {
 })();
 // 个人待办面板
 (function(){
+  // --- GitHub API 任务操作 ---
+  const REPO = 'g676967453-blip/creation-forge';
+  const FILE_PATH = 'docs/个人待办.md';
+  const STATUS_MAP = { pending: '📋 待办', active: '🟢 进行中', done: '✅ 已完成', cancelled: '❌ 已取消' };
+
+  function getToken() { return localStorage.getItem('gh_pat'); }
+  function hasToken() { return !!getToken(); }
+
+  // 调用 GitHub Contents API 更新任务状态
+  async function updateTaskStatus(taskId, newStatus, newStatusText) {
+    const token = getToken();
+    if (!token) { showTokenSetup(); toast('请先设置 GitHub Token', 'err'); return false; }
+    const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
+    try {
+      // 1. GET 当前文件
+      const getRes = await fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
+      if (!getRes.ok) throw new Error('GET failed: ' + getRes.status);
+      const fileData = await getRes.json();
+      const content = atob(fileData.content);
+      const sha = fileData.sha;
+
+      // 2. 找到任务行并替换状态
+      const lines = content.split('\n');
+      let found = false;
+      for (let i = 0; i < lines.length; i++) {
+        // 匹配表格行: | ID | 任务 | 状态 | ...
+        if (lines[i].indexOf('| ' + taskId + ' |') === 0) {
+          const cells = lines[i].split('|');
+          if (cells.length >= 3) {
+            // cells[2] 是状态列（去掉首尾空白）
+            const oldStatus = cells[2].trim();
+            // 替换整个状态文本
+            lines[i] = lines[i].replace('| ' + oldStatus + ' |', '| ' + newStatusText + ' |');
+            found = true;
+          }
+          break;
+        }
+      }
+      if (!found) { toast('未找到任务 ' + taskId, 'err'); return false; }
+      const newContent = lines.join('\n');
+
+      // 3. PUT 更新
+      const putBody = {
+        message: '✅ ' + taskId + ' → ' + newStatusText + ' [via 仪表盘]',
+        content: btoa(unescape(encodeURIComponent(newContent))),
+        sha: sha,
+        branch: 'main'
+      };
+      const putRes = await fetch(url, {
+        method: 'PUT',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', Accept: 'application/vnd.github+json' },
+        body: JSON.stringify(putBody)
+      });
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        if (putRes.status === 409) { // SHA 冲突，重试一次
+          toast('文件已被修改，正在重试...', '');
+          await new Promise(r => setTimeout(r, 1000));
+          return await updateTaskStatus(taskId, newStatus, newStatusText);
+        }
+        throw new Error(err.message || 'PUT failed: ' + putRes.status);
+      }
+      return true;
+    } catch(e) {
+      toast('操作失败: ' + e.message, 'err');
+      return false;
+    }
+  }
+
+  // TextEncoder replacement for btoa with UTF-8
+  function btoaUTF8(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  window.completeTask = async function(taskId, catKey, btn) {
+    if (btn) { btn.classList.add('loading'); btn.textContent = '...'; }
+    const ok = await updateTaskStatus(taskId, 'done', '✅ 已完成');
+    if (btn) { btn.classList.remove('loading'); btn.textContent = '✓'; }
+    if (ok) {
+      toast('✅ ' + taskId + ' 已完成', 'ok');
+      // 局部刷新
+      document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable(currentPtFilter);
+      // 刷新统计卡片
+      refreshTaskCards();
+    }
+  };
+
+  window.cancelTask = async function(taskId, catKey, btn) {
+    if (!confirm('确认取消 ' + taskId + '？')) return;
+    if (btn) { btn.classList.add('loading'); btn.textContent = '...'; }
+    const ok = await updateTaskStatus(taskId, 'cancelled', '❌ 已取消');
+    if (btn) { btn.classList.remove('loading'); btn.textContent = '✗'; }
+    if (ok) {
+      toast('❌ ' + taskId + ' 已取消', 'ok');
+      document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable(currentPtFilter);
+      refreshTaskCards();
+    }
+  };
+
+  // 保存 Token
+  window.saveToken = function() {
+    const input = document.getElementById('token-input');
+    const val = input.value.trim();
+    if (val) {
+      localStorage.setItem('gh_pat', val);
+      document.getElementById('token-setup-row').style.display = 'none';
+      document.getElementById('token-help').style.display = 'none';
+      toast('✅ Token 已保存', 'ok');
+    }
+  };
+
+  window.clearToken = function() {
+    localStorage.removeItem('gh_pat');
+    document.getElementById('token-setup-row').style.display = 'flex';
+    toast('Token 已清除', '');
+  };
+
+  function showTokenSetup() {
+    document.getElementById('token-setup-row').style.display = 'flex';
+    document.getElementById('token-help').style.display = 'block';
+  }
+
+  function refreshTaskCards() {
+    // 简单刷新：重新计算活跃数
+    var cardsEl = document.getElementById('cards-personal-tasks');
+    var s = D.personalTasks.stats;
+    // 更新全部活跃计数（数据已变，用 DOM 估算）
+    // 这里用简单方式：标记需要刷新，用户下次手动刷新仪表盘即可看到准确数据
+  }
+
+  // --- 个人待办面板渲染 ---
   const PT = D.personalTasks;
   const sm = {pending:'badge-planned',active:'badge-active-task',done:'badge-done',cancelled:'badge-cancelled'};
   const pm = {'🔴 高':'badge-prio-high','🔴高':'badge-prio-high','🟡 中':'badge-prio-mid','🟡中':'badge-prio-mid','🟢 低':'badge-prio-low','🟢低':'badge-prio-low'};
@@ -646,11 +793,21 @@ function renderProjectCards(projects) {
       var cls = e === '高能' ? 'badge-energy-high' : e === '中能' ? 'badge-energy-mid' : 'badge-energy-low';
       return '<span class="badge-energy '+cls+'">'+e+'</span>';
     };
-    return '<table class="tbl"><thead><tr><th>ID</th><th>任务</th><th>状态</th><th>ABC</th><th>能量</th><th>优先级</th><th>截止日</th><th>备注</th></tr></thead><tbody>'+
+    return '<table class="tbl"><thead><tr><th>ID</th><th>任务</th><th>状态</th><th>ABC</th><th>能量</th><th>优先级</th><th>截止日</th><th>备注</th><th>操作</th></tr></thead><tbody>'+
       allRows.map(function(r){
         var t = r.task;
         var dline = t.deadline === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : '<span style="color:#ff6b6b">'+t.deadline+'</span>';
-        return '<tr><td style="color:rgba(255,255,255,.4);font-size:12px">'+t.id+'</td><td>'+t.task+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td>'+abcBadge(t.abc)+'</td><td>'+enBadge(t.energy)+'</td><td><span class="badge '+pmap(t.priority)+'">'+t.priority+'</span></td><td>'+dline+'</td><td style="color:rgba(255,255,255,.35);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+t.note.replace(/"/g,'&quot;')+'">'+t.note+'</td></tr>';
+        // 操作按钮：仅待办/进行中状态显示
+        var actions = '';
+        if (t.status === 'pending' || t.status === 'active') {
+          actions = '<div class="task-actions">'+
+            '<button class="task-btn done" onclick="completeTask(\''+t.id+'\',\''+r.cat.key+'\',this)" title="完成">✓</button>'+
+            '<button class="task-btn cancel" onclick="cancelTask(\''+t.id+'\',\''+r.cat.key+'\',this)" title="取消">✗</button>'+
+          '</div>';
+        } else {
+          actions = '<span style="color:rgba(255,255,255,.15);font-size:11px">—</span>';
+        }
+        return '<tr><td style="color:rgba(255,255,255,.4);font-size:12px">'+t.id+'</td><td>'+t.task+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td>'+abcBadge(t.abc)+'</td><td>'+enBadge(t.energy)+'</td><td><span class="badge '+pmap(t.priority)+'">'+t.priority+'</span></td><td>'+dline+'</td><td style="color:rgba(255,255,255,.35);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+t.note.replace(/"/g,'&quot;')+'">'+t.note+'</td><td>'+actions+'</td></tr>';
       }).join('')+'</tbody></table>';
   }
 
