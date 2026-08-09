@@ -629,7 +629,7 @@ function renderProjectCards(projects) {
       const getRes = await fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
       if (!getRes.ok) throw new Error('GET failed: ' + getRes.status);
       const fileData = await getRes.json();
-      const content = atob(fileData.content);
+      const content = fromBase64(fileData.content);
       const sha = fileData.sha;
 
       // 2. 找到任务行并替换状态
@@ -658,7 +658,7 @@ function renderProjectCards(projects) {
       // 3. PUT 更新
       const putBody = {
         message: '✅ ' + taskId + ' → ' + newStatusText + ' [via 仪表盘]',
-        content: btoa(unescape(encodeURIComponent(newContent))),
+        content: toBase64(newContent),
         sha: sha,
         branch: 'main'
       };
@@ -683,9 +683,18 @@ function renderProjectCards(projects) {
     }
   }
 
-  // TextEncoder replacement for btoa with UTF-8
-  function btoaUTF8(str) {
-    return btoa(unescape(encodeURIComponent(str)));
+  // 正确的 UTF-8 Base64 编解码（兼容中文/emoji）
+  function toBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+  function fromBase64(b64) {
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
   }
 
   window.completeTask = async function(taskId, catKey, btn) {
