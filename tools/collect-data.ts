@@ -290,7 +290,8 @@ export function loadPersonalTasks(): PersonalTasksData {
 
   try {
     const content = fs.readFileSync(filePath, "utf-8");
-    const lines = content.split("\n");
+    // 统一换行符（Windows CRLF → LF），确保跨平台解析一致
+    const lines = content.replace(/\r/g, "").split("\n");
 
     for (const line of lines) {
       const trimmed = line.trim();

@@ -21,7 +21,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     permissions:
-      contents: write
       pages: write
       id-token: write
 
@@ -46,19 +45,6 @@ jobs:
         run: |
           cp reports/造化坊仪表盘.html docs/index.html
           sed -i 's|../docs/workflows/变更日志.md|workflows/变更日志.md|g' docs/index.html
-
-      - name: 提交并推送
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html reports/造化坊仪表盘.html
-          if git diff --staged --quiet; then
-            echo "没有变更，跳过提交"
-          else
-            git commit -m "chore: 仪表盘自动更新 [skip ci]"
-            git pull --rebase origin main
-            git push origin main
-          fi
 
       - name: 配置 Pages
         uses: actions/configure-pages@v4
