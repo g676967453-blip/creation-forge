@@ -17,6 +17,19 @@ export/
 .libtv/
 _*_output/
 
+# 游戏机器人产出文件（流程脚本提交，产出不提交）
+*.apk
+*.mp4
+game-bot/screenshots/
+game-bot/run_*/
+game-bot/ocr/
+game-bot/*.png
+game-bot/*.txt
+!game-bot/game-log.txt
+mumu_auto_*/
+frames/
+.cowork-temp/
+
 # 多 AI 协作锁文件（不提交到仓库）
 .ai-locks/*.lock
 

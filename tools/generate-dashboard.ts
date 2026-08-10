@@ -641,10 +641,11 @@ function renderProjectCards(projects) {
       for (let i = 0; i < lines.length; i++) {
         // 匹配表格行: | ID | 任务 | 状态 | ...
         if (lines[i].indexOf('| ' + taskId + ' |') === 0) {
-          const cells = lines[i].split('|');
+          // split('|') 首元素为空（行首是 |），需 filter(Boolean) 修正索引
+          const cells = lines[i].split('|').map(function(c){return c.trim();}).filter(Boolean);
           if (cells.length >= 3) {
-            // cells[2] 是状态列（去掉首尾空白）
-            const oldStatus = cells[2].trim();
+            // cells[2] 是状态列（0=ID, 1=任务, 2=状态）
+            const oldStatus = cells[2];
             // 替换整个状态文本
             lines[i] = lines[i].replace('| ' + oldStatus + ' |', '| ' + newStatusText + ' |');
             found = true;

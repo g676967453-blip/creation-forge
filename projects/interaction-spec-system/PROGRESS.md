@@ -46,7 +46,7 @@ interaction-spec-system/
 3. 已完成 [工程资源命名与导出规范](docs/engineering/export-and-naming.md)
 4. 已完成 [游戏场景界面模式库](docs/game-screen-patterns.md)（2026-08-06，基于上线产品界面分析抽象 8 场景 + 11 复合组件）
 5. 已完成 [页面内容字段模板](docs/page-content-templates.md)（2026-08-06，覆盖主界面 / 列表 / 网格 / 详情 / 筛选 / 弹窗 / 状态页）
-6. 下一步补 [Figma 组件与变体清单](docs/figma/component-inventory.md)；场景模式库与页面内容字段模板待同步至 HTML 预览页
+6. 下一步补 [Figma 组件与变体清单](docs/figma/component-inventory.md)；场景模式库与卡牌组件已同步至 HTML 预览页（2026-08-06，新增「05+ 场景模式」「05++ 卡牌组件」两个页签），页面内容字段模板待同步
 
 ## 核心文件说明
 

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本周AI如何做游戏设计系统踩坑记录 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; text-align: right; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #a855f7; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  .punch { font-size: 24px; font-weight: 700; line-height: 1.5; text-align: center; }
+
+  /* === Card 1: Cover === */
+  .card-1 .emoji { font-size: 56px; margin-bottom: 25px; text-align: center; }
+  .card-1 h1 { font-size: 44px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; letter-spacing: 2px; text-align: center; }
+  .card-1 h1 .highlight { color: var(--accent); }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 1.9; text-align: center; }
+
+  /* === Card 2: Pit 1-2 === */
+  .card-2 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-2 h2 .highlight { color: var(--accent); }
+  .card-2 .pit-block { width: 100%; display: flex; flex-direction: column; gap: 28px; }
+  .card-2 .pit-item { padding: 24px 30px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+  .card-2 .pit-item .p-label { font-size: 16px; color: var(--accent); letter-spacing: 3px; margin-bottom: 10px; text-align: left; }
+  .card-2 .pit-item .p-title { font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.85); margin-bottom: 10px; text-align: left; }
+  .card-2 .pit-item .p-desc { font-size: 19px; color: rgba(255,255,255,0.50); line-height: 1.7; text-align: left; }
+  .card-2 .pit-item .p-desc b { color: rgba(255,255,255,0.75); }
+  /* Table in Card 2 */
+  .card-2 .vs-table { width: 100%; margin-top: 24px; border-collapse: collapse; text-align: left; }
+  .card-2 .vs-table th { font-size: 17px; color: rgba(255,255,255,0.80); padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: left; font-weight: 700; }
+  .card-2 .vs-table th:first-child { color: var(--accent); }
+  .card-2 .vs-table th:last-child { color: #f0a040; }
+  .card-2 .vs-table td { font-size: 17px; color: rgba(255,255,255,0.50); padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); text-align: left; }
+  .card-2 .vs-table td:last-child { color: rgba(255,255,255,0.65); }
+  .card-2 .punch { color: var(--accent); margin-top: 16px; }
+
+  /* === Card 3: Pit 3-4 === */
+  .card-3 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-3 h2 .highlight { color: var(--accent); }
+  .card-3 .agent-row { width: 100%; display: flex; gap: 18px; margin-bottom: 30px; }
+  .card-3 .agent-card { flex: 1; border-radius: 12px; padding: 22px 20px; text-align: left; background: rgba(255,255,255,0.02); border: 1px solid rgba(168,85,247,0.12); }
+  .card-3 .agent-card .a-name { font-size: 20px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-align: left; }
+  .card-3 .agent-card .a-good { font-size: 16px; color: rgba(255,255,255,0.60); line-height: 1.6; text-align: left; }
+  .card-3 .agent-card .a-bad { font-size: 16px; color: rgba(255,255,255,0.35); line-height: 1.6; text-align: left; }
+  .card-3 .agent-card .a-good::before { content: "✓ "; color: #4ade80; }
+  .card-3 .agent-card .a-bad::before { content: "✗ "; color: #f87171; }
+  .card-3 .pit-item { width: 100%; padding: 24px 30px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+  .card-3 .pit-item .p-label { font-size: 16px; color: var(--accent); letter-spacing: 3px; margin-bottom: 10px; text-align: left; }
+  .card-3 .pit-item .p-title { font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.85); margin-bottom: 10px; text-align: left; }
+  .card-3 .pit-item .p-desc { font-size: 19px; color: rgba(255,255,255,0.50); line-height: 1.7; text-align: left; }
+  .card-3 .pit-item .p-desc b { color: rgba(255,255,255,0.75); }
+  .card-3 .order-compare { width: 100%; display: flex; gap: 18px; margin-top: 20px; }
+  .card-3 .order-compare .oc { flex: 1; border-radius: 12px; padding: 20px; text-align: center; }
+  .card-3 .order-compare .oc.bad { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15); }
+  .card-3 .order-compare .oc.good { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.15); }
+  .card-3 .order-compare .oc .o-label { font-size: 28px; margin-bottom: 10px; text-align: center; }
+  .card-3 .order-compare .oc .o-text { font-size: 17px; color: rgba(255,255,255,0.50); line-height: 1.6; text-align: center; }
+  .card-3 .order-compare .oc .o-text b { color: rgba(255,255,255,0.75); }
+
+  /* === Card 4: Reflections === */
+  .card-4 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-4 h2 .highlight { color: var(--accent); }
+  .card-4 .reflect-grid { width: 100%; display: flex; flex-direction: column; gap: 18px; }
+  .card-4 .r-item { display: flex; align-items: flex-start; gap: 18px; padding: 20px 26px; border-radius: 10px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-4 .r-item .r-num { font-size: 28px; font-weight: 900; color: var(--accent); flex-shrink: 0; width: 40px; text-align: center; }
+  .card-4 .r-item .r-body { text-align: left; }
+  .card-4 .r-item .r-title { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.85); margin-bottom: 6px; text-align: left; }
+  .card-4 .r-item .r-desc { font-size: 17px; color: rgba(255,255,255,0.45); line-height: 1.6; text-align: left; }
+  .card-4 .r-item .r-desc b { color: rgba(255,255,255,0.70); }
+
+  /* === Card 5: Outputs === */
+  .card-5 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-5 h2 .highlight { color: var(--accent); }
+  .card-5 .output-grid { width: 100%; display: flex; flex-direction: column; gap: 18px; }
+  .card-5 .o-item { display: flex; align-items: center; gap: 20px; padding: 20px 28px; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); text-align: left; }
+  .card-5 .o-item .o-icon { font-size: 26px; flex-shrink: 0; text-align: center; width: 40px; }
+  .card-5 .o-item .o-name { font-size: 19px; font-weight: 700; color: rgba(255,255,255,0.85); flex-shrink: 0; min-width: 140px; text-align: left; }
+  .card-5 .o-item .o-desc { font-size: 17px; color: rgba(255,255,255,0.45); line-height: 1.6; text-align: left; }
+  .card-5 .o-item .o-desc b { color: rgba(255,255,255,0.65); }
+  .card-5 .punch { color: var(--accent); margin-top: 28px; }
+
+  /* === Card 6: CTA === */
+  .card-6 h2 { font-size: 44px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; }
+  .card-6 h2 .highlight { color: var(--accent); }
+  .card-6 .cta-body { font-size: 24px; line-height: 2.4; color: rgba(255,255,255,0.55); margin-bottom: 50px; text-align: center; }
+  .card-6 .cta-body .search-hint { display: inline-block; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.15); border-radius: 8px; padding: 6px 18px; color: var(--accent); font-weight: 700; font-size: 22px; margin: 4px 8px; vertical-align: middle; text-align: center; white-space: nowrap; }
+  .card-6 .cta-body .search-line { display: block; margin-bottom: 14px; text-align: center; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 — 目标 + 标题 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🕳️</div>
+  <h1>本周AI如何做<br><span class="highlight">游戏设计系统</span><br>踩坑记录</h1>
+  <p class="subtitle">
+    初衷很简单<br>
+    统一策划案原型图的设计规范<br>
+    为「原型图 → 效果图」做衔接<br><br>
+    换了三个Agent，踩了四个坑<br>
+    才搞明白问题出在哪
+  </p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 坑1 + 坑2 — 期望一口气 + AI默认APP -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">🕳️ 坑 ①</div>
+  <h2>期望一口气给周全<br><span class="highlight">结果方向就错了</span></h2>
+  <div class="pit-block">
+    <div class="pit-item">
+      <div class="p-label">坑 1</div>
+      <div class="p-title">「帮我做一套游戏设计系统」——我又犯了</div>
+      <div class="p-desc">AI给了717行HTML预览页，什么都有。但<b>没有先定义边界</b>——我要的是游戏HUD规范，AI给的是APP页面规范。方向错了，越周全越没用。</div>
+    </div>
+    <div class="pit-item">
+      <div class="p-label">坑 2</div>
+      <div class="p-title">AI默认输出的是APP设计系统</div>
+      <div class="p-desc">不是AI不聪明——是训练数据里APP比游戏多100倍，它默认走熟路：</div>
+    </div>
+  </div>
+  <table class="vs-table">
+    <tr><th>❌ APP设计系统</th><th>✅ 游戏设计系统</th></tr>
+    <tr><td>品牌色</td><td>稀有度色阶（白/绿/蓝/紫/橙）</td></tr>
+    <tr><td>操作按钮（确认/取消）</td><td>游戏按钮（升级/升星/领取/前往）</td></tr>
+    <tr><td>页面跳转流</td><td>HUD叠层 + 弹窗</td></tr>
+    <tr><td>列表 + Tab</td><td>卡牌网格 + 底部导航</td></tr>
+  </table>
+  <p class="punch">AI能替你填满100个未说出口的决策——但填的方向不一定是你要的</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 坑3 + 坑4 — 多Agent断层 + 顺序反了 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">🕳️ 坑 ②</div>
+  <h2>多Agent切换<span class="highlight">理解断层</span><br>顺序反了效率全无</h2>
+
+  <div class="agent-row">
+    <div class="agent-card">
+      <div class="a-name">TREA</div>
+      <div class="a-good">理解游戏需求，比较周全</div>
+      <div class="a-bad">视觉产出弱</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-name">Codex</div>
+      <div class="a-good">HTML视觉效果出彩</div>
+      <div class="a-bad">理解不周全，偏向APP</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-name">Claude</div>
+      <div class="a-good">统一基线，拆分交付物</div>
+      <div class="a-bad">需要前两个Agent的产出做输入</div>
+    </div>
+  </div>
+
+  <div class="pit-item" style="margin-bottom: 10px;">
+    <div class="p-label">坑 3</div>
+    <div class="p-title">换AI不能换方向——但我没有基线文档给下一个Agent看</div>
+    <div class="p-desc">每个Agent擅长的东西不一样，<b>不是谁更强，是怎么组合</b></div>
+  </div>
+
+  <div class="pit-item">
+    <div class="p-label">坑 4</div>
+    <div class="p-title">先做HTML后写MD，顺序反了</div>
+  </div>
+
+  <div class="order-compare">
+    <div class="oc bad">
+      <div class="o-label">❌</div>
+      <div class="o-text">直接写HTML<br><b>好看但结构散</b></div>
+    </div>
+    <div class="oc good">
+      <div class="o-label">✅</div>
+      <div class="o-text">先MD定义结构<br><b>再HTML排版视觉</b></div>
+    </div>
+  </div>
+
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 四条反思 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">💡 反思</div>
+  <h2>不是AI不够强<br><span class="highlight">是我总想跳过「想清楚」</span></h2>
+  <div class="reflect-grid">
+    <div class="r-item">
+      <div class="r-num">1</div>
+      <div class="r-body">
+        <div class="r-title">期望管理：AI不能替你「想清楚」</div>
+        <div class="r-desc">「帮我做一套设计系统」包含了100个未说出口的决策。<b>定义边界这件事，省不了。</b></div>
+      </div>
+    </div>
+    <div class="r-item">
+      <div class="r-num">2</div>
+      <div class="r-body">
+        <div class="r-title">多AI脑暴：各取所长，合并周全</div>
+        <div class="r-desc">单个Agent有盲区，三个Agent各跑一遍——<b>TREA周全、Codex视觉、Claude统一</b>，拼起来才完整。</div>
+      </div>
+    </div>
+    <div class="r-item">
+      <div class="r-num">3</div>
+      <div class="r-body">
+        <div class="r-title">MD先于HTML：结构清晰了，视觉才有根</div>
+        <div class="r-desc">先MD定义边界和结构 → 再HTML排版 → 锁定基线。<b>顺序一换，效率完全不同。</b></div>
+      </div>
+    </div>
+    <div class="r-item">
+      <div class="r-num">4</div>
+      <div class="r-body">
+        <div class="r-title">游戏设计系统 ≠ APP设计系统</div>
+        <div class="r-desc">下次第一句话不是「帮我做设计系统」，而是<b>「用稀有度色阶替代品牌色，用HUD替代页面流」</b>。</div>
+      </div>
+    </div>
+  </div>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 产出记录 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">📦 产出</div>
+  <h2>踩完坑之后<br><span class="highlight">实际交付了什么</span></h2>
+  <div class="output-grid">
+    <div class="o-item">
+      <div class="o-icon">🧩</div>
+      <div class="o-name">设计系统</div>
+      <div class="o-desc">Design Tokens / 稀有度色阶 / 动效变量 / 按钮层级 / 出图规范</div>
+    </div>
+    <div class="o-item">
+      <div class="o-icon">📱</div>
+      <div class="o-name">交互原型</div>
+      <div class="o-desc">手机框模拟 + HUD / 稀有度组件演示 / 可交互验证</div>
+    </div>
+  </div>
+  <p class="punch">v1.0：设计系统定义规则，交互原型验证规则</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>你的AI<br>是不是也在给你<br><span class="highlight">APP思维？</span></h2>
+  <div class="cta-body">
+    <span class="search-line">让AI做游戏设计系统之前，先告诉它：</span>
+    <span class="search-line">
+      <span class="search-hint">稀有度色阶</span> 替代 <span class="search-hint">品牌色</span>
+    </span>
+    <span class="search-line">
+      <span class="search-hint">HUD叠层</span> 替代 <span class="search-hint">页面流</span>
+    </span>
+    <span class="search-line">
+      <span class="search-hint">升级按钮</span> 替代 <span class="search-hint">操作按钮</span>
+    </span>
+    <br>
+    MD先写清楚，HTML才做得好看<br>
+    顺序不能反
+  </div>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

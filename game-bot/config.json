@@ -1,0 +1,31 @@
+{
+  "game": {
+    "name": "点兵成将",
+    "package": "com.yk.zjsg2",
+    "activity": "com.unity3d.player.UnityPlayerActivity",
+    "candidates": [
+      { "pkg": "com.yk.zjsg2", "act": "com.unity3d.player.UnityPlayerActivity" },
+      { "pkg": "com.zszz.tt11", "act": "com.fastsdk.bridge.FastUnityContext" },
+      { "pkg": "com.Youkia.zhjh5", "act": "com.unity3d.player.UnityPlayerActivity" },
+      { "pkg": "com.rk.qyzjdfw", "act": "com.fastsdk.bridge.FastUnityContext" }
+    ]
+  },
+  "mumu": {
+    "cli": "G:/MuMu Player 12/nx_main/mumu-cli.exe",
+    "adbExe": "G:/MuMu Player 12/nx_main/adb.exe",
+    "vmIndex": 1,
+    "adbHost": "127.0.0.1",
+    "adbPort": 16416
+  },
+  "obs": {
+    "wsUrl": "ws://127.0.0.1:4455",
+    "password": "CWhgJ6SPnBeFY3yt"
+  },
+  "loop": {
+    "intervalMs": 3000,
+    "screenshotDir": "J:/ceshi/game-bot/screenshots",
+    "ocrOutDir": "J:/ceshi/game-bot/ocr",
+    "logFile": "J:/ceshi/game-bot/game-log.txt",
+    "maxIterations": 0
+  }
+}
