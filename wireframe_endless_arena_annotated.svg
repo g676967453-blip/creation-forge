@@ -1,0 +1,292 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 860" width="760" height="860" style="background:#fff;font-family:Arial,sans-serif;">
+  <!-- 外框 -->
+  <rect x="10" y="10" width="380" height="760" rx="20" ry="20" fill="none" stroke="#000" stroke-width="2"/>
+
+  <!-- 顶部标题栏 -->
+  <rect x="10" y="10" width="380" height="55" rx="20" ry="20" fill="none" stroke="#000" stroke-width="2"/>
+  <path d="M20 45 L35 30 L50 45" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="200" y="45" text-anchor="middle" font-size="18" font-weight="bold" fill="#000">无尽斗场</text>
+  <circle cx="280" cy="38" r="8" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="280" y="42" text-anchor="middle" font-size="10" fill="#000">i</text>
+  <rect x="335" y="25" width="28" height="28" rx="4" fill="none" stroke="#000" stroke-width="1.5"/>
+  <path d="M349 32 L349 46 M342 38 L356 38" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="349" y="58" text-anchor="middle" font-size="9" fill="#000">排行榜</text>
+
+  <!-- 信息条 -->
+  <rect x="30" y="75" width="120" height="22" rx="11" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="90" y="90" text-anchor="middle" font-size="11" fill="#000">2天17小时后结束</text>
+  <rect x="165" y="75" width="80" height="22" rx="11" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="205" y="90" text-anchor="middle" font-size="11" fill="#000">Lvl 240</text>
+  <rect x="255" y="75" width="60" height="22" rx="11" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="285" y="90" text-anchor="middle" font-size="11" fill="#000">传说</text>
+
+  <!-- 积分区 -->
+  <rect x="30" y="110" width="340" height="90" rx="12" fill="none" stroke="#000" stroke-width="2"/>
+  <circle cx="75" cy="145" r="22" fill="none" stroke="#000" stroke-width="2"/>
+  <text x="75" y="151" text-anchor="middle" font-size="20" font-weight="bold" fill="#000">0</text>
+  <text x="75" y="180" text-anchor="middle" font-size="10" fill="#000">当前积分</text>
+
+  <!-- 进度条 -->
+  <line x1="120" y1="145" x2="360" y2="145" stroke="#000" stroke-width="3"/>
+  <circle cx="150" cy="145" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <text x="150" y="165" text-anchor="middle" font-size="9" fill="#000">200</text>
+  <circle cx="210" cy="145" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <text x="210" y="165" text-anchor="middle" font-size="9" fill="#000">400</text>
+  <circle cx="270" cy="145" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <text x="270" y="165" text-anchor="middle" font-size="9" fill="#000">600</text>
+  <circle cx="330" cy="145" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <text x="330" y="165" text-anchor="middle" font-size="9" fill="#000">800</text>
+  <circle cx="360" cy="145" r="5" fill="#fff" stroke="#000" stroke-width="1.5"/>
+  <text x="360" y="165" text-anchor="middle" font-size="9" fill="#000">1000</text>
+
+  <!-- 奖励图标 -->
+  <g transform="translate(135,110)">
+    <rect x="0" y="0" width="35" height="30" rx="4" fill="none" stroke="#000" stroke-width="1.5"/>
+    <path d="M17 8 L12 18 L22 18 Z" fill="none" stroke="#000" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(195,110)">
+    <rect x="0" y="0" width="35" height="30" rx="4" fill="none" stroke="#000" stroke-width="1.5"/>
+    <path d="M17 8 L12 18 L22 18 Z" fill="none" stroke="#000" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(255,110)">
+    <rect x="0" y="0" width="35" height="30" rx="4" fill="none" stroke="#000" stroke-width="1.5"/>
+    <path d="M17 8 L12 18 L22 18 Z" fill="none" stroke="#000" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(315,110)">
+    <rect x="0" y="0" width="35" height="30" rx="4" fill="none" stroke="#000" stroke-width="1.5"/>
+    <path d="M17 8 L12 18 L22 18 Z" fill="none" stroke="#000" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(360,110)">
+    <rect x="0" y="0" width="35" height="30" rx="4" fill="none" stroke="#000" stroke-width="1.5"/>
+    <path d="M17 8 L12 18 L22 18 Z" fill="none" stroke="#000" stroke-width="1.5"/>
+  </g>
+
+  <!-- Tab 切换 -->
+  <rect x="30" y="215" width="340" height="45" rx="12" fill="none" stroke="#000" stroke-width="2"/>
+  <rect x="45" y="222" width="125" height="32" rx="8" fill="none" stroke="#000" stroke-width="2"/>
+  <text x="107" y="242" text-anchor="middle" font-size="14" font-weight="bold" fill="#000">斗场</text>
+  <text x="277" y="242" text-anchor="middle" font-size="14" fill="#000">任务</text>
+  <circle cx="350" cy="225" r="7" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="350" y="229" text-anchor="middle" font-size="8" fill="#000">!</text>
+
+  <!-- 斗场卡片区 -->
+  <g transform="translate(25,275)">
+    <!-- 卡片1 -->
+    <rect x="0" y="0" width="108" height="320" rx="12" fill="none" stroke="#000" stroke-width="2"/>
+    <circle cx="88" y="20" r="8" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="88" y="24" text-anchor="middle" font-size="10" fill="#000">i</text>
+    <rect x="14" y="45" width="80" height="110" rx="8" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="54" y="175" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">斗场1</text>
+    <text x="54" y="192" text-anchor="middle" font-size="10" fill="#000">开放中</text>
+    <rect x="20" y="205" width="68" height="26" rx="13" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="54" y="222" text-anchor="middle" font-size="12" fill="#000">普通</text>
+    <path d="M82 215 L88 222 L82 229" fill="none" stroke="#000" stroke-width="1.5"/>
+    <rect x="14" y="250" width="80" height="45" rx="8" fill="none" stroke="#000" stroke-width="2"/>
+    <text x="54" y="278" text-anchor="middle" font-size="14" font-weight="bold" fill="#000">挑战</text>
+
+    <!-- 卡片2 -->
+    <rect x="126" y="0" width="108" height="320" rx="12" fill="none" stroke="#000" stroke-width="2"/>
+    <circle cx="214" y="20" r="8" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="214" y="24" text-anchor="middle" font-size="10" fill="#000">i</text>
+    <rect x="140" y="45" width="80" height="110" rx="8" fill="none" stroke="#000" stroke-width="1.5"/>
+    <rect x="150" y="115" width="60" height="20" rx="4" fill="none" stroke="#000" stroke-width="1"/>
+    <text x="180" y="128" text-anchor="middle" font-size="9" fill="#000">锋刀</text>
+    <text x="180" y="175" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">斗场2</text>
+    <text x="180" y="192" text-anchor="middle" font-size="10" fill="#000">开放中</text>
+    <rect x="146" y="205" width="68" height="26" rx="13" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="180" y="222" text-anchor="middle" font-size="12" fill="#000">无尽</text>
+    <path d="M208 215 L214 222 L208 229" fill="none" stroke="#000" stroke-width="1.5"/>
+    <rect x="140" y="250" width="80" height="45" rx="8" fill="none" stroke="#000" stroke-width="2"/>
+    <text x="180" y="278" text-anchor="middle" font-size="14" font-weight="bold" fill="#000">挑战</text>
+
+    <!-- 卡片3 -->
+    <rect x="252" y="0" width="108" height="320" rx="12" fill="none" stroke="#000" stroke-width="2"/>
+    <circle cx="340" y="20" r="8" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="340" y="24" text-anchor="middle" font-size="10" fill="#000">i</text>
+    <rect x="266" y="45" width="80" height="110" rx="8" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="306" y="175" text-anchor="middle" font-size="16" font-weight="bold" fill="#000">斗场3</text>
+    <text x="306" y="192" text-anchor="middle" font-size="10" fill="#000">开放中</text>
+    <rect x="272" y="205" width="68" height="26" rx="13" fill="none" stroke="#000" stroke-width="1.5"/>
+    <text x="306" y="222" text-anchor="middle" font-size="12" fill="#000">普通</text>
+    <path d="M334 215 L340 222 L334 229" fill="none" stroke="#000" stroke-width="1.5"/>
+    <rect x="266" y="250" width="80" height="45" rx="8" fill="none" stroke="#000" stroke-width="2"/>
+    <text x="306" y="278" text-anchor="middle" font-size="14" font-weight="bold" fill="#000">挑战</text>
+  </g>
+
+  <!-- 底部导航 -->
+  <rect x="10" y="700" width="380" height="70" rx="20" ry="20" fill="none" stroke="#000" stroke-width="2"/>
+  <rect x="25" y="710" width="50" height="50" rx="10" fill="none" stroke="#000" stroke-width="1.5"/>
+  <path d="M50 725 L38 737 L62 737 Z" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="95" y="710" width="70" height="50" rx="8" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="130" y="740" text-anchor="middle" font-size="10" fill="#000">启程之礼</text>
+  <circle cx="150" cy="715" r="6" fill="none" stroke="#000" stroke-width="1"/>
+  <text x="150" y="718" text-anchor="middle" font-size="6" fill="#000">!</text>
+
+  <rect x="165" y="705" width="70" height="55" rx="8" fill="none" stroke="#000" stroke-width="2"/>
+  <text x="200" y="740" text-anchor="middle" font-size="10" font-weight="bold" fill="#000">无尽斗场</text>
+  <circle cx="220" cy="712" r="6" fill="none" stroke="#000" stroke-width="1"/>
+  <text x="220" y="715" text-anchor="middle" font-size="6" fill="#000">!</text>
+
+  <rect x="235" y="710" width="70" height="50" rx="8" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="270" y="740" text-anchor="middle" font-size="10" fill="#000">回声之礼</text>
+  <circle cx="290" cy="715" r="6" fill="none" stroke="#000" stroke-width="1"/>
+  <text x="290" y="718" text-anchor="middle" font-size="6" fill="#000">!</text>
+
+  <rect x="310" y="710" width="70" height="50" rx="8" fill="none" stroke="#000" stroke-width="1.5"/>
+  <text x="345" y="740" text-anchor="middle" font-size="10" fill="#000">...</text>
+
+  <!-- ==================== 注释标注区 ==================== -->
+  <text x="410" y="30" font-size="16" font-weight="bold" fill="#000">功能模块说明</text>
+  <line x1="410" y1="38" x2="730" y2="38" stroke="#000" stroke-width="1"/>
+
+  <!-- 标注项：带编号圆圈 + 说明文字 + 引线 -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8" fill="#000"/>
+    </marker>
+  </defs>
+
+  <!-- 1 返回 -->
+  <g transform="translate(410,55)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">1</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">返回按钮</text>
+    <text x="28" y="24" font-size="9" fill="#000">返回上一级界面</text>
+  </g>
+  <line x1="420" y1="65" x2="55" y2="38" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 2 标题 -->
+  <g transform="translate(410,95)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">2</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">玩法标题</text>
+    <text x="28" y="24" font-size="9" fill="#000">当前活动名称：无尽斗场</text>
+  </g>
+  <line x1="420" y1="105" x2="200" y2="45" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 3 规则 -->
+  <g transform="translate(410,135)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">3</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">规则说明</text>
+    <text x="28" y="24" font-size="9" fill="#000">查看玩法规则、积分规则</text>
+  </g>
+  <line x1="420" y1="145" x2="288" y2="42" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 4 排行榜 -->
+  <g transform="translate(410,175)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">4</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">排行榜</text>
+    <text x="28" y="24" font-size="9" fill="#000">查看全服/好友排名与奖励</text>
+  </g>
+  <line x1="420" y1="185" x2="349" y2="40" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 5 倒计时 -->
+  <g transform="translate(410,215)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">5</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">活动倒计时</text>
+    <text x="28" y="24" font-size="9" fill="#000">限时活动剩余时间</text>
+  </g>
+  <line x1="420" y1="225" x2="90" y2="88" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 6 等级段位 -->
+  <g transform="translate(410,255)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">6</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">玩家实力展示</text>
+    <text x="28" y="24" font-size="9" fill="#000">等级 Lvl 240 / 段位 传说</text>
+  </g>
+  <line x1="420" y1="265" x2="250" y2="88" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 7 当前积分 -->
+  <g transform="translate(410,295)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">7</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">当前积分</text>
+    <text x="28" y="24" font-size="9" fill="#000">本活动累计获得积分</text>
+  </g>
+  <line x1="420" y1="305" x2="75" y2="150" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 8 里程碑 -->
+  <g transform="translate(410,335)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">8</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">积分里程碑</text>
+    <text x="28" y="24" font-size="9" fill="#000">达到节点解锁对应奖励</text>
+  </g>
+  <line x1="420" y1="345" x2="240" y2="150" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 9 奖励 -->
+  <g transform="translate(410,375)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">9</text>
+    <text x="28" y="9" font-size="11" font-weight="bold" fill="#000">阶段奖励</text>
+    <text x="28" y="24" font-size="9" fill="#000">点击领取已达标的奖励</text>
+  </g>
+  <line x1="420" y1="385" x2="340" y2="130" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 10 Tab -->
+  <g transform="translate(410,415)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">10</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">Tab 切换</text>
+    <text x="32" y="24" font-size="9" fill="#000">斗场列表 / 任务列表</text>
+  </g>
+  <line x1="420" y1="425" x2="170" y2="238" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 11 红点 -->
+  <g transform="translate(410,455)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">11</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">奖励提醒</text>
+    <text x="32" y="24" font-size="9" fill="#000">有可领取奖励/未完成任务</text>
+  </g>
+  <line x1="420" y1="465" x2="350" y2="225" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 12 卡片 -->
+  <g transform="translate(410,495)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">12</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">斗场选择卡片</text>
+    <text x="32" y="24" font-size="9" fill="#000">选择不同斗场进行挑战</text>
+  </g>
+  <line x1="420" y1="505" x2="160" y2="435" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 13 难度 -->
+  <g transform="translate(410,535)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">13</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">难度模式</text>
+    <text x="32" y="24" font-size="9" fill="#000">普通 / 无尽 / 其他模式</text>
+  </g>
+  <line x1="420" y1="545" x2="180" y2="500" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 14 挑战 -->
+  <g transform="translate(410,575)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">14</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">挑战入口</text>
+    <text x="32" y="24" font-size="9" fill="#000">点击进入战斗准备/战斗</text>
+  </g>
+  <line x1="420" y1="585" x2="180" y2="555" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 15 底部导航 -->
+  <g transform="translate(410,615)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">15</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">活动导航栏</text>
+    <text x="32" y="24" font-size="9" fill="#000">快速切换本期各活动入口</text>
+  </g>
+  <line x1="420" y1="625" x2="300" y2="735" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- 16 当前高亮 -->
+  <g transform="translate(410,655)">
+    <circle cx="10" cy="10" r="10" fill="#fff" stroke="#000" stroke-width="1.5"/>
+    <text x="10" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#000">16</text>
+    <text x="32" y="9" font-size="11" font-weight="bold" fill="#000">当前活动高亮</text>
+    <text x="32" y="24" font-size="9" fill="#000">标识当前所在活动页面</text>
+  </g>
+  <line x1="420" y1="665" x2="200" y2="735" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+</svg>

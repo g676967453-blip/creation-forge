@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI绘画提示词方法论 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; text-align: right; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #8b5cf6; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  .punch { font-size: 24px; font-weight: 700; line-height: 1.5; text-align: center; }
+
+  /* === Card 1: Cover === */
+  .card-1 .emoji { font-size: 56px; margin-bottom: 25px; text-align: center; }
+  .card-1 h1 { font-size: 44px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; letter-spacing: 2px; text-align: center; }
+  .card-1 h1 .highlight { color: var(--accent); }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 1.9; text-align: center; }
+
+  /* === Card 2: Pain Point === */
+  .card-2 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-2 h2 .highlight { color: var(--accent); }
+  .card-2 .compare-row { width: 100%; display: flex; gap: 20px; margin-bottom: 24px; }
+  .card-2 .compare-col { flex: 1; border-radius: 12px; padding: 24px 20px; text-align: center; }
+  .card-2 .compare-col.bad { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15); }
+  .card-2 .compare-col .c-label { font-size: 26px; margin-bottom: 12px; text-align: center; }
+  .card-2 .compare-col .c-desc { font-size: 17px; color: rgba(255,255,255,0.50); line-height: 1.7; text-align: left; }
+  .card-2 .compare-col .c-desc b { color: rgba(255,255,255,0.75); }
+  .card-2 .var-box { width: 100%; padding: 20px 28px; border-radius: 10px; background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.15); margin-top: 10px; text-align: center; }
+  .card-2 .var-box .v-title { font-size: 18px; color: var(--accent); letter-spacing: 3px; margin-bottom: 8px; text-align: center; }
+  .card-2 .var-box .v-text { font-size: 19px; color: rgba(255,255,255,0.55); line-height: 1.6; text-align: center; }
+  .card-2 .var-box .v-text b { color: rgba(255,255,255,0.80); }
+
+  /* === Card 3: Method === */
+  .card-3 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-3 h2 .highlight { color: var(--accent); }
+  .card-3 .formula { font-size: 30px; font-weight: 800; color: var(--accent); margin-bottom: 30px; text-align: center; letter-spacing: 1px; line-height: 1.6; }
+  .card-3 .insight-grid { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .card-3 .i-item { display: flex; align-items: flex-start; gap: 16px; padding: 18px 24px; border-radius: 10px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-3 .i-item .i-icon { font-size: 24px; flex-shrink: 0; text-align: center; width: 36px; }
+  .card-3 .i-item .i-body { text-align: left; }
+  .card-3 .i-item .i-title { font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.80); margin-bottom: 4px; text-align: left; }
+  .card-3 .i-item .i-desc { font-size: 16px; color: rgba(255,255,255,0.45); line-height: 1.5; text-align: left; }
+  .card-3 .punch { color: var(--accent); margin-top: 24px; }
+
+  /* === Card 4: Process === */
+  .card-4 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-4 h2 .highlight { color: var(--accent); }
+  .card-4 .round-grid { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+  .card-4 .r-item { display: flex; align-items: center; gap: 16px; padding: 16px 22px; border-radius: 8px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-4 .r-item .r-tag { font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 4px; flex-shrink: 0; text-align: center; min-width: 48px; }
+  .card-4 .r-item .r-tag.fail { background: rgba(248,113,113,0.15); color: #f87171; }
+  .card-4 .r-item .r-tag.warn { background: rgba(240,160,64,0.15); color: #f0a040; }
+  .card-4 .r-item .r-tag.pass { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .card-4 .r-item .r-text { font-size: 17px; color: rgba(255,255,255,0.55); line-height: 1.5; text-align: left; }
+  .card-4 .r-item .r-text b { color: rgba(255,255,255,0.80); }
+  .card-4 .template-box { width: 100%; margin-top: 24px; padding: 22px 28px; border-radius: 10px; background: rgba(139,92,246,0.05); border: 1px solid rgba(139,92,246,0.12); text-align: left; }
+  .card-4 .template-box .t-label { font-size: 16px; color: var(--accent); letter-spacing: 3px; margin-bottom: 10px; text-align: left; }
+  .card-4 .template-box .t-text { font-size: 16px; color: rgba(255,255,255,0.50); line-height: 1.8; font-family: "SF Mono", "Consolas", "Courier New", monospace; text-align: left; }
+  .card-4 .template-box .t-text b { color: rgba(255,255,255,0.75); }
+
+  /* === Card 5: Insights === */
+  .card-5 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-5 h2 .highlight { color: var(--accent); }
+  .card-5 .formula-steps { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .card-5 .fs-item { display: flex; align-items: center; gap: 18px; padding: 20px 26px; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); text-align: left; }
+  .card-5 .fs-item .fs-num { font-size: 32px; font-weight: 900; color: var(--accent); flex-shrink: 0; width: 44px; text-align: center; }
+  .card-5 .fs-item .fs-body { text-align: left; }
+  .card-5 .fs-item .fs-title { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.85); margin-bottom: 4px; text-align: left; }
+  .card-5 .fs-item .fs-desc { font-size: 16px; color: rgba(255,255,255,0.45); line-height: 1.5; text-align: left; }
+  .card-5 .fs-item .fs-desc b { color: rgba(255,255,255,0.65); }
+  .card-5 .warn-box { width: 100%; margin-top: 18px; padding: 18px 24px; border-radius: 8px; background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.10); text-align: center; }
+  .card-5 .warn-box .warn-text { font-size: 17px; color: rgba(255,255,255,0.50); line-height: 1.6; text-align: center; }
+  .card-5 .warn-box .warn-text b { color: #f87171; }
+
+  /* === Card 6: CTA === */
+  .card-6 h2 { font-size: 44px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; }
+  .card-6 h2 .highlight { color: var(--accent); }
+  .card-6 .cta-body { font-size: 24px; line-height: 2.4; color: rgba(255,255,255,0.55); margin-bottom: 50px; text-align: center; }
+  .card-6 .cta-body .search-hint { display: inline-block; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15); border-radius: 8px; padding: 6px 18px; color: var(--accent); font-weight: 700; font-size: 22px; margin: 4px 8px; vertical-align: middle; text-align: center; white-space: nowrap; }
+  .card-6 .cta-body .search-line { display: block; margin-bottom: 14px; text-align: center; }
+  .card-6 .punch { color: var(--accent); margin-bottom: 30px; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🎨</div>
+  <h1>不要写十个提示词<br><span class="highlight">找到一句对的</span><br>跑十次</h1>
+  <p class="subtitle">
+    AI绘画最大的误区<br>
+    不是提示词不够好<br>
+    而是你换了太多次<br><br>
+    5轮SLG城池皮肤实测<br>
+    从「10个创意各跑1次」<br>
+    翻转到「1个模板跑10次」
+  </p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 痛点 — 10个提示词的问题 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">🔍 根因</div>
+  <h2>为什么十个提示词<br><span class="highlight">不如一个跑十次？</span></h2>
+
+  <div class="compare-row">
+    <div class="compare-col bad">
+      <div class="c-label">❌</div>
+      <div class="c-desc">
+        <b>10个不同提示词各跑1次</b><br><br>
+        • 风格不统一<br>
+        • 部分跑偏无法定位<br>
+        • 两个变量混在一起：<br>
+        &nbsp;&nbsp;提示词差异<br>
+        &nbsp;&nbsp;+ AI随机性<br>
+        • <b>你永远不知道<br>
+        &nbsp;&nbsp;问题出在哪</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="var-box">
+    <div class="v-title">核心问题</div>
+    <div class="v-text">
+      两个变量同时变化 → 无法归因<br>
+      <b>是提示词写错了？还是AI这次运气不好？</b>
+    </div>
+  </div>
+
+  <p class="punch" style="color: #f87171; margin-top: 20px;">变量越多，控制力越弱</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 方法 — 认知翻转 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">💡 翻转</div>
+  <h2>把思路反过来<br><span class="highlight">变量只剩一个</span></h2>
+
+  <div class="formula">1个好提示词 × 10次<br>= 10个天然变体</div>
+
+  <div class="insight-grid">
+    <div class="i-item">
+      <div class="i-icon">🎯</div>
+      <div class="i-body">
+        <div class="i-title">变量只剩一个：AI的随机性</div>
+        <div class="i-desc">而这恰恰是你想要的多样性——风格统一的前提下，构图/细节/光影自然变化</div>
+      </div>
+    </div>
+    <div class="i-item">
+      <div class="i-icon">🔒</div>
+      <div class="i-body">
+        <div class="i-title">提示词一旦验证通过就锁死</div>
+        <div class="i-desc">先花时间打磨一句好提示词，确认产出方向正确，然后原封不动跑N次</div>
+      </div>
+    </div>
+    <div class="i-item">
+      <div class="i-icon">🧩</div>
+      <div class="i-body">
+        <div class="i-title">跑偏时一眼就能定位</div>
+        <div class="i-desc">10张图中有2张跑偏 → 不是提示词的问题，是这次roll到的种子不对 → 重跑即可</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="punch">AI的随机性不是bug——是你想要的多样性<br>前提是你只变这一个变量</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 流程 — 5轮迭代 + 模板 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">🧪 实测</div>
+  <h2>SLG城池皮肤<br><span class="highlight">5轮迭代找到方向</span></h2>
+
+  <div class="round-grid">
+    <div class="r-item">
+      <div class="r-tag fail">R1</div>
+      <div class="r-text">复杂的城市集群主城皮肤 → <b>太多元素，没有主体</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag warn">R2</div>
+      <div class="r-text">单体图标建筑 → <b>方向对了，但设计感不够</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag fail">R3</div>
+      <div class="r-text">紧凑城市集群 + 主堡突出 → <b>围合感太强，不够简洁</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag pass">R4</div>
+      <div class="r-text">单体建筑 + 清晰主题 + 强剪影 → <b>✅ 方向正确</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag pass">R5</div>
+      <div class="r-text">统一3D渲染 + 10个不限题材 → <b>✅ 验证了公式</b></div>
+    </div>
+  </div>
+
+  <div class="template-box">
+    <div class="t-label">🔧 锁定的Prompt模板</div>
+    <div class="t-text">
+      a single 3D isometric building,<br>
+      a <b>[主题] [建筑类型]</b>, [视觉特征],<br>
+      standalone iconic structure,<br>
+      <b>bold readable silhouette</b>,<br>
+      3D rendered game asset style,<br>
+      clean polished rendering,<br>
+      [色彩方案],<br>
+      centered filling the frame,<br>
+      pure green #00FF00 background
+    </div>
+  </div>
+
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 洞察 — 四步公式 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">🧠 公式</div>
+  <h2>提示词打磨<br><span class="highlight">四步有先后</span></h2>
+
+  <div class="formula-steps">
+    <div class="fs-item">
+      <div class="fs-num">1</div>
+      <div class="fs-body">
+        <div class="fs-title">Big Form 大形体</div>
+        <div class="fs-desc">第一眼看轮廓，<b>剪影要一眼辨识</b>。这一步不稳，后面全白费</div>
+      </div>
+    </div>
+    <div class="fs-item">
+      <div class="fs-num">2</div>
+      <div class="fs-body">
+        <div class="fs-title">Fun Theme 主题趣味</div>
+        <div class="fs-desc">一个明确有趣的idea——螃蟹汉堡、冰晶要塞、鲸鱼城</div>
+      </div>
+    </div>
+    <div class="fs-item">
+      <div class="fs-num">3</div>
+      <div class="fs-body">
+        <div class="fs-title">Recognition 识别度</div>
+        <div class="fs-desc">特征够强，<b>缩小到地图图标大小也能认出来</b></div>
+      </div>
+    </div>
+    <div class="fs-item">
+      <div class="fs-num">4</div>
+      <div class="fs-body">
+        <div class="fs-title">Polish 精致感</div>
+        <div class="fs-desc">最后才是材质光滑、渲染通透——<b>皮相是最后一步</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <div class="warn-text">
+      ⚠️ <b>四步不能倒过来</b><br>
+      如果先从细节入手（复杂纹理、花哨装饰）<br>
+      轮廓和主题没稳住，整张图就没灵魂
+    </div>
+  </div>
+
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>下次用AI出图<br><span class="highlight">试试这个流程</span></h2>
+  <div class="cta-body">
+    <span class="search-line">
+      <span class="search-hint">1</span> 打磨一句好提示词
+    </span>
+    <span class="search-line">
+      <span class="search-hint">2</span> 先跑1次验证方向
+    </span>
+    <span class="search-line">
+      <span class="search-hint">3</span> 确认OK后原封不动跑10次
+    </span>
+    <span class="search-line">
+      <span class="search-hint">4</span> 只换主题词，结构锁死
+    </span>
+    <br>
+    不要写十个提示词<br>
+    找到一句对的，跑十次
+  </div>
+  <p class="punch">大形体 → 主题 → 识别度 → 精致感</p>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

@@ -228,6 +228,22 @@ python3 {baseDir}/agent_skill.py chat \
 # 详见 docs/workflows/道具图标-生产.md（系统层工作流）
 ```
 
+### 建筑 2×2 网格
+
+```bash
+# 3D 等距建筑 → GPT Image 2
+python3 {baseDir}/agent_skill.py chat \
+  --prompt "4 3D isometric game buildings arranged in 2 rows of 2, evenly spaced,
+    no visible grid lines, 45-degree isometric top-down camera angle,
+    buildings: ..., {style_keywords},
+    pure green #00FF00 solid background, game building asset for 2D isometric game" \
+  --prefer-models '{"IMAGE":["generate_image_gpt_image_2"]}' \
+  --json --download
+
+# 后处理：PS 色彩范围抠图 → slice_grid_2x2.py 切片
+# 详见 docs/07-建筑工作流.md
+```
+
 ### 下载到指定目录
 
 ```bash
@@ -265,6 +281,8 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 | `templates/character-portrait.md` | 角色原画/插画（UI展示/宣传用） |
 | `templates/icon.md` | 图标（技能/物品/建筑） |
 | `templates/vfx.md` | 特效帧动画（闪电/爆炸/护盾） |
+| `templates/building-grid.md` | 3D 等距建筑 2×2 网格（2048→4×1024） |
+| `templates/item-grid.md` | 道具图标 4×4 网格（1024→16×256） |
 
 ---
 

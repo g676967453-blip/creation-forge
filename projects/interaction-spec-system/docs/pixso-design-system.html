@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>造化坊 · 通用竖版手游 UI 设计系统</title>
+<style>
+  :root {
+    --page-bg: #F5F5F5;
+    --surface: #FFFFFF;
+    --surface-weak: #EEEEEE;
+    --text-primary: #111418;
+    --text-secondary: #646B73;
+    --border-default: #CFD3D7;
+    --border-weak: #E8EBED;
+    --success: #2B8A3E;
+    --warning: #E67700;
+    --error: #C92A2A;
+    --info: #1864AB;
+    --quality-common: #868E96;
+    --quality-rare: #1864AB;
+    --quality-epic: #6741D9;
+    --quality-legendary: #E67700;
+    --quality-mythic: #C92A2A;
+    --neutral-900: #111418;
+    --neutral-700: #343A40;
+    --neutral-500: #646B73;
+    --neutral-300: #CFD3D7;
+    --neutral-200: #E8EBED;
+    --neutral-100: #F1F2F3;
+    --neutral-000: #FFFFFF;
+    --spacing-4: 4px;
+    --spacing-8: 8px;
+    --spacing-12: 12px;
+    --spacing-16: 16px;
+    --spacing-24: 24px;
+    --spacing-32: 32px;
+    --spacing-48: 48px;
+    --spacing-64: 64px;
+    --radius-2: 2px;
+    --radius-4: 4px;
+    --radius-8: 8px;
+    --radius-12: 12px;
+    --radius-full: 9999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Page Header ===== */
+  .ds-header {
+    background: var(--neutral-900);
+    color: #fff;
+    padding: 48px 64px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .ds-header-badge {
+    background: var(--quality-epic);
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: var(--radius-full);
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .ds-header h1 {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .ds-header p {
+    font-size: 28px;
+    color: var(--neutral-300);
+    margin-top: 8px;
+  }
+
+  /* ===== Section ===== */
+  .ds-section {
+    margin: 48px 64px;
+  }
+  .ds-section-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border-default);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .ds-section-emoji { font-size: 40px; }
+
+  /* ===== Color Swatches ===== */
+  .color-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .color-card {
+    width: 240px;
+    border-radius: var(--radius-8);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .color-swatch {
+    height: 140px;
+    position: relative;
+  }
+  .color-swatch.has-border { border: 1px solid var(--border-default); }
+  .color-label {
+    padding: 16px;
+    background: var(--surface);
+  }
+  .color-label .name {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .color-label .value {
+    font-size: 20px;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', 'JetBrains Mono', monospace;
+    margin-top: 4px;
+  }
+  .color-label .token {
+    font-size: 18px;
+    color: var(--neutral-500);
+    font-family: 'SF Mono', monospace;
+    margin-top: 2px;
+  }
+
+  /* ===== Sub-section ===== */
+  .ds-subsection {
+    margin-bottom: 40px;
+  }
+  .ds-subsection h3 {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+
+  /* ===== Typography ===== */
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 32px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-weak);
+  }
+  .type-label {
+    width: 200px;
+    font-size: 22px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .type-spec {
+    width: 160px;
+    font-size: 20px;
+    color: var(--neutral-500);
+    font-family: 'SF Mono', monospace;
+    flex-shrink: 0;
+  }
+  .type-sample { flex: 1; }
+
+  /* ===== Spacing ===== */
+  .spacing-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 0;
+  }
+  .spacing-label {
+    width: 120px;
+    font-size: 22px;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', monospace;
+  }
+  .spacing-bar {
+    height: 32px;
+    background: var(--quality-epic);
+    border-radius: var(--radius-2);
+    min-width: 4px;
+    opacity: 0.7;
+  }
+  .spacing-value {
+    font-size: 20px;
+    color: var(--neutral-500);
+    font-family: 'SF Mono', monospace;
+    width: 60px;
+  }
+
+  /* ===== Radius ===== */
+  .radius-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .radius-card {
+    width: 160px;
+    text-align: center;
+  }
+  .radius-shape {
+    width: 120px;
+    height: 120px;
+    background: var(--quality-epic);
+    margin: 0 auto 12px;
+    opacity: 0.6;
+  }
+  .radius-label {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .radius-value {
+    font-size: 18px;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', monospace;
+  }
+
+  /* ===== Components ===== */
+  .comp-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-weak);
+    flex-wrap: wrap;
+  }
+  .comp-label {
+    width: 180px;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+  .comp-demo {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* ===== Button ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-4);
+    font-family: inherit;
+    transition: all 0.1s;
+  }
+  .btn-primary {
+    background: var(--neutral-900);
+    color: #fff;
+    width: 360px;
+    height: 104px;
+    font-size: 32px;
+  }
+  .btn-primary-wide {
+    background: var(--neutral-900);
+    color: #fff;
+    width: 480px;
+    height: 112px;
+    font-size: 32px;
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 2px solid var(--border-default);
+    width: 240px;
+    height: 88px;
+    font-size: 28px;
+  }
+  .btn-secondary.primary {
+    background: var(--neutral-900);
+    color: #fff;
+    border: none;
+  }
+  .btn-tertiary {
+    background: var(--quality-epic);
+    color: #fff;
+    width: 160px;
+    height: 64px;
+    font-size: 24px;
+  }
+  .btn:disabled, .btn.disabled {
+    opacity: 0.4;
+  }
+  .btn-danger {
+    background: var(--error);
+    color: #fff;
+  }
+  .btn-loading {
+    opacity: 0.7;
+  }
+
+  /* ===== Badge ===== */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 16px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 24px;
+  }
+  .badge-success { background: var(--success); color: #fff; }
+  .badge-warning { background: var(--warning); color: #fff; }
+  .badge-error { background: var(--error); color: #fff; }
+  .badge-info { background: var(--info); color: #fff; }
+  .badge-count {
+    background: var(--error);
+    color: #fff;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: var(--radius-full);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .badge-quality-common { background: var(--quality-common); color: #fff; }
+  .badge-quality-rare { background: var(--quality-rare); color: #fff; }
+  .badge-quality-epic { background: var(--quality-epic); color: #fff; }
+  .badge-quality-legendary { background: var(--quality-legendary); color: #fff; }
+  .badge-quality-mythic { background: var(--quality-mythic); color: #fff; }
+
+  /* ===== Toggle ===== */
+  .toggle {
+    width: 112px;
+    height: 56px;
+    border-radius: var(--radius-full);
+    background: var(--border-default);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on {
+    background: var(--success);
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .toggle.on::after { transform: translateX(56px); }
+
+  /* ===== Tab ===== */
+  .tabs {
+    display: flex;
+    gap: 0;
+    height: 80px;
+  }
+  .tab-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 40px;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+  }
+  .tab-item.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--neutral-900);
+  }
+
+  /* ===== Progress ===== */
+  .progress-bar {
+    width: 480px;
+    height: 32px;
+    background: var(--border-weak);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--quality-epic);
+    border-radius: var(--radius-full);
+    transition: width 0.3s;
+  }
+  .progress-label {
+    font-size: 24px;
+    color: var(--text-secondary);
+    font-family: 'SF Mono', monospace;
+  }
+
+  /* ===== Input ===== */
+  .input-field {
+    width: 480px;
+    height: 88px;
+    border: 2px solid var(--border-default);
+    border-radius: var(--radius-4);
+    padding: 0 24px;
+    font-size: 28px;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: var(--surface);
+  }
+  .input-field:focus {
+    outline: none;
+    border-color: var(--neutral-900);
+    box-shadow: 0 0 0 4px rgba(17,20,24,0.1);
+  }
+
+  /* ===== Grid Demo ===== */
+  .grid-demo {
+    width: 984px;
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+  }
+  .grid-col {
+    width: 231px;
+    height: 120px;
+    background: var(--border-weak);
+    border-radius: var(--radius-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+  .grid-info {
+    font-size: 22px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+  }
+
+  /* ===== Page Template ===== */
+  .phone-frame {
+    width: 270px;
+    height: 480px;
+    border: 3px solid var(--neutral-900);
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--page-bg);
+    position: relative;
+  }
+  .phone-hud {
+    height: 36px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border-weak);
+  }
+  .phone-content {
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+  }
+  .phone-bottom {
+    height: 64px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-top: 1px solid var(--border-weak);
+  }
+  .phone-nav-item {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-4);
+    background: var(--border-weak);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .phone-nav-item.active { background: var(--neutral-900); color: #fff; }
+
+  /* ===== Layout ===== */
+  .ds-layout { display: flex; flex-direction: column; }
+
+  .color-group-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--neutral-500);
+    margin-bottom: 16px;
+    margin-top: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .color-group-title:first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<div class="ds-header">
+  <div class="ds-header-badge">v2.0</div>
+  <div>
+    <h1>造化坊 · 通用竖版手游 UI 设计系统</h1>
+    <p>生产基准 1080×1920px | 完整色彩/字体/间距/组件规范</p>
+  </div>
+</div>
+
+<!-- ====== 色彩系统 ====== -->
+<div class="ds-section">
+  <div class="ds-section-title">
+    <span class="ds-section-emoji">🎨</span> 色彩系统 Color System
+  </div>
+
+  <div class="ds-subsection">
+    <h3>表面色 Surface</h3>
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#F5F5F5"></div>
+        <div class="color-label"><div class="name">页面背景</div><div class="value">#F5F5F5</div><div class="token">$Color/Surface/Page Background</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch has-border" style="background:#FFFFFF"></div>
+        <div class="color-label"><div class="name">内容表面</div><div class="value">#FFFFFF</div><div class="token">$Color/Surface/Content Surface</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#EEEEEE"></div>
+        <div class="color-label"><div class="name">弱表面</div><div class="value">#EEEEEE</div><div class="token">$Color/Surface/Weak Surface</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-subsection">
+    <h3>文字 & 描边 Text & Border</h3>
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#111418"></div>
+        <div class="color-label"><div class="name">主文字 / 强描边</div><div class="value">#111418</div><div class="token">$Color/Text/Primary</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#646B73"></div>
+        <div class="color-label"><div class="name">次文字</div><div class="value">#646B73</div><div class="token">$Color/Text/Secondary</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#CFD3D7"></div>
+        <div class="color-label"><div class="name">默认描边</div><div class="value">#CFD3D7</div><div class="token">$Color/Border/Default</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#E8EBED"></div>
+        <div class="color-label"><div class="name">弱描边</div><div class="value">#E8EBED</div><div class="token">$Color/Border/Weak</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-subsection">
+    <h3>语义色 Semantic</h3>
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#2B8A3E"></div>
+        <div class="color-label"><div class="name">✅ 成功 Success</div><div class="value">#2B8A3E</div><div class="token">$Color/Semantic/Success</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#E67700"></div>
+        <div class="color-label"><div class="name">⚠️ 提醒 Warning</div><div class="value">#E67700</div><div class="token">$Color/Semantic/Warning</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#C92A2A"></div>
+        <div class="color-label"><div class="name">❌ 错误 Error</div><div class="value">#C92A2A</div><div class="token">$Color/Semantic/Error</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#1864AB"></div>
+        <div class="color-label"><div class="name">ℹ️ 信息 Info</div><div class="value">#1864AB</div><div class="token">$Color/Semantic/Info</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-subsection">
+    <h3>品质色 Quality</h3>
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#868E96"></div>
+        <div class="color-label"><div class="name">普通 Common</div><div class="value">#868E96</div><div class="token">$Color/Quality/Common</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#1864AB"></div>
+        <div class="color-label"><div class="name">稀有 Rare</div><div class="value">#1864AB</div><div class="token">$Color/Quality/Rare</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#6741D9"></div>
+        <div class="color-label"><div class="name">史诗 Epic</div><div class="value">#6741D9</div><div class="token">$Color/Quality/Epic</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#E67700"></div>
+        <div class="color-label"><div class="name">传说 Legendary</div><div class="value">#E67700</div><div class="token">$Color/Quality/Legendary</div></div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#C92A2A"></div>
+        <div class="color-label"><div class="name">神话 Mythic</div><div class="value">#C92A2A</div><div class="token">$Color/Quality/Mythic</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ds-subsection">
+    <h3>中性色阶 Neutral Scale</h3>
+    <div class="color-grid">
+      <div class="color-card"><div class="color-swatch" style="background:#111418"></div><div class="color-label"><div class="name">900 · 强文字</div><div class="value">#111418</div><div class="token">$Color/Neutral/900</div></div></div>
+      <div class="color-card"><div class="color-swatch" style="background:#343A40"></div><div class="color-label"><div class="name">700 · 次级强文字</div><div class="value">#343A40</div><div class="token">$Color/Neutral/700</div></div></div>
+      <div class="color-card"><div class="color-swatch" style="background:#646B73"></div><div class="color-label"><div class="name">500 · 辅助文字</div><div class="value">#646B73</div><div class="token">$Color/Neutral/500</div></div></div>
+      <div class="color-card"><div class="color-swatch" style="background:#CFD3D7"></div><div class="color-label"><div class="name">300 · 分割线</div><div class="value">#CFD3D7</div><div class="token">$Color/Neutral/300</div></div></div>
+      <div class="color-card"><div class="color-swatch" style="background:#E8EBED"></div><div class="color-label"><div class="name">200 · 弱表面</div><div class="value">#E8EBED</div><div class="token">$Color/Neutral/200</div></div></div>
+      <div class="color-card"><div class="color-swatch" style="background:#F1F2F3"></div><div class="color-label"><div class="name">100 · 页面底</div><div class="value">#F1F2F3</div><div class="token">$Color/Neutral/100</div></div></div>
+      <div class="color-card"><div class="color-swatch has-border" style="background:#FFFFFF"></div><div class="color-label"><div class="name">000 · 内容表面</div><div class="value">#FFFFFF</div><div class="token">$Color/Neutral/000</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 字体系统 ====== -->
+<div class="ds-section">
+  <div class="ds-section-title">
+    <span class="ds-section-emoji">🔤</span> 字体系统 Typography
+  </div>
+
+  <div class="type-row">
+    <span class="type-label">页面主标题</span>
+    <span class="type-spec">64/76 Bold</span>
+    <span class="type-sample" style="font-size:64px;font-weight:700;line-height:76px;">造化坊</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">页面标题</span>
+    <span class="type-spec">48/60 Bold</span>
+    <span class="type-sample" style="font-size:48px;font-weight:700;line-height:60px;">造化坊标题</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">区块标题</span>
+    <span class="type-spec">40/52 Bold</span>
+    <span class="type-sample" style="font-size:40px;font-weight:700;line-height:52px;">区块标题范例</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">主要正文</span>
+    <span class="type-spec">32/44 Medium</span>
+    <span class="type-sample" style="font-size:32px;font-weight:500;line-height:44px;">主要正文与关键数值 12,450</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">正文</span>
+    <span class="type-spec">28/40 Regular</span>
+    <span class="type-sample" style="font-size:28px;font-weight:400;line-height:40px;">正文内容用于列表、操作说明和描述文字</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">辅助说明</span>
+    <span class="type-spec">24/32 Regular</span>
+    <span class="type-sample" style="font-size:24px;font-weight:400;line-height:32px;color:#646B73;">标签、时间、单位和辅助信息</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">角标</span>
+    <span class="type-spec">20/28 Bold</span>
+    <span class="type-sample" style="font-size:20px;font-weight:700;line-height:28px;color:#646B73;">NEW · 99+</span>
+  </div>
+</div>
+
+<!-- ====== 间距系统 ====== -->
+<div class="ds-section">
+  <div class="ds-section-title">
+    <span class="ds-section-emoji">📏</span> 间距 & 网格 Spacing & Grid
+  </div>
+
+  <div class="ds-subsection">
+    <h3>间距阶梯 (基准 4px)</h3>
+    <div class="spacing-row"><span class="spacing-label">spacing-4</span><div class="spacing-bar" style="width:4px"></div><span class="spacing-value">4px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-8</span><div class="spacing-bar" style="width:8px"></div><span class="spacing-value">8px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-12</span><div class="spacing-bar" style="width:12px"></div><span class="spacing-value">12px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-16</span><div class="spacing-bar" style="width:16px"></div><span class="spacing-value">16px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-24</span><div class="spacing-bar" style="width:24px"></div><span class="spacing-value">24px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-32</span><div class="spacing-bar" style="width:32px"></div><span class="spacing-value">32px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-48</span><div class="spacing-bar" style="width:48px"></div><span class="spacing-value">48px</span></div>
+    <div class="spacing-row"><span class="spacing-label">spacing-64</span><div class="spacing-bar" style="width:64px"></div><span class="spacing-value">64px</span></div>
+  </div>
+
+  <div class="ds-subsection">
+    <h3>圆角系统</h3>
+    <div class="radius-grid">
+      <div class="radius-card"><div class="radius-shape" style="border-radius:2px"></div><div class="radius-label">极小</div><div class="radius-value">2px</div></div>
+      <div class="radius-card"><div class="radius-shape" style="border-radius:4px"></div><div class="radius-label">小</div><div class="radius-value">4px</div></div>
+      <div class="radius-card"><div class="radius-shape" style="border-radius:8px"></div><div class="radius-label">中</div><div class="radius-value">8px</div></div>
+      <div class="radius-card"><div class="radius-shape" style="border-radius:12px"></div><div class="radius-label">大</div><div class="radius-value">12px</div></div>
+      <div class="radius-card"><div class="radius-shape" style="border-radius:60px"></div><div class="radius-label">全圆角</div><div class="radius-value">9999px</div></div>
+    </div>
+  </div>
+
+  <div class="ds-subsection">
+    <h3>四列栅格 4-Column Grid</h3>
+    <p class="grid-info">画布 1080×1920 · 左右边距 48px · 内容宽 984px · 列宽 231px · 沟槽 20px</p>
+    <div class="grid-demo">
+      <div class="grid-col">1 列<br>231px</div>
+      <div class="grid-col">2 列<br>231px</div>
+      <div class="grid-col">3 列<br>231px</div>
+      <div class="grid-col">4 列<br>231px</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 组件库 ====== -->
+<div class="ds-section">
+  <div class="ds-section-title">
+    <span class="ds-section-emoji">🧩</span> 组件库 Components
+  </div>
+
+  <!-- Buttons -->
+  <div class="comp-row">
+    <span class="comp-label">按钮 Button</span>
+    <div class="comp-demo">
+      <button class="btn btn-primary">主要操作</button>
+      <button class="btn btn-primary-wide">宽版主操作</button>
+      <button class="btn btn-secondary primary">确认</button>
+      <button class="btn btn-secondary">取消</button>
+      <button class="btn btn-tertiary">领取</button>
+      <button class="btn btn-primary disabled">禁用状态</button>
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div class="comp-row">
+    <span class="comp-label">徽章 Badge</span>
+    <div class="comp-demo">
+      <span class="badge badge-success">完成</span>
+      <span class="badge badge-warning">待处理</span>
+      <span class="badge badge-error">失败</span>
+      <span class="badge badge-info">帮助</span>
+      <span class="badge badge-count">99+</span>
+      <span class="badge badge-quality-common">普通</span>
+      <span class="badge badge-quality-rare">稀有</span>
+      <span class="badge badge-quality-epic">史诗</span>
+      <span class="badge badge-quality-legendary">传说</span>
+      <span class="badge badge-quality-mythic">神话</span>
+    </div>
+  </div>
+
+  <!-- Toggle & Slider -->
+  <div class="comp-row">
+    <span class="comp-label">开关 Toggle</span>
+    <div class="comp-demo" style="gap:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="toggle on"></div>
+        <span style="font-size:24px;color:var(--text-secondary)">开</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="toggle"></div>
+        <span style="font-size:24px;color:var(--text-secondary)">关</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="comp-row">
+    <span class="comp-label">页签 Tab</span>
+    <div class="comp-demo">
+      <div class="tabs">
+        <div class="tab-item active">基础信息</div>
+        <div class="tab-item">装备</div>
+        <div class="tab-item">技能</div>
+        <div class="tab-item">符文</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="comp-row">
+    <span class="comp-label">进度条 Progress</span>
+    <div class="comp-demo" style="gap:20px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
+        <span class="progress-label">45/100</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
+        <span class="progress-label" style="color:var(--success)">Complete</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="comp-row">
+    <span class="comp-label">输入框 Input</span>
+    <div class="comp-demo">
+      <input class="input-field" placeholder="请输入角色名称..." value="">
+      <input class="input-field" placeholder="搜索..." value="" style="width:360px">
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="comp-row">
+    <span class="comp-label">Toast 提示</span>
+    <div class="comp-demo">
+      <div style="background:var(--neutral-900);color:#fff;padding:16px 32px;border-radius:8px;font-size:28px;display:flex;align-items:center;gap:12px;">
+        <span>✅</span> 操作成功完成
+      </div>
+      <div style="background:var(--neutral-900);color:#fff;padding:16px 32px;border-radius:8px;font-size:28px;display:flex;align-items:center;gap:12px;">
+        <span>❌</span> 网络连接失败，请重试
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 界面模板 ====== -->
+<div class="ds-section">
+  <div class="ds-section-title">
+    <span class="ds-section-emoji">📱</span> 界面模板 Page Templates
+  </div>
+  <p style="font-size:24px;color:var(--text-secondary);margin-bottom:24px;">所有模板基于 1080×1920px 竖版画布 · 顶部 HUD + 中心内容区 + 底部导航</p>
+
+  <div style="display:flex;gap:32px;flex-wrap:wrap;">
+    <!-- 主界面 -->
+    <div class="phone-frame">
+      <div class="phone-hud">
+        <span style="font-size:10px;font-weight:600;">Lv.42</span>
+        <span style="font-size:10px;">💰 12K · 💎 350</span>
+      </div>
+      <div class="phone-content">
+        <div style="width:200px;height:280px;background:var(--border-weak);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text-secondary);">主场景</div>
+      </div>
+      <div class="phone-bottom">
+        <div class="phone-nav-item active">🏠</div>
+        <div class="phone-nav-item">⚔️</div>
+        <div class="phone-nav-item">🎒</div>
+        <div class="phone-nav-item">👤</div>
+      </div>
+    </div>
+
+    <!-- 全屏窗口 -->
+    <div class="phone-frame">
+      <div class="phone-hud">
+        <span style="font-size:10px;">← 返回</span>
+        <span style="font-size:10px;font-weight:600;">角色养成</span>
+      </div>
+      <div class="phone-content">
+        <div style="width:220px;height:60px;background:var(--surface);border-radius:4px;border:1px solid var(--border-default);display:flex;align-items:center;justify-content:center;font-size:14px;">角色属性面板</div>
+        <div style="width:220px;height:160px;background:var(--border-weak);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-secondary);">装备 & 符文</div>
+      </div>
+      <div class="phone-bottom">
+        <span style="font-size:12px;font-weight:600;">← 返回</span>
+        <span style="font-size:12px;color:var(--neutral-500);">信息 | 装备 | 技能</span>
+      </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="phone-frame">
+      <div class="phone-hud" style="opacity:0.6">
+        <span style="font-size:10px;">Lv.42</span>
+        <span style="font-size:10px;">💰 12K</span>
+      </div>
+      <div class="phone-content" style="position:relative;">
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+          <div style="width:200px;height:140px;background:var(--surface);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px;">
+            <div style="font-size:16px;font-weight:700;text-align:center;">确认删除?</div>
+            <div style="font-size:10px;color:var(--text-secondary);text-align:center;">此操作不可撤销</div>
+            <div style="display:flex;gap:8px;justify-content:center;">
+              <div style="padding:6px 24px;background:var(--border-weak);border-radius:4px;font-size:12px;">取消</div>
+              <div style="padding:6px 24px;background:var(--error);color:#fff;border-radius:4px;font-size:12px;">删除</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-bottom" style="opacity:0.4">
+        <div class="phone-nav-item">🏠</div><div class="phone-nav-item">⚔️</div><div class="phone-nav-item">🎒</div><div class="phone-nav-item">👤</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

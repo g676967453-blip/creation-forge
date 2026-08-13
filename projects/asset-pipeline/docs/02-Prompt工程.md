@@ -151,4 +151,41 @@ game asset / game key visual / character illustration
 
 - [01-协作模型.md](01-协作模型.md) — 三角协作循环
 - [03-工作流阶段.md](03-工作流阶段.md) — 草稿→成品→集成
+- [07-建筑工作流.md](07-建筑工作流.md) — 建筑生产工作流
 - `templates/` — 各资产类型的具体 Prompt 模板
+- [../../works/2026-08-11-claude-ai-building-prompt-insights.md](../../works/2026-08-11-claude-ai-building-prompt-insights.md) — 建筑出图实战心得
+
+---
+
+## 附：单体建筑 Prompt 实战公式（2026-08-11 更新）
+
+> 来自 SLG 城池皮肤 4 轮迭代 + 10 题材批量验证的实战总结。
+
+### 单体建筑 Prompt 结构
+
+```
+画风词 + 建筑类型 + 主题元素 + 构图方式 + 材质色彩
+```
+
+### 四步优先级：大形体 → 趣味主题 → 特征识别 → 精致感
+
+```
+1. Big Form   — 轮廓强、一眼辨识（bold readable silhouette）
+2. Fun Theme  — 一个明确的趣味 idea（螃蟹汉堡、冰晶要塞）
+3. Recognition — 缩小到地图图标也能认出来
+4. Polish     — 最后才是材质光滑、渲染通透
+```
+
+**核心原则**：先从大形体稳住，再加精致感。不能反过来——如果先从细节入手，轮廓和主题没稳住，整张图就没灵魂。
+
+### 常见翻车与修复关键词
+
+| 翻车 | 表现 | Prompt 修复词 |
+|------|------|-------------|
+| 主题太多 | 一个建筑塞 5 个设计点 | `single standalone iconic structure, a single clear focal theme` |
+| 细节碎 | 小窗户/花纹密密麻麻 | `minimal small clutter, focus on the main architectural form` |
+| 材质太写实 | PBR 金属反光、粗糙石纹 | `smooth refined surface like collectible figure quality, clean polished rendering` |
+| 背景太乱 | 周围环境喧宾夺主 | `pure green #00FF00 solid background, no environment, no landscape` |
+| 构图散 | 不居中、留白大 | `centered filling the frame, bold readable silhouette` |
+| 配色花 | 颜色无主次 | `restrained color palette with one dominant color and accents` |
+| 轮廓弱 | 缩到小尺寸认不出 | `graphically simplified shapes, clear bold outlines, iconic silhouette` |
