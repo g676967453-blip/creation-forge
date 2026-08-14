@@ -19,16 +19,17 @@ description: Git 提交并推送到 GitHub：检查变更 → 生成约定式提
 - 用户可指定排除某些文件
 
 ### 3. 提交
-- 按约定式提交格式生成 commit message（中文描述）
+- 按约定式提交格式生成 commit message（中文描述），**必须带身份标签前缀**：
   ```
-  feat: 做了什么
-  fix: 修复了什么
-  docs: 文档更新
-  refactor: 重构
-  chore: 杂项
+  [claude] feat: 做了什么
+  [claude] fix: 修复了什么
+  [claude] docs: 文档更新
+  [claude] refactor: 重构
+  [claude] chore: 杂项
   ```
 - 尾部附加 `Co-Authored-By: Claude <noreply@anthropic.com>`
 - 执行 `git add -A && git commit -m "..."`
+- 提交前自查：commit message 首字符必须是 `[`（身份标签），缺少则补上再提交
 
 ### 4. 推送（可选）
 - 用户说"推"后执行 `git push`
