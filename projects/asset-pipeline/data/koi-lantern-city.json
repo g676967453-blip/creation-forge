@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "template_version": "v3",
+  "template_source": "docs/03-单体建筑Prompt模板.md（gw-phoenix_05 验证通过）",
+  "output_base": "outputs/buildings/castle-skins",
+  "generation": {
+    "model": "generate_image_gpt_image_2",
+    "variants_per_skin": 5,
+    "strategy": "同一 prompt 跑 5 次得 5 个自然变体（固定层一字不改）"
+  },
+  "skins": [
+    {
+      "id": "koi-lantern-city",
+      "name_zh": "鲤鱼花灯",
+      "tier": "C",
+      "theme_zh": "鲤鱼花灯主题，巨型鲤鱼花灯+城池底座（创意探索，沿用 lantern-city 先例：主体灯笼为主、城池为底）",
+      "source": "创意探索",
+      "art_scope": "皮肤主体、专属背景",
+      "animation": "主体待机动作",
+      "fx": "待机特效",
+      "components": ["鲤鱼花灯", "城池", "光晕"],
+      "ref_images": [],
+      "prompt_en": "a single 3D isometric building, 45-degree top-down view,\na giant glowing koi fish lantern floating above a miniature walled city fortress,\nthe massive translucent koi lantern with layered orange and crimson scales and flowing tail fins arches in bold sweeping curves, warm golden light glowing from within its body,\ntiny city walls with round corner watchtowers and clustered grey tiled roofs wrap around the lantern base like a delicate miniature ornament,\nthe entire structure reading as both koi lantern and walled city in one bold unified form,\nblind box toy proportions big chunky block forms minimal fine details cartoon toy texture,\nbold readable silhouette,\nRise of Kingdoms semi-realistic 3D rendered style, clean polished rendering,\nglowing amber orange and warm crimson with gold trim accents,\ncentered filling the frame, pure green #00FF00 solid background,\ngame asset for 2D isometric mobile SLG world map city skin",
+      "variants": 5,
+      "phase": "exploration"
+    }
+  ]
+}

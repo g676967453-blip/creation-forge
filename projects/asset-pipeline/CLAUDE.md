@@ -96,7 +96,7 @@
 🎨 调用的模型：Nano Banana Pro
 💰 消耗积分：0（无限模式）
 📋 工作流名称：角色原画 胸像
-🖼️ 项目画布：https://www.lovart.ai/canvas?projectId=4a1e820eeb2e4240b59c78ed3fa03463
+🖼️ 项目画布：https://www.lovart.ai/canvas?projectId=2e637ab783934655b86e0fe33617fa4f
 ```
 
 ---
@@ -292,6 +292,8 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 
 | 问题 | 影响 | 规避方法 |
 |------|------|---------|
+| Lovart API 直连被重置 (WinError 10054) | 所有 API 调用失败 | 先 `export HTTPS_PROXY=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897` 再执行（详见 05-踩坑记录 坑#8） |
+| 云端项目可能被删但本地 state 不更新 | chat 报 `Project does not exist` | `create-project` 新建后重命名；`projects --json` 只读本地，勿信 |
 | `projects --json` 可能返回空 | 无法发现云端项目 | 用户手动提供 projectId |
 | `/tmp/` 路径在 Windows 上不可达 | 下载文件用户找不到 | 用 `--output-dir` 指定本项目 outputs/ |
 | 中文路径可能导致乱码 | 文件写入失败 | 使用英文目录名 |
