@@ -1,69 +1,46 @@
 extends Node
 class_name BlessingManager
-## V0.1 祝福系统 — 替换 card_manager.gd
-## 每轮升级从祝福池抽 3 张，玩家选 1；同名叠 3 张升阶质变
+## V3.0 祝福池、局内叠层与质变管理。
 
-signal blessing_applied(category: String, effect_type: String, effect_value: float, tier: int)
+signal blessing_applied(blessing_id: String, effect_key: String, effect_value: float, effect_value_2: float, tier: int)
 signal blessing_drawn(blessings: Array)
+signal blessing_transformed(blessing_line: String, tier: int, effect_key: String)
 
 var _pool: Array[BlessingData] = []
-var _stacks: Dictionary = {}   ## blessing_id → count (0-3)
-var _exhausted: Array[String] = []  ## 已达 3 层的祝福 ID
-
-const RARITY_WEIGHTS := {
-	"common": 50,
-	"rare": 30,
-	"epic": 15,
-	"legend": 5,
-}
+var _stacks: Dictionary = {}
+var _exhausted_lines: Dictionary = {}
 
 
 func initialize(pool: Array[BlessingData]) -> void:
 	_pool = pool.duplicate()
+	reset_run()
+
+
+func reset_run() -> void:
 	_stacks.clear()
-	_exhausted.clear()
+	_exhausted_lines.clear()
 
 
-func draw_three(active_peak_ids: Array[String], active_disciple_ids: Array[String]) -> Array[BlessingData]:
-	## 过滤可用祝福池，抽 3 张
+func draw_three(active_peak_ids: Array[String]) -> Array[BlessingData]:
 	var available: Array[BlessingData] = []
-	for b in _pool:
-		if b.blessing_id in _exhausted:
+	for blessing in _pool:
+		if _exhausted_lines.has(blessing.blessing_line):
 			continue
-		# 过滤：peak_filter 非空时必须匹配
-		if not b.peak_filter.is_empty() and not active_peak_ids.has(b.peak_filter):
+		if blessing.required_peak != "" and not active_peak_ids.has(blessing.required_peak):
 			continue
-		# 过滤：disciple_filter 非空时必须匹配
-		if not b.disciple_filter.is_empty() and not active_disciple_ids.has(b.disciple_filter):
+		var line_tier: int = int(_stacks.get(blessing.blessing_line, 0))
+		if blessing.tier != line_tier + 1:
 			continue
-		available.append(b)
+		available.append(blessing)
 
-	# 不够 3 张时放宽过滤
-	if available.size() < 3:
-		available.clear()
-		for b in _pool:
-			if b.blessing_id in _exhausted:
-				continue
-			if not b.peak_filter.is_empty() and not active_peak_ids.has(b.peak_filter):
-				continue
-			available.append(b)
-
-	# 仍不够则重置（所有非 exhausted 的祝福都可选）
-	if available.size() < 3:
-		available.clear()
-		for b in _pool:
-			if b.blessing_id in _exhausted:
-				continue
-			available.append(b)
-
-	# 按稀有度加权抽取 3 张
 	var drawn: Array[BlessingData] = []
 	var candidates := available.duplicate()
-	while drawn.size() < 3 and candidates.size() > 0:
-		var pick := _weighted_pick(candidates)
-		if pick != null:
-			drawn.append(pick)
-			candidates.erase(pick)
+	while drawn.size() < 3 and not candidates.is_empty():
+		var picked := _weighted_pick(candidates)
+		if picked == null:
+			break
+		drawn.append(picked)
+		candidates.erase(picked)
 
 	blessing_drawn.emit(drawn)
 	return drawn
@@ -71,37 +48,35 @@ func draw_three(active_peak_ids: Array[String], active_disciple_ids: Array[Strin
 
 func _weighted_pick(candidates: Array[BlessingData]) -> BlessingData:
 	var total_weight := 0
-	for b in candidates:
-		total_weight += RARITY_WEIGHTS.get(b.tier, 10)
+	for blessing in candidates:
+		total_weight += maxi(blessing.weight, 1)
 	if total_weight <= 0:
-		return candidates.pick_random() if candidates.size() > 0 else null
-	var roll := randi() % total_weight
-	var acc := 0
-	for b in candidates:
-		acc += RARITY_WEIGHTS.get(b.tier, 10)
-		if roll < acc:
-			return b
-	return candidates.back() if candidates.size() > 0 else null
+		return candidates.pick_random() if not candidates.is_empty() else null
+	var roll := randi_range(0, total_weight - 1)
+	var accumulated := 0
+	for blessing in candidates:
+		accumulated += maxi(blessing.weight, 1)
+		if roll < accumulated:
+			return blessing
+	return candidates.back()
 
 
 func apply(blessing: BlessingData) -> void:
-	## 应用祝福，追踪叠层
-	var count: int = _stacks.get(blessing.blessing_id, 0) + 1
-	_stacks[blessing.blessing_id] = count
-
-	var tier := count
-	var tiered_effect := blessing.effect_type
-	# 叠 3 层 = 质变
-	if count >= 3:
-		tiered_effect = "%s_t3" % blessing.effect_type
-		_exhausted.append(blessing.blessing_id)
-
-	blessing_applied.emit(blessing.category, tiered_effect, blessing.effect_value, tier)
+	if blessing == null:
+		return
+	var next_tier: int = int(_stacks.get(blessing.blessing_line, 0)) + 1
+	if next_tier > 3:
+		return
+	_stacks[blessing.blessing_line] = next_tier
+	if next_tier == 3:
+		_exhausted_lines[blessing.blessing_line] = true
+		blessing_transformed.emit(blessing.blessing_line, next_tier, blessing.effect_key)
+	blessing_applied.emit(blessing.blessing_id, blessing.effect_key, blessing.effect_value, blessing.effect_value_2, next_tier)
 
 
-func get_stack(blessing_id: String) -> int:
-	return _stacks.get(blessing_id, 0)
+func get_stack(blessing_line: String) -> int:
+	return int(_stacks.get(blessing_line, 0))
 
 
-func is_exhausted(blessing_id: String) -> bool:
-	return blessing_id in _exhausted
+func is_exhausted(blessing_line: String) -> bool:
+	return _exhausted_lines.has(blessing_line)

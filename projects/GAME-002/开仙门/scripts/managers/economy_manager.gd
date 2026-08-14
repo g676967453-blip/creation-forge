@@ -5,10 +5,14 @@ class_name EconomyManager
 const FLOATING_TEXT_SCENE: PackedScene = preload("res://scenes/ui/floating_text.tscn")
 
 signal spirit_updated(value: int)
+signal resource_changed(resource_type: String, new_value: int, delta: int)
+signal resource_insufficient(resource_type: String, required: int, current: int)
 signal upgrade_triggered
 signal card_resolved
 
 var spirit: int = 0
+var nuwa_stone: int = 0
+var secret_treasures: Dictionary = {}
 var _spirit_accumulated: int = 0
 var current_level: int = 1
 var current_exp: int = 0
@@ -44,6 +48,68 @@ func set_bonuses(spirit_bonus: float, damage_bonus: float, exp_bonus: float) -> 
 	_spirit_bonus = spirit_bonus
 	_damage_bonus = damage_bonus
 	_exp_bonus = exp_bonus
+
+
+func add_energy(amount: int) -> void:
+	spirit += maxi(amount, 0)
+	spirit_updated.emit(spirit)
+	resource_changed.emit("energy", spirit, maxi(amount, 0))
+
+
+func spend_energy(amount: int) -> bool:
+	if amount <= 0:
+		return true
+	if spirit < amount:
+		resource_insufficient.emit("energy", amount, spirit)
+		return false
+	spirit -= amount
+	spirit_updated.emit(spirit)
+	resource_changed.emit("energy", spirit, -amount)
+	return true
+
+
+func add_stone(amount: int) -> void:
+	nuwa_stone += maxi(amount, 0)
+	resource_changed.emit("stone", nuwa_stone, maxi(amount, 0))
+
+
+func spend_stone(amount: int) -> bool:
+	if amount <= 0:
+		return true
+	if nuwa_stone < amount:
+		resource_insufficient.emit("stone", amount, nuwa_stone)
+		return false
+	nuwa_stone -= amount
+	resource_changed.emit("stone", nuwa_stone, -amount)
+	return true
+
+
+func add_treasure(peak_id: String, amount: int) -> void:
+	if amount <= 0:
+		return
+	var value: int = int(secret_treasures.get(peak_id, 0)) + amount
+	secret_treasures[peak_id] = value
+	resource_changed.emit("treasure:%s" % peak_id, value, amount)
+
+
+func spend_treasure(peak_id: String, amount: int) -> bool:
+	if amount <= 0:
+		return true
+	var current: int = int(secret_treasures.get(peak_id, 0))
+	if current < amount:
+		resource_insufficient.emit("treasure:%s" % peak_id, amount, current)
+		return false
+	secret_treasures[peak_id] = current - amount
+	resource_changed.emit("treasure:%s" % peak_id, current - amount, -amount)
+	return true
+
+
+func get_resources() -> Dictionary:
+	return {
+		"spirit_energy": spirit,
+		"nuwa_stone": nuwa_stone,
+		"secret_treasures": secret_treasures.duplicate(),
+	}
 
 
 func get_damage_bonus() -> float:
@@ -209,22 +275,19 @@ func _trigger_battle_upgrade() -> void:
 	var active_peak_ids: Array[String] = []
 	if mountain_manager and mountain_manager.has_method("get_all_activated_form_ids"):
 		active_peak_ids = mountain_manager.get_all_activated_form_ids()
-	var active_disciple_ids: Array[String] = []
-	if disciple_squad:
-		for d in disciple_squad.get_disciples():
-			active_disciple_ids.append(d.disciple_id)
-	var blessings: Array = blessing_manager.draw_three(active_peak_ids, active_disciple_ids)
-	# 桥接：BlessingData → 字典格式给 card_selection_panel
+	var blessings: Array = blessing_manager.draw_three(active_peak_ids)
+	# 桥接：BlessingData → 现有选择面板的字典格式。
 	var cards: Array = []
 	for b in blessings:
 		cards.append({
 			"card_id": b.blessing_id,
-			"card_name": b.blessing_name,
+			"card_name": b.display_name,
 			"description": b.description,
-			"form_id": b.category,
-			"rarity": b.tier,
-			"effect_type": b.effect_type,
+			"form_id": b.blessing_line,
+			"rarity": b.rarity,
+			"effect_type": b.effect_key,
 			"effect_value": b.effect_value,
+			"effect_value_2": b.effect_value_2,
 			"_is_blessing": true,
 			"_blessing": b,
 		})

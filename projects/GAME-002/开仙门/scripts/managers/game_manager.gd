@@ -221,14 +221,7 @@ func _get_or_create_disciple_squad() -> DiscipleSquad:
 	return new_node
 
 
-func _on_blessing_applied(category: String, effect_type: String, effect_value: float, _tier: int) -> void:
-	## V0.1 祝福应用：分发到对应目标
-	match category:
-		"disciple":
-			disciple_squad.apply_blessing_to_all(effect_type, effect_value)
-		"technique":
-			disciple_squad.apply_blessing_to_all(effect_type, effect_value)
-		"buff":
-			disciple_squad.apply_blessing_to_all(effect_type, effect_value)
-	if spirit_seat:
-		spirit_seat.apply_blessing(effect_type, effect_value)
+func _on_blessing_applied(_blessing_id: String, effect_key: String, effect_value: float, _effect_value_2: float, _tier: int) -> void:
+	## V3.0 祝福应用：向器灵战斗实体分发效果。
+	if spirit_seat and spirit_seat.has_method("apply_blessing"):
+		spirit_seat.apply_blessing(effect_key, effect_value)

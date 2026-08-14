@@ -311,17 +311,20 @@ func _load_blessings() -> void:
 	var rows := CsvLoader.load_csv("res://data/blessing_config.csv")
 	for r in rows:
 		var b := BlessingData.new()
-		b.blessing_id = str(r.get("id", ""))
+		b.blessing_id = str(r.get("blessing_id", ""))
 		if b.blessing_id.is_empty() or b.blessing_id.begins_with("#"):
 			continue
-		b.blessing_name = str(r.get("name", ""))
-		b.category = str(r.get("category", ""))
-		b.tier = str(r.get("tier", "common"))
+		b.blessing_line = str(r.get("blessing_line", ""))
+		b.tier = int(r.get("tier", "1"))
+		b.blessing_type = str(r.get("type", ""))
+		b.display_name = str(r.get("display_name", ""))
 		b.description = str(r.get("description", ""))
-		b.effect_type = str(r.get("effect_type", ""))
+		b.effect_key = str(r.get("effect_key", ""))
 		b.effect_value = float(r.get("effect_value", "0"))
-		b.disciple_filter = str(r.get("disciple_filter", ""))
-		b.peak_filter = str(r.get("peak_filter", ""))
+		b.effect_value_2 = float(r.get("effect_value_2", "0"))
+		b.required_peak = str(r.get("required_peak", ""))
+		b.rarity = str(r.get("rarity", "common"))
+		b.weight = int(r.get("weight", "10"))
 		blessing_database[b.blessing_id] = b
 
 
