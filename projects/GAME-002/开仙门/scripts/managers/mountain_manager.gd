@@ -1,4 +1,4 @@
-﻿extends Node
+extends Node
 class_name MountainManager
 
 const NODE_PSD_SPRITES := "Battlefield/PSD_Sprites"

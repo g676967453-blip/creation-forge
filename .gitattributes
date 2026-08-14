@@ -1,0 +1,37 @@
+# 编码卫生：统一文本检测与换行（与 .editorconfig 的 charset=utf-8 / eol=lf 配套）
+# 作用：git 仓库内统一 LF 存储，避免中文文件被误判为二进制、跨平台换行污染 diff
+# 编码规范：所有文本文件必须为「无 BOM UTF-8」（检测 tools/check-encoding.mjs）
+
+* text=auto
+
+# 常见文本类型显式声明
+*.md text
+*.ts text
+*.js text
+*.mjs text
+*.cjs text
+*.json text
+*.gd text
+*.tscn text
+*.tres text
+*.godot text
+*.html text
+*.css text
+*.csv text
+*.ps1 text
+*.yml text
+*.yaml text
+*.txt text
+*.xml text
+*.svg text
+
+# 二进制文件（防误判）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.godot.exe binary
+*.import binary

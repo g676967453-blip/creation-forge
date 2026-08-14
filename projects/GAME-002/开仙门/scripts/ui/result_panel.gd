@@ -1,4 +1,4 @@
-﻿extends Control
+extends Control
 ## 战斗结算界面
 
 signal return_requested
