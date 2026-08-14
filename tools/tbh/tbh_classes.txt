@@ -1,0 +1,65 @@
+## Trade (1)
+SteamAPI_ISteamInventory_TradeItems
+
+## Market (0)
+
+## Auction (0)
+
+## Backend (2)
+TheBackendMultiSettings
+TheBackendSettings
+
+## Save (0)
+
+## AntiCheat (0)
+
+## Taskbar (0)
+
+## Hero (2)
+HmoHeroL3HF
+TaskbarHero_client
+
+## Quest (0)
+
+## Dungeon (0)
+
+## Boss (0)
+
+## Raid (0)
+
+## Pet (1)
+jHHPet
+
+## Guild (0)
+
+## Inventory (15)
+SteamAPI_ISteamInventory_AddPromoItem
+SteamAPI_ISteamInventory_AddPromoItems
+SteamAPI_ISteamInventory_ConsumeItem
+SteamAPI_ISteamInventory_DestroyResult
+SteamAPI_ISteamInventory_ExchangeItems
+SteamAPI_ISteamInventory_GenerateItems
+SteamAPI_ISteamInventory_GetAllItems
+SteamAPI_ISteamInventory_GetItemPrice
+SteamAPI_ISteamInventory_GetItemsByID
+SteamAPI_ISteamInventory_GetResultItems
+SteamAPI_ISteamInventory_InspectItem
+SteamAPI_ISteamInventory_RemoveProperty
+SteamAPI_ISteamInventory_RequestPrices
+SteamAPI_ISteamInventory_StartPurchase
+SteamAPI_ISteamInventory_TradeItems
+
+## Equipment (0)
+
+## Forge (1)
+SteamAPI_ISteamRemoteStorage_FileForget
+
+## Fishing (0)
+
+## Idle (0)
+
+## Offline (0)
+
+## Rank (1)
+SteamAPI_ISteamUGC_SetRankedByTrendDays
+

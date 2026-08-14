@@ -231,12 +231,13 @@ tags: [interaction-spec-system, 重构]
 
 | 项目 | 路径 | 状态 |
 |------|------|------|
-| 开仙门 (GAME-002) | `projects/GAME-002/` | 🟡 开发中 — V0.1 核心循环 ~80% |
+| 开仙门 (GAME-002) | `projects/GAME-002/` | 🟡 开发中 — V0.1 核心循环 ~80%，08-14 祝福系统规则收敛 |
 | 交互规范系统 | `projects/interaction-spec-system/` | 🟢 运转中 — v2.1 组件库 + 调参工具 |
-| 资产管线 | `projects/asset-pipeline/` | 🔵 待启动 — 等 GAME-002 V0.1 稳定 |
+| 资产管线 | `projects/asset-pipeline/` | 🟢 投产中 — 图标/建筑双管线，08-14 鲤鱼花灯批次 |
 | 秦王殿奏对 | `projects/qin-court-audience/` | 🟢 已完成 — v1.0 |
 | 小红书 | `projects/xiaohongshu/` | 🟢 运转中 — 15 期已发布 |
-| 美术AI协作中台 | `projects/游戏美术部门AI协作中台/` | 🟠 规划中 — 项目已建，待开发 |
+| 美术AI协作中台 | `projects/游戏美术部门AI协作中台/` | 🟠 规划中 — 已立项（D-014），待开发 |
+| TBH 复刻 | 调研完成，待立项 | 🔵 调研完成 — 市场+实机分析（08-06） |
 
 ---
 

@@ -2,10 +2,28 @@
 name: user-偏好设置
 description: 用户的工作偏好、风格要求和沟通习惯
 author: claude
-updated: 2026-08-02
+updated: 2026-08-14
 ---
 
 # 用户偏好设置
+
+## AI 身份标识约定（2026-08-14 确定）
+
+用户通过 Claude Code 客户端接入，但底层模型是 DeepSeek（如 deepseek-v4-flash）。为避免记录误导，约定两层信息都留痕：
+
+- **身份标签/提交签名按接入工具入口**：Claude Code 会话 → `[claude]` + `Co-Authored-By: Claude`，协议身份表不变（不改 AI_COLLABORATION.md）
+- **工作记录 frontmatter 增加 `model` 字段** 注明底层实际模型，例如：
+
+```yaml
+---
+date: 2026-08-14
+ai: claude
+model: deepseek-v4-flash
+type: ...
+---
+```
+
+- 其他 AI 若底层模型与工具名称不一致，同样按「标签=工具入口、model=实际模型」处理
 
 ## 沟通风格
 

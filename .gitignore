@@ -36,6 +36,9 @@ frames/
 # 多 AI 协作锁文件（不提交到仓库）
 .ai-locks/*.lock
 
+# 临时调试文件（根目录 tmp/ 不入库）
+tmp/
+
 # IDE
 .idea/
 *.swp

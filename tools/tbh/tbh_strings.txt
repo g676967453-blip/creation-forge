@@ -1,0 +1,65 @@
+==== localization-string-tables-chinese(simplified)(zh-hans)_assets_all.bundle ====
+哥布林兽皮i
+蝙蝠翼膜P
+食人魔之衛
+魂石 - 普通
+见的基础雕刻材料
+根据装备类
+机授予两种微l
+上提供特别的能力h
+难度首领所需的y
+德拉草根 
+国一周年纪念币
+制作某物jJ
+愿，投入k5之中吧R
+背景音乐 (BGM)
+体验版)8
+前8 HP剑
+生HP低4
+桌面启动时3
+账户保存数据0
+日志文件夹 ( 
+大FPS 
+凃烧村庄入d
+漠地下洞0
+专精gp远
+想在哪个显示器
+才能使用，且
+载到贸易船上
+常带来了欢乐
+季庰 0布
+谢谢 :)
+接已断开1
+回收上层组
+由于TBH 
+新创建账号
+音 (开)
+期间 DLC 免费9
+新陈代谻!R续!
+撌附近队友
+狗td卫兵
+政官莫尔卡l
+匹配 Forging z-
+剑与盾守住
+伐轻快、f
+输5y0瞬
+生这种情况8
+方Discord或help
+首次访问8
+防止作弊及未经
+第 1 条s
+利、义务J
+由 Valve CorporS
+而实q  e
+至 X7 天
+均被严格禁止K
+民事诉讼法》9Y(
+析 SDK
+监管机构X
+例 (EU) 2016
+至 18:00
+表述p际做sY
+节Boss
+
+==== localization-string-tables-english(unitedstates)(en-us)_assets_all.bundle ====
+
