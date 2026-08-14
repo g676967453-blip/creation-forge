@@ -17,6 +17,7 @@
 | [05](./05-校企合作与培训/) | 校企合作与培训 | 4 | 校企合作方案、项目制培训、学员问卷、美院规划建议 |
 | [06](./06-行业认知与职业/) | 行业认知与职业 | 1 | 游戏行业上下游结构 |
 | [07](./07-AI与工具/) | AI与工具 | 1 | AI 美术工作台开发分工 |
+| [08](./08-商业化与付费设计/) | 商业化与付费设计 | 1 | 手游付费认知框架 + 《英雄没有闪》竞品拆解 |
 
 ---
 
@@ -93,11 +94,21 @@
 
 ---
 
+## 08-商业化与付费设计 ✅ 已分析
+
+手游付费/变现设计方法论与竞品拆解。
+
+| 文件 | 状态 | 概要 | 重写版 |
+|------|:--:|------|------|
+| `手游付费认知框架与《英雄没有闪》拆解`（HTML 导出） | ⭐ | 完整付费拆解框架：玩家路径 × 付费入口 × 付费数据 三者关联模型 + 主表/单点拆解表/速查表/用户分层，并完整拆解《英雄没有闪》9 大付费模块与三大压力引擎 | [_rewritten/mobile-game-monetization-framework.md](./08-商业化与付费设计/_rewritten/mobile-game-monetization-framework.md)，[HTML 原文](../_assets/手游付费认知框架/monetization-framework.html) |
+
+---
+
 ## 分析统计
 
 | 标记 | 数量 | 说明 |
 |:--:|:---:|------|
-| ⭐ | 8 | 高价值，已重写为结构化文档 |
+| ⭐ | 9 | 高价值，已重写为结构化文档 |
 | 📄 | 14 | 有参考价值，保留原文 |
 | 📊 | 8 | 原始数据表（xlsx/csv），待手动提取 |
 | 🗑️ | 4 | 已删除（纯图片×2 + 隐私数据×1 + 重复文件×1） |
@@ -110,6 +121,7 @@
 | 02-团队管理与方法 | [lead-artist-handbook.md](./02-团队管理与方法/_rewritten/lead-artist-handbook.md) / [project-management-triangle.md](./02-团队管理与方法/_rewritten/project-management-triangle.md) / [project-health-checklist.md](./02-团队管理与方法/_rewritten/project-health-checklist.md) / [management-insights.md](./02-团队管理与方法/_rewritten/management-insights.md) |
 | 03-项目成本与评估 | [project-data-summary.md](./03-项目成本与评估/_rewritten/project-data-summary.md) |
 | 05-校企合作与培训 | [ai-era-art-education-reform.md](./05-校企合作与培训/_rewritten/ai-era-art-education-reform.md) / [project-based-training-guide.md](./05-校企合作与培训/_rewritten/project-based-training-guide.md) / [school-enterprise-collaboration-template.md](./05-校企合作与培训/_rewritten/school-enterprise-collaboration-template.md) |
+| 08-商业化与付费设计 | [mobile-game-monetization-framework.md](./08-商业化与付费设计/_rewritten/mobile-game-monetization-framework.md) |
 
 ---
 
