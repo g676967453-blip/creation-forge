@@ -17,6 +17,9 @@ export/
 .libtv/
 _*_output/
 
+# asset-pipeline 图片产出不入库（体积大，可再生成）
+projects/asset-pipeline/outputs/**/_clean/
+
 # 游戏机器人产出文件（流程脚本提交，产出不提交）
 *.apk
 *.mp4

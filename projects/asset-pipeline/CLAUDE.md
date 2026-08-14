@@ -241,7 +241,7 @@ python3 {baseDir}/agent_skill.py chat \
   --json --download
 
 # 后处理：PS 色彩范围抠图 → slice_grid_2x2.py 切片
-# 详见 docs/07-建筑工作流.md
+# 详见 docs/workflows/建筑-生产.md（系统层工作流）
 ```
 
 ### 下载到指定目录

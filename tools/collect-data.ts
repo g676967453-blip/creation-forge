@@ -718,7 +718,7 @@ export function collectData() {
     { layer: "系统层", name: "reports/", path: "reports/", desc: "汇报仪表盘" },
     { layer: "项目层", name: "GAME-002「开仙门」", path: "projects/GAME-002/", desc: "Godot 修仙 Roguelike 塔防 → 吸血鬼+放置" },
     { layer: "项目层", name: "小红书自媒体", path: "projects/xiaohongshu/", desc: "AI 协作内容创作 — 15 期帖子" },
-    { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标资产管线" },
+    { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标 + 建筑资产管线" },
     { layer: "项目层", name: "秦王殿奏对", path: "projects/qin-court-audience/", desc: "HTML/CSS/JS 打字答题游戏 — 300 题库 + 10 分类" },
     { layer: "项目层", name: "交互规范系统", path: "projects/interaction-spec-system/", desc: "MD 驱动游戏交互规范生产线 — 模板+生成器+技能包" },
     { layer: "项目层", name: "美术AI协作中台", path: "projects/游戏美术部门AI协作中台/", desc: "美术部门 AI 协作平台 — 资产管理+AI生成+管线集成（已规划）" },
