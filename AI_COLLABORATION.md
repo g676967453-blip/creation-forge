@@ -21,6 +21,8 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 
 ## 2. 所有 AI 必须遵守的规则
 
+> 🔴 **首次对话先读 [ONBOARDING.md](./ONBOARDING.md)** —— 30 秒速查卡 + 5 分钟必读文件清单。违反目录规则会被要求回滚。
+
 ### 2.1 编码规范
 
 - TypeScript strict mode，`interface` 优先于 `type`
@@ -48,20 +50,35 @@ Co-Authored-By: AI名称 <邮箱>
 
 ```
 ceshi/
+├── ONBOARDING.md        ← 🔴 新 AI 首次对话强制入口（所有 AI 先读这个）
 ├── AI_COLLABORATION.md  ← 你在这里（所有 AI 的共同协议）
 ├── CLAUDE.md            ← Claude 专属配置（其他 AI 有自己的配置入口）
 ├── memory/              ← 🆕 跨 AI 共享记忆（所有 AI 读写）
 ├── .ai-locks/           ← 🆕 文件锁目录（修改共享文件前检查）
 ├── docs/                ← 文档中心（只读为主，目标规划和待办除外）
 ├── works/               ← 工作记录（每天写入，带 AI 身份）
-├── projects/            ← 所有项目
+├── projects/            ← 所有项目（唯一合法项目存放位置）
 ├── shared/              ← 共享代码库
 ├── templates/           ← 项目模板
-├── tools/               ← 开发工具
-└── reports/             ← 报告与仪表盘
+├── tools/               ← 开发工具（所有工具脚本放这里，不要另建 scripts/）
+├── reports/             ← 报告与仪表盘
+└── .github/             ← GitHub Actions CI/CD（标准路径）
 ```
 
 > 详见 [docs/zh-CN/04-project-structure.md](./docs/zh-CN/04-project-structure.md)
+
+#### 🔴 硬性目录规则（所有 AI 必须遵守）
+
+| 规则 | 说明 |
+|------|------|
+| **项目必须放 `projects/` 下** | 任何新项目的唯一合法位置是 `projects/<项目名>/` |
+| **禁止在根目录新建一级文件夹** | 除了上述列出的目录，不得在根目录创建任何新目录 |
+| **工具脚本放 `tools/`** | 不要另建 `scripts/`、`bin/` 等目录 |
+| **文档放 `docs/`** | 不在根目录散落 `.md` 文件（ONBOARDING.md / CLAUDE.md / AI_COLLABORATION.md / README.md 除外） |
+
+**违反目录规则 = 打乱项目结构，会被用户要求回滚修改。**
+
+> 💡 若有合理需求需要新增一级目录，必须先向用户说明理由并获取批准。
 
 ### 2.4 不可随意修改的文件
 
@@ -85,6 +102,7 @@ ceshi/
 | 字节 TREA | `[trea]` | `Co-Authored-By: TREA <noreply@bytedance.com>` | [.trea/config.md](./.trea/config.md) | `works/YYYY-MM-DD-[trea]-*.md` |
 | LobsterAl | `[lobster]` | `Co-Authored-By: LobsterAl <noreply@lobster.ai>` | [.lobster/config.md](./.lobster/config.md) | `works/YYYY-MM-DD-[lobster]-*.md` |
 | Codex | `[codex]` | `Co-Authored-By: Codex <noreply@openai.com>` | Codex Desktop / CLI 会话配置 | `works/YYYY-MM-DD-[codex]-*.md` |
+| Libtv | `[libtv]` | `Co-Authored-By: Libtv <noreply@libtv.dev>` | [.libtv/README.md](./.libtv/README.md) | `works/YYYY-MM-DD-[libtv]-*.md` |
 
 > 💡 新增 AI 助手时，在此表追加一行，并创建对应的配置文件。
 
@@ -96,6 +114,7 @@ ceshi/
 
 修改以下**共享状态文件**前，必须检查并获取锁：
 
+- `ONBOARDING.md`
 - `docs/目标规划.md`
 - `docs/个人待办.md`
 - `tools/collect-data.ts`
@@ -213,10 +232,11 @@ tags: [interaction-spec-system, 重构]
 | 项目 | 路径 | 状态 |
 |------|------|------|
 | 开仙门 (GAME-002) | `projects/GAME-002/` | 🟡 开发中 — V0.1 核心循环 ~80% |
-| 交互规范系统 | `projects/interaction-spec-system/` | 🟢 运转中 — v1.0 组件库 + 调参工具 |
+| 交互规范系统 | `projects/interaction-spec-system/` | 🟢 运转中 — v2.1 组件库 + 调参工具 |
 | 资产管线 | `projects/asset-pipeline/` | 🔵 待启动 — 等 GAME-002 V0.1 稳定 |
 | 秦王殿奏对 | `projects/qin-court-audience/` | 🟢 已完成 — v1.0 |
 | 小红书 | `projects/xiaohongshu/` | 🟢 运转中 — 15 期已发布 |
+| 美术AI协作中台 | `projects/游戏美术部门AI协作中台/` | 🟠 规划中 — 项目已建，待开发 |
 
 ---
 

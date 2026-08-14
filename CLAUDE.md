@@ -11,6 +11,22 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 
 核心理念：**匠心造化，万物可成** —— 每一个小项目都是创造的淬炼。
 
+## 会话启动检查清单 (Session Startup Checklist)
+
+> ⚠️ 每次会话开始时，在回答用户的第一个问题前，确认以下事项：
+
+- [ ] 已读 [memory/MEMORY.md](./memory/MEMORY.md) — 了解项目当前状态、活跃项目、待办事项
+- [ ] 已确认今日日期，检查 `works/` 是否有今日日志，没有则准备提醒用户
+- [ ] 回顾 [AI_COLLABORATION.md](./AI_COLLABORATION.md) Section 2.3 目录规则：
+  - **所有项目必须放在 `projects/` 下** — 不在根目录新建项目
+  - **禁止在根目录新建一级文件夹** — 除非用户明确要求
+  - **工具脚本放 `tools/`** — 不要另建 `scripts/`、`bin/` 等
+- [ ] 涉及共享文件修改前，检查 `.ai-locks/` 是否有锁
+
+> 📖 完整入门指引见 [ONBOARDING.md](./ONBOARDING.md)
+
+---
+
 ## 日常工作流 (Daily Loop)
 
 本项目的日常运转遵循 [运转线路图](./docs/zh-CN/operational-loop.md) 定义的循环：
