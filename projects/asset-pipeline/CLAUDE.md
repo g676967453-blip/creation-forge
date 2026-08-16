@@ -296,6 +296,9 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 | 云端项目可能被删但本地 state 不更新 | chat 报 `Project does not exist` | `create-project` 新建后重命名；`projects --json` 只读本地，勿信 |
 | `projects --json` 可能返回空 | 无法发现云端项目 | 用户手动提供 projectId |
 | `/tmp/` 路径在 Windows 上不可达 | 下载文件用户找不到 | 用 `--output-dir` 指定本项目 outputs/ |
+| 中文提示词被转译污染 | 语义漂移 | 英文直写 + 中文包装指令（坑#9） |
+| 裸头身短语「X heads tall」无效 | 比例漂移 2.0~8.5 头身 | 分数锚点句 + 按模型×风格校准；MJ×3D/GPT2×3D/MJ×韩 禁用（坑#10） |
+| 批量续跑重命名错位 | 行-图错位 | rename 只认 `new == true`；timeout 先轮询 result 补收（坑#11） |
 | 中文路径可能导致乱码 | 文件写入失败 | 使用英文目录名 |
 | Canvas 浏览器编辑与 API 冲突 | 画布覆盖 | 生成时关闭浏览器 Lovart 页面 |
 

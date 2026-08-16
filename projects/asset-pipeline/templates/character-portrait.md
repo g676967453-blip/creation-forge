@@ -5,6 +5,44 @@
 
 ---
 
+## 主模板 C — 全身像·分节标注式（demo-character-concept 线，2026-08-16 沉淀）
+
+> 适用于需要锁头身比（3-4.5）与派系配色纪律的角色原画。**英文直写**（中文会被 Lovart 转译污染），分节标注。
+
+```text
+STYLE: {style_keywords} | Negative: {negative_keywords}
+CHARACTER: black oni mask with two yellow horns, black-brown kimono,
+  {corruption_tier} corruption: {mutation_sentence}, {class_and_weapon}
+COLORS: {palette_2_main + 1_accent_discipline}
+PROPORTION: {heads_phrase}
+POSE: side view fighting game stance, full body centered
+COMPOSITION: 1:1 square canvas, pure white background, no text
+```
+
+### 头身比句（禁裸短语，必须用分数锚点）
+
+| 目标 | 句式 |
+|------|------|
+| 3 | `3 heads tall, head height equals one third of full body height, stocky rounded build, short sturdy limbs` |
+| 3.5 | `3.5 heads tall, head height equals about 29% of full body height, stocky rounded build, short sturdy limbs` |
+| 4 | `4 heads tall, head height equals one quarter of full body height, stocky rounded build, short sturdy limbs` |
+| 4.5 | `4.5 heads tall, head height equals about 22% of full body height, stocky build, moderately short limbs` |
+
+> ⚠️ 按模型×风格校准：风格化3D 需删前缀 `toy-like proportions` 并加 `not chibi`；MJ×韩系加 `big head small body`（对 MJ 仍不可控，见 [09-角色原画工作流](../docs/09-角色原画工作流.md) 适配矩阵）。
+
+### 批量生产（每行一张图）
+
+```text
+请直接用下面的英文规格生成 {n} 张角色原画，每行规格生成一张图，不要改写每行规格内容，原样传递给图片模型。共享画风前缀：{style}
+
+1. {mini prompt 1}
+2. {mini prompt 2}
+```
+
+单行紧凑格式：`{corr}% corruption: {突变句}, {配色}, {基底}, {头身比句}, side view fighting game stance, full body centered, 1:1 square canvas, pure white background, no text`
+
+---
+
 ## 主模板 A — 半身像（图鉴/展示用）
 
 ```text
