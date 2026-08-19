@@ -113,6 +113,12 @@ func _on_cycle_done() -> void:
 	_show_paragraph(_current_index + 1)
 
 
+func _kill_tween() -> void:
+	if _tween and _tween.is_valid():
+		_tween.kill()
+	_tween = null
+
+
 func _finish() -> void:
 	if _finished:
 		return

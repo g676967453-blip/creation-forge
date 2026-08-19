@@ -49,7 +49,6 @@ const NODE_INTRO := ^"UI/IntroScreen"
 @onready var spirit_growth_manager: SpiritGrowthManager = _get_or_create_spirit_growth()
 ## V0.1 新模块
 @onready var blessing_manager: BlessingManager = _get_or_create_blessing_manager()
-@onready var disciple_squad: DiscipleSquad = _get_or_create_disciple_squad()
 
 var main_peak
 var spirit_seat: SpiritSeat = null  ## V0.1 器灵引用
@@ -81,7 +80,7 @@ func _ready() -> void:
 	if battle_hud and battle_hud.has_method("setup_main_peak"):
 		battle_hud.setup_main_peak(main_peak)
 	# V0.1: 注入新模块
-	economy_manager.setup(main_peak, mountain_manager, card_selection_ui, battle_hud, blessing_manager, disciple_squad)
+	economy_manager.setup(main_peak, mountain_manager, card_selection_ui, battle_hud, blessing_manager)
 	battle_flow.setup(main_peak, wave_manager, battle_hud, result_ui, countdown_label, ui_coordinator, economy_manager)
 	ui_coordinator.setup(main_peak, main_peak_select_panel, battle_hud, card_selection_ui, result_ui, repair_prompt_ui, battle_start_button_ui, settings_button_ui, economy_manager, mountain_manager, intro_screen)
 
@@ -106,8 +105,6 @@ func _ready() -> void:
 			mountain_manager.mountain_repaired.connect(spirit_growth_manager.on_mountain_repaired)
 	if repair_prompt_ui and repair_prompt_ui.has_signal("repair_requested"):
 		repair_prompt_ui.repair_requested.connect(economy_manager.repair_selected_mountain)
-	if repair_prompt_ui and repair_prompt_ui.has_signal("upgrade_requested"):
-		repair_prompt_ui.upgrade_requested.connect(economy_manager.upgrade_selected_mountain)
 	if main_peak_select_panel and main_peak_select_panel.has_signal("start_game_requested"):
 		main_peak_select_panel.start_game_requested.connect(_on_start_game_requested)
 	if intro_screen and intro_screen.has_signal("intro_finished"):
@@ -123,13 +120,17 @@ func _ready() -> void:
 
 	blessing_manager.initialize(DataManager.get_all_blessings())
 	blessing_manager.blessing_applied.connect(_on_blessing_applied)
-	disciple_squad.setup(null)
 	wave_manager.load_waves(DataManager.get_waves())
 	wave_manager.all_waves_completed.connect(battle_flow._on_victory)
 	wave_manager.wave_changed.connect(battle_flow._on_wave_changed)
 	wave_manager.battle_started.connect(battle_flow._on_battle_started)
 	wave_manager.battle_ended.connect(battle_flow._on_battle_ended)
 	wave_manager.enemy_killed.connect(economy_manager.add_exp)
+	wave_manager.enemy_killed.connect(battle_flow.on_enemy_killed)
+	SaveManager.bind_runtime(economy_manager, mountain_manager)
+	if mountain_manager and mountain_manager.has_signal("mountain_repaired"):
+		mountain_manager.mountain_repaired.connect(func(_peak_id): SaveManager.save_game())
+	battle_flow.battle_ended.connect(func(_victory): SaveManager.save_game())
 
 	economy_manager.spirit_updated.connect(func(val): spirit_changed.emit(val))
 	economy_manager.spirit_updated.connect(func(_val): ui_coordinator.update_ui())
@@ -207,16 +208,6 @@ func _get_or_create_blessing_manager() -> BlessingManager:
 		return existing as BlessingManager
 	var new_node := BlessingManager.new()
 	new_node.name = "BlessingManager"
-	add_child(new_node)
-	return new_node
-
-
-func _get_or_create_disciple_squad() -> DiscipleSquad:
-	var existing := get_node_or_null("DiscipleSquad")
-	if existing and existing is DiscipleSquad:
-		return existing as DiscipleSquad
-	var new_node := DiscipleSquad.new()
-	new_node.name = "DiscipleSquad"
 	add_child(new_node)
 	return new_node
 

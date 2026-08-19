@@ -23,6 +23,8 @@ var _damage_bonus: float = 0.0
 var _exp_bonus: float = 0.0
 var spirit_active: bool = false
 var _in_selection: bool = false
+var idle_boost_end_timestamp: int = 0
+var _last_spirit_click_msec: int = -100000
 
 @onready var _auto_spirit_timer: Timer = $AutoSpiritTimer
 @onready var _auto_display_timer: Timer = $AutoDisplayTimer
@@ -32,16 +34,14 @@ var mountain_manager: Node
 var card_selection_ui: Control
 var battle_hud: Control
 var blessing_manager: BlessingManager = null
-var disciple_squad: DiscipleSquad = null
 
 
-func setup(p_main_peak, p_mountain_manager, p_card_selection_ui, p_battle_hud, p_blessing_manager, p_disciple_squad) -> void:
+func setup(p_main_peak, p_mountain_manager, p_card_selection_ui, p_battle_hud, p_blessing_manager) -> void:
 	main_peak = p_main_peak
 	mountain_manager = p_mountain_manager
 	card_selection_ui = p_card_selection_ui
 	battle_hud = p_battle_hud
 	blessing_manager = p_blessing_manager
-	disciple_squad = p_disciple_squad
 
 
 func set_bonuses(spirit_bonus: float, damage_bonus: float, exp_bonus: float) -> void:
@@ -148,8 +148,13 @@ func reset_progress() -> void:
 func handle_main_peak_clicked(screen_position: Vector2 = Vector2.ZERO) -> void:
 	if not spirit_active:
 		return
+	var cooldown_msec := DataManager.get_game_config_int("spirit_click_cooldown_sec", 5) * 1000
+	var now_msec := Time.get_ticks_msec()
+	if now_msec - _last_spirit_click_msec < cooldown_msec:
+		return
+	_last_spirit_click_msec = now_msec
 	var mpcfg = DataManager.main_peak_config
-	var base_click: int = mpcfg.spirit_click_base if mpcfg else 10
+	var base_click: int = DataManager.get_game_config_int("spirit_click_energy", 20)
 	var gain: int = int(float(base_click) * (1.0 + _spirit_bonus))
 	spirit += gain
 	_spawn_spirit_popup(screen_position, gain)
@@ -172,9 +177,14 @@ func _spawn_spirit_popup(screen_position: Vector2, amount: int, color: Color = C
 func _on_auto_spirit_tick() -> void:
 	if not spirit_active:
 		return
-	var mpcfg = DataManager.main_peak_config
-	var base_auto: int = mpcfg.spirit_auto_base if mpcfg else 5
-	var gain: int = int(float(base_auto) * (1.0 + _spirit_bonus))
+	var base_auto: float = DataManager.get_game_config("energy_base_rate_per_sec", 10.0)
+	var repaired_count := 0
+	if mountain_manager and mountain_manager.has_method("get_all_activated_peak_ids"):
+		repaired_count = mountain_manager.get_all_activated_peak_ids().size()
+	var level_bonus := DataManager.get_game_config("energy_rate_bonus_per_spirit_level", 0.1)
+	var peak_bonus := DataManager.get_game_config("energy_rate_bonus_per_repaired_peak", 2.0)
+	var boost := DataManager.get_game_config("idle_boost_multiplier", 1.5) if Time.get_unix_time_from_system() < idle_boost_end_timestamp else 1.0
+	var gain: int = int((base_auto * (1.0 + repaired_count * level_bonus) + repaired_count * peak_bonus) * boost)
 	spirit += gain
 	_spirit_accumulated += gain
 	spirit_updated.emit(spirit)
@@ -217,29 +227,20 @@ func repair_selected_mountain() -> bool:
 	if not mountain_manager.can_repair_selected():
 		return false
 	var peak_id: String = mountain_manager.get_selected_peak_id()
-	var cost: int = mountain_manager.get_repair_cost(peak_id)
-	if not try_spend_spirit(cost):
+	var energy_cost: int = mountain_manager.get_repair_cost(peak_id)
+	var nuwa_cost: int = mountain_manager.get_repair_cost_nuwa(peak_id)
+	var treasure_id: String = mountain_manager.get_repair_treasure(peak_id)
+	if spirit < energy_cost or nuwa_stone < nuwa_cost or (not treasure_id.is_empty() and int(secret_treasures.get(treasure_id, 0)) < 1):
+		return false
+	if not spend_energy(energy_cost) or not spend_stone(nuwa_cost) or (not treasure_id.is_empty() and not spend_treasure(treasure_id, 1)):
 		return false
 	if mountain_manager.has_method("repair_selected"):
 		var ok: bool = mountain_manager.repair_selected()
-		spirit_updated.emit(spirit)
 		return ok
 	return false
 
 
 func upgrade_selected_mountain() -> bool:
-	if not (mountain_manager and mountain_manager.has_method("can_upgrade_selected")):
-		return false
-	if not mountain_manager.can_upgrade_selected():
-		return false
-	var peak_id: String = mountain_manager.get_selected_peak_id()
-	var cost: int = mountain_manager.get_upgrade_cost(peak_id)
-	if not try_spend_spirit(cost):
-		return false
-	if mountain_manager.has_method("upgrade_selected"):
-		var ok: bool = mountain_manager.upgrade_selected()
-		spirit_updated.emit(spirit)
-		return ok
 	return false
 
 
@@ -251,6 +252,10 @@ func has_any_mountain_activated() -> bool:
 	if mountain_manager.has_method("get_selected_form_id"):
 		return not str(mountain_manager.get_selected_form_id()).is_empty()
 	return false
+
+
+func apply_idle_boost() -> void:
+	idle_boost_end_timestamp = int(Time.get_unix_time_from_system()) + DataManager.get_game_config_int("idle_boost_duration_sec", 1800)
 
 
 func add_exp(amount: int) -> void:
@@ -273,8 +278,8 @@ func _trigger_battle_upgrade() -> void:
 	_in_selection = true
 	upgrade_triggered.emit()
 	var active_peak_ids: Array[String] = []
-	if mountain_manager and mountain_manager.has_method("get_all_activated_form_ids"):
-		active_peak_ids = mountain_manager.get_all_activated_form_ids()
+	if mountain_manager and mountain_manager.has_method("get_all_activated_peak_ids"):
+		active_peak_ids = mountain_manager.get_all_activated_peak_ids()
 	var blessings: Array = blessing_manager.draw_three(active_peak_ids)
 	# 桥接：BlessingData → 现有选择面板的字典格式。
 	var cards: Array = []
