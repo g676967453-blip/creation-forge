@@ -236,7 +236,7 @@ tags: [interaction-spec-system, 重构]
 | 资产管线 | `projects/asset-pipeline/` | 🟢 投产中 — 图标/建筑双管线，08-14 鲤鱼花灯批次 |
 | 秦王殿奏对 | `projects/qin-court-audience/` | 🟢 已完成 — v1.0 |
 | 小红书 | `projects/xiaohongshu/` | 🟢 运转中 — 15 期已发布 |
-| 美术AI协作中台 | `projects/游戏美术部门AI协作中台/` | 🟠 规划中 — 已立项（D-014），待开发 |
+| 美术AI协作中台 | `projects/游戏美术部门AI协作中台/` | 🟢 已完成 — v1.0（08-19） |
 | TBH 复刻 | 调研完成，待立项 | 🔵 调研完成 — 市场+实机分析（08-06） |
 
 ---
