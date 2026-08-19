@@ -198,13 +198,15 @@ creation-forge/
 ├── projects/           ← 🚀 所有项目
 │   ├── GAME-002/       ← 🎮 开仙门（Godot 4.7 独立游戏）
 │   ├── xiaohongshu/    ← 📱 小红书自媒体内容创作
-│   └── asset-pipeline/ ← 🔧 资产生产管线（游戏道具图标批量生产）
+│   └── asset-pipeline/ ← 🔧 资产生产管线（产出媒体→桌面 asset-pipeline-outputs/，不进仓库）
 ├── works/              ← 📝 每日工作记录（一事一记 + 视频草案）
 ├── reports/            ← 📊 报告与仪表盘
 ├── tools/              ← 🛠️ 开发工具脚本（数据采集/仪表盘生成/Pixso导入等）
 ├── .claude/            ← ⚙️ Claude Code 配置（SKILL/记忆/settings）
 └── .workbuddy/         ← 🔗 工作伙伴集成
 ```
+
+> 🔑 **全局规则（2026-08-20 起）**：`projects/asset-pipeline/` 的生成产出（图片/视频/音频）不入仓库，统一存桌面 `C:\Users\Administrator\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流 MD 文档、规则、过程数据（映射表/批次状态）与参考图。详见 `projects/asset-pipeline/CLAUDE.md`。
 
 ## 开发工作流
 
