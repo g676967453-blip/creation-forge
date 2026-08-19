@@ -244,7 +244,7 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 </div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
-<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px;margin-left:6px" title="设置 GitHub Token 以启用网页端任务操作">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px;margin-left:6px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档</button></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px;margin-left:6px" title="设置 GitHub Token 以启用网页端任务操作">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px;margin-left:6px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
@@ -703,10 +703,7 @@ function renderProjectCards(projects) {
     const ok = await updateTaskStatus(taskId, 'done', '✅ 已完成');
     if (btn) { btn.classList.remove('loading'); btn.textContent = '✓'; }
     if (ok) {
-      toast('✅ ' + taskId + ' 已完成', 'ok');
-      // 局部刷新
-      document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable(currentPtFilter);
-      // 刷新统计卡片
+      toast('✅ ' + taskId + ' 已完成，正在刷新数据...', 'ok');
       refreshTaskCards();
     }
   };
@@ -717,8 +714,7 @@ function renderProjectCards(projects) {
     const ok = await updateTaskStatus(taskId, 'cancelled', '❌ 已取消');
     if (btn) { btn.classList.remove('loading'); btn.textContent = '✗'; }
     if (ok) {
-      toast('❌ ' + taskId + ' 已取消', 'ok');
-      document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable(currentPtFilter);
+      toast('❌ ' + taskId + ' 已取消，正在刷新数据...', 'ok');
       refreshTaskCards();
     }
   };
@@ -874,11 +870,8 @@ function renderProjectCards(projects) {
   window.showTokenSetup = showTokenSetup;
 
   function refreshTaskCards() {
-    // 简单刷新：重新计算活跃数
-    var cardsEl = document.getElementById('cards-personal-tasks');
-    var s = D.personalTasks.stats;
-    // 更新全部活跃计数（数据已变，用 DOM 估算）
-    // 这里用简单方式：标记需要刷新，用户下次手动刷新仪表盘即可看到准确数据
+    // 状态已通过 GitHub API 写入远端，本地 D 数据已过期——整页刷新拉取最新数据
+    setTimeout(function(){ location.reload(); }, 1200);
   }
 
   // --- 个人待办面板渲染 ---
@@ -904,6 +897,14 @@ function renderProjectCards(projects) {
     {label:'🔧 造化坊',value:(PT.stats.byCategory.F||{pending:0,active:0}).pending+(PT.stats.byCategory.F||{pending:0,active:0}).active,detail:'迭代优化',color:'#ce93d8'},
     {label:'🏠 日常管理',value:(PT.stats.byCategory.L||{pending:0,active:0}).pending+(PT.stats.byCategory.L||{pending:0,active:0}).active,detail:'生活杂项',color:'#78909c'},
   ].map(function(c){return '<div class="card"><div class="label" style="color:'+c.color+'">'+c.label+'</div><div class="value" style="color:'+c.color+'">'+c.value+'</div><div class="detail">'+c.detail+'</div></div>';}).join('');
+
+  // 待归档徽标：活跃区里已完成/已取消的任务数（提醒用户执行周度归档）
+  (function(){
+    var stranded = 0;
+    cats.forEach(function(c){ c.tasks.forEach(function(t){ if (t.status === 'done' || t.status === 'cancelled') stranded++; }); });
+    var badge = document.getElementById('archive-badge');
+    if (badge && stranded > 0) badge.textContent = '(' + stranded + ' 条待归档)';
+  })();
 
   // 全局筛选状态
   var currentAbcFilter = 'all';
