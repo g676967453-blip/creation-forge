@@ -98,6 +98,15 @@ _MID = {
     4: "4 heads tall, head height equals one quarter of full body height, normal-sized head on a short body, sturdy proportionate limbs",
     4.5: "4.5 heads tall, head height equals about 22% of full body height, normal-sized head on a short body, sturdy proportionate limbs",
 }
+# gpt2×west 专属档（2026-08-16 校准轮定稿，6 张单图实测）：
+# _Q_FIX 系统性 +0.5 拉长（写3.0→3.5 / 3.5→4.0 / 4.0→4.5 / 4.5→5.0）；_MID 下漂（写4.0→3.0 / 4.5→4.0）。
+# 定稿：qfix 句写目标值-0.5 补偿，3.0 档写 2.5 句（40% 锚点，保留 not chibi 抗Q）
+_GPT2_WEST = {
+    3: "2.5 heads tall, head height equals about 40% of full body height, normal-sized head on a short body, sturdy proportionate limbs, not chibi",
+    3.5: _Q_FIX[3],
+    4: _Q_FIX[3.5],
+    4.5: _Q_FIX[4],
+}
 # v5 比例句覆盖（2026-08-16，v4 风格块定稿后的比例复校）：
 # v4 实测：s3d 组 3.0-3.5 ✅（_Q_FIX 继续有效）；west 组被拉长到 5.5-6.0 → 改 _COMPRESS；
 # kr 组被压成 2.5 → 删 cute 词 + _Q_FIX；mj-kr 历史一贯写实 → 维持 _COMPRESS
@@ -107,9 +116,10 @@ RATIO_OVERRIDE = {
     ("gpt2", "s3d"): _Q_FIX,
     ("nbp", "west"): _COMPRESS,
     ("mj", "west"): _COMPRESS,
-    # gpt2×west 2026-08-16 实测：_COMPRESS 全部压成 2.5（west 风格块自带卡通Q倾向，
-    # gpt2 严格服从 → 与 mj×west 拉长问题方向相反）。暂挂 _Q_FIX，校准轮后定稿
-    ("gpt2", "west"): _Q_FIX,
+    # gpt2×west 2026-08-16 校准轮定稿（6 张单图实测）：
+    # _COMPRESS 全部压成 2.5（west 风格块自带卡通Q倾向，gpt2 严格服从，与 mj×west 拉长方向相反）；
+    # _Q_FIX 系统性 +0.5 拉长 → 用 _GPT2_WEST 写目标值-0.5 补偿
+    ("gpt2", "west"): _GPT2_WEST,
     ("nbp", "kr"): _Q_FIX,
     ("gpt2", "kr"): _Q_FIX,
     ("mj", "kr"): _COMPRESS,
