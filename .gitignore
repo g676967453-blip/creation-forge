@@ -26,12 +26,12 @@ projects/asset-pipeline/outputs/demo-character-concept/portraits/*
 # 游戏机器人产出文件（流程脚本提交，产出不提交）
 *.apk
 *.mp4
-game-bot/screenshots/
-game-bot/run_*/
-game-bot/ocr/
-game-bot/*.png
-game-bot/*.txt
-!game-bot/game-log.txt
+projects/game-bot/screenshots/
+projects/game-bot/run_*/
+projects/game-bot/ocr/
+projects/game-bot/*.png
+projects/game-bot/*.txt
+!projects/game-bot/game-log.txt
 mumu_auto_*/
 frames/
 .cowork-temp/
