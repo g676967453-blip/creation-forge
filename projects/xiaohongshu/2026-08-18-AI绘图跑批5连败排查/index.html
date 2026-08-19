@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI绘图跑批5连败排查 · 造化坊</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0d0d; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 0; }
+  .card {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 100px 80px;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .card-num { position: absolute; top: 40px; right: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 2px; font-weight: 600; text-align: right; }
+  .creation-badge { position: absolute; bottom: 50px; font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; font-weight: 600; text-align: center; }
+  .card-1, .card-3, .card-5 { background: #141414; color: #f0f0f0; }
+  .card-2, .card-4, .card-6 { background: #1a1a1a; color: #e0e0e0; }
+  :root { --accent: #ff6b6b; }
+  .section-label { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 6px; margin-bottom: 30px; font-weight: 600; text-align: center; }
+  .brand-line { font-size: 20px; color: rgba(255,255,255,0.30); letter-spacing: 4px; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 40px; font-weight: 600; text-align: center; }
+  .cta-line { font-size: 24px; margin-top: 18px; font-weight: 700; color: var(--accent); text-align: center; }
+  .punch { font-size: 24px; font-weight: 700; line-height: 1.5; text-align: center; }
+
+  /* === Card 1: Cover === */
+  .card-1 .emoji { font-size: 56px; margin-bottom: 25px; text-align: center; }
+  .card-1 h1 { font-size: 44px; font-weight: 900; line-height: 1.3; margin-bottom: 30px; letter-spacing: 2px; text-align: center; }
+  .card-1 h1 .highlight { color: var(--accent); }
+  .card-1 .subtitle { font-size: 24px; color: rgba(255,255,255,0.50); line-height: 1.9; text-align: center; }
+
+  /* === Card 2: Pain Point === */
+  .card-2 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-2 h2 .highlight { color: var(--accent); }
+  .card-2 .compare-row { width: 100%; display: flex; gap: 20px; margin-bottom: 24px; }
+  .card-2 .compare-col { flex: 1; border-radius: 12px; padding: 24px 20px; text-align: center; }
+  .card-2 .compare-col.bad { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15); }
+  .card-2 .compare-col .c-label { font-size: 26px; margin-bottom: 12px; text-align: center; }
+  .card-2 .compare-col .c-desc { font-size: 17px; color: rgba(255,255,255,0.50); line-height: 1.7; text-align: left; }
+  .card-2 .compare-col .c-desc b { color: rgba(255,255,255,0.75); }
+  .card-2 .var-box { width: 100%; padding: 20px 28px; border-radius: 10px; background: rgba(255,107,107,0.06); border: 1px solid rgba(255,107,107,0.15); margin-top: 10px; text-align: center; }
+  .card-2 .var-box .v-title { font-size: 18px; color: var(--accent); letter-spacing: 3px; margin-bottom: 8px; text-align: center; }
+  .card-2 .var-box .v-text { font-size: 19px; color: rgba(255,255,255,0.55); line-height: 1.6; text-align: center; }
+  .card-2 .var-box .v-text b { color: rgba(255,255,255,0.80); }
+
+  /* === Card 3: Method === */
+  .card-3 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-3 h2 .highlight { color: var(--accent); }
+  .card-3 .formula { font-size: 30px; font-weight: 800; color: var(--accent); margin-bottom: 30px; text-align: center; letter-spacing: 1px; line-height: 1.6; }
+  .card-3 .insight-grid { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .card-3 .i-item { display: flex; align-items: flex-start; gap: 16px; padding: 18px 24px; border-radius: 10px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-3 .i-item .i-icon { font-size: 24px; flex-shrink: 0; text-align: center; width: 36px; }
+  .card-3 .i-item .i-body { text-align: left; }
+  .card-3 .i-item .i-title { font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.80); margin-bottom: 4px; text-align: left; }
+  .card-3 .i-item .i-desc { font-size: 16px; color: rgba(255,255,255,0.45); line-height: 1.5; text-align: left; }
+  .card-3 .punch { color: var(--accent); margin-top: 24px; }
+
+  /* === Card 4: Process === */
+  .card-4 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-4 h2 .highlight { color: var(--accent); }
+  .card-4 .round-grid { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+  .card-4 .r-item { display: flex; align-items: center; gap: 16px; padding: 16px 22px; border-radius: 8px; background: rgba(255,255,255,0.02); text-align: left; }
+  .card-4 .r-item .r-tag { font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 4px; flex-shrink: 0; text-align: center; min-width: 48px; }
+  .card-4 .r-item .r-tag.man { background: rgba(240,160,64,0.15); color: #f0a040; }
+  .card-4 .r-item .r-tag.ai { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .card-4 .r-item .r-text { font-size: 17px; color: rgba(255,255,255,0.55); line-height: 1.5; text-align: left; }
+  .card-4 .r-item .r-text b { color: rgba(255,255,255,0.80); }
+  .card-4 .template-box { width: 100%; margin-top: 24px; padding: 22px 28px; border-radius: 10px; background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.12); text-align: left; }
+  .card-4 .template-box .t-label { font-size: 16px; color: var(--accent); letter-spacing: 3px; margin-bottom: 10px; text-align: left; }
+  .card-4 .template-box .t-text { font-size: 16px; color: rgba(255,255,255,0.50); line-height: 1.8; font-family: "SF Mono", "Consolas", "Courier New", monospace; text-align: left; }
+  .card-4 .template-box .t-text b { color: rgba(255,255,255,0.75); }
+
+  /* === Card 5: Insights === */
+  .card-5 h2 { font-size: 38px; font-weight: 800; margin-bottom: 35px; line-height: 1.35; letter-spacing: 1px; text-align: center; }
+  .card-5 h2 .highlight { color: var(--accent); }
+  .card-5 .formula-steps { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .card-5 .fs-item { display: flex; align-items: center; gap: 18px; padding: 20px 26px; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); text-align: left; }
+  .card-5 .fs-item .fs-num { font-size: 32px; font-weight: 900; color: var(--accent); flex-shrink: 0; width: 44px; text-align: center; }
+  .card-5 .fs-item .fs-body { text-align: left; }
+  .card-5 .fs-item .fs-title { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.85); margin-bottom: 4px; text-align: left; }
+  .card-5 .fs-item .fs-desc { font-size: 16px; color: rgba(255,255,255,0.45); line-height: 1.5; text-align: left; }
+  .card-5 .fs-item .fs-desc b { color: rgba(255,255,255,0.65); }
+  .card-5 .warn-box { width: 100%; margin-top: 18px; padding: 18px 24px; border-radius: 8px; background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.10); text-align: center; }
+  .card-5 .warn-box .warn-text { font-size: 17px; color: rgba(255,255,255,0.50); line-height: 1.6; text-align: center; }
+  .card-5 .warn-box .warn-text b { color: #f87171; }
+
+  /* === Card 6: CTA === */
+  .card-6 h2 { font-size: 44px; font-weight: 900; line-height: 1.3; margin-bottom: 40px; letter-spacing: 2px; text-align: center; }
+  .card-6 h2 .highlight { color: var(--accent); }
+  .card-6 .cta-body { font-size: 24px; line-height: 2.4; color: rgba(255,255,255,0.55); margin-bottom: 50px; text-align: center; }
+  .card-6 .cta-body .search-hint { display: inline-block; background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.15); border-radius: 8px; padding: 6px 18px; color: var(--accent); font-weight: 700; font-size: 22px; margin: 4px 8px; vertical-align: middle; text-align: center; white-space: nowrap; }
+  .card-6 .cta-body .search-line { display: block; margin-bottom: 14px; text-align: center; }
+  .card-6 .punch { color: var(--accent); margin-bottom: 30px; }
+
+  @media (max-width: 1100px) { .card { width: 90vw; height: auto; aspect-ratio: 3/4; padding: 40px 30px; } }
+</style>
+</head>
+<body>
+
+<!-- Card 1: 封面 -->
+<div class="card card-1">
+  <div class="card-num">1 / 6</div>
+  <div class="emoji">🏮</div>
+  <h1>AI绘图跑批<br><span class="highlight">5连败</span><br>问题不在AI</h1>
+  <p class="subtitle">
+    本地状态说项目还在<br>
+    云端其实已经没了<br><br>
+    昨天还能直连的服务器<br>
+    今天握手被重置<br><br>
+    5张鲤鱼花灯+城池变体<br>
+    5分钟找回通路
+  </p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 2: 痛点 — 两个说谎者 -->
+<div class="card card-2">
+  <div class="card-num">2 / 6</div>
+  <div class="section-label">🔍 根因</div>
+  <h2>流水线报错<br><span class="highlight">先问一句谁在说谎</span></h2>
+
+  <div class="compare-row">
+    <div class="compare-col bad">
+      <div class="c-label">📦</div>
+      <div class="c-desc">
+        <b>本地缓存</b><br><br>
+        • 命令显示项目还在<br>
+        • 实际读的是本地 state.json<br>
+        • <b>云端项目早已被删除</b>
+      </div>
+    </div>
+    <div class="compare-col bad">
+      <div class="c-label">🌐</div>
+      <div class="c-desc">
+        <b>网络</b><br><br>
+        • 昨天直连还通<br>
+        • 今天握手被重置<br>
+        • <b>时好时坏，间歇性撒谎</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="var-box">
+    <div class="v-title">核心问题</div>
+    <div class="v-text">
+      5个任务秒失败，两个嫌疑犯同时在场<br>
+      <b>别急着怀疑模型——先分清是谁在说谎</b>
+    </div>
+  </div>
+
+  <p class="punch" style="color: #f87171; margin-top: 20px;">报错不等于模型错了</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 3: 方法 — 对比实验 -->
+<div class="card card-3">
+  <div class="card-num">3 / 6</div>
+  <div class="section-label">💡 方法</div>
+  <h2>一次只改变一个变量<br><span class="highlight">找出唯一通路</span></h2>
+
+  <div class="formula">同一个请求 × 两条路径<br>= 两行代码定位答案</div>
+
+  <div class="insight-grid">
+    <div class="i-item">
+      <div class="i-icon">🧪</div>
+      <div class="i-body">
+        <div class="i-title">连通性对比实验</div>
+        <div class="i-desc">直连 vs 代理 127.0.0.1:7897，各发一次请求——谁通，谁就是答案</div>
+      </div>
+    </div>
+    <div class="i-item">
+      <div class="i-icon">📍</div>
+      <div class="i-body">
+        <div class="i-title">结论一句话</div>
+        <div class="i-desc">直连被重置、代理能到服务器 → export HTTPS_PROXY，全部恢复</div>
+      </div>
+    </div>
+    <div class="i-item">
+      <div class="i-icon">🔁</div>
+      <div class="i-body">
+        <div class="i-title">修复后零成本重跑</div>
+        <div class="i-desc">批量脚本支持断点续跑——定位一次，5个任务一键重来</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="punch">别急着重启、别急着换API<br>先做对比实验，答案会自己浮出来</p>
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 4: 流程 — 人机分工 -->
+<div class="card card-4">
+  <div class="card-num">4 / 6</div>
+  <div class="section-label">🧪 实测</div>
+  <h2>从5连败到5连成<br><span class="highlight">分工是这样的</span></h2>
+
+  <div class="round-grid">
+    <div class="r-item">
+      <div class="r-tag man">人</div>
+      <div class="r-text">一句话需求：<b>「画一个鲤鱼花灯+城池」</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag ai">AI</div>
+      <div class="r-text">模板锁定：<b>风格层一字不改，只换主题层</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag ai">AI</div>
+      <div class="r-text">新建云端项目，<b>替代被删的旧项目</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag ai">AI</div>
+      <div class="r-text">对比实验，<b>定位代理才是通路</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag ai">AI</div>
+      <div class="r-text">一波并发5，<b>同模板 × 5变体</b></div>
+    </div>
+    <div class="r-item">
+      <div class="r-tag man">人</div>
+      <div class="r-text">验收 <b>5张变体</b>，确认风格统一</div>
+    </div>
+  </div>
+
+  <div class="template-box">
+    <div class="t-label">🔒 锁定模板的用法</div>
+    <div class="t-text">
+      风格层（锁死）：渲染方式 / 构图 / 背景<br>
+      主题层（替换）：<b>giant glowing koi fish lantern</b> +<br>
+      &nbsp;&nbsp;<b>miniature walled city fortress</b>
+    </div>
+  </div>
+
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 5: 洞察 — 三块拼图 -->
+<div class="card card-5">
+  <div class="card-num">5 / 6</div>
+  <div class="section-label">🧠 洞察</div>
+  <h2>批量流水线<br><span class="highlight">由三块拼图组成</span></h2>
+
+  <div class="formula-steps">
+    <div class="fs-item">
+      <div class="fs-num">1</div>
+      <div class="fs-body">
+        <div class="fs-title">状态管理</div>
+        <div class="fs-desc">本地缓存会说谎，<b>命令列表 ≠ 云端真实状态</b></div>
+      </div>
+    </div>
+    <div class="fs-item">
+      <div class="fs-num">2</div>
+      <div class="fs-body">
+        <div class="fs-title">网络管理</div>
+        <div class="fs-desc">连通性时好时坏，<b>代理是唯一稳定的通路</b></div>
+      </div>
+    </div>
+    <div class="fs-item">
+      <div class="fs-num">3</div>
+      <div class="fs-body">
+        <div class="fs-title">模板管理</div>
+        <div class="fs-desc">风格层锁死、主题层替换，<b>5分钟出5张风格统一变体</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <div class="warn-text">
+      ⚠️ <b>排查顺序别反</b><br>
+      先看状态 → 再看网络 → 最后才轮到模型<br>
+      AI 只负责组装，出问题的是拼图
+    </div>
+  </div>
+
+  <div class="creation-badge">造化坊</div>
+</div>
+
+<!-- Card 6: CTA -->
+<div class="card card-6">
+  <div class="card-num">6 / 6</div>
+  <div class="section-label">开始行动</div>
+  <h2>下次流水线报错<br><span class="highlight">先问一句</span></h2>
+  <div class="cta-body">
+    <span class="search-line">
+      <span class="search-hint">1</span> 先看状态：本地缓存 ≠ 云端真实
+    </span>
+    <span class="search-line">
+      <span class="search-hint">2</span> 再看网络：直连 vs 代理做对比
+    </span>
+    <span class="search-line">
+      <span class="search-hint">3</span> 最后才轮到模型
+    </span>
+    <span class="search-line">
+      <span class="search-hint">4</span> 修复后断点续跑，一键重来
+    </span>
+    <br>
+    本地状态会说谎<br>
+    网络会间歇性撒谎<br>
+    代理是唯一稳定的通路
+  </div>
+  <p class="punch">谁在说谎？</p>
+  <div class="brand-line">造化坊 · 项目制学习实践</div>
+  <p class="cta-line">关注我：每天解决一个问题</p>
+</div>
+
+</body>
+</html>

@@ -16,6 +16,13 @@ export/
 # AI 工具集成
 .libtv/
 _*_output/
+sub2api-output/
+
+# Python
+__pycache__/
+
+# 临时文件
+.tmp_*
 
 # asset-pipeline 图片产出不入库（体积大，可再生成）
 projects/asset-pipeline/outputs/**/_clean/
