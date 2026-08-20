@@ -90,7 +90,7 @@ async function run() {
       const items = await request('GetSceneItemList', { sceneName: scene.currentProgramSceneName });
       console.log(JSON.stringify(items.sceneItems.map(i => ({ name: i.sourceName, type: i.inputKind, visible: i.sceneItemEnabled, x: i.sceneItemTransform?.positionX, y: i.sceneItemTransform?.positionY, w: i.sceneItemTransform?.sourceWidth, h: i.sceneItemTransform?.sourceHeight })), null, 2));
     } else if (action === 'shot') {
-      const out = process.argv[5] || 'J:/ceshi/shot.png';
+      const out = process.argv[5] || './shot.png';
       const scene = await request('GetCurrentProgramScene');
       const s = await request('GetSourceScreenshot', { sourceName: scene.currentProgramSceneName, imageFormat: 'png', imageWidth: 1280, imageHeight: 720 });
       const fs = await import('fs');

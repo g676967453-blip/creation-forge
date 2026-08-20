@@ -5,7 +5,7 @@
 ## 使用方法
 
 1. 在项目执行中遇到一个问题（代码、设计、素材……任何问题）
-2. 复制 `_template.md`，按 `YYYY-MM-DD-简短描述.md` 格式命名
+2. 复制 `_template.md`，按 `YYYY-MM-DD-[ai标签]-简短描述.md` 格式命名
 3. 与 AI 协作解决问题
 4. 填写日志区块（遇到了什么 → AI 怎么帮的 → 产出结果）
 5. 填写视频草案区块（三幕结构 + 素材清单）
@@ -14,10 +14,12 @@
 ## 命名示例
 
 ```
-2026-07-15-phaser-double-jump.md
-2026-07-16-generate-game-sfx.md
-2026-07-16-multi-lang-setup.md
+2026-08-06-[claude]-phaser-double-jump.md
+2026-08-07-[trea]-generate-game-sfx.md
+2026-08-07-[lobster]-multi-lang-setup.md
 ```
+
+> 注：2026-08-06 之前的日志是规范前遗留，不强制补标签。
 
 ## 与其他目录的关系
 

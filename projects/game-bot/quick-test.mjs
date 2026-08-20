@@ -26,8 +26,9 @@ async function main() {
 
   // 3. 截图 + OCR
   console.log('\n截图 + OCR...');
-  const shot = 'J:/ceshi/game-bot/quick_test.png';
-  const ocrOut = 'J:/ceshi/game-bot/quick_test.txt';
+  // 输出路径基于脚本所在目录 (game-bot/) 解析，不依赖 J: 盘
+  const shot = join(import.meta.dirname, 'quick_test.png');
+  const ocrOut = join(import.meta.dirname, 'quick_test.txt');
 
   await mumu.screenshot(shot);
   const ocrR = await ocrImage(shot, ocrOut);
@@ -66,7 +67,7 @@ async function main() {
 
     // 等响应后再截图看看效果
     await sleep(2000);
-    await mumu.screenshot('J:/ceshi/game-bot/after_tap.png');
+    await mumu.screenshot(join(import.meta.dirname, 'after_tap.png'));
     console.log('已截图 after_tap.png');
   } else if (action.type === 'key') {
     console.log('\n执行按键...');

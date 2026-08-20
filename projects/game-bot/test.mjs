@@ -11,12 +11,14 @@ console.log('=== 核心功能测试 ===\n');
 
 // 1. 截图
 console.log('1. 截图...');
-const r = await mumu.screenshot('J:/ceshi/game-bot/test_shot.png');
+// 路径基于脚本所在目录 (game-bot/) 解析，不依赖 J: 盘
+const shot = join(import.meta.dirname, 'test_shot.png');
+const r = await mumu.screenshot(shot);
 console.log('   结果:', r.ok ? '✓ OK' : '✗ ' + r.error);
 
 // 2. OCR
 console.log('2. OCR...');
-const ocr = await ocrImage('J:/ceshi/game-bot/test_shot.png', 'J:/ceshi/game-bot/test_ocr.txt');
+const ocr = await ocrImage(shot, join(import.meta.dirname, 'test_ocr.txt'));
 if (ocr.ok) {
   console.log('   行数:', ocr.lines.length);
   ocr.lines.slice(0, 5).forEach(l => console.log('   ', l));

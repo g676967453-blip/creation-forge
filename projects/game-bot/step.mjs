@@ -7,10 +7,11 @@ import { ocrImage, parseOcrText, detectUIState } from './lib/ocr.mjs';
 const config = JSON.parse(readFileSync(join(import.meta.dirname, 'config.json'), 'utf8'));
 const mumu = new MumuCtl(config.mumu);
 
-// 使用 Windows 反斜杠路径
-const SHOT = 'J:\\ceshi\\game-bot\\step_shot.png';
-const OCR_OUT = 'J:\\ceshi\\game-bot\\step_ocr.txt';
-const RESULT = 'J:\\ceshi\\game-bot\\step_result.json';
+// 输出文件基于脚本所在目录 (game-bot/) 解析，不再依赖 J: 盘绝对路径
+// join 在 Windows 上生成反斜杠路径，满足 WinRT OCR 的要求
+const SHOT = join(import.meta.dirname, 'step_shot.png');
+const OCR_OUT = join(import.meta.dirname, 'step_ocr.txt');
+const RESULT = join(import.meta.dirname, 'step_result.json');
 
 // 截图
 await mumu.screenshot(SHOT);

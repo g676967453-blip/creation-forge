@@ -11,7 +11,7 @@
 
 ## 迁入记录
 
-- 2026-08-05：从 `J:\Art Support AI Station\projects\idle-rpg-mobile-design-system` 迁入
+- 2026-08-05：从本地美术支持工作站的 `idle-rpg-mobile-design-system` 项目迁入
 - 归档：v1.0 内容已归档至 `_archive/v1.0/`
 
 ## 下一步

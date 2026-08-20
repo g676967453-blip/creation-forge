@@ -30,7 +30,7 @@
 | `项目协作规范.md` | ⭐ | 网格/间距规则（4px）、安全区、双分辨率交付（1334×750 + 1624×750）、命名规范、飞书验收流程 | [_rewritten/game-ui-collaboration-spec.md](./01-美术规范与标准/_rewritten/game-ui-collaboration-spec.md) |
 | `整体定制包装UI业务流程与内容概述.md` | ⭐ | 五阶段 UI 业务流程：需求分析→概念设计→五图定风格→APK 全量包装→通用规范+量产管线 | [_rewritten/game-ui-production-pipeline.md](./01-美术规范与标准/_rewritten/game-ui-production-pipeline.md) |
 | `UI外包协作规范内容模板.md` | 📄 | 外包全生命周期：准备→供应商筛选→制作，含供应商评估池与沟通标准 | [_rewritten/game-ui-outsourcing-guide.md](./01-美术规范与标准/_rewritten/game-ui-outsourcing-guide.md) |
-| [交互设计规范.md](./01-美术规范与标准/交互设计规范.md) | 📄 | 交互设计参考规范文档，[PDF 原始文件](../_assets/交互设计规范.pdf)（3.2MB，图片为主，无法自动提取文本） | —（待手动处理） |
+| [交互设计规范.md](./01-美术规范与标准/交互设计规范.md) | 📄 | 交互设计参考规范文档，[PDF 原始文件](./_assets/交互设计规范.pdf)（3.2MB，图片为主，无法自动提取文本） | —（待手动处理） |
 
 ---
 
@@ -100,7 +100,7 @@
 
 | 文件 | 状态 | 概要 | 重写版 |
 |------|:--:|------|------|
-| `手游付费认知框架与《英雄没有闪》拆解`（HTML 导出） | ⭐ | 完整付费拆解框架：玩家路径 × 付费入口 × 付费数据 三者关联模型 + 主表/单点拆解表/速查表/用户分层，并完整拆解《英雄没有闪》9 大付费模块与三大压力引擎 | [_rewritten/mobile-game-monetization-framework.md](./08-商业化与付费设计/_rewritten/mobile-game-monetization-framework.md)，[HTML 原文](../_assets/手游付费认知框架/monetization-framework.html) |
+| `手游付费认知框架与《英雄没有闪》拆解`（HTML 导出） | ⭐ | 完整付费拆解框架：玩家路径 × 付费入口 × 付费数据 三者关联模型 + 主表/单点拆解表/速查表/用户分层，并完整拆解《英雄没有闪》9 大付费模块与三大压力引擎 | [_rewritten/mobile-game-monetization-framework.md](./08-商业化与付费设计/_rewritten/mobile-game-monetization-framework.md)，[HTML 原文](./_assets/手游付费认知框架/monetization-framework.html) |
 
 ---
 

@@ -38,7 +38,13 @@ projects/game-bot/run_*/
 projects/game-bot/ocr/
 projects/game-bot/*.png
 projects/game-bot/*.txt
-!projects/game-bot/game-log.txt
+projects/game-bot/identify/
+projects/game-bot/aid_request.json
+projects/game-bot/step_result.json
+tools/tbh/capture_log.txt
+tools/tbh/debug_ocr_copy.txt
+tools/tbh/ocr_out.txt
+tools/tbh/ocr_yk.txt
 mumu_auto_*/
 frames/
 .cowork-temp/

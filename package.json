@@ -14,10 +14,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "scaffold": "npx tsx tools/scaffold-game.ts",
-    "journal": "npx tsx tools/new-journal.ts",
-    "stitch": "node stitch-test.mjs",
-    "stitch-ui": "node stitch-test.mjs",
-    "build-spec": "npx tsx projects/interaction-spec-system/tools/build-interaction-spec.ts"
+    "journal": "npx tsx tools/new-journal.ts"
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.0.0",

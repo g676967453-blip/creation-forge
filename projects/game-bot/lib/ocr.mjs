@@ -1,8 +1,12 @@
 // OCR 模块 —— 调用 Windows WinRT OCR 引擎提取中文文字
 import { spawnSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
-const OCR_SCRIPT = 'J:/ceshi/ocr.ps1';
+// ocr.ps1 位于仓库根 tools/tbh/ 下；本文件在 game-bot/lib/，向上三级到仓库根。
+// 基于 import.meta.dirname 解析，不依赖 J: 盘或进程 cwd。
+// 调用时经 winPath 转换为 Windows 反斜杠路径（见 ocrImage）。
+const OCR_SCRIPT = join(import.meta.dirname, '../../../tools/tbh/ocr.ps1');
 
 export async function ocrImage(imagePath, outPath, retries = 3) {
   // WinRT API 需要 Windows 风格反斜杠路径

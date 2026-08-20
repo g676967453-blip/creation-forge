@@ -1,6 +1,6 @@
 # 通用竖版手游 UI 设计系统
 
-> 版本：2.0.0 | 基准画布：`1080 x 1920px` | 来源：[idle-rpg-mobile-design-system](J:\Art%20Support%20AI%20Station\projects\idle-rpg-mobile-design-system)
+> 版本：2.0.0 | 基准画布：`1080 x 1920px` | 来源：`idle-rpg-mobile-design-system`（本地工作站）
 
 ## 项目定位
 
@@ -28,14 +28,14 @@
 | 版本 | 日期 | 来源 | 说明 |
 |------|------|------|------|
 | v2.1（进行中） | 2026-08-06 | 上线产品界面分析 | 新增游戏场景界面模式库与 11 个游戏复合组件，完成布局结构层面校准 |
-| v2.0.0 | 2026-08-05 | [idle-rpg-mobile-design-system](J:\Art%20Support%20AI%20Station\projects\idle-rpg-mobile-design-system) | 从美术支持工作站迁入，作为交互规范系统新基线 |
+| v2.0.0 | 2026-08-05 | idle-rpg-mobile-design-system（本地工作站） | 从美术支持工作站迁入，作为交互规范系统新基线 |
 | v1.0.0 | 2026-07-31 | 造化坊自建 | MD→HTML 生成器 + 竖版/横版规范 + 22 组件库（已归档至 `_archive/v1.0/`） |
 
 ## 关联项目
 
-- **造化坊**：`j:\ceshi` — AI 时代新学习思想实践场
+- **造化坊**：本仓库 — AI 时代新学习思想实践场
 - **GAME-002 开仙门**：首个实战验证项目
-- **美术支持工作站**：`J:\Art Support AI Station\` — 设计资产来源
+- **美术支持工作站**：本地工作站 — 设计资产来源
 
 ---
 

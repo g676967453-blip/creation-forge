@@ -73,7 +73,7 @@ python3 {baseDir}/agent_skill.py chat \
 ```bash
 python3 {baseDir}/agent_skill.py download \
   --urls "{返回的 URL}" \
-  --output-dir "j:/ceshi/projects/asset-pipeline/outputs/{项目名}/icons" \
+  --output-dir "C:/Users/Administrator/Desktop/asset-pipeline-outputs/{项目名}/icons" \
   --prefix "{项目名}_item_grid"
 ```
 
@@ -151,7 +151,7 @@ python3 scripts/slice_grid.py \
 - **PS 2026 Color Range 无法脚本化** — 手动抠图是唯一稳定方案（7 版 JSX 验证过的结论）
 - **PIL 管线有绿边残留风险** — 像素艺术可接受，3D/二次元建议走 PS 手动
 - **生成时必须关闭浏览器 Lovart 页面** — Canvas 多端编辑会冲突
-- **下载始终用绝对路径 `j:/ceshi/...`** — 不要用 `/tmp/`（Windows 不可达）
+- **下载始终用桌面绝对路径 `C:/Users/Administrator/Desktop/asset-pipeline-outputs/...`** — 不要用 `/tmp/`（Windows 不可达），产出不入仓库
 - **目录名用英文** — 中文路径会导致 Python 编码错误
 
 > 完整流程见 [docs/workflows/道具图标-生产.md](../docs/workflows/道具图标-生产.md)

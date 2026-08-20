@@ -9,7 +9,8 @@ const m = new MumuCtl(config.mumu);
 
 console.log('1. Taking screenshot...');
 const winPath = (p) => p.replace(/\//g, '\\');
-const shotPath = 'J:\\ceshi\\game-bot\\debug_shot.png';
+// 路径基于脚本所在目录 (game-bot/) 解析，不依赖 J: 盘
+const shotPath = join(import.meta.dirname, 'debug_shot.png');
 const r = await m.screenshot(shotPath);
 console.log('   Result:', r.ok ? 'OK' : 'FAIL: ' + r.error);
 
@@ -19,10 +20,11 @@ if (r.ok && existsSync(shotPath)) {
 
   console.log('2. Running OCR via spawnSync...');
   console.log('   ImagePath:', shotPath);
-  const ocrPath = 'J:\\ceshi\\game-bot\\debug_ocr.txt';
+  const ocrPath = join(import.meta.dirname, 'debug_ocr.txt');
   const result = spawnSync('powershell', [
     '-NoProfile', '-ExecutionPolicy', 'Bypass',
-    '-File', 'J:\\ceshi\\ocr.ps1',
+    // ocr.ps1 位于仓库根 tools/tbh/ 下，从 game-bot/ 向上两级
+    '-File', winPath(join(import.meta.dirname, '../../tools/tbh/ocr.ps1')),
     '-ImagePath', shotPath,
     '-OutFile', ocrPath
   ], { timeout: 20000, encoding: 'utf8', windowsHide: true });

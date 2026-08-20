@@ -1,7 +1,9 @@
 // OCR-only test
 import { ocrImage, parseOcrText, detectUIState } from './lib/ocr.mjs';
+import { join } from 'path';
 
-const r = await ocrImage('J:/ceshi/game-bot/screen_test.png', 'J:/ceshi/game-bot/screen_ocr.txt');
+// 路径基于脚本所在目录 (game-bot/) 解析，不依赖 J: 盘
+const r = await ocrImage(join(import.meta.dirname, 'screen_test.png'), join(import.meta.dirname, 'screen_ocr.txt'));
 if (r.ok) {
   console.log('OCR OK, lines:', r.lines.length);
   r.lines.forEach(l => console.log(' ', l));

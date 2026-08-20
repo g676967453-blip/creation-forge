@@ -1,7 +1,9 @@
 import { ocrImage, parseOcrText, detectUIState } from './lib/ocr.mjs';
+import { join } from 'path';
 
-const shotPath = 'J:\\ceshi\\game-bot\\after_tap.png';
-const ocrPath = 'J:\\ceshi\\game-bot\\after2_ocr.txt';
+// 路径基于脚本所在目录 (game-bot/) 解析，不依赖 J: 盘
+const shotPath = join(import.meta.dirname, 'after_tap.png');
+const ocrPath = join(import.meta.dirname, 'after2_ocr.txt');
 
 const r = await ocrImage(shotPath, ocrPath);
 if (r.ok) {

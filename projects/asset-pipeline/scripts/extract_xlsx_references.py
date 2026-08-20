@@ -12,7 +12,7 @@ extract_xlsx_references.py — 提取 xlsx 内嵌参考图（WPS DISPIMG 浮动�
 
 用法：
   python extract_xlsx_references.py --xlsx "<中文源路径>.xlsx" \
-      --out-dir j:/ceshi/projects/asset-pipeline/outputs/buildings/castle-skins/_references
+      --out-dir C:/Users/Administrator/Desktop/asset-pipeline-outputs/buildings/castle-skins/_references
 
 依赖：仅标准库（zipfile / re / json）
 """

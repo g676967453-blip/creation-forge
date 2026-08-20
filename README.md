@@ -61,8 +61,8 @@
 
 | 正在做的项目 | 技术 | 当前状态 |
 |-------------|------|---------|
-| [开仙门](projects/GAME-002/) — Roguelike 塔防 | Godot 4.7 | V0.1 开发中 |
-| [小红书内容线](projects/xiaohongshu/) — AI 协作内容创作 | HTML/CSS + Pixso | 11 期帖子 |
+| [开仙门](projects/GAME-002/) — 吸血鬼幸存者+放置 | Godot 4.7 | V0.1 开发中 |
+| [小红书内容线](projects/xiaohongshu/) — AI 协作内容创作 | HTML/CSS + Pixso | 15 期帖子 |
 
 > 更多项目见 [projects/](projects/) 目录。教程模板在 [templates/](templates/)。
 

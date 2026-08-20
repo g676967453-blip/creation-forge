@@ -238,6 +238,8 @@ tags: [interaction-spec-system, 重构]
 | 秦王殿奏对 | `projects/qin-court-audience/` | 🟢 已完成 — v1.0 |
 | 小红书 | `projects/xiaohongshu/` | 🟢 运转中 — 15 期已发布 |
 | 美术AI协作中台 | `projects/游戏美术部门AI协作中台/` | 🟢 已完成 — v1.0（08-19） |
+| game-bot | `projects/game-bot/` | 🟢 在役 — AI 游戏自动化工作流（08-10 仪表盘注册） |
+| 情景认知小程序 | `projects/情景认知小程序/` | 🟡 原型验证中 — prototype/sim.js 原型验证 |
 | TBH 复刻 | 调研完成，待立项 | 🔵 调研完成 — 市场+实机分析（08-06） |
 
 ---

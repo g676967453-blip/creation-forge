@@ -43,7 +43,7 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 
 - 问题来源：项目执行中自然遇到，大到架构设计，小到字体下载
 - 记录方式：[`works/_template.md`](./works/_template.md) — 一个文件 = 日志 + 视频草案
-- 文件命名：`YYYY-MM-DD-简短描述.md`
+- 文件命名：`YYYY-MM-DD-[ai标签]-简短描述.md`
 - 多线并行：各线独立运转，互不交叉
 - **每日日志**：AI 每天首次对话时检查当日是否有 `works/YYYY-MM-DD-*.md` 文件，没有则主动提醒"今天的工作记录在哪里？"
 
@@ -153,7 +153,7 @@ AI 不是替代人类创造力，而是放大它。它同时扮演两个底层�
 | 包管理          | npm        | 11.x              |
 | 3D渲染 (按需)   | Three.js   | 最新稳定版        |
 | 桌面打包 (按需) | Electron   | 最新稳定版        |
-| 备选引擎 (未来) | Godot      | 4.x               |
+| 在役引擎         | Godot      | 4.x               |
 
 ---
 
@@ -190,8 +190,10 @@ creation-forge/
 ├── docs/
 │   ├── zh-CN/          ← 📚 核心文档（哲学/技术栈/工作流/规范）
 │   │   └── manifesto.md ← 🔥 AI时代的新学习思想宣言
-│   ├── workflows/      ← 🔄 标准化协作流程（21 个工作流文档 + 模板）
+│   ├── workflows/      ← 🔄 标准化协作流程（26 个工作流文档 + 4 模板）
 │   ├── tool-guides/    ← 📖 工具知识库（Git/GitHub/Pixso 操作与人机协作）
+│   ├── personal-work-records/ ← 📁 个人工作记录知识库（33 文档）
+│   ├── specs/          ← 📐 技术规范（资产输出与切图命名）
 │   └── en/             ← 🌐 英文文档
 ├── shared/             ← 📦 共享库（跨项目复用的 types/utils/assets）
 ├── templates/          ← 🔧 项目模板（Phaser / Godot 快速启动）
@@ -201,9 +203,8 @@ creation-forge/
 │   ├── asset-pipeline/ ← 🔧 资产生产管线（产出媒体→桌面 asset-pipeline-outputs/，不进仓库）
 │   ├── interaction-spec-system/ ← 📐 游戏交互规范生成系统
 │   ├── qin-court-audience/ ← 🏛️ 秦殿听政（HTML 原型）
-│   ├── tutorial/       ← 🎓 学习教程项目
 │   ├── game-bot/       ← 🤖 游戏自动化机器人（流程脚本入库，运行产出忽略）
-│   ├── 游戏美术部门AI协作中台/ ← 🎨 美术协作中台（planned）
+│   ├── 游戏美术部门AI协作中台/ ← 🎨 美术协作中台（✅ 已完成 v1.0，08-19）
 │   └── 情景认知小程序/  ← 🧠 情景认知训练小程序（原型验证中）
 ├── works/              ← 📝 每日工作记录（一事一记 + 视频草案）
 ├── reports/            ← 📊 报告与仪表盘
@@ -249,27 +250,21 @@ assets: 添加玩家精灵素材
 
 ### 创建交互规范文档
 
-使用 `projects/interaction-spec-system/specs/_interaction-template.md` 模板创建新的游戏交互规范：
+交互规范系统 v2.x 以 MD 为单一数据源（`projects/interaction-spec-system/`），HTML 预览页手工维护：
 
-1. 复制模板：`cp projects/interaction-spec-system/specs/_interaction-template.md projects/interaction-spec-system/specs/<平台>-game-interaction-spec.md`
-2. 编辑 YAML frontmatter（平台/画布/网格/色彩参数）
-3. 填写各章节内容（画布/热区/手势/触控/布局/组件/动效等）
-4. 生成 HTML：`npm run build-spec -- projects/interaction-spec-system/specs/<平台>-game-interaction-spec.md`
-5. 在浏览器中打开 HTML 验证视觉效果
+1. 阅读 [交互规范系统 README](projects/interaction-spec-system/README.md) 了解 v2.1 基线（组件库 + 游戏场景界面模式库）
+2. 新增/修改规范时同步更新 README.md 与 docs/ 下的模式、组件文档
+3. 可视化预览直接打开 docs/ 下的 HTML 预览页（v2 无构建步骤）
 
-MD 为 AI 可读的单一数据源，HTML 由生成器自动渲染（网格可视化 + 组件陈列 + 手机原型标注）。
-
-> 📖 详见 [方案文档](C:\Users\admin\.claude\plans\wiggly-bouncing-blanket.md)
-
----
+> 📖 v1.0 的 MD→HTML 构建工具链（spec-parser / spec-renderer / build-spec）已归档至 `projects/interaction-spec-system/_archive/v1.0/tools/`，package.json 中对应 script 已移除。
 
 ---
 
 ## 当前任务上下文
 
-> 📌 **当前阶段：** 游戏交互规范生成系统 v1.0 — MD 驱动 HTML 的交互规范生产线
-> 📌 **状态：** 已完成核心工具链（2026-07-30）
-> 📌 **最新完成：** 创建 spec-parser + spec-renderer + build-spec 工具链，重构竖版交互规范为 MD 驱动
+> 📌 **当前阶段：** 游戏交互规范生成系统 v2.1 — 组件库 + 场景界面模式库（2026-08-06）
+> 📌 **状态：** v1.0 MD→HTML 工具链已归档（2026-08-05 起以本地工作站迁入版本为新基线）
+> 📌 **最新完成：** 全项目诊断修复（2026-08-20）— 文档口径统一、game-bot 路径改造、仓库卫生
 
 ---
 

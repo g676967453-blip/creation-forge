@@ -23,9 +23,9 @@
   },
   "loop": {
     "intervalMs": 3000,
-    "screenshotDir": "J:/ceshi/game-bot/screenshots",
-    "ocrOutDir": "J:/ceshi/game-bot/ocr",
-    "logFile": "J:/ceshi/game-bot/game-log.txt",
+    "screenshotDir": "./screenshots",
+    "ocrOutDir": "./ocr",
+    "logFile": "./game-log.txt",
     "maxIterations": 0
   }
 }
