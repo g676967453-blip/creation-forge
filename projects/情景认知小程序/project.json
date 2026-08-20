@@ -1,0 +1,7 @@
+{
+  "name": "情景认知小程序 (scenario-cognition)",
+  "engine": "小程序",
+  "status": "prototype",
+  "output": "prototype/sim.js 原型验证",
+  "sortOrder": 7
+}

@@ -198,7 +198,13 @@ creation-forge/
 ├── projects/           ← 🚀 所有项目
 │   ├── GAME-002/       ← 🎮 开仙门（Godot 4.7 独立游戏）
 │   ├── xiaohongshu/    ← 📱 小红书自媒体内容创作
-│   └── asset-pipeline/ ← 🔧 资产生产管线（产出媒体→桌面 asset-pipeline-outputs/，不进仓库）
+│   ├── asset-pipeline/ ← 🔧 资产生产管线（产出媒体→桌面 asset-pipeline-outputs/，不进仓库）
+│   ├── interaction-spec-system/ ← 📐 游戏交互规范生成系统
+│   ├── qin-court-audience/ ← 🏛️ 秦殿听政（HTML 原型）
+│   ├── tutorial/       ← 🎓 学习教程项目
+│   ├── game-bot/       ← 🤖 游戏自动化机器人（流程脚本入库，运行产出忽略）
+│   ├── 游戏美术部门AI协作中台/ ← 🎨 美术协作中台（planned）
+│   └── 情景认知小程序/  ← 🧠 情景认知训练小程序（原型验证中）
 ├── works/              ← 📝 每日工作记录（一事一记 + 视频草案）
 ├── reports/            ← 📊 报告与仪表盘
 ├── tools/              ← 🛠️ 开发工具脚本（数据采集/仪表盘生成/Pixso导入等）
