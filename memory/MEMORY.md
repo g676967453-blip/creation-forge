@@ -14,3 +14,4 @@
 - [制作游戏UI设计系统](project-制作游戏UI设计系统.md) — 📋 待办：制作游戏UI设计系统（F-005）
 - [asset-pipeline 产出目录](project-asset-pipeline产出目录.md) — 🔑 全局规则：产出媒体存桌面 asset-pipeline-outputs/，不进仓库（2026-08-20）
 - [⚠️ git 历史重写告警](ops-git历史重写.md) — ⚠️ 2026-08-20 历史已重写强推：旧克隆必须重新 clone（新 HEAD 164d4b3）
+- [飞书知识库](reference-飞书知识库.md) — 🔗 用户个人知识库「独立制作学习」：链接、space_id 与 lark-cli 访问方式（2026-08-20）
