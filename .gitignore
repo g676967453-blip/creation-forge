@@ -26,16 +26,19 @@ __pycache__/
 
 # asset-pipeline 图片产出不入库（体积大，可再生成）
 projects/asset-pipeline/outputs/**/_clean/
+# demo-character-concept 角色原画产出不入库（体积大，可再生成；cankao 参考图除外）
+projects/asset-pipeline/outputs/demo-character-concept/portraits/*
+!projects/asset-pipeline/outputs/demo-character-concept/portraits/cankao/
 
 # 游戏机器人产出文件（流程脚本提交，产出不提交）
 *.apk
 *.mp4
-game-bot/screenshots/
-game-bot/run_*/
-game-bot/ocr/
-game-bot/*.png
-game-bot/*.txt
-!game-bot/game-log.txt
+projects/game-bot/screenshots/
+projects/game-bot/run_*/
+projects/game-bot/ocr/
+projects/game-bot/*.png
+projects/game-bot/*.txt
+!projects/game-bot/game-log.txt
 mumu_auto_*/
 frames/
 .cowork-temp/

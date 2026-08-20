@@ -721,7 +721,7 @@ export function collectData() {
     { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标 + 建筑资产管线" },
     { layer: "项目层", name: "秦王殿奏对", path: "projects/qin-court-audience/", desc: "HTML/CSS/JS 打字答题游戏 — 300 题库 + 10 分类" },
     { layer: "项目层", name: "交互规范系统", path: "projects/interaction-spec-system/", desc: "MD 驱动游戏交互规范生产线 — 模板+生成器+技能包" },
-    { layer: "项目层", name: "美术AI协作中台", path: "projects/游戏美术部门AI协作中台/", desc: "美术部门 AI 协作平台 — 资产管理+AI生成+管线集成（已规划）" },
+    { layer: "项目层", name: "美术AI协作中台", path: "projects/游戏美术部门AI协作中台/", desc: "美术部门 AI 协作平台 — 资产管理+AI生成+管线集成（已完成）" },
     { layer: "—", name: "GitHub", path: "https://github.com/g676967453-blip/creation-forge", desc: "远程仓库" },
   ];
 

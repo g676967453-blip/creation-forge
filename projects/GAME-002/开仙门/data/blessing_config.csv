@@ -1,28 +1,28 @@
-blessing_id,blessing_line,tier,type,display_name,description,effect_key,effect_value,required_peak,rarity,weight
-ricochet_1,ricochet,1,projectile,弹射+1,投射物命中敌人后弹射至附近1个敌人,ricochet_count,1,peak_sword,common,15
-ricochet_2,ricochet,2,projectile,弹射+2,投射物命中敌人后弹射至附近2个敌人,ricochet_count,2,peak_sword,rare,10
-ricochet_3,ricochet,3,projectile,闪电网,链式弹射——每次弹跳后再弹2次，闪电链视觉效果,ricochet_count,3,peak_sword,epic,5
-shield_1,shield,1,special,护盾·初,获得器灵最大HP 20%的护盾,shield_hp_pct,0.2,peak_buddha,common,15
-shield_2,shield,2,special,护盾·固,获得器灵最大HP 40%的护盾,shield_hp_pct,0.4,peak_buddha,rare,10
-shield_3,shield,3,special,护盾·爆,护盾破裂时释放冲击波（击退周围敌人+造成100%攻击力伤害）,shield_explosion,1,peak_buddha,epic,5
-split_1,split,1,projectile,分裂+1,投射物命中后分裂为2个次级投射物,split_count,1,peak_magic,common,15
-split_2,split,2,projectile,分裂+2,投射物命中后分裂为3个次级投射物,split_count,2,peak_magic,rare,10
-split_3,split,3,projectile,扇形齐射,前方60°扇形同时发射5发投射物,fan_shot_count,5,peak_magic,epic,5
-pierce_1,pierce,1,projectile,穿透+1,投射物可穿透1个敌人继续飞行,pierce_count,1,peak_beast,common,15
-pierce_2,pierce,2,projectile,穿透+2,投射物可穿透2个敌人继续飞行,pierce_count,2,peak_beast,rare,10
-pierce_3,pierce,3,projectile,回旋穿透,穿透数翻倍+弹幕穿透到底后自动折返再次穿透,pierce_count,4,peak_beast,epic,5
-range_1,range,1,stat,范围+15%,投射物碰撞体积和爆炸范围+15%,range_mult,1.15,peak_artifact,common,15
-range_2,range,2,stat,范围+30%,投射物碰撞体积和爆炸范围+30%,range_mult,1.3,peak_artifact,rare,10
-range_3,range,3,stat,全屏覆盖,弹幕尺寸大幅增加+射程覆盖全屏,range_mult,2.0,peak_artifact,epic,5
-damage_1,damage,1,stat,伤害+30%,所有投射物伤害×1.3,dmg_mult,1.3,peak_soul,common,15
-damage_2,damage,2,stat,伤害+60%,所有投射物伤害×1.6,dmg_mult,1.6,peak_soul,rare,10
-damage_3,damage,3,stat,暴击觉醒,暴击率+20%+暴击伤害200%,crit_rate,0.2,peak_soul,epic,5
-atk_speed_1,atk_speed,1,stat,攻速+20%,器灵攻击间隔×0.8,atk_speed_mult,1.2,,common,15
-atk_speed_2,atk_speed,2,stat,攻速+40%,器灵攻击间隔×0.6,atk_speed_mult,1.4,,rare,10
-atk_speed_3,atk_speed,3,stat,双倍连击,每tick同时发射2发投射物,double_shot,1,,epic,5
-lifesteal_1,lifesteal,1,special,吸血5%,造成伤害的5%转化为器灵HP恢复,lifesteal_pct,0.05,,common,15
-lifesteal_2,lifesteal,2,special,吸血10%,造成伤害的10%转化为器灵HP恢复,lifesteal_pct,0.1,,rare,10
-lifesteal_3,lifesteal,3,special,血盾转化,过量治疗自动转为护盾,overheal_shield,1,,epic,5
-crit_1,crit,1,special,暴击+10%,投射物10%概率造成1.5倍伤害,crit_chance,0.1,,common,15
-crit_2,crit,2,special,暴击+20%,投射物20%概率造成1.5倍伤害,crit_chance,0.2,,rare,10
-crit_3,crit,3,special,闪电暴击,暴击时产生闪电链——弹跳至附近3个敌人造成50%伤害,crit_chain,1,,epic,5
+blessing_id,blessing_line,tier,type,display_name,description,effect_key,effect_value,effect_value_2,required_peak,rarity,weight
+ricochet_1,ricochet,1,projectile,弹射+1,投射物命中敌人后弹射至附近1个敌人,ricochet_count,1,0,peak_sword,common,15
+ricochet_2,ricochet,2,projectile,弹射+2,投射物命中敌人后弹射至附近2个敌人,ricochet_count,2,0,peak_sword,rare,10
+ricochet_3,ricochet,3,projectile,闪电网,链式弹射——每次弹跳后再弹2次，闪电链视觉效果,ricochet_count,3,0,peak_sword,epic,5
+shield_1,shield,1,special,护盾·初,获得器灵最大HP 20%的护盾,shield_hp_pct,0.2,0,peak_buddha,common,15
+shield_2,shield,2,special,护盾·固,获得器灵最大HP 40%的护盾,shield_hp_pct,0.4,0,peak_buddha,rare,10
+shield_3,shield,3,special,护盾·爆,护盾破裂时释放冲击波（击退周围敌人+造成100%攻击力伤害）,shield_explosion,1,0,peak_buddha,epic,5
+split_1,split,1,projectile,分裂+1,投射物命中后分裂为2个次级投射物,split_count,1,0,peak_magic,common,15
+split_2,split,2,projectile,分裂+2,投射物命中后分裂为3个次级投射物,split_count,2,0,peak_magic,rare,10
+split_3,split,3,projectile,扇形齐射,前方60°扇形同时发射5发投射物,fan_shot_count,5,0,peak_magic,epic,5
+pierce_1,pierce,1,projectile,穿透+1,投射物可穿透1个敌人继续飞行,pierce_count,1,0,peak_beast,common,15
+pierce_2,pierce,2,projectile,穿透+2,投射物可穿透2个敌人继续飞行,pierce_count,2,0,peak_beast,rare,10
+pierce_3,pierce,3,projectile,回旋穿透,穿透数翻倍+弹幕穿透到底后自动折返再次穿透,pierce_count,4,0,peak_beast,epic,5
+range_1,range,1,stat,范围+15%,投射物碰撞体积和爆炸范围+15%,range_mult,1.15,0,peak_artifact,common,15
+range_2,range,2,stat,范围+30%,投射物碰撞体积和爆炸范围+30%,range_mult,1.3,0,peak_artifact,rare,10
+range_3,range,3,stat,全屏覆盖,弹幕尺寸大幅增加+射程覆盖全屏,range_mult,2.0,0,peak_artifact,epic,5
+damage_1,damage,1,stat,伤害+30%,所有投射物伤害×1.3,dmg_mult,1.3,0,peak_soul,common,15
+damage_2,damage,2,stat,伤害+60%,所有投射物伤害×1.6,dmg_mult,1.6,0,peak_soul,rare,10
+damage_3,damage,3,stat,暴击觉醒,暴击率+20%+暴击伤害200%,crit_burst,0.2,2.0,peak_soul,epic,5
+atk_speed_1,atk_speed,1,stat,攻速+20%,器灵攻击间隔×0.8,atk_speed_mult,1.2,0,,common,15
+atk_speed_2,atk_speed,2,stat,攻速+40%,器灵攻击间隔×0.6,atk_speed_mult,1.4,0,,rare,10
+atk_speed_3,atk_speed,3,stat,双倍连击,每tick同时发射2发投射物,double_shot,1,0,,epic,5
+lifesteal_1,lifesteal,1,special,吸血5%,造成伤害的5%转化为器灵HP恢复,lifesteal_pct,0.05,0,,common,15
+lifesteal_2,lifesteal,2,special,吸血10%,造成伤害的10%转化为器灵HP恢复,lifesteal_pct,0.1,0,,rare,10
+lifesteal_3,lifesteal,3,special,血盾转化,过量治疗自动转为护盾,overheal_shield,1,0,,epic,5
+crit_1,crit,1,special,暴击+10%,投射物10%概率造成1.5倍伤害,crit_chance,0.1,0,,common,15
+crit_2,crit,2,special,暴击+20%,投射物20%概率造成1.5倍伤害,crit_chance,0.2,0,,rare,10
+crit_3,crit,3,special,闪电暴击,暴击时产生闪电链——弹跳至附近3个敌人造成50%伤害,crit_chain,1,0,,epic,5

@@ -23,6 +23,7 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
   - **禁止在根目录新建一级文件夹** — 除非用户明确要求
   - **工具脚本放 `tools/`** — 不要另建 `scripts/`、`bin/` 等
 - [ ] 涉及共享文件修改前，检查 `.ai-locks/` 是否有锁
+- [ ] 检查 `docs/个人待办.md` 活跃区是否有 ✅/❌ 未归档任务，有则提醒用户「有 N 条任务待归档」
 
 > 📖 完整入门指引见 [ONBOARDING.md](./ONBOARDING.md)
 
@@ -197,13 +198,15 @@ creation-forge/
 ├── projects/           ← 🚀 所有项目
 │   ├── GAME-002/       ← 🎮 开仙门（Godot 4.7 独立游戏）
 │   ├── xiaohongshu/    ← 📱 小红书自媒体内容创作
-│   └── asset-pipeline/ ← 🔧 资产生产管线（游戏道具图标批量生产）
+│   └── asset-pipeline/ ← 🔧 资产生产管线（产出媒体→桌面 asset-pipeline-outputs/，不进仓库）
 ├── works/              ← 📝 每日工作记录（一事一记 + 视频草案）
 ├── reports/            ← 📊 报告与仪表盘
 ├── tools/              ← 🛠️ 开发工具脚本（数据采集/仪表盘生成/Pixso导入等）
 ├── .claude/            ← ⚙️ Claude Code 配置（SKILL/记忆/settings）
 └── .workbuddy/         ← 🔗 工作伙伴集成
 ```
+
+> 🔑 **全局规则（2026-08-20 起）**：`projects/asset-pipeline/` 的生成产出（图片/视频/音频）不入仓库，统一存桌面 `C:\Users\Administrator\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流 MD 文档、规则、过程数据（映射表/批次状态）与参考图。详见 `projects/asset-pipeline/CLAUDE.md`。
 
 ## 开发工作流
 

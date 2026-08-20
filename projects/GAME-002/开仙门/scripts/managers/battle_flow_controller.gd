@@ -9,6 +9,7 @@ const NODE_PROJECTILES := ^"Projectiles"
 signal battle_ended(victory: bool)
 
 var _battle_time: float = 0.0
+var _kill_count: int = 0
 
 var main_peak
 var wave_manager: WaveManager
@@ -45,24 +46,18 @@ func _show_countdown(text: String, duration: float) -> void:
 func start_battle() -> void:
 	if ui_state_coordinator.current_state != GameManager.GameState.PREPARATION:
 		return
-	# V0.1: 根据已修复山峰自动生成弟子
-	var disciple_squad: DiscipleSquad = null
-	if economy_manager and economy_manager.get("disciple_squad") != null:
-		disciple_squad = economy_manager.disciple_squad as DiscipleSquad
-	if disciple_squad:
-		var all_disciples := DataManager.get_all_disciples()
-		var active_peaks: Array[String] = []
-		if economy_manager.mountain_manager and economy_manager.mountain_manager.has_method("get_all_activated_form_ids"):
-			active_peaks = economy_manager.mountain_manager.get_all_activated_form_ids()
-		# 为每个已激活的山峰招募对应弟子
-		for peak_id in active_peaks:
-			for d in all_disciples:
-				if d.peak_id == peak_id:
-					disciple_squad.recruit(peak_id, d)
-					break
-		print("[BattleFlowController] V0.1: spawned %d disciples" % disciple_squad.get_disciples().size())
+	var challenge_cost := DataManager.get_game_config_int("challenge_cost_energy", 100)
+	if not economy_manager.spend_energy(challenge_cost):
+		return
+	_kill_count = 0
+	economy_manager.blessing_manager.reset_run()
 	_battle_time = 0.0
 	ui_state_coordinator.set_state(GameManager.GameState.BATTLE)
+	economy_manager._pending_upgrade_count += 1
+	economy_manager._trigger_battle_upgrade()
+	await economy_manager.card_resolved
+	if ui_state_coordinator.current_state != GameManager.GameState.BATTLE:
+		return
 	if main_peak:
 		main_peak.set_battle_active(false)
 	_show_countdown("3", 1.0)
@@ -119,6 +114,13 @@ func _on_wave_changed(wave_idx: int, total: int) -> void:
 
 
 func _on_victory() -> void:
+	economy_manager.add_stone(DataManager.get_game_config_int("victory_reward_nuwa_stone", 1))
+	economy_manager.add_energy(_kill_count * DataManager.get_game_config_int("victory_reward_energy_per_kill", 1))
+	var peak_ids := DataManager.peak_config_database.keys()
+	if not peak_ids.is_empty():
+		for index in range(DataManager.get_game_config_int("victory_reward_treasure_count", 1)):
+			economy_manager.add_treasure(str(peak_ids.pick_random()), 1)
+	economy_manager.apply_idle_boost()
 	ui_state_coordinator.set_state(GameManager.GameState.GAME_OVER)
 	if result_ui and result_ui.has_method("show_result"):
 		result_ui.show_result(true)
@@ -126,10 +128,17 @@ func _on_victory() -> void:
 
 
 func on_defeat() -> void:
+	if main_peak and main_peak.has_method("set_invincible"):
+		main_peak.current_hp = main_peak.max_hp
+		main_peak.queue_redraw()
 	ui_state_coordinator.set_state(GameManager.GameState.GAME_OVER)
 	if result_ui and result_ui.has_method("show_result"):
 		result_ui.show_result(false)
 	battle_ended.emit(false)
+
+
+func on_enemy_killed(_exp_reward: int) -> void:
+	_kill_count += 1
 
 
 func return_to_preparation() -> void:
@@ -140,6 +149,7 @@ func return_to_preparation() -> void:
 	main_peak.queue_redraw()
 	main_peak.set_battle_active(false)
 	economy_manager.reset_progress()
+	economy_manager.blessing_manager.reset_run()
 	ui_state_coordinator.set_state(GameManager.GameState.PREPARATION)
 	ui_state_coordinator.update_ui()
 

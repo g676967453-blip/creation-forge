@@ -2,6 +2,7 @@ extends Node
 ## 全局数据管理器(Autoload) - 通过 CSV 载入配置
 
 var peak_config_database: Dictionary = {}
+var game_config_database: Dictionary = {}
 var enemy_database: Dictionary = {}
 ## V0.0 card_database — 已废弃（V0.1 用 blessing_database 替代）
 var form_database: Dictionary = {}
@@ -18,21 +19,35 @@ var artifact_database: Dictionary = {}
 
 
 func _ready() -> void:
+	_load_game_config()
 	_load_main_peak()
 	_load_peak_configs()
 	_load_enemies()
-	_load_forms()
 	_load_spirit_profiles()
 	_load_spirit_growth()
 	_load_enemy_sprites()
-	_load_form_levels()
 	_init_waves()
-	_load_disciples()
 	_load_blessings()
-	_load_artifacts()
-	print("[DataManager] loaded: peaks=%d enemies=%d forms=%d profiles=%d sprites=%d levels=%d waves=%d disciples=%d blessings=%d artifacts=%d" % [
-		peak_config_database.size(), enemy_database.size(), form_database.size(), spirit_profile_database.size(), enemy_sprite_database.size(), form_level_database.size(), wave_database.size(), disciple_database.size(), blessing_database.size(), artifact_database.size()
+	print("[DataManager] loaded: game=%d peaks=%d enemies=%d profiles=%d sprites=%d waves=%d blessings=%d" % [
+		game_config_database.size(), peak_config_database.size(), enemy_database.size(), spirit_profile_database.size(), enemy_sprite_database.size(), wave_database.size(), blessing_database.size()
 	])
+
+
+func _load_game_config() -> void:
+	game_config_database.clear()
+	for row in CsvLoader.load_csv("res://data/game_config.csv"):
+		var key := str(row.get("key", ""))
+		if key.is_empty() or key.begins_with("#"):
+			continue
+		game_config_database[key] = float(row.get("value", "0"))
+
+
+func get_game_config(key: String, default_value: float = 0.0) -> float:
+	return float(game_config_database.get(key, default_value))
+
+
+func get_game_config_int(key: String, default_value: int = 0) -> int:
+	return int(game_config_database.get(key, default_value))
 
 
 func _load_main_peak() -> void:
@@ -49,14 +64,12 @@ func _load_main_peak() -> void:
 	main_peak_config.split_count = int(r.get("split_count", "0"))
 	main_peak_config.pierce_count = int(r.get("pierce_count", "0"))
 	main_peak_config.damage_multiplier = float(r.get("damage_multiplier", "1.0"))
-	main_peak_config.spirit_click_base = int(r.get("spirit_click_base", "10"))
-	main_peak_config.spirit_auto_base = int(r.get("spirit_auto_base", "5"))
-	main_peak_config.spirit_auto_interval = float(r.get("spirit_auto_interval", "0.2"))
+	main_peak_config.spirit_click_base = get_game_config_int("spirit_click_energy", 20)
+	main_peak_config.spirit_auto_base = get_game_config_int("energy_base_rate_per_sec", 10)
+	main_peak_config.spirit_auto_interval = 1.0
 	main_peak_config.spirit_display_interval = float(r.get("spirit_display_interval", "1.0"))
 	main_peak_config.projectile_max_distance = float(r.get("projectile_max_distance", "1800"))
 	main_peak_config.exp_per_level_increase = int(r.get("exp_per_level_increase", "25"))
-	main_peak_config.soul_mark_weaken_per_stack = float(r.get("soul_mark_weaken_per_stack", "0.08"))
-	main_peak_config.soul_mark_base_damage = float(r.get("soul_mark_base_damage", "20.0"))
 
 
 func _load_peak_configs() -> void:
@@ -66,14 +79,13 @@ func _load_peak_configs() -> void:
 		var d = preload("res://scripts/data/peak_config.gd").new()
 		d.peak_id = str(r.get("peak_id", ""))
 		d.peak_name = str(r.get("peak_name", ""))
-		d.school_name = str(r.get("school_name", ""))
-		d.school_tag = str(r.get("school_tag", ""))
-		d.school_desc = str(r.get("school_desc", ""))
-		d.entry_form_id = str(r.get("entry_form_id", ""))
 		d.icon_path = str(r.get("icon_path", ""))
-		d.repair_cost = int(r.get("repair_cost", "20"))
-		d.upgrade_cost_base = int(r.get("upgrade_cost_base", "30"))
-		d.upgrade_cost_per_level = int(r.get("upgrade_cost_per_level", "15"))
+		d.ability_id = str(r.get("ability_id", ""))
+		d.repair_cost_energy = int(r.get("repair_cost_energy", "0"))
+		d.repair_cost_nuwa = int(r.get("repair_cost_nuwa", "0"))
+		d.repair_requires_treasure = str(r.get("repair_requires_treasure", ""))
+		d.repair_order = str(r.get("repair_order", "free"))
+		d.repair_cost = d.repair_cost_energy
 		peak_config_database[d.peak_id] = d
 
 
@@ -87,8 +99,7 @@ func _load_enemies() -> void:
 		d.hp = float(r.get("hp", "50"))
 		d.speed = float(r.get("speed", "120"))
 		d.damage = float(r.get("damage", "10"))
-		d.enemy_type = str(r.get("enemy_type", "ground"))
-		d.path_type = str(r.get("path_type", "straight"))
+		d.enemy_type = str(r.get("enemy_type", "normal"))
 		d.size = float(r.get("size", "1.0"))
 		d.color = Color(
 			float(r.get("color_r", "1.0")),
@@ -96,10 +107,9 @@ func _load_enemies() -> void:
 			float(r.get("color_b", "1.0"))
 		)
 		d.exp_reward = int(r.get("exp_reward", "10"))
-		d.siege_attack_interval = float(r.get("siege_attack_interval", "1.0"))
-		d.armor = int(r.get("armor", "0"))
-		d.march_style = str(r.get("march_style", "quick"))
-		d.attack_range = float(r.get("attack_range", "0"))
+		d.elite_wave = int(r.get("elite_wave", "0"))
+		d.special_skill_id = str(r.get("special_skill_id", ""))
+		d.drop_trinket_table = str(r.get("drop_trinket_table", ""))
 		enemy_database[d.id] = d
 
 
@@ -150,6 +160,10 @@ func _load_spirit_profiles() -> void:
 		p.desc = str(r.get("desc", ""))
 		p.icon_path = str(r.get("icon_path", ""))
 		p.special_ability = str(r.get("special_ability", ""))
+		p.unlock_condition = str(r.get("unlock_condition", "initial"))
+		p.trait_id = str(r.get("trait_id", "immortality"))
+		p.base_hp = int(r.get("base_hp", "2000"))
+		p.hp_per_level = int(r.get("hp_per_level", "200"))
 		spirit_profile_database[p.profile_id] = p
 
 
@@ -242,7 +256,6 @@ func _init_waves() -> void:
 			eg.enemy_id = str(row.get("enemy_id", ""))
 			eg.count = int(row.get("count", "0"))
 			eg.spawn_interval = float(row.get("spawn_interval", "1.0"))
-			eg.path_type = str(row.get("path_type", "straight"))
 			w.enemy_groups.append(eg)
 		wave_database.append(w)
 	wave_database.sort_custom(func(a, b): return a.wave_index < b.wave_index)

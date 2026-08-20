@@ -18,6 +18,7 @@ var spawn_timer: Timer
 var _wave_pause_timer: Timer
 var is_spawning: bool = false
 var _spawn_queue: Array = []
+var _spawn_paused_for_cap: bool = false
 
 
 func _ready() -> void:
@@ -39,6 +40,7 @@ func reset_battle() -> void:
 	current_wave = 0
 	enemies_alive = 0
 	is_spawning = false
+	_spawn_paused_for_cap = false
 	_spawn_queue.clear()
 	if spawn_timer:
 		spawn_timer.stop()
@@ -71,7 +73,6 @@ func _build_spawn_queue(config) -> void:
 		for i in range(group.count):
 			_spawn_queue.append({
 				"enemy_id": group.enemy_id,
-				"path_type": group.path_type,
 				"spawn_interval": group.spawn_interval,
 			})
 	_spawn_queue.shuffle()
@@ -85,9 +86,16 @@ func _spawn_next_from_queue() -> void:
 	if _spawn_queue.is_empty():
 		is_spawning = false
 		return
+	var enemy_cap := DataManager.get_game_config_int("enemy_cap_on_screen", 200)
+	var resume_threshold := DataManager.get_game_config_int("enemy_resume_threshold", 150)
+	if (_spawn_paused_for_cap and enemies_alive > resume_threshold) or (not _spawn_paused_for_cap and enemies_alive >= enemy_cap):
+		_spawn_paused_for_cap = true
+		spawn_timer.start(0.25)
+		return
+	_spawn_paused_for_cap = false
 
 	var entry = _spawn_queue.pop_front()
-	_spawn_enemy(entry["enemy_id"], entry["path_type"])
+	_spawn_enemy(entry["enemy_id"])
 
 	if not _spawn_queue.is_empty():
 		spawn_timer.start(max(0.3, float(entry["spawn_interval"])))
@@ -96,14 +104,14 @@ func _spawn_next_from_queue() -> void:
 		is_spawning = false
 
 
-func _spawn_enemy(enemy_id: String, path_type: String) -> void:
+func _spawn_enemy(enemy_id: String) -> void:
 	var enemy_data = DataManager.get_enemy_data(enemy_id)
 	if not enemy_data:
 		return
 	var enemy = preload("res://scenes/enemies/enemy_base.tscn").instantiate()
 	enemy.initialize(enemy_data)
 	_add_enemy_to_battlefield(enemy)
-	enemy.global_position = _get_spawn_position(path_type)
+	enemy.global_position = _get_spawn_position()
 	enemy.enemy_destroyed.connect(_on_enemy_removed)
 	enemy.reached_main_peak.connect(_on_enemy_reached_main)
 	enemies_alive += 1
@@ -118,26 +126,11 @@ func _add_enemy_to_battlefield(enemy: Node) -> void:
 		battlefield.add_child(enemy)
 
 
-func _get_spawn_position(path_type: String) -> Vector2:
+func _get_spawn_position() -> Vector2:
 	var center := Vector2(640, 380)
 	var radius := 540.0
-	var angle_center := -PI / 2.0
-	var angle_range := deg_to_rad(160.0)
-	var angle_min := angle_center - angle_range / 2.0
-	var angle_max := angle_center + angle_range / 2.0
-	match path_type:
-		"straight":
-			var angle := randf_range(angle_min, angle_max)
-			return center + Vector2(cos(angle), sin(angle)) * radius
-		"left_flank":
-			var angle := randf_range(angle_min, angle_center)
-			return center + Vector2(cos(angle), sin(angle)) * radius
-		"right_flank":
-			var angle := randf_range(angle_center, angle_max)
-			return center + Vector2(cos(angle), sin(angle)) * radius
-		_:
-			var angle := randf_range(angle_min, angle_max)
-			return center + Vector2(cos(angle), sin(angle)) * radius
+	var angle := randf_range(-PI, PI)
+	return center + Vector2(cos(angle), sin(angle)) * radius
 
 
 func _on_enemy_removed(_enemy) -> void:
@@ -151,7 +144,7 @@ func _on_enemy_removed(_enemy) -> void:
 			battle_ended.emit()
 		else:
 			wave_completed.emit(current_wave)
-			call_deferred("start_next_wave")
+			_wave_pause_timer.start(DataManager.get_game_config("wave_break_sec", 2.0))
 
 
 func _on_enemy_reached_main(enemy) -> void:
@@ -167,4 +160,4 @@ func _on_enemy_reached_main(enemy) -> void:
 			battle_ended.emit()
 		else:
 			wave_completed.emit(current_wave)
-			call_deferred("start_next_wave")
+			_wave_pause_timer.start(DataManager.get_game_config("wave_break_sec", 2.0))

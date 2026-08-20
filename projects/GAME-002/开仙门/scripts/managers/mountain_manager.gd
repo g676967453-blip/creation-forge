@@ -33,7 +33,16 @@ func _get_peak_cost(peak_id: String, field: String, default_value: int) -> int:
 
 
 func get_repair_cost(peak_id: String) -> int:
-	return _get_peak_cost(peak_id, "repair_cost", 20)
+	return _get_peak_cost(peak_id, "repair_cost_energy", 0)
+
+
+func get_repair_cost_nuwa(peak_id: String) -> int:
+	return _get_peak_cost(peak_id, "repair_cost_nuwa", 0)
+
+
+func get_repair_treasure(peak_id: String) -> String:
+	var cfg = DataManager.get_peak_config(peak_id)
+	return str(cfg.repair_requires_treasure) if cfg else ""
 
 
 func _get_upgrade_cost_base(peak_id: String) -> int:
@@ -146,43 +155,54 @@ func get_selected_peak_id() -> String:
 func get_selected_peak_display_name() -> String:
 	var cfg = DataManager.get_peak_config(_selected_peak_id)
 	if cfg:
-		return "%s 路 %s" % [cfg.peak_name, cfg.school_name]
+		return str(cfg.peak_name)
 	return "未选择山峰"
 
 
 func get_selected_form_id() -> String:
 	if not _mountains.has(_selected_peak_id):
 		return ""
-	return str(_mountains[_selected_peak_id]["form_id"])
+	return ""
 
 
 func get_selected_form_label() -> String:
-	var form_id := get_selected_form_id()
-	var form = DataManager.get_form_config(form_id)
-	if form:
-		return form.form_name
-	return "未激活"
+	var cfg = DataManager.get_peak_config(_selected_peak_id)
+	return str(cfg.ability_id) if cfg else "未激活"
 
 
 func get_first_activated_form_id() -> String:
 	for peak_id in PEAK_IDS:
-		if not _mountains.has(peak_id):
-			continue
-		var form_id := str(_mountains[peak_id]["form_id"])
-		if not form_id.is_empty():
-			return form_id
+		if _mountains.has(peak_id) and bool(_mountains[peak_id]["repaired"]):
+			return peak_id
 	return ""
 
 
 func get_all_activated_form_ids() -> Array[String]:
+	return get_all_activated_peak_ids()
+
+
+func get_all_activated_peak_ids() -> Array[String]:
 	var result: Array[String] = []
+	for peak_id in PEAK_IDS:
+		if _mountains.has(peak_id) and bool(_mountains[peak_id]["repaired"]):
+			result.append(peak_id)
+	return result
+
+
+func export_repaired_states() -> Dictionary:
+	var result: Dictionary = {}
+	for peak_id in PEAK_IDS:
+		result[peak_id] = _mountains.has(peak_id) and bool(_mountains[peak_id]["repaired"])
+	return result
+
+
+func import_repaired_states(states: Dictionary) -> void:
 	for peak_id in PEAK_IDS:
 		if not _mountains.has(peak_id):
 			continue
-		var form_id := str(_mountains[peak_id]["form_id"])
-		if not form_id.is_empty():
-			result.append(form_id)
-	return result
+		_mountains[peak_id]["repaired"] = bool(states.get(peak_id, false))
+		_set_visual_state(peak_id)
+		_mountain_state_broadcast(peak_id)
 
 
 func debug_dump_mountain_forms() -> void:
@@ -204,11 +224,16 @@ func debug_dump_mountain_forms() -> void:
 
 
 func can_repair_selected() -> bool:
-	return _mountains.has(_selected_peak_id) and not bool(_mountains[_selected_peak_id]["repaired"])
+	if not _mountains.has(_selected_peak_id) or bool(_mountains[_selected_peak_id]["repaired"]):
+		return false
+	var cfg = DataManager.get_peak_config(_selected_peak_id)
+	if cfg and cfg.repair_order == "first":
+		return get_all_activated_peak_ids().is_empty()
+	return _mountains.has("peak_sword") and bool(_mountains["peak_sword"]["repaired"])
 
 
 func has_any_mountain_activated() -> bool:
-	return not get_first_activated_form_id().is_empty()
+	return not get_all_activated_peak_ids().is_empty()
 
 
 func repair_selected() -> bool:
@@ -216,12 +241,7 @@ func repair_selected() -> bool:
 		return false
 
 	var peak_config = DataManager.get_peak_config(_selected_peak_id)
-	var form_id := ""
-	if peak_config:
-		form_id = peak_config.entry_form_id
-
 	_mountains[_selected_peak_id]["repaired"] = true
-	_mountains[_selected_peak_id]["form_id"] = form_id
 	_mountains[_selected_peak_id]["level"] = 1
 	_set_visual_state(_selected_peak_id)
 	repair_prompt_requested.emit(_selected_peak_id, false)
@@ -244,17 +264,7 @@ func get_upgrade_cost(peak_id: String) -> int:
 
 
 func can_upgrade_selected() -> bool:
-	if not _mountains.has(_selected_peak_id):
-		return false
-	var state = _mountains.get(_selected_peak_id, {})
-	if not bool(state.get("repaired", false)):
-		return false
-	var level: int = int(state.get("level", 1))
-	var form_id: String = str(state.get("form_id", ""))
-	var form = DataManager.get_form_config(form_id)
-	if form == null:
-		return false
-	return level < form.max_level
+	return false
 
 
 func upgrade_selected() -> bool:
@@ -300,31 +310,24 @@ func get_selected_mountain_state() -> Dictionary:
 		return {}
 
 	var cfg = DataManager.get_peak_config(_selected_peak_id)
-	var entry_form_id: String = cfg.entry_form_id if cfg else ""
-	var current_form_id := str(_mountains[_selected_peak_id]["form_id"])
-	var form = DataManager.get_form_config(current_form_id)
-
-	if form == null and not entry_form_id.is_empty():
-		form = DataManager.get_form_config(entry_form_id)
-
 	var level: int = int(_mountains[_selected_peak_id]["level"])
-	var max_level: int = form.max_level if form else 10
 	var repair_cost: int = get_repair_cost(_selected_peak_id)
-	var upgrade_cost: int = get_upgrade_cost(_selected_peak_id)
 
 	return {
 		"peak_id": _selected_peak_id,
 		"display_name": cfg.peak_name if cfg else _selected_peak_id,
-		"school_name": cfg.school_name if cfg else "",
-		"school_desc": cfg.school_desc if cfg else "",
-		"school_tag": cfg.school_tag if cfg else "",
+		"school_name": "",
+		"school_desc": "",
+		"school_tag": "",
 		"repaired": bool(_mountains[_selected_peak_id]["repaired"]),
-		"form_id": current_form_id,
-		"form_label": form.form_name if form else "未激活",
-		"form": form,
+		"form_id": "",
+		"form_label": cfg.ability_id if cfg else "未激活",
+		"form": null,
 		"level": level,
-		"max_level": max_level,
+		"max_level": 1,
 		"repair_cost": repair_cost,
-		"upgrade_cost": upgrade_cost,
-		"can_upgrade": level < max_level,
+		"upgrade_cost": 0,
+		"can_upgrade": false,
+		"repair_cost_nuwa": get_repair_cost_nuwa(_selected_peak_id),
+		"repair_requires_treasure": get_repair_treasure(_selected_peak_id),
 	}

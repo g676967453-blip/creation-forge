@@ -1,2 +1,2 @@
-max_hp,base_damage,attack_interval,projectile_speed,split_count,pierce_count,damage_multiplier,spirit_click_base,spirit_auto_base,spirit_auto_interval,spirit_display_interval,projectile_max_distance,exp_per_level_increase,soul_mark_weaken_per_stack,soul_mark_base_damage
-2000,18,0.85,520,0,0,1.0,10,5,0.2,1.0,1800,25,0.08,20.0
+max_hp,base_damage,attack_interval,projectile_speed,split_count,pierce_count,damage_multiplier,spirit_display_interval,projectile_max_distance,exp_per_level_increase
+2000,10,1.0,520,0,0,1.0,1.0,1800,25

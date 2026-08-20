@@ -23,7 +23,7 @@
 | 调用 Lovart | 通过 chat/result/download 命令执行生成全流程 |
 | 管理线程上下文 | 复用 thread_id 保持迭代连续性 |
 | 后处理 | 品红抠除、NEAREST 缩放、格式转换 |
-| 文件管理 | 按项目/类型归档到 outputs/ 目录 |
+| 文件管理 | 按项目/类型归档到桌面 asset-pipeline-outputs/ 目录 |
 | 项目管理 | Lovart project/thread 的增删改查 |
 
 ### 我不能做的 ❌
@@ -41,7 +41,7 @@
 2. **反馈越具体，迭代越高效** — "头发不够银白" > "不太对" > 沉默
 3. **先草稿后成品** — 不要一上来就用最贵最好的模型，先快速验证方向
 4. **线程即上下文** — 同一主题的迭代必须复用 thread_id
-5. **产出必须落盘** — 生成完必须下载到 outputs/ 对应目录
+5. **产出必须落盘** — 生成完必须下载到桌面 asset-pipeline-outputs/ 对应目录（媒体产出不进仓库）
 6. **汇报必须完整** — 每次生成完成后使用标准汇报模板
 
 ---
@@ -66,7 +66,7 @@
 | 字段 | 来源 | 示例 |
 |------|------|------|
 | 状态 | `chat` 返回的 `final_status` | `done` / `pending_confirmation` |
-| 本地文件 | `chat` 返回的 `downloaded[].local_path` | `outputs/GAME-002/portraits/xxx.png` |
+| 本地文件 | `chat` 返回的 `downloaded[].local_path` | 桌面 `asset-pipeline-outputs/GAME-002/portraits/xxx.png` |
 | 图片链接 | `chat` 返回的 `downloaded[].url` | `https://a.lovart.ai/artifacts/agent/xxx.png` |
 | 对话线程 | `chat` 返回的 `thread_id` | `4dacb38f-...` |
 | 调用的模型 | 从命令参数推断 | `Nano Banana Pro` / `Midjourney` / `默认模型` |
@@ -90,7 +90,7 @@
 
 ```
 ✅ 状态：done
-📁 本地文件：outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
+📁 本地文件：C:/Users/Administrator/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
 🔗 图片链接：https://a.lovart.ai/artifacts/agent/AkX3ut0yQULpDZFL.png
 🧵 对话线程：529c4c2e-3828-445d-877e-0c455ff18aa9
 🎨 调用的模型：Nano Banana Pro
@@ -118,7 +118,7 @@
 3. Lovart 生成
    - Claude 执行 chat 命令
    - 阻塞等待完成
-   - 下载文件到 outputs/
+   - 下载文件到桌面 asset-pipeline-outputs/
 
 4. 人类验收
    - Claude 发送文件路径 + 画布链接
@@ -133,17 +133,22 @@
 6. 入库
    - 人类确认通过
    - Claude 运行后处理脚本
-   - 文件归档到 outputs/{项目名}/{类型}/
+   - 文件归档到桌面 asset-pipeline-outputs/{项目名}/{类型}/
 ```
 
 ---
 
 ## 资产目录约定
 
-### 生成产出：`outputs/{项目名}/`
+> 🔑 **全局规则（2026-08-20 起）：生成产出（图片/视频/音频）一律存桌面，不进 ceshi 仓库。**
+> 桌面根目录：`C:\Users\Administrator\Desktop\asset-pipeline-outputs\`
+> 仓库内只保留：工作流 MD 文档、规则、映射表/批次状态等过程数据、参考图（`_references/`、`cankao/`）。
+> 存量产出已外移（08-20：397 个媒体文件，仓库 712M → 16M）。
+
+### 生成产出：桌面 `asset-pipeline-outputs/{项目名}/`
 
 ```
-outputs/
+C:/Users/Administrator/Desktop/asset-pipeline-outputs/
 └── {project-name}/
     ├── portraits/      ← 角色原画（胸像/半身像/全身像）
     ├── sprites/        ← 游戏内精灵表
@@ -165,9 +170,9 @@ outputs/
 
 ### 各游戏项目如何引用
 
-游戏项目通过相对路径引用本仓库的资产：
+游戏项目按需复制桌面产出到自己的 assets/ 目录，或直接用绝对路径引用：
 ```
-../../asset-pipeline/outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
+C:/Users/Administrator/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
 ```
 
 ---
@@ -249,7 +254,7 @@ python3 {baseDir}/agent_skill.py chat \
 ```bash
 python3 {baseDir}/agent_skill.py download \
   --urls "URL1" "URL2" \
-  --output-dir "j:/ceshi/projects/asset-pipeline/outputs/{项目名}/{类型}" \
+  --output-dir "C:/Users/Administrator/Desktop/asset-pipeline-outputs/{项目名}/{类型}" \
   --prefix {命名前缀}
 ```
 
@@ -295,10 +300,13 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 | Lovart API 直连被重置 (WinError 10054) | 所有 API 调用失败 | 先 `export HTTPS_PROXY=http://127.0.0.1:7897 HTTP_PROXY=http://127.0.0.1:7897` 再执行（详见 05-踩坑记录 坑#8） |
 | 云端项目可能被删但本地 state 不更新 | chat 报 `Project does not exist` | `create-project` 新建后重命名；`projects --json` 只读本地，勿信 |
 | `projects --json` 可能返回空 | 无法发现云端项目 | 用户手动提供 projectId |
-| `/tmp/` 路径在 Windows 上不可达 | 下载文件用户找不到 | 用 `--output-dir` 指定本项目 outputs/ |
+| `/tmp/` 路径在 Windows 上不可达 | 下载文件用户找不到 | 用 `--output-dir` 指定桌面 asset-pipeline-outputs/ |
 | 中文提示词被转译污染 | 语义漂移 | 英文直写 + 中文包装指令（坑#9） |
 | 裸头身短语「X heads tall」无效 | 比例漂移 2.0~8.5 头身 | 分数锚点句 + 按模型×风格校准；MJ×3D/GPT2×3D/MJ×韩 禁用（坑#10） |
 | 批量续跑重命名错位 | 行-图错位 | rename 只认 `new == true`；timeout 先轮询 result 补收（坑#11） |
+| 批量产物顺序与规格行不一致 | 行-图错位 | agent 汇总表映射 / 优先信续跑批；落盘前 agent 三要素核对（坑#12） |
+| 遗留同名文件（同 b 编号旧批次） | Windows 重命名崩溃 | 重建批次前先归档旧批次到 `*-archive/`（坑#13） |
+| Prompt 模板漏拼变量 | 要素缺失（如职业道具） | 变量与命名规则同源；首轮 agent 抽检（坑#14） |
 | 中文路径可能导致乱码 | 文件写入失败 | 使用英文目录名 |
 | Canvas 浏览器编辑与 API 冲突 | 画布覆盖 | 生成时关闭浏览器 Lovart 页面 |
 
