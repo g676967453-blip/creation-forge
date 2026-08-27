@@ -73,7 +73,7 @@ python3 {baseDir}/agent_skill.py chat \
 ```bash
 python3 {baseDir}/agent_skill.py download \
   --urls "{返回的 URL}" \
-  --output-dir "C:/Users/Administrator/Desktop/asset-pipeline-outputs/{项目名}/icons" \
+  --output-dir "C:/Users/admin/Desktop/asset-pipeline-outputs/{项目名}/icons" \
   --prefix "{项目名}_item_grid"
 ```
 
@@ -88,6 +88,18 @@ python3 {baseDir}/agent_skill.py download \
 📋 工作流名称：道具图标 4×4 网格
 🖼️ 项目画布：https://www.lovart.ai/canvas?projectId={project_id}
 ```
+
+### 4.5 尺寸规范化 ⚠️ 不可跳过
+
+**模型返回尺寸不保证是 1024×1024**（实测 GPT Image 2 吐过 1254×1254）。
+非 4 倍数时切片会逐格累积偏移、右下角图标被截断，且脚本静默不报错。
+
+```bash
+python3 projects/asset-pipeline/scripts/normalize_icons.py --square 1024 \
+  --input grid_raw.png --output grid_1024.png
+```
+
+即使某次恰好是 1024 也要跑（幂等）。详见踩坑记录坑 #15。
 
 ### 5. PS 手动抠图（约 30 秒）
 > PS 2026 的 Color Range API 在 JSX 中不可用，必须人工操作。
@@ -111,6 +123,9 @@ python3 {baseDir}/agent_skill.py download \
 - 满意的 → 重命名为道具名（如 `crescent_blade.png`）
 - 不满意的 → 对该格单独用 1×1 Prompt 重新生成，替换
 
+⚠️ **AI 不保证按 prompt 顺序排列道具** —— 给用户的映射表只是「预期」，
+必须让用户核对行列与道具的实际对应关系，不要当成事实陈述（坑 #12）。
+
 ## 备选：全自动 PIL 管线（像素艺术优先）
 
 适合像素艺术或对边缘精度要求不高的场景（PIL 自动但有绿边风险）：
@@ -126,9 +141,14 @@ python3 scripts/postprocess.py \
 # 切片
 python3 scripts/slice_grid.py \
   --input grid_clean.png \
-  --output-dir outputs/{项目名}/icons \
+  --output-dir "C:/Users/admin/Desktop/asset-pipeline-outputs/{项目名}/icons/sliced" \
   --prefix {项目名}_item \
   --trim
+
+# 统一到 256×256 居中（--trim 后每张尺寸不一，不利于 UI 布局）
+python3 scripts/normalize_icons.py --pad 256 --margin 16 \
+  --input-dir "C:/Users/admin/Desktop/asset-pipeline-outputs/{项目名}/icons/sliced" \
+  --output-dir "C:/Users/admin/Desktop/asset-pipeline-outputs/{项目名}/icons/sliced-256"
 ```
 
 ## 关键参数卡
@@ -151,9 +171,9 @@ python3 scripts/slice_grid.py \
 - **PS 2026 Color Range 无法脚本化** — 手动抠图是唯一稳定方案（7 版 JSX 验证过的结论）
 - **PIL 管线有绿边残留风险** — 像素艺术可接受，3D/二次元建议走 PS 手动
 - **生成时必须关闭浏览器 Lovart 页面** — Canvas 多端编辑会冲突
-- **下载始终用桌面绝对路径 `C:/Users/Administrator/Desktop/asset-pipeline-outputs/...`** — 不要用 `/tmp/`（Windows 不可达），产出不入仓库
+- **下载始终用桌面绝对路径 `C:/Users/admin/Desktop/asset-pipeline-outputs/...`** — 不要用 `/tmp/`（Windows 不可达），产出不入仓库
 - **目录名用英文** — 中文路径会导致 Python 编码错误
 
-> 完整流程见 [docs/workflows/道具图标-生产.md](../docs/workflows/道具图标-生产.md)
-> 协作模型见 [projects/asset-pipeline/docs/01-协作模型.md](../projects/asset-pipeline/docs/01-协作模型.md)
-> Prompt 模板见 [projects/asset-pipeline/templates/item-grid.md](../projects/asset-pipeline/templates/item-grid.md)
+> 完整流程见 [docs/workflows/道具图标-生产.md](../../docs/workflows/道具图标-生产.md)
+> 协作模型见 [projects/asset-pipeline/docs/01-协作模型.md](../../projects/asset-pipeline/docs/01-协作模型.md)
+> Prompt 模板见 [projects/asset-pipeline/templates/item-grid.md](../../projects/asset-pipeline/templates/item-grid.md)

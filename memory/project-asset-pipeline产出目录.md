@@ -15,7 +15,7 @@ metadata:
 
 ## 规则内容
 
-1. **生成产出（图片/视频/音频）不入仓库** — 统一存桌面 `C:\Users\Administrator\Desktop\asset-pipeline-outputs\{项目名}\{类型}\`（沿用原 outputs/ 的目录结构）
+1. **生成产出（图片/视频/音频）不入仓库** — 统一存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\{项目名}\{类型}\`（沿用原 outputs/ 的目录结构）
 2. **仓库内保留** — 工作流 MD 文档、规则、映射表/批次状态（csv/json）、参考图（`_references/`、`cankao/`）
 3. **存量已外移** — 2026-08-20：397 个媒体文件搬到桌面（仓库 712M → 16M），git 中 22 个已跟踪文件以删除记录提交
 4. **游戏项目引用方式** — 按需复制桌面产出到自己的 assets/ 目录，或用绝对路径引用
@@ -28,7 +28,7 @@ metadata:
 
 ## 注意事项
 
-- 桌面路径含中文（用户目录），下载示例用 `--output-dir` 英文前向斜杠写法 `C:/Users/Administrator/Desktop/asset-pipeline-outputs/...`
+- 桌面路径含中文（用户目录），下载示例用 `--output-dir` 英文前向斜杠写法 `C:/Users/admin/Desktop/asset-pipeline-outputs/...`
 - 产出文件无 git 备份，重要成品建议由用户自行备份到云盘
 
 关联：[[project-项目结构]]、[[project-当前目标]]

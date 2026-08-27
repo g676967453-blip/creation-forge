@@ -90,7 +90,7 @@
 
 ```
 ✅ 状态：done
-📁 本地文件：C:/Users/Administrator/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
+📁 本地文件：C:/Users/admin/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
 🔗 图片链接：https://a.lovart.ai/artifacts/agent/AkX3ut0yQULpDZFL.png
 🧵 对话线程：529c4c2e-3828-445d-877e-0c455ff18aa9
 🎨 调用的模型：Nano Banana Pro
@@ -141,14 +141,18 @@
 ## 资产目录约定
 
 > 🔑 **全局规则（2026-08-20 起）：生成产出（图片/视频/音频）一律存桌面，不进 ceshi 仓库。**
-> 桌面根目录：`C:\Users\Administrator\Desktop\asset-pipeline-outputs\`
+> 桌面根目录：`C:\Users\admin\Desktop\asset-pipeline-outputs\`
 > 仓库内只保留：工作流 MD 文档、规则、映射表/批次状态等过程数据、参考图（`_references/`、`cankao/`）。
 > 存量产出已外移（08-20：397 个媒体文件，仓库 712M → 16M）。
+>
+> ⚠️ **路径中的用户名以当前机器实际值为准**（本机为 `admin`）。换机器或交付给他人时，
+> 先用 `echo $HOME` / `%USERPROFILE%` 确认，不要照抄文档里的用户名。
+> 08-26 曾因文档残留 `Administrator` 而导致路径全线失效。
 
 ### 生成产出：桌面 `asset-pipeline-outputs/{项目名}/`
 
 ```
-C:/Users/Administrator/Desktop/asset-pipeline-outputs/
+C:/Users/admin/Desktop/asset-pipeline-outputs/
 └── {project-name}/
     ├── portraits/      ← 角色原画（胸像/半身像/全身像）
     ├── sprites/        ← 游戏内精灵表
@@ -172,7 +176,7 @@ C:/Users/Administrator/Desktop/asset-pipeline-outputs/
 
 游戏项目按需复制桌面产出到自己的 assets/ 目录，或直接用绝对路径引用：
 ```
-C:/Users/Administrator/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
+C:/Users/admin/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portrait_sword-master_bust.png
 ```
 
 ---
@@ -254,7 +258,7 @@ python3 {baseDir}/agent_skill.py chat \
 ```bash
 python3 {baseDir}/agent_skill.py download \
   --urls "URL1" "URL2" \
-  --output-dir "C:/Users/Administrator/Desktop/asset-pipeline-outputs/{项目名}/{类型}" \
+  --output-dir "C:/Users/admin/Desktop/asset-pipeline-outputs/{项目名}/{类型}" \
   --prefix {命名前缀}
 ```
 
