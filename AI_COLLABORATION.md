@@ -49,7 +49,7 @@ Co-Authored-By: AI名称 <邮箱>
 ### 2.3 目录结构约定
 
 ```
-ceshi/
+ever-forge/
 ├── ONBOARDING.md        ← 🔴 新 AI 首次对话强制入口（所有 AI 先读这个）
 ├── AI_COLLABORATION.md  ← 你在这里（所有 AI 的共同协议）
 ├── CLAUDE.md            ← Claude 专属配置（其他 AI 有自己的配置入口）
