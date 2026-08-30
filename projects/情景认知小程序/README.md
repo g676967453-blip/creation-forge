@@ -9,6 +9,7 @@
 ## 当前进展
 
 - **原型**：`prototype/sim.js`（18 KB，交互模拟脚本）+ `sample_run.json` / `sample_output.txt`（样例输出）
+- **HTML 可玩原型**：`prototype/index.html`（竖版 9:16，单文件零依赖，双击即可体验完整一局）
 - 验证重点：情景认知互动的可行性、交互形式、内容呈现
 
 ## 目录结构
@@ -16,7 +17,7 @@
 ```
 情景认知小程序/
 ├── project.json       # 项目元数据
-├── prototype/         # 原型验证（sim.js + 样例输出）
+├── prototype/         # 原型验证（sim.js + 样例输出 + HTML 可玩原型）
 └── README.md
 ```
 

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>《中了500万》— 情景认知训练原型</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --card: #151c26;
+    --card2: #1b2431;
+    --line: #2a3646;
+    --gold: #f5c542;
+    --gold-dim: #a8862e;
+    --text: #e8edf4;
+    --sub: #8b98a9;
+    --green: #3ddc97;
+    --red: #ff5d5d;
+    --blue: #5aa7ff;
+    --radius: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(1200px 800px at 50% -10%, #1a2332 0%, var(--bg) 55%);
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  /* 手机壳：9:16 竖版 */
+  .phone {
+    width: 390px; height: 844px; max-height: 96vh;
+    background: var(--bg);
+    border-radius: 40px;
+    border: 1px solid #2c3a4d;
+    box-shadow: 0 0 0 10px #0e131b, 0 30px 80px rgba(0,0,0,.6);
+    overflow: hidden;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  @media (max-width: 430px), (max-height: 880px) {
+    .phone { width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+  }
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+  .hidden { display: none !important; }
+  ::-webkit-scrollbar { width: 0; }
+
+  /* ===== 开始画面 ===== */
+  #screen-start { align-items: center; justify-content: center; text-align: center; padding: 40px 28px; }
+  .lottery-icon { font-size: 64px; margin-bottom: 18px; animation: pop 1.2s ease infinite; }
+  @keyframes pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  .logo-title {
+    font-size: 44px; font-weight: 800; letter-spacing: 6px;
+    background: linear-gradient(180deg, #ffe9a8, var(--gold) 60%, #b8860b);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 6px;
+  }
+  .logo-sub { color: var(--gold-dim); font-size: 13px; letter-spacing: 8px; margin-bottom: 30px; }
+  .start-desc {
+    color: var(--sub); font-size: 14px; line-height: 1.9; text-align: left;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 26px;
+  }
+  .start-desc b { color: var(--gold); }
+  .btn-main {
+    width: 100%; padding: 16px; font-size: 18px; font-weight: 700; letter-spacing: 4px;
+    background: linear-gradient(180deg, #ffd968, var(--gold) 60%, #d9a62e);
+    color: #241a02; border: none; border-radius: 40px; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(245,197,66,.25);
+    transition: transform .15s;
+  }
+  .btn-main:active { transform: scale(.97); }
+  .start-foot { margin-top: 22px; font-size: 11px; color: #55606e; }
+
+  /* ===== 顶部状态栏 ===== */
+  .hud { padding: 14px 16px 10px; background: linear-gradient(180deg, #10161f, transparent); position: sticky; top: 0; z-index: 5; }
+  .hud-row1 { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .year-tag { font-size: 13px; color: var(--sub); }
+  .year-tag b { color: var(--gold); font-size: 17px; }
+  .net-tag { font-size: 12px; color: var(--sub); }
+  .net-tag b { font-size: 16px; color: var(--text); }
+  .bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #ffe9a8); border-radius: 2px; transition: width .6s; }
+  .hud-row2 { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .cash-tag { font-size: 12px; color: var(--sub); }
+  .cash-tag b { color: var(--green); font-size: 15px; }
+  .asset-toggle { font-size: 11px; color: var(--blue); background: none; border: 1px solid #2c4460; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+  /* 资产明细抽屉 */
+  #asset-drawer { display: none; margin-top: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  #asset-drawer.open { display: block; }
+  .drawer-row { display: flex; justify-content: space-between; font-size: 12.5px; padding: 4px 0; color: var(--sub); }
+  .drawer-row b { color: var(--text); }
+  .drawer-row .neg { color: var(--red); }
+
+  /* ===== 事件卡片 ===== */
+  #event-area { flex: 1; padding: 8px 16px 20px; display: flex; flex-direction: column; }
+  .ev-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px; margin-top: 6px;
+    animation: rise .35s ease;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .ev-year-badge {
+    display: inline-block; font-size: 11px; color: var(--gold); background: rgba(245,197,66,.1);
+    border: 1px solid rgba(245,197,66,.35); border-radius: 20px; padding: 3px 10px; margin-bottom: 10px;
+  }
+  .ev-name { font-size: 21px; font-weight: 800; margin-bottom: 10px; }
+  .ev-scene { font-size: 14px; line-height: 1.8; color: #c3cdda; margin-bottom: 18px; }
+  .opt-btn {
+    display: block; width: 100%; text-align: left;
+    background: var(--card2); color: var(--text);
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 13px 14px; font-size: 14px; line-height: 1.6; cursor: pointer;
+    margin-bottom: 10px; transition: all .15s; font-family: inherit;
+  }
+  .opt-btn:active { transform: scale(.98); border-color: var(--gold); }
+  .opt-btn:disabled { opacity: .45; cursor: default; transform: none; }
+  .opt-btn.picked { border-color: var(--gold); background: rgba(245,197,66,.08); }
+
+  /* ===== 反馈浮层 ===== */
+  .overlay {
+    position: absolute; inset: 0; z-index: 20;
+    background: rgba(5,8,12,.82); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; padding: 26px;
+  }
+  .overlay.hidden { display: none; }
+  .fb-card {
+    width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 24px 20px; text-align: center; animation: rise .3s ease;
+    max-height: 78%; overflow-y: auto;
+  }
+  .fb-title { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+  .fb-diffs { text-align: left; margin-bottom: 14px; }
+  .diff { display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 4px; border-bottom: 1px dashed var(--line); }
+  .diff .up { color: var(--green); }
+  .diff .down { color: var(--red); }
+  .diff .warn { color: var(--gold); }
+  .fb-text {
+    font-size: 14px; line-height: 1.8; color: #c3cdda; text-align: left;
+    background: var(--card2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;
+  }
+  .fb-btn {
+    width: 100%; padding: 13px; font-size: 15px; font-weight: 700; letter-spacing: 2px;
+    background: linear-gradient(180deg, #ffd968, var(--gold) 60%, #d9a62e); color: #241a02;
+    border: none; border-radius: 30px; cursor: pointer;
+  }
+
+  /* ===== 结算浮层 ===== */
+  .settle-card { text-align: left; }
+  .settle-title { text-align: center; font-size: 17px; font-weight: 800; color: var(--gold); margin-bottom: 14px; }
+  .settle-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 2px; color: var(--sub); }
+  .settle-row b { color: var(--text); }
+  .settle-row .up { color: var(--green); }
+  .settle-row .down { color: var(--red); }
+  .settle-divider { border: none; border-top: 1px dashed var(--line); margin: 10px 0; }
+
+  /* ===== 结局画面 ===== */
+  #screen-result { padding: 30px 20px 40px; }
+  .res-tier { text-align: center; margin-bottom: 8px; }
+  .res-emoji { font-size: 52px; display: block; margin-bottom: 6px; }
+  .res-name { font-size: 32px; font-weight: 800; letter-spacing: 4px; }
+  .res-title { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--gold);
+    background: rgba(245,197,66,.12); border: 1px solid rgba(245,197,66,.4);
+    border-radius: 30px; padding: 5px 16px; }
+  .res-net { text-align: center; margin: 18px 0 6px; font-size: 13px; color: var(--sub); }
+  .res-net b { font-size: 30px; color: var(--gold); display: block; margin-top: 4px; }
+  .res-killer {
+    text-align: center; font-size: 12.5px; color: var(--sub); background: var(--card);
+    border: 1px dashed var(--line); border-radius: 12px; padding: 10px; margin: 14px 0;
+  }
+  .card-box { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-top: 14px; }
+  .card-box h3 { font-size: 14px; color: var(--gold); margin-bottom: 12px; letter-spacing: 1px; }
+  .pr-row { display: flex; align-items: center; font-size: 12.5px; margin-bottom: 8px; }
+  .pr-name { width: 96px; color: var(--sub); flex-shrink: 0; }
+  .pr-bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin: 0 10px; }
+  .pr-bar i { display: block; height: 100%; background: linear-gradient(90deg, #2f6f54, var(--green)); border-radius: 4px; }
+  .pr-count { color: var(--sub); font-size: 11.5px; }
+  .pr-count b.good { color: var(--green); }
+  .pr-count b.bad { color: var(--red); }
+  .comment {
+    font-size: 14px; line-height: 1.9; color: #dbe3ee;
+    background: var(--card2); border-radius: 12px; padding: 14px 16px; margin-top: 12px;
+  }
+  .comment-tag { font-size: 11px; color: var(--gold-dim); margin-bottom: 6px; }
+  .btn-row { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-ghost {
+    flex: 1; padding: 13px; font-size: 14px; font-weight: 600;
+    background: var(--card2); color: var(--text); border: 1px solid var(--line); border-radius: 30px; cursor: pointer;
+  }
+  .btn-gold {
+    flex: 1.6; padding: 13px; font-size: 14px; font-weight: 700; letter-spacing: 2px;
+    background: linear-gradient(180deg, #ffd968, var(--gold) 60%, #d9a62e); color: #241a02;
+    border: none; border-radius: 30px; cursor: pointer;
+  }
+  #curve { width: 100%; height: 150px; display: block; }
+  .tier-legend { display: flex; justify-content: space-between; font-size: 10.5px; color: #55606e; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- 开始画面 -->
+  <div id="screen-start" class="screen">
+    <div class="lottery-icon">🎟️</div>
+    <div class="logo-title">中了500万</div>
+    <div class="logo-sub">情景认知训练 · 理财剧本</div>
+    <div class="start-desc">
+      你中了 <b>500 万</b>（税后到账）。月工资 0.8 万，月支出 1 万。
+      接下来 20 年，借钱、投资、骗局、消费诱惑接踵而至……
+      <br><br>你的每一个选择，都会改变财富的走向。<br>
+      <b>死于哪一年、死于谁的手，由你决定。</b>
+    </div>
+    <button class="btn-main" onclick="startGame()">开始作死</button>
+    <div class="start-foot">原型 v0.1 · 数据与文案来自《MVP剧本-中了500万》· 全对必赢，乱选必亏</div>
+  </div>
+
+  <!-- 游戏画面 -->
+  <div id="screen-play" class="screen hidden">
+    <div class="hud">
+      <div class="hud-row1">
+        <div class="year-tag">第 <b id="hud-year">1</b> 年</div>
+        <div class="net-tag">总资产 <b id="hud-net">500万</b></div>
+      </div>
+      <div class="bar"><div class="bar-fill" id="hud-bar" style="width:5%"></div></div>
+      <div class="hud-row2">
+        <div class="cash-tag">现金 <b id="hud-cash">500万</b></div>
+        <button class="asset-toggle" onclick="toggleDrawer()">资产明细 ▾</button>
+      </div>
+      <div id="asset-drawer">
+        <div class="drawer-row"><span>现金 / 货基</span><b id="d-cash">500万</b></div>
+        <div class="drawer-row"><span>应急金（保命钱）</span><b id="d-emergency">0</b></div>
+        <div class="drawer-row"><span>稳健资产（存款/债）</span><b id="d-stable">0</b></div>
+        <div class="drawer-row"><span>进取资产（指数/股基）</span><b id="d-growth">0</b></div>
+        <div class="drawer-row"><span>房产（收租）</span><b id="d-property">0</b></div>
+        <div class="drawer-row"><span>负债</span><b class="neg" id="d-debt">0</b></div>
+        <div class="drawer-row"><span>月支出 / 月收入</span><b id="d-expense">1万 / 0.8万</b></div>
+      </div>
+    </div>
+    <div id="event-area"></div>
+  </div>
+
+  <!-- 结局画面 -->
+  <div id="screen-result" class="screen hidden">
+    <div class="res-tier">
+      <span class="res-emoji" id="res-emoji">💸</span>
+      <div class="res-name" id="res-name">破产</div>
+      <span class="res-title" id="res-title">破产兄弟</span>
+    </div>
+    <div class="res-net">20 年后净资产<b id="res-net">-241万</b></div>
+    <div class="res-killer" id="res-killer"></div>
+
+    <div class="card-box">
+      <h3>📈 财富曲线（20 年）</h3>
+      <canvas id="curve"></canvas>
+      <div class="tier-legend"><span>0</span><span>100万 返贫线</span><span>500万</span><span>1000万 自由线</span></div>
+    </div>
+
+    <div class="card-box">
+      <h3>🧠 原则命中（复盘依据）</h3>
+      <div id="pr-list"></div>
+    </div>
+
+    <div class="card-box">
+      <h3>🗣️ AI 复盘点评</h3>
+      <div class="comment-tag">原型版：本地模板生成 · 正式版为 LLM 一局一调</div>
+      <div class="comment" id="res-comment"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="copyShare()">分享</button>
+      <button class="btn-gold" onclick="startGame()">再作死一局</button>
+    </div>
+  </div>
+
+  <!-- 反馈浮层 -->
+  <div id="fb-overlay" class="overlay hidden">
+    <div class="fb-card">
+      <div class="fb-title" id="fb-title">后果</div>
+      <div class="fb-diffs" id="fb-diffs"></div>
+      <div class="fb-text" id="fb-text"></div>
+      <button class="fb-btn" id="fb-btn" onclick="afterFeedback()">继续 →</button>
+    </div>
+  </div>
+
+  <!-- 结算浮层 -->
+  <div id="settle-overlay" class="overlay hidden">
+    <div class="fb-card settle-card">
+      <div class="settle-title" id="st-title">年度结算</div>
+      <div id="st-body"></div>
+      <hr class="settle-divider">
+      <button class="fb-btn" onclick="afterSettle()">继续 →</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= 原则库 ================= */
+const PRINCIPLES = {
+  p1: '保命钱', p2: '先存后花', p3: '天上不掉馅饼',
+  p4: '别放一个篮子', p5: '买资产不买负债', p6: '救急不救穷'
+};
+
+/* ================= 事件池（18 个，来自 MVP 剧本） =================
+   effect 单位：万。cash 现金 / emergency 应急金 / stable 稳健 / growth 进取
+   / property 房产 / debt 负债 / expense 月支出(+永久) / scam 骗局标记
+   / concentrate 集中持仓 / locked 资金锁定 */
+const EVENTS = [
+  { id:1, name:'第一笔安排', stage:1, anchor:true,
+    scene:'500 万到账当晚，你兴奋得睡不着。这笔钱，怎么安排？',
+    options:[
+      { text:'留 40 万应急金，170 万稳健理财，250 万指数基金长期持有', g:['p1','p4'], b:[], effect:{ cash:-460, emergency:40, stable:170, growth:250 },
+        feedback:'现金全部派去上班：应急、稳健、进取，各就各位。' },
+      { text:'全部存 5 年定期吃利息', g:[], b:[], effect:{ cash:-500, stable:500, locked:true },
+        feedback:'5 年定期，锁死。急用钱时提前支取，要亏 2%。' },
+      { text:'发小说有"稳赚项目"，全投进去', g:[], b:['p3'], effect:{ cash:-300, scam:true },
+        feedback:'发小拍胸脯：稳赚不赔。300 万进了"内部项目"。' }
+    ] },
+  { id:2, name:'亲戚来了', stage:1,
+    scene:'叔叔听说你中奖，上门借 50 万"周转"，承诺一年还。',
+    options:[
+      { text:'借，都是一家人', g:[], b:['p6'], effect:{ cash:-50 }, feedback:'一年后，叔叔说生意难做，再缓缓。' },
+      { text:'借 5 万，明说不用还，是心意', g:['p6'], b:[], effect:{ cash:-5 }, feedback:'5 万当心意，叔叔面子挂得住，你也睡得着。' },
+      { text:'不借，帮他找正规贷款渠道', g:['p6'], b:[], effect:{}, feedback:'帮他对接了银行渠道，他反而更敬你。' }
+    ] },
+  { id:3, name:'换车冲动', stage:1,
+    scene:'4S 店销售围着你转：全款 100 万的豪车，今天就能提。',
+    options:[
+      { text:'全款买，人生苦短', g:[], b:['p5'], effect:{ cash:-100, expense:2 }, feedback:'虚荣税到账：养车、保险、油费，每月多花 2 万。' },
+      { text:'买 20 万代步车，再买套小公寓收租', g:['p5'], b:[], effect:{ cash:-20, property:80 }, feedback:'代步车 + 收租公寓，钱在为你打工。' },
+      { text:'不买，旧车还能开', g:['p2'], b:[], effect:{}, feedback:'旧车保养一下，还能再战三年。' }
+    ] },
+  { id:4, name:'杀猪盘', stage:2,
+    scene:'微信群里"股神"天天晒收益，群友都在喊"跟上吃肉"。',
+    options:[
+      { text:'投 50 万试试水', g:[], b:['p3'], effect:{ cash:-50, scam:true }, feedback:'群友都在晒收益，你心动了。' },
+      { text:'拉黑退群', g:['p3'], b:[], effect:{}, feedback:'退群一时爽，一直退群一直爽。' },
+      { text:'先观察三个月', g:[], b:[], effect:{}, feedback:'三个月后群被封了，你庆幸手慢。' }
+    ] },
+  { id:5, name:'发小开店', stage:2,
+    scene:'发小拉你合伙开火锅店：你出 100 万，他出人出力。',
+    options:[
+      { text:'出钱，兄弟情义', g:[], b:['p5','p6'], effect:{ cash:-100 }, feedback:'火锅店两年后倒闭，100 万打了水漂。' },
+      { text:'出 20 万，签好分红和退出条款', g:['p5'], b:[], effect:{ cash:-20 }, feedback:'小店不温不火，20 万本金收回了大半。' },
+      { text:'不出钱，帮他做市场调研', g:[], b:[], effect:{}, feedback:'他的店生意一般，你省下 100 万学费。' }
+    ] },
+  { id:6, name:'理财经理', stage:2,
+    scene:'银行"理财经理"推荐"特殊额度"产品：保本 12%，限时抢购。',
+    options:[
+      { text:'买 200 万', g:[], b:['p3'], effect:{ cash:-200, scam:true }, feedback:'保本 12%？经理说是"内部额度"。' },
+      { text:'追问底层资产，发现是私募包装，拒绝', g:['p3'], b:[], effect:{}, feedback:'私募包装，你识破了。' },
+      { text:'买 10 万试试', g:[], b:['p3'], effect:{ cash:-10 }, feedback:'10 万试水，水花都没溅起来。' }
+    ] },
+  { id:7, name:'换大房子', stage:2,
+    scene:'家人看中一套大平层，月供要吃掉家庭现金流 60%。',
+    options:[
+      { text:'换，住得舒服最重要', g:[], b:['p5'], effect:{ cash:-200, expense:3 }, feedback:'大房子住着爽，月供像抽水机。' },
+      { text:'不换，现有住房够住', g:['p2'], b:[], effect:{}, feedback:'旧房够住，现金流保住了。' },
+      { text:'换改善型小套，月供 ≤30%', g:['p5'], b:[], effect:{ cash:-100, expense:1 }, feedback:'小改善，生活与现金流兼顾。' }
+    ] },
+  { id:8, name:'意外失业', stage:2,
+    scene:'行业下行，你被裁员，预计 3 个月无收入。',
+    options:[
+      { text:'靠应急金撑过去，资产不动', g:['p1'], b:[], effect:{ cash:-6 }, feedback:'应急金顶上，资产一分没动。' },
+      { text:'卖股票套现', g:[], b:['p1'], effect:{ growth:-15 }, feedback:'熊市窗口割肉，卖在了地板上。' },
+      { text:'借消费贷过渡', g:[], b:['p2','p1'], effect:{ debt:10, expense:0.1 }, feedback:'10% 的利息，雪球开始滚。' }
+    ] },
+  { id:9, name:'牛市来了', stage:3,
+    scene:'大盘一年涨 50%，连卖菜大妈都在谈股票。',
+    options:[
+      { text:'抵押房产加杠杆，All in', g:[], b:['p4'], effect:{ debt:30, growth:200, concentrate:true }, feedback:'杠杆 + 梭哈，风险拉满。' },
+      { text:'按原计划定投，不动', g:['p4'], b:[], effect:{ growth:50 }, feedback:'定投纪律，牛市自然吃肉。' },
+      { text:'追加 20% 仓位', g:[], b:[], effect:{ growth:20 }, feedback:'小仓位追加，留了后手。' }
+    ] },
+  { id:10, name:'内部消息', stage:3,
+    scene:'朋友拍胸脯："内部消息"，某只股票三个月必翻倍。',
+    options:[
+      { text:'重仓 300 万', g:[], b:['p4'], effect:{ cash:-300, growth:120, concentrate:true }, feedback:'消息股崩盘，300 万剩 120 万。' },
+      { text:'买 5 万玩玩', g:[], b:[], effect:{ cash:-5, growth:5 }, feedback:'小仓位，亏了不疼。' },
+      { text:'不碰', g:['p4'], b:[], effect:{}, feedback:'"内部消息" = 接盘信号，不碰。' }
+    ] },
+  { id:11, name:'担保', stage:3,
+    scene:'亲戚求你帮他担保 200 万经营贷，"就走个流程"。',
+    options:[
+      { text:'签了，一家人', g:[], b:['p6'], effect:{ debt:200 }, feedback:'一年后他跑路，你背了 200 万债务。' },
+      { text:'拒绝，担保=替他还债', g:['p6'], b:[], effect:{}, feedback:'担保=替他还债，你拒绝了。' },
+      { text:'帮他对接正规渠道，不担保', g:['p6'], b:[], effect:{}, feedback:'帮他找了正规渠道，不沾担保。' }
+    ] },
+  { id:12, name:'大病来袭', stage:3,
+    scene:'家人查出重疾，治疗费 50 万，医保报销一部分。',
+    options:[
+      { text:'有商业医疗/重疾险，理赔', g:['p1'], b:[], effect:{ cash:-10 }, feedback:'保险兜底 80%，自付 10 万。' },
+      { text:'裸奔，卖房卖资产凑钱', g:[], b:['p1'], effect:{ cash:-50 }, feedback:'卖房凑钱，雪上加霜。' },
+      { text:'水滴筹', g:[], b:['p1'], effect:{ cash:-50 }, feedback:'面子丢了，钱也没省。' }
+    ] },
+  { id:13, name:'P2P 暴雷', stage:3, needScam:true,
+    scene:'你投过的"高息平台"跑路了，维权群哭成一片。',
+    options:[
+      { text:'投得不多，认栽止损', g:[], b:[], effect:{}, feedback:'及时止损，认栽走人。' },
+      { text:'不甘心，追加一笔"回本"', g:[], b:['p3'], effect:{ cash:-100 }, feedback:'二次暴雷，双杀。' },
+      { text:'转投"新平台"回本', g:[], b:['p3'], effect:{ cash:-50 }, feedback:'新平台也跑了，你站在天台。' }
+    ] },
+  { id:14, name:'熊市暴跌', stage:4,
+    scene:'市场跌了 30%，新闻天天喊"熊市来了"。',
+    options:[
+      { text:'割肉离场', g:[], b:['p4'], effect:{ growth:-100 }, feedback:'割在地板，反弹与你无关。' },
+      { text:'坚持定投、继续持有', g:['p4'], b:[], effect:{ growth:50 }, feedback:'3 年后收复失地，还创新高。' },
+      { text:'有分寸地加仓', g:[], b:[], effect:{ growth:30 }, feedback:'成本摊低，等风来。' }
+    ] },
+  { id:15, name:'二度借钱', stage:4,
+    scene:'当年借钱的朋友又来："再借 30 万就能翻身"。',
+    options:[
+      { text:'再借，不然之前的要不回来', g:[], b:['p6'], effect:{ cash:-30 }, feedback:'沉没成本陷阱，第 30 万又没了。' },
+      { text:'不借，之前那笔就当送他', g:['p6'], b:[], effect:{}, feedback:'止损，就当那笔钱丢了。' }
+    ] },
+  { id:16, name:'养老规划', stage:4,
+    scene:'50 岁了，朋友约你报"养老规划营"。',
+    options:[
+      { text:'开始定投养老组合', g:['p4'], b:[], effect:{ growth:50 }, feedback:'10 年复利，养老无忧。' },
+      { text:'儿孙自有儿孙福', g:[], b:['p2'], effect:{}, feedback:'晚年现金流吃紧，全靠孩子脸色。' }
+    ] },
+  { id:17, name:'彩票再来', stage:4,
+    scene:'老同学拉你合买彩票："这次必中，就差你 10 万"。',
+    options:[
+      { text:'买 10 块玩玩', g:[], b:[], effect:{}, feedback:'10 块买个乐子。' },
+      { text:'买 10 万搏一搏', g:[], b:['p2'], effect:{ cash:-10 }, feedback:'没中。10 万买了张彩票。' }
+    ] },
+  { id:18, name:'继承纠纷', stage:4,
+    scene:'长辈去世留一套老宅，几个亲戚争得面红耳赤。',
+    options:[
+      { text:'放弃，不争', g:[], b:[], effect:{}, feedback:'清净，但也少了一笔。' },
+      { text:'走法律程序，该拿的拿', g:['p5'], b:[], effect:{ property:60 }, feedback:'分到老宅，收租 + 增值。' }
+    ] }
+];
+
+/* ================= 游戏状态 ================= */
+let S = null;
+let scenario = [];      // 本局事件序列
+let evIdx = 0;          // 当前事件下标
+let yearNow = 0;        // 当前已推进到的年份
+let shareText = '';
+
+function resetState() {
+  S = {
+    cash: 500, emergency: 0, stable: 0, growth: 0, property: 0, debt: 0,
+    monthExpense: 1, monthIncome: 0.8,
+    scam: false, concentrate: false, locked: false,
+    hits: { p1:{g:0,b:0}, p2:{g:0,b:0}, p3:{g:0,b:0}, p4:{g:0,b:0}, p5:{g:0,b:0}, p6:{g:0,b:0} },
+    curve: [{ year: 0, net: 500 }],
+    firstLoss: null   // { year, name, opt, detail }
+  };
+}
+
+function netWorth() {
+  return S.cash + S.emergency + S.stable + S.growth + S.property - S.debt;
+}
+
+function fmtW(v) {
+  v = Math.round(v);
+  if (v < 0) return '-' + Math.abs(v) + '万';
+  return v + '万';
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* 构建本局事件序列：阶段分层抽取 + 锚点固定第一 */
+function buildScenario() {
+  const s1 = shuffle(EVENTS.filter(e => e.stage === 1 && !e.anchor));
+  const s2 = shuffle(EVENTS.filter(e => e.stage === 2));
+  const s3 = shuffle(EVENTS.filter(e => e.stage === 3));
+  const s4 = shuffle(EVENTS.filter(e => e.stage === 4));
+  const anchor = EVENTS.find(e => e.anchor);
+  const seq = [anchor, ...s1.slice(0, 2), ...s2.slice(0, 3), ...s3.slice(0, 3), ...s4.slice(0, 2)];
+  return seq;
+}
+
+/* ================= 界面切换 ================= */
+function show(id) {
+  ['screen-start', 'screen-play', 'screen-result'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+}
+
+/* ================= 开始游戏 ================= */
+function startGame() {
+  resetState();
+  scenario = buildScenario();
+  evIdx = 0;
+  yearNow = 0;
+  show('screen-play');
+  hideOverlays();
+  advance();
+}
+
+/* 事件 i 对应年份：均匀铺到 1~20 年（首个第 1 年，末个第 20 年） */
+function eventYear(i) {
+  return 1 + Math.round((i * 19) / (scenario.length - 1));
+}
+
+/* 推进流程：先结算经过的年份（弹结算浮层），再显示事件或进入终局 */
+function advance() {
+  // 跳过不满足条件的事件（P2P 暴雷需 scam 标记）
+  while (evIdx < scenario.length && scenario[evIdx].needScam && !S.scam) evIdx++;
+
+  if (evIdx >= scenario.length) {
+    finishGame();
+    return;
+  }
+
+  const year = eventYear(evIdx);
+  // 从上一事件年份推进结算到当前事件年份（首个事件前不结算）
+  if (yearNow > 0 && year > yearNow) {
+    settleYears(year - yearNow, year);
+    yearNow = year;
+    return; // 结算浮层点"继续"→ afterSettle → advance
+  }
+  yearNow = year;
+  renderEvent(scenario[evIdx], year);
+}
+
+function renderEvent(ev, year) {
+  const area = document.getElementById('event-area');
+  const optsHtml = ev.options.map((o, i) =>
+    '<button class="opt-btn" onclick="choose(' + evIdx + ',' + i + ')">' + o.text + '</button>'
+  ).join('');
+  area.innerHTML =
+    '<div class="ev-card">' +
+      '<span class="ev-year-badge">第 ' + year + ' 年 · 人生大事</span>' +
+      '<div class="ev-name">' + ev.name + '</div>' +
+      '<div class="ev-scene">' + ev.scene + '</div>' +
+      optsHtml +
+    '</div>';
+  updateHud();
+  area.scrollTop = 0;
+  document.getElementById('screen-play').scrollTop = 0;
+}
+
+/* ================= 顶部 HUD ================= */
+function updateHud() {
+  document.getElementById('hud-year').textContent = yearNow;
+  document.getElementById('hud-net').textContent = fmtW(netWorth());
+  document.getElementById('hud-cash').textContent = fmtW(S.cash + S.emergency);
+  document.getElementById('hud-bar').style.width = Math.min(100, (yearNow / 20) * 100) + '%';
+  document.getElementById('d-cash').textContent = fmtW(S.cash);
+  document.getElementById('d-emergency').textContent = fmtW(S.emergency);
+  document.getElementById('d-stable').textContent = fmtW(S.stable);
+  document.getElementById('d-growth').textContent = fmtW(S.growth);
+  document.getElementById('d-property').textContent = fmtW(S.property);
+  document.getElementById('d-debt').textContent = S.debt > 0 ? '-' + Math.round(S.debt) + '万' : '0';
+  document.getElementById('d-expense').textContent = fmtW(S.monthExpense) + ' / 0.8万';
+}
+
+function toggleDrawer() {
+  document.getElementById('asset-drawer').classList.toggle('open');
+}
+
+/* ================= 选择事件 ================= */
+function choose(evI, optI) {
+  const ev = scenario[evI];
+  const opt = ev.options[optI];
+
+  // 禁用按钮并高亮选择
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[optI].classList.add('picked');
+
+  // 原则命中记录
+  opt.g.forEach(p => S.hits[p].g++);
+  opt.b.forEach(p => S.hits[p].b++);
+
+  // 记录首个重大损失（用于"凶手"梗）
+  const e = opt.effect;
+  if (!S.firstLoss && (e.cash < 0 || e.debt > 0 || e.expense > 0 || e.scam)) {
+    S.firstLoss = { year: yearNow, name: ev.name, opt: opt.text,
+      detail: (e.scam ? '骗局' : e.cash < 0 ? '大额支出' : e.debt > 0 ? '背债' : '消费升级') };
+  }
+
+  // 应用效果
+  if (e.cash) S.cash += e.cash;
+  if (e.emergency) S.emergency += e.emergency;
+  if (e.stable) S.stable += e.stable;
+  if (e.growth) S.growth += e.growth;
+  if (e.property) S.property += e.property;
+  if (e.debt) S.debt += e.debt;
+  if (e.expense) S.monthExpense += e.expense;
+  if (e.scam) S.scam = true;
+  if (e.concentrate) S.concentrate = true;
+  if (e.locked) S.locked = true;
+
+  // 集中持仓惩罚：熊市割肉（事件14-A）时进取资产损失 ×1.5（文案承诺必须兑现）
+  let extraWarn = '';
+  if (ev.id === 14 && optI === 0 && S.concentrate) {
+    const pen = Math.min(S.growth, 50);
+    if (pen > 0) {
+      S.growth -= pen;
+      extraWarn = '⚠ 集中持仓惩罚：熊市割肉损失 ×1.5，进取资产再 -' + Math.round(pen) + '万';
+    }
+  }
+
+  // 显示反馈
+  showFeedback(ev, opt, e, extraWarn);
+}
+
+function effectDiffs(e) {
+  const d = [];
+  const push = (sign, txt) => d.push({ sign, txt });
+  if (e.cash) push(e.cash > 0 ? 'up' : 'down', (e.cash > 0 ? '+' : '') + Math.round(e.cash) + '万 现金');
+  if (e.emergency) push('up', '+' + Math.round(e.emergency) + '万 应急金');
+  if (e.stable) push(e.stable > 0 ? 'up' : 'down', (e.stable > 0 ? '+' : '') + Math.round(e.stable) + '万 稳健资产');
+  if (e.growth) push(e.growth > 0 ? 'up' : 'down', (e.growth > 0 ? '+' : '') + Math.round(e.growth) + '万 进取资产');
+  if (e.property) push(e.property > 0 ? 'up' : 'down', (e.property > 0 ? '+' : '') + Math.round(e.property) + '万 房产');
+  if (e.debt) push('down', '+' + Math.round(e.debt) + '万 负债');
+  if (e.expense) push('down', '月支出 +' + e.expense + '万（永久）');
+  if (e.scam) push('warn', '⚠ 资金进了"稳赚项目"');
+  if (e.concentrate) push('warn', '⚠ 集中持仓：熊市割肉损失 ×1.5');
+  if (e.locked) push('warn', '🔒 资金锁定：提前支取损失 2%');
+  if (!d.length) d.push({ sign:'up', txt:'没有直接金钱变化' });
+  return d;
+}
+
+function showFeedback(ev, opt, e, extraWarn) {
+  document.getElementById('fb-title').textContent = ev.name + ' · 后果';
+  let html = effectDiffs(e).map(x =>
+    '<div class="diff"><span>' + x.txt + '</span></div>'
+  ).join('');
+  if (extraWarn) html += '<div class="diff"><span>' + extraWarn + '</span></div>';
+  document.getElementById('fb-diffs').innerHTML = html;
+  document.getElementById('fb-text').textContent = '「' + opt.feedback + '」';
+  document.getElementById('fb-overlay').classList.remove('hidden');
+  updateHud();
+}
+
+function afterFeedback() {
+  document.getElementById('fb-overlay').classList.add('hidden');
+  evIdx++;
+  advance();
+}
+
+/* ================= 年度结算 ================= */
+function settleYears(delta, targetYear) {
+  let rescued = false;
+  let interest = 0, wage = 0, spend = 0, debtInt = 0;
+  for (let i = 0; i < delta; i++) {
+    interest = (S.cash + S.emergency) * 0.02 + S.stable * 0.03 + S.growth * 0.07 + S.property * 0.07;
+    wage = S.monthIncome * 12;
+    spend = S.monthExpense * 12;
+    debtInt = S.debt * 0.08;
+    let flow = interest + wage - spend - debtInt;
+    S.cash += flow;
+    if (S.cash < 0) { rescued = rescue() || rescued; }
+  }
+  const net = netWorth();
+  S.curve.push({ year: targetYear, net });
+  showSettle(targetYear, delta, interest, wage, spend, debtInt, rescued);
+}
+
+/* 卖资产救急链：进取9折 → 稳健95折 → 房产85折 → 负债兜底 */
+function rescue() {
+  let acted = false;
+  while (S.cash < 0) {
+    const need = -S.cash;
+    if (S.growth > 0) {
+      const sell = Math.min(S.growth, need / 0.9);
+      S.cash += sell * 0.9; S.growth -= sell; acted = true;
+    } else if (S.stable > 0) {
+      const rate = S.locked ? 0.8 : 0.95;
+      const sell = Math.min(S.stable, need / rate);
+      S.cash += sell * rate; S.stable -= sell; acted = true;
+    } else if (S.property > 0) {
+      const sell = Math.min(S.property, need / 0.85);
+      S.cash += sell * 0.85; S.property -= sell; acted = true;
+    } else {
+      S.debt += need; S.cash = 0; acted = true;
+      break;
+    }
+  }
+  return acted;
+}
+
+function showSettle(year, delta, interest, wage, spend, debtInt, rescued) {
+  const row = (label, val, cls) => '<div class="settle-row"><span>' + label + '</span><b class="' + cls + '">' + val + '</b></div>';
+  let html = row('时间跨度', delta + ' 年', '');
+  html += row('资产收益', '+' + fmtW(interest), 'up');
+  html += row('工资收入', '+' + fmtW(wage), 'up');
+  html += row('生活支出', '-' + fmtW(spend), 'down');
+  if (debtInt > 0) html += row('负债利息', '-' + fmtW(debtInt), 'down');
+  if (rescued) html += row('⚠ 现金告急', '自动卖资产 / 举债救急', 'warn');
+  html += '<hr class="settle-divider">';
+  html += row('净资产', fmtW(netWorth()), netWorth() >= 0 ? 'up' : 'down');
+  document.getElementById('st-title').textContent = '第 ' + year + ' 年 · 年度结算';
+  document.getElementById('st-body').innerHTML = html;
+  document.getElementById('settle-overlay').classList.remove('hidden');
+  updateHud();
+}
+
+function afterSettle() {
+  document.getElementById('settle-overlay').classList.add('hidden');
+  advance();
+}
+
+/* ================= 结局 ================= */
+const TIERS = [
+  { min: 1000, name: '财富自由', title: '复利之王', emoji: '👑', color: '#f5c542',
+    line: '500 万滚成 ' },
+  { min: 500, name: '守住财富', title: '稳健派', emoji: '🛡️', color: '#3ddc97',
+    line: '20 年过去，' },
+  { min: 100, name: '财富缩水', title: '散财童子', emoji: '🎈', color: '#5aa7ff',
+    line: '比中奖时少了一大截，' },
+  { min: 0, name: '返贫', title: '韭菜王', emoji: '🥬', color: '#c0a16a',
+    line: '500 万缩水到' },
+  { min: -Infinity, name: '破产', title: '破产兄弟', emoji: '💸', color: '#ff5d5d',
+    line: '一路散财，最后倒欠 ' }
+];
+
+function getTier(net) {
+  for (const t of TIERS) if (net >= t.min) return t;
+  return TIERS[TIERS.length - 1];
+}
+
+function finishGame() {
+  // 末事件恒在第 20 年，事件效果即时入账，直接出结局
+  renderResult();
+}
+
+function renderResult() {
+  const net = netWorth();
+  const lastPt = S.curve[S.curve.length - 1];
+  if (lastPt.year !== 20) S.curve.push({ year: 20, net });
+  const tier = getTier(net);
+
+  document.getElementById('res-emoji').textContent = tier.emoji;
+  document.getElementById('res-name').textContent = tier.name;
+  document.getElementById('res-name').style.color = tier.color;
+  document.getElementById('res-title').textContent = tier.title;
+  document.getElementById('res-net').textContent = (net < 0 ? '-' : '') + Math.round(Math.abs(net)) + '万';
+
+  // 凶手梗
+  let killer = '';
+  if (S.firstLoss) {
+    killer = '你的 500 万死于第 <b>' + S.firstLoss.year + '</b> 年，凶手：<b>' + S.firstLoss.name + '</b>（' + S.firstLoss.detail + '）';
+  } else {
+    killer = '这 20 年你居然没犯过大错，凶手：无（无聊，但有钱）';
+  }
+  document.getElementById('res-killer').innerHTML = '☠️ ' + killer;
+
+  // 先显示画面再画曲线（canvas 需要可见尺寸）
+  show('screen-result');
+  document.getElementById('screen-result').scrollTop = 0;
+  drawCurve();
+  renderPrincipleList();
+  renderComment(tier, net);
+}
+
+function renderPrincipleList() {
+  const box = document.getElementById('pr-list');
+  const max = Math.max(1, ...Object.values(S.hits).map(h => h.g));
+  box.innerHTML = Object.entries(S.hits).map(([p, h]) => {
+    const name = PRINCIPLES[p];
+    const width = Math.round((h.g / max) * 100);
+    return '<div class="pr-row">' +
+      '<span class="pr-name">' + name + '</span>' +
+      '<span class="pr-bar"><i style="width:' + width + '%"></i></span>' +
+      '<span class="pr-count">✓<b class="good">' + h.g + '</b> / ✗<b class="bad">' + h.b + '</b></span>' +
+    '</div>';
+  }).join('');
+}
+
+/* ================= AI 点评（模板生成，正式版为 LLM） ================= */
+function renderComment(tier, net) {
+  const weak = Object.entries(S.hits)
+    .map(([p, h]) => ({ p, b: h.b }))
+    .sort((a, b) => b.b - a.b);
+
+  const top1 = weak[0];
+  const top2 = weak[1];
+
+  let s1;
+  if (tier.name === '破产') s1 = '500 万开局，一路散财，最后倒欠 ' + Math.round(Math.abs(net)) + ' 万——你这哪是中奖，是给社会做慈善。';
+  else if (tier.name === '返贫') s1 = '20 年过去，500 万缩水到 ' + Math.round(net) + ' 万，韭菜的自我修养练得不错。';
+  else if (tier.name === '财富缩水') s1 = tier.line + '还剩 ' + Math.round(net) + ' 万——钱不是丢了，是悄悄溜走的。';
+  else if (tier.name === '守住财富') s1 = '还有 ' + Math.round(net) + ' 万，不错，但你本可以更好。';
+  else s1 = tier.line + Math.round(net) + ' 万，财富自由，这局挑不出毛病。';
+
+  let s2 = '', s3 = '';
+  if (top1 && top1.b > 0) {
+    const pn1 = PRINCIPLES[top1.p];
+    s2 = '最大问题：' + pn1 + '，连栽 ' + top1.b + ' 次';
+    if (top2 && top2.b > 0) s2 += '；' + PRINCIPLES[top2.p] + '也栽了 ' + top2.b + ' 次';
+    s2 += '。';
+    s3 = '下次开局先做到：' + tipFor(top1.p) + (top2 && top2.b > 0 ? '顺带，' + tipFor(top2.p) : '');
+  } else {
+    s2 = '所有原则全绿，稳健得像教科书。';
+    s3 = '不过下次试试不靠运气再赢一次——高手都是重复正确，不是赌对一次。';
+  }
+
+  // 凶手补刀
+  let s4 = '';
+  if (S.firstLoss && top1 && top1.b > 0) {
+    s4 = '（' + S.firstLoss.name + '那笔，就当交学费了。）';
+  }
+
+  document.getElementById('res-comment').textContent = s1 + s2 + s3 + s4;
+
+  shareText = '【中了500万】第' + (S.curve.length - 1) + '局结局：' + tier.name + '（' + tier.title + '），净资产 ' +
+    (net < 0 ? '-' : '') + Math.round(Math.abs(net)) + '万。' +
+    (S.firstLoss ? '死于第' + S.firstLoss.year + '年，凶手：' + S.firstLoss.name + '。' : '全程无大错。') +
+    ' #情景认知训练 #理财模拟';
+}
+
+function tipFor(p) {
+  const tips = {
+    p1: '先锁 40 万应急金，再谈投资',
+    p2: '发钱先存 30%，再谈花钱',
+    p3: '收益率超 8% 还"保本"的，直接拉黑',
+    p4: '鸡蛋分篮装，定投当呼吸',
+    p5: '豪车是负债，收租才是资产',
+    p6: '只借丢得起的数，担保一律不签'
+  };
+  return tips[p] || '把原则背熟';
+}
+
+/* ================= 财富曲线 ================= */
+function drawCurve() {
+  const cv = document.getElementById('curve');
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth, h = 150;
+  cv.width = w * dpr; cv.height = h * dpr;
+  const ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const data = S.curve;
+  const maxV = Math.max(1000, ...data.map(d => d.net), 500) * 1.15;
+  const minV = Math.min(0, ...data.map(d => d.net)) * 1.2;
+  const X = x => 8 + (x / 20) * (w - 16);
+  const Y = v => h - 14 - ((v - minV) / (maxV - minV)) * (h - 30);
+
+  // 网格
+  ctx.strokeStyle = '#24303f'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const v = minV + ((maxV - minV) * i) / 4;
+    ctx.beginPath(); ctx.moveTo(8, Y(v)); ctx.lineTo(w - 8, Y(v)); ctx.stroke();
+  }
+
+  // 阈值线
+  [1000, 500, 100, 0].forEach(tv => {
+    if (tv >= minV && tv <= maxV) {
+      ctx.strokeStyle = 'rgba(245,197,66,.25)'; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(8, Y(tv)); ctx.lineTo(w - 8, Y(tv)); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+
+  // 折线
+  ctx.strokeStyle = '#f5c542'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  data.forEach((d, i) => { const px = X(d.year), py = Y(d.net); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+  ctx.stroke();
+
+  // 数据点
+  data.forEach(d => {
+    ctx.fillStyle = '#f5c542';
+    ctx.beginPath(); ctx.arc(X(d.year), Y(d.net), 3, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // 终点标注
+  const last = data[data.length - 1];
+  ctx.fillStyle = '#ffd968'; ctx.font = 'bold 11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(Math.round(last.net) + '万', X(last.year), Y(last.net) - 8);
+
+  // 起点标注
+  ctx.fillStyle = '#8b98a9';
+  ctx.fillText('500万', X(0), Y(500) + 16);
+}
+
+/* ================= 分享 ================= */
+function copyShare() {
+  const done = () => alert('分享文案已复制（或手动复制下方文本）：\n\n' + shareText);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareText).then(done).catch(() => fallbackCopy());
+  } else {
+    fallbackCopy();
+  }
+  function fallbackCopy() { done(); }
+}
+
+function hideOverlays() {
+  document.getElementById('fb-overlay').classList.add('hidden');
+  document.getElementById('settle-overlay').classList.add('hidden');
+}
+</script>
+</body>
+</html>
