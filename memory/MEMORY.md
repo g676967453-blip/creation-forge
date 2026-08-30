@@ -10,7 +10,6 @@
 - [用户对各 AI 的反馈](feedback-协作风格.md) — 协作中的注意事项和调整
 - [多AI分工](project-多AI分工.md) — 🆕 各 AI 领域分工与协作边界（2026-08-14 确立）
 - [TBH 复刻项目](project-TBH复刻.md) — 复刻《TBH》调研与开发进度（2026-08-06 调研完成，待立项）
-- [游戏美术部门AI协作中台](project-游戏美术部门AI协作中台.md) — ✅ 已完成：v1.0（2026-08-19，D-014）
 - [制作游戏UI设计系统](project-制作游戏UI设计系统.md) — 📋 待办：制作游戏UI设计系统（F-005）
 - [asset-pipeline 产出目录](project-asset-pipeline产出目录.md) — 🔑 全局规则：产出媒体存桌面 asset-pipeline-outputs/，不进仓库（2026-08-20）
 - [⚠️ git 历史重写告警](ops-git历史重写.md) — ⚠️ 2026-08-20 历史已重写强推：旧克隆必须重新 clone（新 HEAD 164d4b3）
