@@ -16,6 +16,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#070a12;font-family:
 #hud{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 12px;background:linear-gradient(180deg,rgba(0,0,0,.62),rgba(0,0,0,.18),rgba(0,0,0,0));color:#fff;font-size:clamp(11px,3.2vh,14px);font-weight:700;pointer-events:none}
 .hud-item{display:flex;align-items:center;gap:4px;background:rgba(10,14,26,.55);border:1px solid rgba(255,255,255,.09);border-radius:999px;padding:4px 10px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.35);backdrop-filter:blur(6px)}
 #pauseBtn{pointer-events:auto;background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:999px;width:30px;height:30px;font-size:15px;line-height:1;cursor:pointer}
+#btnSkill{pointer-events:auto;background:linear-gradient(180deg,#ff8a3c,#d84315);border:none;color:#fff;border-radius:999px;width:34px;height:34px;font-size:17px;line-height:1;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.3)}
 
 /* overlays */
 .overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;text-align:center;background:rgba(6,9,18,.78);backdrop-filter:blur(4px)}
@@ -30,6 +31,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#070a12;font-family:
 .btn-ghost{background:rgba(255,255,255,.14);box-shadow:0 5px 0 rgba(0,0,0,.2)}
 .badge{background:rgba(255,255,255,.1);border-radius:12px;padding:10px 16px;font-size:clamp(12px,3.2vh,14px);color:#ffe9c9;line-height:1.6}
 .tag{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:rgba(255,255,255,.4);font-size:10px}
+.char-list{display:flex;flex-direction:column;gap:8px;width:100%;max-width:340px;max-height:52vh;overflow-y:auto;padding:4px}
+.char-card{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px 12px;cursor:pointer;text-align:left}
+.char-card.sel{border-color:#ffd24a;background:rgba(255,210,74,.12)}
+.char-card.locked{opacity:.55}
+.char-emoji{font-size:30px;width:40px;text-align:center}
+.char-info{flex:1;min-width:0}
+.char-name{color:#fff;font-weight:800;font-size:clamp(13px,3.4vh,15px)}
+.char-ability{color:#ffe9c9;font-size:clamp(10px,2.6vh,12px);line-height:1.4}
+.char-price{color:#ffd24a;font-size:clamp(10px,2.6vh,12px);white-space:nowrap}
+.shop-item{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 12px;margin-bottom:8px}
+.shop-item .si-name{color:#fff;font-weight:700;font-size:clamp(12px,3vh,14px)}
+.shop-item .si-sub{color:#ffe9c9;font-size:clamp(10px,2.5vh,12px)}
+.shop-buy{background:linear-gradient(180deg,#ffd24a,#e8a20c);border:none;color:#1a1a1a;font-weight:800;border-radius:999px;padding:6px 14px;font-size:clamp(12px,3vh,14px);cursor:pointer}
+.shop-buy:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -42,6 +57,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#070a12;font-family:
     <span class="hud-item">💰<span id="hudCn">0</span></span>
     <span class="hud-item">❤️<span id="hudLi">3</span></span>
     <span class="hud-item" id="hudGoal">🔥0 · 🧑0</span>
+    <button id="btnSkill" class="hidden" title="哪吒·双球技能">⚡</button>
     <button id="pauseBtn">⏸</button>
   </div>
 
@@ -52,9 +68,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#070a12;font-family:
     <button class="btn btn-main" id="btnStart">🔥 开始灭火</button>
     <button class="btn btn-ad" id="btnAdCoin">📺 看广告 +50 金币（模拟点位）</button>
     <button class="btn btn-ghost" id="btnExport">🎨 导出元件素材 (PNG+JSON)</button>
-    <button class="btn btn-ghost" id="btnSkin">🧥 皮肤：经典</button>
+    <button class="btn btn-ghost" id="btnSkin">🧥 角色：小猫</button>
+    <button class="btn btn-ghost" id="btnChar">🎭 角色选择</button>
     <div class="badge">最高分：<span id="menuBest">0</span></div>
     <div class="tag">IAA 点位：激励视频复活 / 通关双倍 / 菜单领币</div>
+  </div>
+
+  <!-- 角色选择 -->
+  <div id="ovChar" class="overlay hidden">
+    <div class="title" style="font-size:clamp(22px,6.5vh,32px)">🎭 选择救火员</div>
+    <div class="sub" style="font-size:clamp(11px,2.8vh,13px)">每个角色有专属能力 · 金币/广告解锁</div>
+    <div id="charList" class="char-list"></div>
+    <div class="stat" id="charCoins">💰 0</div>
+    <button class="btn btn-ghost" id="btnCharBack">返回</button>
+  </div>
+
+  <!-- 补给队商店（过关后） -->
+  <div id="ovShop" class="overlay hidden">
+    <div class="title" style="font-size:clamp(22px,6.5vh,32px)">🚒 补给队</div>
+    <div class="sub">过关奖励已到账 · 金币消费补给</div>
+    <div id="shopContent"></div>
+    <div class="stat" id="shopCoins">💰 0</div>
+    <button class="btn btn-ad" id="btnShopRefresh">📺 看广告刷新</button>
+    <button class="btn btn-main" id="btnShopNext">继续 →</button>
   </div>
 
   <!-- 模拟激励视频广告 -->
@@ -128,12 +164,18 @@ var ITEM_DEF={
 };
 var ITEM_KEYS=['bag','wide','hammer','extinguish','up','fireball','heli','life','boost','horn','keychain'];
 
-// 皮肤定义（P2）：3 款，金币解锁
+// 角色定义（微创新）：5 个动物角色，suit/helm 为形象色，ability 为专属能力
+// unlockBy: free=初始解锁 coins=金币购买 ad=激励视频解锁（也可金币）
 var SKINS=[
-  {id:'classic',name:'经典',cost:0,suit:'#f7c948',helm:'#e6392f'},
-  {id:'blue',  name:'抢险蓝',cost:300,suit:'#4fc3f7',helm:'#1e88e5'},
-  {id:'red',   name:'烈焰红',cost:800,suit:'#ff7043',helm:'#d84315'}
+  {id:'cat',  name:'小猫',     emoji:'🐱', cost:0,    unlockBy:'free',  suit:'#ffb74d',helm:'#e64a19',ability:'敏捷：蹦床移速+25%，接人判定+10%'},
+  {id:'dog',  name:'小狗',     emoji:'🐶', cost:0,    unlockBy:'free',  suit:'#a1887f',helm:'#6d4c41',ability:'救援：救人得分+50%（含红窗）'},
+  {id:'panda',name:'熊猫',     emoji:'🐼', cost:2000, unlockBy:'coins', suit:'#eceff1',helm:'#37474f',ability:'力量：灭火效率+1级（一次撞击抵两次）'},
+  {id:'capy', name:'卡皮巴拉', emoji:'🦫', cost:3000, unlockBy:'coins', suit:'#d7a96a',helm:'#8d6e63',ability:'稳定：蹦床着火概率-50%，着火3秒自动熄灭'},
+  {id:'nezha',name:'哪吒',     emoji:'🧒', cost:5000, unlockBy:'ad',    suit:'#ff8a3c',helm:'#d84315',ability:'爆发：主动技能双球10秒（每关1次）'}
 ];
+// 当前角色辅助
+function curChar(){ return SKINS[S.skin]||SKINS[0]; }
+function curCharAbility(name){ var c=curChar(); return c&&c.ability&&c.ability.indexOf(name)>=0; }
 
 // ===== 游戏状态 =====
 var S={state:'menu',level:1,score:0,coins:0,lives:3,best:0,powerLevel:0,fireLeft:0,rescueLeft:0,skin:0};
@@ -150,6 +192,10 @@ var pierceTimer=0; // 增益·穿透无敌剩余帧（P1）
 // P2：室内 Bonus 关
 var indoorTimer=0, indoorDoors=[], indoorKeys=0, indoorFound=false;
 var ownedSkins=[0]; // 已解锁皮肤 id 列表（0=经典默认）
+var capyFireTimer=0; // 卡皮巴拉：着火自动熄灭倒计时（帧）
+var neZhaTimer=0; // 哪吒：双球剩余帧
+var neZhaUsed=false; // 哪吒技能本关是否已用
+var ball2=null; // 哪吒双球技能的第二球
 
 // 手配关卡布局（每行 7 字符：F=火1级 f=火2级 g=火3级 R=救援窗 r=红窗 .=空）
 var LEVEL_LAYOUTS=[
@@ -199,31 +245,206 @@ function loadBest(){ try{ S.best=parseInt(localStorage.getItem('fireHeroBest')||
 function saveBest(){ try{ localStorage.setItem('fireHeroBest',String(S.best)); }catch(e){} }
 function loadSkins(){
   try{
-    var o=JSON.parse(localStorage.getItem('fireHeroSkins')||'{"owned":[0],"cur":0}');
-    ownedSkins=o.owned||[0]; S.skin=o.cur||0;
-  }catch(e){ ownedSkins=[0]; S.skin=0; }
+    var raw=localStorage.getItem('fireHeroSkins');
+    var o=raw?JSON.parse(raw):null;
+    if(o&&Array.isArray(o.owned)){
+      // 兼容旧数据：旧存档 owned 含旧皮肤索引（0=classic 1=blue 2=red）
+      // 迁移：小猫(0)/小狗(1) 恒拥有；cur 超出新角色数则归 0
+      ownedSkins=[0,1];
+      for(var k=0;k<o.owned.length;k++){ if(ownedSkins.indexOf(o.owned[k])<0) ownedSkins.push(o.owned[k]); }
+      S.skin=(typeof o.cur==='number'&&o.cur<SKINS.length)?o.cur:0;
+      // 金币持久化（合并存档）
+      if(typeof o.coins==='number') S.coins=o.coins;
+    }else{
+      ownedSkins=[0,1]; S.skin=0; // 新档：默认拥有小猫+小狗
+      if(o&&typeof o.coins==='number') S.coins=o.coins;
+    }
+  }catch(e){ ownedSkins=[0,1]; S.skin=0; }
 }
-function saveSkins(){ try{ localStorage.setItem('fireHeroSkins',JSON.stringify({owned:ownedSkins,cur:S.skin})); }catch(e){} }
+function saveSkins(){ try{ localStorage.setItem('fireHeroSkins',JSON.stringify({owned:ownedSkins,cur:S.skin,coins:S.coins})); }catch(e){} }
 function refreshSkinBtn(){
-  var sk=SKINS[S.skin]||SKINS[0];
-  $('btnSkin').textContent='🧥 皮肤：'+sk.name;
+  var sk=curChar();
+  $('btnSkin').textContent=sk.emoji+' '+sk.name;
 }
-// 皮肤循环切换（未解锁的用金币购买）
+// 角色切换（已拥有直接切；未拥有按解锁方式处理）
 function cycleSkin(){
   var next=(S.skin+1)%SKINS.length;
   if(ownedSkins.indexOf(next)===-1){
-    var cost=SKINS[next].cost;
-    if(S.coins>=cost){ S.coins-=cost; ownedSkins.push(next); addText(W/2,H*0.3,'已解锁 '+SKINS[next].name+'! -'+cost+'💰','#ffd700'); sfx('win'); }
-    else { addText(W/2,H*0.3,'金币不足 ('+cost+'💰)','#ff5a4d'); sfx('lose'); return; }
+    var ch=SKINS[next];
+    // 广告解锁角色（哪吒）
+    if(ch.unlockBy==='ad'){
+      showAd(function(){
+        ownedSkins.push(next); S.skin=next; saveSkins(); refreshSkinBtn(); renderHUD();
+        addText(W/2,H*0.3,'看广告解锁 '+ch.name+'!','#ffd700'); sfx('win');
+      });
+      return;
+    }
+    // 金币解锁角色
+    if(S.coins>=ch.cost){ S.coins-=ch.cost; ownedSkins.push(next); S.skin=next; addText(W/2,H*0.3,'已解锁 '+ch.name+'! -'+ch.cost+'💰','#ffd700'); sfx('win'); }
+    else { addText(W/2,H*0.3,'金币不足 ('+ch.cost+'💰)','#ff5a4d'); sfx('lose'); return; }
   }
   S.skin=next; saveSkins(); refreshSkinBtn(); renderHUD();
 }
+
+// ===== 角色选择界面 =====
+function openChar(){
+  renderCharList();
+  $('charCoins').textContent='💰 '+S.coins;
+  ovMenu.classList.add('hidden');
+  ovChar.classList.remove('hidden');
+  sfx('click');
+}
+function closeChar(){
+  ovChar.classList.add('hidden');
+  ovMenu.classList.remove('hidden');
+  refreshSkinBtn();
+  sfx('click');
+}
+function renderCharList(){
+  var html='';
+  for(var i=0;i<SKINS.length;i++){
+    var ch=SKINS[i], owned=ownedSkins.indexOf(i)>=0, sel=(i===S.skin);
+    var priceHtml='';
+    if(!owned){
+      if(ch.unlockBy==='ad'){ priceHtml='<div class="char-price">📺 广告解锁 或 '+ch.cost+'💰</div>'; }
+      else { priceHtml='<div class="char-price">'+ch.cost+'💰 解锁</div>'; }
+    }
+    html+='<div class="char-card'+(sel?' sel':'')+(owned?'':' locked')+'" data-idx="'+i+'">'
+      +'<div class="char-emoji">'+ch.emoji+'</div>'
+      +'<div class="char-info"><div class="char-name">'+ch.name+(sel?' (使用中)':'')+'</div>'
+      +'<div class="char-ability">'+ch.ability+'</div></div>'
+      +priceHtml
+      +'</div>';
+  }
+  $('charList').innerHTML=html;
+  // 绑定点击
+  var cards=$('charList').querySelectorAll('.char-card');
+  for(var k=0;k<cards.length;k++){
+    (function(idx){
+      cards[k].onclick=function(){ trySelectChar(idx); };
+    })(parseInt(cards[k].getAttribute('data-idx'),10));
+  }
+}
+function trySelectChar(idx){
+  if(ownedSkins.indexOf(idx)>=0){
+    S.skin=idx; saveSkins(); renderCharList(); refreshSkinBtn(); renderHUD();
+    addText(W/2,H*0.3,'已切换 '+SKINS[idx].name,'#7ef0a0'); sfx('coin');
+    return;
+  }
+  var ch=SKINS[idx];
+  if(ch.unlockBy==='ad'){
+    // 广告解锁（哪吒）：先问是否用金币还是广告——直接走广告（规格：广告或金币）
+    if(S.coins>=ch.cost){
+      // 提供金币购买（点击即买）
+      S.coins-=ch.cost; ownedSkins.push(idx); S.skin=idx; saveSkins();
+      renderCharList(); refreshSkinBtn(); renderHUD(); $('charCoins').textContent='💰 '+S.coins;
+      addText(W/2,H*0.3,'已解锁 '+ch.name+'! -'+ch.cost+'💰','#ffd700'); sfx('win');
+    }else{
+      showAd(function(){
+        ownedSkins.push(idx); S.skin=idx; saveSkins();
+        renderCharList(); refreshSkinBtn(); renderHUD();
+        addText(W/2,H*0.3,'看广告解锁 '+ch.name+'!','#ffd700'); sfx('win');
+      });
+    }
+    return;
+  }
+  // 金币解锁
+  if(S.coins>=ch.cost){
+    S.coins-=ch.cost; ownedSkins.push(idx); S.skin=idx; saveSkins();
+    renderCharList(); refreshSkinBtn(); renderHUD(); $('charCoins').textContent='💰 '+S.coins;
+    addText(W/2,H*0.3,'已解锁 '+ch.name+'! -'+ch.cost+'💰','#ffd700'); sfx('win');
+  }else{
+    addText(W/2,H*0.3,'金币不足 ('+ch.cost+'💰)','#ff5a4d'); sfx('lose');
+  }
+}
+
+// ===== 补给队商店 =====
+var shopGoods={hero:-1,items:[]}; // 商品：hero 未解锁角色索引（-1 无）；items 道具 key 列表
+function openShop(){
+  // 生成商品（若未生成）
+  if(shopGoods.hero===-2) generateShop();
+  renderShop();
+  ovLevel.classList.add('hidden');
+  ovShop.classList.remove('hidden');
+  sfx('click');
+}
+function generateShop(){
+  // 英雄位：未解锁角色中随机 1 个
+  var locked=[];
+  for(var i=0;i<SKINS.length;i++){ if(ownedSkins.indexOf(i)<0) locked.push(i); }
+  shopGoods.hero=locked.length?locked[Math.floor(Math.random()*locked.length)]:-1;
+  // 道具位 3 个（正向道具）
+  var pool=['wide','up','extinguish','boost','bag'];
+  shopGoods.items=[];
+  var shuffled=pool.slice().sort(function(){return Math.random()-0.5;});
+  for(var k=0;k<3;k++) shopGoods.items.push(shuffled[k]);
+}
+function renderShop(){
+  var html='';
+  $('shopCoins').textContent='💰 '+S.coins;
+  // 英雄位
+  if(shopGoods.hero>=0){
+    var ch=SKINS[shopGoods.hero];
+    html+='<div class="shop-item"><div><div class="si-name">'+ch.emoji+' '+ch.name+'</div>'
+      +'<div class="si-sub">'+ch.ability+'</div></div>'
+      +'<button class="shop-buy" id="shopBuyHero"'+(S.coins>=ch.cost?'':' disabled')+'>'+ch.cost+'💰</button></div>';
+  }
+  // 道具位
+  for(var i=0;i<shopGoods.items.length;i++){
+    var key=shopGoods.items[i], def=ITEM_DEF[key];
+    var price=SHOP_PRICES[key]||100;
+    html+='<div class="shop-item"><div><div class="si-name">'+def.name+'</div>'
+      +'<div class="si-sub">'+def.desc+'</div></div>'
+      +'<button class="shop-buy" data-item="'+key+'" data-price="'+price+'"'+(S.coins>=price?'':' disabled')+'>'+price+'💰</button></div>';
+  }
+  $('shopContent').innerHTML=html;
+  // 绑定
+  var bh=$('shopBuyHero');
+  if(bh) bh.onclick=function(){ buyShopHero(); };
+  var btns=$('shopContent').querySelectorAll('.shop-buy[data-item]');
+  for(var k=0;k<btns.length;k++){
+    (function(btn){
+      btn.onclick=function(){ buyShopItem(btn.getAttribute('data-item'),parseInt(btn.getAttribute('data-price'),10)); };
+    })(btns[k]);
+  }
+}
+// 道具定价（规格 3.3.3）
+var SHOP_PRICES={wide:100,extinguish:120,up:200,boost:150,bag:80};
+// 道具简短描述
+(function(){
+  var d=ITEM_DEF;
+  d.wide.desc='蹦床加长 8 秒'; d.extinguish.desc='扑灭蹦床火'; d.up.desc='+1 灭火等级';
+  d.boost.desc='8 秒穿透无敌'; d.bag.desc='金币+分';
+})();
+function buyShopHero(){
+  if(shopGoods.hero<0) return;
+  var ch=SKINS[shopGoods.hero];
+  if(S.coins<ch.cost) return;
+  S.coins-=ch.cost; ownedSkins.push(shopGoods.hero); saveSkins();
+  addText(W/2,H*0.3,'补给队购入 '+ch.name+'!','#ffd700'); sfx('win');
+  shopGoods.hero=-1;
+  renderShop(); refreshSkinBtn(); renderHUD();
+}
+function buyShopItem(key,price){
+  if(S.coins<price) return;
+  S.coins-=price;
+  addText(W/2,H*0.3,'购入 '+ITEM_DEF[key].name+'! -'+price+'💰','#7ef0a0'); sfx('coin');
+  // 道具立即生效（下关增益）：长条/灭火器/1UP/增益/钱袋按类型即时处理
+  if(key==='wide'){ paddle.w=paddle.baseW+30; timerBoost=480; }
+  else if(key==='extinguish'){ paddle.onFire=false; }
+  else if(key==='up'){ if(S.powerLevel<2){ S.powerLevel++; for(var k=0;k<bricks.length;k++){ if(bricks[k].type==='fire')bricks[k].hp=Math.max(1,bricks[k].hp-1);} } else { S.score+=50; } }
+  else if(key==='boost'){ pierceTimer=480; }
+  else if(key==='bag'){ var pts=80; S.score+=pts; S.coins+=8; }
+  renderShop(); renderHUD();
+}
+function closeShop(){ ovShop.classList.add('hidden'); }
 
 // ===== 关卡 =====
 function buildLevel(lvl){
   bricks=[]; people=[]; particles=[]; texts=[]; items=[]; enemies=[]; bonusCoins=[];
   levelPending=false; S.fireLeft=0; S.rescueLeft=0;
   bonusActive=false; heli=null; paddle.onFire=false; pierceTimer=0; timerBoost=0;
+  ball2=null; neZhaTimer=0; neZhaUsed=false; capyFireTimer=0;
   var x0=FACADE_X0, top=GRID_TOP;
   var list=[],i,r,c,ch,lev;
   var layout=lvl<=LEVEL_LAYOUTS.length?LEVEL_LAYOUTS[lvl-1]:null;
@@ -284,7 +505,7 @@ function buildLevel(lvl){
 }
 function resetBall(){
   var sp=Math.min(5+(S.level-1)*0.3,8.5);
-  ball={x:paddle.x+PW/2,y:paddle.y-12,dx:0,dy:0,r:7,speed:sp,stuck:true,trail:[],carrying:false};
+  ball={x:paddle.x+PW/2,y:paddle.y-12,dx:0,dy:0,r:7,speed:sp,stuck:true,trail:[],carrying:false,carryRed:false};
 }
 function launch(){
   if(!ball||!ball.stuck)return;
@@ -292,6 +513,66 @@ function launch(){
   ball.dx=ball.speed*Math.sin(ang);
   ball.dy=-Math.abs(ball.speed*Math.cos(ang));
   ball.stuck=false; sfx('launch');
+}
+// 哪吒·爆发：双球技能（每关 1 次，10 秒）
+function useSkill(){
+  if(S.state!=='playing'||!ball||ball.stuck) return;
+  if(neZhaUsed||ball2) return;
+  neZhaUsed=true; neZhaTimer=600;
+  var sp=Math.min(5+(S.level-1)*0.3,8.5);
+  ball2={x:ball.x,y:ball.y-20,dx:-ball.dx,dy:-ball.dy,r:7,speed:sp,stuck:false};
+  $('btnSkill').classList.add('hidden');
+  addText(ball.x,ball.y-24,'🔥 乾坤圈·双球!','#ff8a3c');
+  sparks(ball.x,ball.y,12,'#ff8a3c'); sfx('win');
+}
+// 哪吒第二球简化物理（移动+边界+球拍+砖块）
+function updateBall2(dt){
+  if(!ball2)return;
+  var b2=ball2;
+  b2.x+=b2.dx*dt; b2.y+=b2.dy*dt;
+  if(b2.x<b2.r){b2.x=b2.r;b2.dx=Math.abs(b2.dx);}
+  if(b2.x>W-b2.r){b2.x=W-b2.r;b2.dx=-Math.abs(b2.dx);}
+  if(b2.y<b2.r+6){b2.y=b2.r+6;b2.dy=Math.abs(b2.dy);}
+  // 球拍反弹
+  if(b2.dy>0&&b2.y+b2.r>=paddle.y&&b2.y+b2.r<=paddle.y+PH+8&&b2.x>=paddle.x-6&&b2.x<=paddle.x+paddle.w+6){
+    var rel2=(b2.x-(paddle.x+paddle.w/2))/(paddle.w/2);
+    var ang2=rel2*1.1;
+    var sp2=Math.max(b2.speed,Math.hypot(b2.dx,b2.dy)*1.004);
+    b2.dx=Math.sin(ang2)*sp2;
+    b2.dy=-Math.abs(Math.cos(ang2)*sp2);
+    if(Math.abs(b2.dy)<2.4)b2.dy=-2.4;
+    b2.y=paddle.y-b2.r;
+    sfx('bounce');
+  }
+  // 砖块碰撞（简化：不触发抓人/道具，只灭火）
+  for(var i=bricks.length-1;i>=0;i--){
+    var b=bricks[i];
+    var cx=b.x+b.w/2, cy=b.y+b.h/2;
+    var ox=(b.w/2+b2.r)-Math.abs(b2.x-cx);
+    var oy=(b.h/2+b2.r)-Math.abs(b2.y-cy);
+    if(ox>0&&oy>0){
+      if(ox<oy){ b2.dx=b2.x<cx?-Math.abs(b2.dx):Math.abs(b2.dx); b2.x+=b2.x<cx?-ox:ox; }
+      else { b2.dy=b2.y<cy?-Math.abs(b2.dy):Math.abs(b2.dy); b2.y+=b2.y<cy?-oy:oy; }
+      // 第二球只灭火（不抓人）
+      if(b.type==='fire'){
+        var dmg=curCharAbility('力量')?2:1;
+        b.hp-=dmg;
+        splash(b.x+b.w/2,b.y+b.h/2,'#9fe0ff');
+        if(b.hp<=0){
+          bricks.splice(i,1); S.fireLeft=Math.max(0,S.fireLeft-1);
+          var pts=15*b.level; S.score+=pts;
+          smoke(b.x+b.w/2,b.y+b.h/2);
+        }
+      }
+      break;
+    }
+  }
+  if(b2.y-b2.r>H+10){ ball2=null; return; }
+  // 倒计时结束移除第二球
+  if(neZhaTimer>0){
+    neZhaTimer-=dt;
+    if(neZhaTimer<=0){ ball2=null; neZhaTimer=0; }
+  }
 }
 
 // ===== 关卡流程 =====
@@ -309,7 +590,7 @@ function nextLevel(){
 }
 function levelComplete(){
   S.state='levelup';
-  var bonus=10+S.level*10;
+  var bonus=50+S.level*10; // 微创新：过关基础金币 50+关卡×10
   levelBonus=bonus;
   S.score+=bonus; S.coins+=bonus;
   renderHUD(); sfx('win');
@@ -326,6 +607,15 @@ function gameOver(){
 }
 function loseLife(){
   sfx('lose'); S.lives--;
+  // 掉球时若带着人：人未获救，重新生成一个普通救援窗（确保救人通道可达成）
+  if(ball&&ball.carrying){
+    ball.carrying=false;
+    // 在砖块区随机空位生成救援窗
+    var x0=FACADE_X0, top=GRID_TOP;
+    var rx=Math.floor(Math.random()*BRICK_COLS), ry=Math.floor(Math.random()*5);
+    bricks.push({x:x0+rx*(BRICK_W+BRICK_GAP),y:top+ry*(BRICK_H+BRICK_GAP),w:BRICK_W,h:BRICK_H,level:1,req:1,hp:999,type:'rescue',red:false,seed:Math.random()*10});
+    addText(W/2,H*0.4,'人没救成，回到窗户…','#ff9a4d');
+  }
   if(S.lives<=0){ gameOver(); }
   else { resetBall(); }
   renderHUD();
@@ -363,17 +653,19 @@ function maybeDropItem(x,y){
 }
 function hitBrick(b,i){
   if(b.type==='rescue'){
-    // 救人：撞到救援窗 → 生成"被抓人"附着球上（球带人），窗口关闭，rescueLeft 递减（仅普通窗）
+    // 抓人：撞到救援窗 → 人附着球上带回（抓到不算获救，rescueLeft 待落到蹦床才减）
     bricks.splice(i,1);
-    if(!b.red){ S.rescueLeft=Math.max(0,S.rescueLeft-1); addText(b.x+b.w/2,b.y-8,'抓住人!','#7ef0a0'); }
+    if(!b.red){ addText(b.x+b.w/2,b.y-8,'抓住人! 带回蹦床','#7ef0a0'); }
     else { addText(b.x+b.w/2,b.y-8,'救人!','#7ef0a0'); }
     ball.carrying=true;
+    ball.carryRed=!!b.red; // 记录来源：红窗抓到的人不计入救援目标
     sparks(b.x+b.w/2,b.y+b.h/2,8,'#7ef0a0');
     splash(b.x+b.w/2,b.y+b.h/2,'#eaffff'); sfx('coin');
     renderHUD(); return;
   }
-  // 灭火：减少命中次数（受 powerLevel 加成；命中一次 hp-1）
-  b.hp--;
+  // 灭火：减少命中次数（受 powerLevel 加成；熊猫·力量：一次撞击抵两次）
+  var fireDmg=curCharAbility('力量')?2:1;
+  b.hp-=fireDmg;
   sfx('break');
   splash(b.x+b.w/2,b.y+b.h/2,'#9fe0ff');
   sparks(b.x+b.w/2,b.y+b.h/2,4,'#fff3d6');
@@ -381,7 +673,7 @@ function hitBrick(b,i){
     bricks.splice(i,1);
     S.fireLeft=Math.max(0,S.fireLeft-1);
     var pts=15*b.level;
-    S.score+=pts; addText(b.x+b.w/2,b.y,'+'+pts,'#9fe0ff');
+    S.score+=pts; S.coins+=2; addText(b.x+b.w/2,b.y,'+'+pts,'#9fe0ff');
     smoke(b.x+b.w/2,b.y+b.h/2);
     maybeDropItem(b.x+b.w/2,b.y);
   }
@@ -393,14 +685,15 @@ function applyItem(it){
   sfx('coin');
   if(it.key==='bag'){
     var pts=it.seed%2?50:25;
-    S.score+=pts; S.coins+=Math.round(pts/10);
-    addText(it.x,it.y-10,'钱袋 +'+pts,'#ffd24a');
+    S.score+=pts;
+    S.coins+=15+Math.floor(Math.random()*16); // 钱袋 +15~30 金币
+    addText(it.x,it.y-10,'钱袋 +'+pts+' 💰+'+Math.round(pts/3),'#ffd24a');
   }else if(it.key==='wide'){ // 长条：加宽蹦床
     paddle.w=paddle.baseW+30; timerBoost=480; addText(it.x,it.y-10,'蹦床加宽!','#7ef0a0');
   }else if(it.key==='hammer'){ // 锤子：收窄蹦床（负向）
     paddle.w=Math.max(40,paddle.baseW-24); timerBoost=480; addText(it.x,it.y-10,'蹦床变窄!','#ff9a4d'); sfx('lose');
   }else if(it.key==='extinguish'){ // 灭火器：扑灭蹦床上的火
-    paddle.onFire=false;
+    paddle.onFire=false; capyFireTimer=0;
     addText(it.x,it.y-10,'灭火器!','#8fd8ff');
   }else if(it.key==='up'){ // 1UP：灭火等级+1（蓝→绿→红）
     if(S.powerLevel<2){
@@ -410,14 +703,23 @@ function applyItem(it){
       addText(it.x,it.y-10,'灭火等级提升!','#ff8a3c');
     }
     else { S.score+=50; addText(it.x,it.y-10,'+50','#ff8a3c'); }
-  }else if(it.key==='fireball'){ // 火球：蹦床着火；着火时再吃一个丢一条命
+  }else if(it.key==='fireball'){ // 火球：蹦床着火；着火时再吃一个丢一条命（卡皮巴拉·抗火）
+    var capySafe=curCharAbility('稳定');
     if(paddle.onFire){
-      S.lives=Math.max(0,S.lives-1); sfx('lose');
-      addText(it.x,it.y-10,'蹦床起火! -1命','#ff3b30');
-      if(S.lives<=0){ gameOver(); return; }
+      if(capySafe&&Math.random()<0.5){ addText(it.x,it.y-10,'抗火! 火苗弹开','#ff9a4d'); }
+      else{
+        S.lives=Math.max(0,S.lives-1); sfx('lose');
+        addText(it.x,it.y-10,'蹦床起火! -1命','#ff3b30');
+        if(S.lives<=0){ gameOver(); return; }
+      }
     }else{
-      paddle.onFire=true;
-      addText(it.x,it.y-10,'蹦床着火了!','#ff3b30'); sfx('lose');
+      if(capySafe&&Math.random()<0.5){ addText(it.x,it.y-10,'抗火! 未着火','#ff9a4d'); }
+      else{
+        paddle.onFire=true;
+        // 卡皮巴拉：着火 3 秒后自动熄灭（180帧）
+        capyFireTimer=capySafe?180:0;
+        addText(it.x,it.y-10,'蹦床着火了!','#ff3b30'); sfx('lose');
+      }
     }
   }else if(it.key==='boost'){ // 增益：限时穿透无敌（穿过火焰砖）
     pierceTimer=480; // 8秒
@@ -559,6 +861,10 @@ function fxStep(dt,T){
   }
 }
 
+function paddleSpeedFactor(){
+  // 小猫·敏捷：蹦床移速+25%
+  return curCharAbility('敏捷')?1.25:1;
+}
 // ===== 更新 =====
 function update(dt){
   var i,b,cx,cy,ox,oy,p;
@@ -570,7 +876,7 @@ function update(dt){
   }
   // BONUS TIME：独立阶段，球冻结，只处理天空金币（挡板仍可移动）
   if(bonusActive){
-    paddle.x+=(paddle.tx-paddle.x)*Math.min(1,dt*0.45);
+    paddle.x+=(paddle.tx-paddle.x)*Math.min(1,dt*0.45*paddleSpeedFactor());
     bonusTimer-=dt;
     for(i=bonusCoins.length-1;i>=0;i--){
       var bc=bonusCoins[i];
@@ -584,7 +890,7 @@ function update(dt){
     fxStep(dt,performance.now()/1000);
     return;
   }
-  paddle.x+=(paddle.tx-paddle.x)*Math.min(1,dt*0.45);
+  paddle.x+=(paddle.tx-paddle.x)*Math.min(1,dt*0.45*paddleSpeedFactor());
   if(ball.stuck){ ball.x=paddle.x+PW/2; ball.y=paddle.y-12; }
   else{
     // 球在大楼立面范围内才记录拖尾；飞出大楼（天空/暗边）立即清空，避免残影印在背景层
@@ -607,11 +913,15 @@ function update(dt){
       ball.y=paddle.y-ball.r;
       ball.speed=Math.min(ball.speed+0.015,10);
       sfx('bounce'); splash(ball.x,ball.y+ball.r,'#bde8ff');
-      // 带回的人弹起瞬间获救（原版核心：抓人→带回蹦床→弹起获救）
+      // 带回的人落到蹦床弹起瞬间获救（原版核心：抓人→带回蹦床→弹起获救；小狗·救人得分+50%）
       if(ball.carrying){
         ball.carrying=false;
-        S.score+=100; S.coins+=5;
-        addText(ball.x,ball.y-16,'获救! +100 💰+5','#7ef0a0');
+        var dogBonus=curCharAbility('救援')?1.5:1;
+        S.score+=Math.round(100*dogBonus);
+        S.coins+=Math.round(10*dogBonus); // 救人 +10（小狗 +15）
+        // 仅普通窗抓的人计入救援目标；红窗抓的人加分但不减目标
+        if(!ball.carryRed){ S.rescueLeft=Math.max(0,S.rescueLeft-1); }
+        addText(ball.x,ball.y-16,'获救! +'+Math.round(100*dogBonus)+' 💰+'+Math.round(10*dogBonus),'#7ef0a0');
         sparks(ball.x,ball.y,10,'#7ef0a0'); sfx('rescue'); renderHUD();
       }
     }
@@ -671,24 +981,28 @@ function update(dt){
     // 双通道胜利：火全灭 或 人全救 任一达成即过关
     if((S.fireLeft<=0||S.rescueLeft<=0)&&!levelPending){ levelPending=true; levelTimer=55; }
   }
-  // 火焰砖持续飘出火星
+  // 哪吒·第二球
+  updateBall2(dt);
+  // 火焰砖持续飘出火星（球未弹射时红窗不跳人）
   for(i=0;i<bricks.length;i++){
     b=bricks[i];
     if(b.type==='fire'&&Math.random()<0.02*b.level){
       particles.push({x:b.x+Math.random()*b.w,y:b.y+Math.random()*b.h*0.6,vx:(Math.random()-0.5)*0.5,vy:-0.4-Math.random()*0.9,life:1,size:1.2+Math.random()*1.6,color:Math.random()<0.5?'#ffb347':'#ff7a1c',type:'ember'});
     }
-    // 红窗周期性跳人（可选择性接住，接住加分）
-    if(b.type==='rescue'&&b.red&&Math.random()<0.004){
+    // 红窗周期性跳人（可选择性接住，接住加分）——仅球已弹射时激活
+    if(!ball.stuck&&b.type==='rescue'&&b.red&&Math.random()<0.004){
       people.push({x:b.x+b.w/2,y:b.y+b.h,vy:0,seed:Math.random()*10,jumper:true});
     }
   }
-  // 掉落/跳楼人员下落
+  // 掉落/跳楼人员下落（小猫·接人判定范围+10%）
+  var catchPad=curCharAbility('敏捷')?1.1:1;
   for(i=people.length-1;i>=0;i--){
     p=people[i]; p.vy=Math.min(p.vy+0.06*dt,2.0); p.y+=p.vy*dt;
-    if(p.y>paddle.y&&p.y<paddle.y+26&&p.x>paddle.x-6&&p.x<paddle.x+PW+6){
+    if(p.y>paddle.y-4&&p.y<paddle.y+26+4&&p.x>paddle.x-6-6*catchPad&&p.x<paddle.x+PW+6+6*catchPad){
       people.splice(i,1);
-      if(p.jumper){ S.score+=50; addText(p.x,p.y-14,'接住 +50','#ffe27a'); }
-      else { S.score+=100; S.coins+=5; addText(p.x,p.y-14,'救回! +100 💰+5','#ffe27a'); }
+      var dogB=curCharAbility('救援')?1.5:1;
+      if(p.jumper){ S.score+=Math.round(50*dogB); addText(p.x,p.y-14,'接住 +'+Math.round(50*dogB),'#ffe27a'); }
+      else { S.score+=Math.round(100*dogB); S.coins+=5; addText(p.x,p.y-14,'救回! +'+Math.round(100*dogB)+' 💰+5','#ffe27a'); }
       sparks(p.x,p.y,10,'#ffe27a'); sfx('rescue'); renderHUD();
     }else if(p.y>H+14){ if(!p.jumper){ S.rescueLeft=Math.max(0,S.rescueLeft+1); } people.splice(i,1); }
   }
@@ -710,6 +1024,8 @@ function update(dt){
   }
   // 穿透无敌计时
   if(pierceTimer>0){ pierceTimer-=dt; if(pierceTimer<0)pierceTimer=0; }
+  // 卡皮巴拉：着火 3 秒后自动熄灭
+  if(capyFireTimer>0){ capyFireTimer-=dt; if(capyFireTimer<=0){ capyFireTimer=0; paddle.onFire=false; addText(paddle.x+paddle.w/2,paddle.y-12,'火自动熄灭了!','#8fd8ff'); } }
   // 蹦床着火：持续飘火星（若被灭火器扑灭则停止）
   if(paddle.onFire&&Math.random()<0.15){
     particles.push({x:paddle.x+Math.random()*paddle.w,y:paddle.y,vx:(Math.random()-0.5)*0.6,vy:-0.5-Math.random()*0.8,life:0.8,size:2+Math.random()*2,color:Math.random()<0.5?'#ffb347':'#ff7a1c',type:'ember'});
@@ -1196,6 +1512,14 @@ function draw(T){
   if(bonusActive) drawBonusCoins(T);
   drawPaddle(T);
   if(S.state!=='menu') drawBall(T);
+  // 哪吒双球：第二球绘制（简化消防员）
+  if(ball2&&S.state!=='menu'){
+    var sk2=curChar();
+    drawMiniFireman(ctx,ball2.x,ball2.y,1.25,1,0,sk2.suit,sk2.helm);
+    var pg2=ctx.createRadialGradient(ball2.x,ball2.y,2,ball2.x,ball2.y,ball2.r+8);
+    pg2.addColorStop(0,'rgba(255,138,60,0.4)'); pg2.addColorStop(1,'rgba(255,138,60,0)');
+    ctx.fillStyle=pg2; ctx.beginPath(); ctx.arc(ball2.x,ball2.y,ball2.r+8,0,7); ctx.fill();
+  }
   drawFX(T);
 }
 
@@ -1206,6 +1530,11 @@ function renderHUD(){
   hudCn.textContent=S.coins;
   hudLi.textContent=Math.max(0,S.lives);
   hudGoal.textContent='🔥'+S.fireLeft+' · 🧑'+S.rescueLeft;
+  // 金币持久化（合并存档）
+  saveSkins();
+  // 哪吒角色且在游戏中 → 显示技能按钮（未使用且球已弹射）
+  var showSkill=(curCharAbility('爆发')&&S.state==='playing'&&!neZhaUsed&&ball&&!ball.stuck);
+  $('btnSkill').classList.toggle('hidden',!showSkill);
 }
 
 // ===== 广告（模拟激励视频）=====
@@ -1242,12 +1571,22 @@ $('btnAdCoin').onclick=function(){
     setTimeout(function(){ $('btnAdCoin').textContent='📺 看广告 +50 金币（模拟点位）'; },1200);
   });
 };
-$('btnNext').onclick=function(){ sfx('click'); nextLevel(); };
+$('btnNext').onclick=function(){ sfx('click'); shopGoods.hero=-2; generateShop(); openShop(); };
 $('btnDouble').onclick=function(){
   showAd(function(){
-    S.coins+=levelBonus; renderHUD(); sfx('coin'); nextLevel();
+    S.coins+=levelBonus; renderHUD(); sfx('coin');
+    shopGoods.hero=-2; generateShop(); openShop();
   });
 };
+$('btnShopNext').onclick=function(){ sfx('click'); closeShop(); nextLevel(); };
+$('btnShopRefresh').onclick=function(){
+  showAd(function(){
+    generateShop(); renderShop();
+    addText(W/2,H*0.3,'商品已刷新!','#7ec8ff'); sfx('coin');
+  });
+};
+$('btnChar').onclick=openChar;
+$('btnCharBack').onclick=closeChar;
 $('btnRevive').onclick=function(){
   showAd(function(){
     reviveUsed=true; S.lives=1; resetBall(); S.state='playing';
@@ -1257,6 +1596,7 @@ $('btnRevive').onclick=function(){
 $('btnRetry').onclick=function(){ sfx('click'); startGame(); };
 $('btnMenu').onclick=function(){ sfx('click'); S.state='menu'; ovOver.classList.add('hidden'); ovMenu.classList.remove('hidden'); $('menuBest').textContent=S.best; };
 $('btnResume').onclick=function(){ sfx('click'); S.state='playing'; ovPause.classList.add('hidden'); };
+$('btnSkill').onclick=function(){ sfx('click'); useSkill(); };
 $('btnPauseMenu').onclick=function(){ sfx('click'); S.state='menu'; ovPause.classList.add('hidden'); ovMenu.classList.remove('hidden'); $('menuBest').textContent=S.best; };
 $('pauseBtn').onclick=function(){ ensureAudio(); if(S.state==='playing'){ S.state='paused'; ovPause.classList.remove('hidden'); } };
 

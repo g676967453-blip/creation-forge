@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IAA 小队价值主张</title>
+<style>
+:root { --primary:#2f6fce; --border:#d9dee5; --bg:#f5f6f8; --text:#2b2f36; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  line-height: 1.75; font-size: 15px;
+}
+.topbar {
+  background: #1f2937; color: #fff; padding: 10px 0;
+}
+.topbar .inner {
+  max-width: 920px; margin: 0 auto; padding: 0 24px;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.topbar a { color: #93c5fd; text-decoration: none; font-size: 13px; }
+.topbar a:hover { text-decoration: underline; }
+.topbar .brand { font-size: 13px; color: #cbd5e1; }
+.container {
+  max-width: 920px; margin: 24px auto 60px; background: #fff;
+  padding: 40px 48px 56px; border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+h1 { font-size: 26px; border-bottom: 3px solid var(--primary); padding-bottom: 12px; margin-top: 8px; }
+h2 { font-size: 20px; margin-top: 34px; border-left: 4px solid var(--primary); padding-left: 12px; }
+h3 { font-size: 16px; margin-top: 26px; color: #1f2937; }
+p { margin: 10px 0; }
+a { color: var(--primary); }
+strong { font-weight: 600; }
+ul, ol { padding-left: 26px; }
+li { margin: 5px 0; }
+table {
+  width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px;
+}
+th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #eef2f7; font-weight: 600; white-space: nowrap; }
+tr:nth-child(even) td { background: #fafbfc; }
+blockquote {
+  margin: 14px 0; padding: 10px 16px; background: #f4f8fc;
+  border-left: 4px solid var(--primary); color: #445; border-radius: 0 6px 6px 0;
+}
+blockquote p { margin: 4px 0; }
+code {
+  background: #eef1f5; padding: 2px 6px; border-radius: 4px;
+  font-family: "JetBrains Mono", Consolas, "Courier New", monospace; font-size: 13px;
+}
+pre {
+  background: #282c34; color: #e6e6e6; padding: 16px 18px; border-radius: 8px;
+  overflow-x: auto; line-height: 1.5;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: 13px; }
+hr { border: none; border-top: 1px solid var(--border); margin: 26px 0; }
+.footer { text-align: center; color: #8a9199; font-size: 12.5px; padding: 12px 0 40px; }
+@media (max-width: 720px) {
+  .container { padding: 24px 18px 40px; margin: 12px auto 30px; }
+  th, td { padding: 6px 8px; }
+}
+@media print {
+  .topbar { display: none; }
+  body { background: #fff; }
+  .container { box-shadow: none; margin: 0; max-width: none; }
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="inner">
+  <a href="index.html">← 返回目录</a>
+  <span class="brand">IAA 小队 · 内部资料</span>
+</div></div>
+<div class="container">
+<h1>IAA 小队价值主张</h1>
+<blockquote>
+<p>版本：v1.0（立项评审稿）
+编制：IAA 小队
+日期：2026 年 8 月
+状态：内部立项审批用（待确认事项见文末附录）
+关联文档：首个落地项目《FC 救火英雄》的立项企划书见《救火英雄IAA游戏企划.md》</p>
+</blockquote>
+<hr>
+<h2>1. 小队背景与定位</h2>
+<p><strong>背景</strong>：IAA 小队为三人专项小队，刚刚组建，核心使命是<strong>用 AI 快速开发广告小游戏（IAA，In-App Advertising）</strong>。</p>
+<p><strong>定位</strong>：一支用 AI 重构广告小游戏研发流程的验证型尖兵小队。小队不做「PPT 式」的方法论证，而是<strong>亲自下场做产品</strong>，用真实结果回答三个问题：</p>
+<ol>
+<li>AI 开发广告小游戏，到底能做到什么程度？</li>
+<li>与传统研发流程相比，AI 流程哪里不一样？不一样带来了什么价值？</li>
+<li>这套打法能不能复制，成为可复用的方法论？</li>
+</ol>
+<h2>2. 核心方法论：IAA 立项策略</h2>
+<p>小队的立项策略是「<strong>选品 → 换包装 → 微创新</strong>」三步走，用经典玩法做基本盘，用 AI 降低成本，用包装与微创新做出差异化：</p>
+<p><strong>选品四标准</strong>（缺一不可）：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>标准</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>玩法简单、规则明确</td>
+<td>AI 理解成本低：网上数据多、规则可描述，AI 生成策划与代码的准确率高</td>
+</tr>
+<tr>
+<td>2</td>
+<td>经典 FC（红白机）游戏玩法</td>
+<td>用户认知成本低：玩家玩过、看得懂，无需教育</td>
+</tr>
+<tr>
+<td>3</td>
+<td>交互适合手机移动端</td>
+<td>适配触屏操作，适配竖屏 9:16 小游戏场景</td>
+</tr>
+<tr>
+<td>4</td>
+<td>可换皮、可微创新</td>
+<td>有再创作空间，避开版权红线，做出差异化</td>
+</tr>
+</tbody>
+</table>
+<p><strong>执行路径</strong>：</p>
+<pre><code>选品（满足四标准的经典 FC 玩法）
+   ↓
+换包装和美术（纯美术层面换皮，不动核心玩法）
+   ↓
+微创新重置（玩法微调 + 创新点，形成差异化）
+</code></pre>
+<p><strong>两阶段节奏</strong>：</p>
+<ul>
+<li><strong>阶段一：快速跑通全流程</strong>——用第一款产品验证「AI 快速开发」这条路能不能走通（核心指标：研发周期）；</li>
+<li><strong>阶段二：微创新</strong>——在跑通的基础上，验证微创新点带来的增量价值（留存、变现等）。</li>
+</ul>
+<h2>3. 价值主张</h2>
+<p>小队价值由三块构成，相互印证：</p>
+<p><strong>① 实证价值：用研发周期量化 AI 开发的真实边界</strong></p>
+<p>小队亲手做出首款产品，以「立项 → 上线」的研发周期作为硬指标（首版目标：<strong>2 周内</strong>），证明 AI 重构研发流程后，单款休闲小游戏从立项到上线的速度边界在哪。这是最直接、最难反驳的价值证明。</p>
+<p><strong>② 流程价值：全流程对比传统研发，量化差异收益</strong></p>
+<p>将 AI 开发全流程（策划 → 美术 → 程序 → 测试 → 上线 → 投放素材）与传统小游戏研发流程逐环节对比，找出差异点，并量化每个差异带来的收益：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>传统流程</th>
+<th>AI 流程（预期差异）</th>
+<th>价值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>策划</td>
+<td>人工撰写规则、数值</td>
+<td>AI 辅助梳理规则、生成文档</td>
+<td>时间缩短，规范度高</td>
+</tr>
+<tr>
+<td>美术</td>
+<td>外包或人工绘制</td>
+<td>AI 生成概念图、像素素材、UI</td>
+<td>成本大幅下降，出图快</td>
+</tr>
+<tr>
+<td>程序</td>
+<td>手写代码</td>
+<td>AI 辅助编码、快速迭代原型</td>
+<td>开发周期压缩</td>
+</tr>
+<tr>
+<td>测试/迭代</td>
+<td>人工测试、逐版修改</td>
+<td>快速出包、快速改版</td>
+<td>试错成本低</td>
+</tr>
+<tr>
+<td>投放素材</td>
+<td>外包制作</td>
+<td>AI 批量生成买量素材</td>
+<td>素材产能提升</td>
+</tr>
+</tbody>
+</table>
+<p><strong>③ 可复制价值：沉淀 SOP 与工具链</strong></p>
+<p>流程验证完成后，产出两种可复制形态：</p>
+<ul>
+<li><strong>SOP / 方法论</strong>：文档化的标准作业流程——选品标准、开发流程、验收标准、广告点位设计规范，其他团队可照着做；</li>
+<li><strong>工具链 / 模板库</strong>：可复用的 AI 提示词库、代码模板、美术素材模板、规则文档模板，直接降低下一个项目的启动成本。</li>
+</ul>
+<h2>4. 阶段目标与里程碑</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>目标</th>
+<th>产出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阶段一：快速跑通全流程</td>
+<td>0–3 个月</td>
+<td>首款产品（FC 救火英雄）2 周内出首版，完成双端上线、数据观察与一轮迭代，跑通全流程</td>
+<td>首款上线产品 + 全流程跑通结论汇报</td>
+</tr>
+<tr>
+<td>阶段二：微创新</td>
+<td>3–6 个月</td>
+<td>验证角色系统、补给队商店与金币经济循环等微创新点对留存/变现的增量；沉淀 SOP v1</td>
+<td>数据结论 + 《IAA 小游戏研发 SOP v1》</td>
+</tr>
+<tr>
+<td>长期</td>
+<td>6 个月以上</td>
+<td>建设工具链/模板库，复制到第二、第三个项目</td>
+<td>可复用的工具链/模板库 + 团队产能提升</td>
+</tr>
+</tbody>
+</table>
+<p><strong>阶段一的核心验收标准</strong>：首版 2 周内可玩 → 2–3 个月内完成「上线 + 数据观察 + 一轮迭代」，并对「AI 流程 vs 传统流程」的差异与价值给出量化结论。</p>
+<h2>5. 团队构成</h2>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全能主导（策划 + 程序）</td>
+<td>玩法设计、规则梳理、AI 辅助开发、技术实现</td>
+</tr>
+<tr>
+<td>美术</td>
+<td>AI 素材生成、美术风格把控、UI/包装</td>
+</tr>
+<tr>
+<td>投放/数据</td>
+<td>平台接入、广告变现配置、数据统计与分析</td>
+</tr>
+</tbody>
+</table>
+<p>三人均深度使用 AI 工具（代码、美术、文案、素材生成），以 AI 工具/API 为主要生产力。</p>
+<h2>6. 资源需求</h2>
+<ul>
+<li><strong>首阶段（验证期）</strong>：仅申请 <strong>AI 工具订阅与模型 API 费用</strong>，以最小成本跑通全流程；</li>
+<li><strong>后续阶段</strong>：按项目实际需要另行申请（完整预算参考见《救火英雄IAA游戏企划.md》§9）。</li>
+</ul>
+<hr>
+<h2>附录</h2>
+<h3>A. 待确认事项清单（本文件范围）</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>事项</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>预算档位：验证期后是否按 B 方案（40–90 万）正式立项</td>
+<td>待确认</td>
+</tr>
+<tr>
+<td>2</td>
+<td>游戏项目相关待确认事项（角色数值、平台、版号、数据基线、项目名等）</td>
+<td>见《救火英雄IAA游戏企划.md》附录 A</td>
+</tr>
+</tbody>
+</table>
+<h3>B. 关联文档（工作目录）</h3>
+<table>
+<thead>
+<tr>
+<th>文档</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>救火英雄IAA游戏企划.md</code></td>
+<td>首个落地项目《FC 救火英雄》立项企划书</td>
+</tr>
+<tr>
+<td><code>fire-hero-game-rules.md</code></td>
+<td>原版规则梳理 + IAA 化改造决策（玩法设计依据）</td>
+</tr>
+<tr>
+<td><code>fire-hero-iaa.html</code></td>
+<td>现有 HTML 原型（首版开发基础）</td>
+</tr>
+<tr>
+<td><code>IAA项目开发成本清单.md</code></td>
+<td>立项预算评估（预算来源）</td>
+</tr>
+<tr>
+<td><code>_lovart_prompt.txt</code></td>
+<td>美术概念图提示词（美术方向参考）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="footer">IAA 小队内部资料 · 仅供立项评审使用 · 局域网共享</div>
+</body>
+</html>
