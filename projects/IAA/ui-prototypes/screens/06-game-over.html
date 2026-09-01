@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>06-失败复活</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 450px; height: 800px; overflow: hidden; background: transparent; font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    background: #0a0e18;
+    color: #fff;
+    padding: 40px;
+  }
+  .board-title {
+    color: #ffe9c9;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .board-sub {
+    color: rgba(255,233,201,.7);
+    font-size: 14px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 36px;
+    align-items: flex-start;
+  }
+  .phone {
+    width: 450px;
+    height: 800px;
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.08);
+    background: #0b0f1a;
+    flex-shrink: 0;
+  }
+  .label {
+    position: absolute;
+    top: -28px;
+    left: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffd24a;
+    letter-spacing: .5px;
+  }
+  /* shared night bg with building silhouette */
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 120% 60% at 50% -10%, #2a1a12 0%, transparent 55%),
+      linear-gradient(180deg, #0b0f1a 0%, #12182b 45%, #1a2340 100%);
+  }
+  .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 40px 60px, rgba(255,255,255,.7) 50%, transparent 51%),
+      radial-gradient(1px 1px at 120px 30px, rgba(255,255,255,.5) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 220px 90px, rgba(255,255,255,.6) 50%, transparent 51%),
+      radial-gradient(1px 1px at 320px 50px, rgba(255,255,255,.45) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 380px 120px, rgba(255,255,255,.55) 50%, transparent 51%),
+      radial-gradient(1px 1px at 80px 160px, rgba(255,255,255,.4) 50%, transparent 51%);
+    opacity: .9;
+    pointer-events: none;
+  }
+  .facade {
+    position: absolute;
+    left: 36px; right: 36px;
+    top: 88px; bottom: 150px;
+    background: linear-gradient(180deg, #1a2340 0%, #12182b 100%);
+    border-radius: 6px 6px 0 0;
+    border: 2px solid rgba(255,255,255,.08);
+    overflow: hidden;
+  }
+  .win-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    padding: 10px 8px;
+  }
+  .win {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: #2a3355;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .win.fire1 { background: linear-gradient(180deg, #ffb74d, #ff8a3c); box-shadow: 0 0 8px #ff8a3c; }
+  .win.fire2 { background: linear-gradient(180deg, #ff8a3c, #ff3b30); box-shadow: 0 0 10px #ff3b30; }
+  .win.fire3 { background: linear-gradient(180deg, #ff3b30, #b71c1c); box-shadow: 0 0 12px #ff3b30; }
+  .win.rescue { background: linear-gradient(180deg, #3d5a80, #1e3a5f); box-shadow: inset 0 0 0 2px #7ef0a0; }
+  .win.rescue::after { content: "!"; display:flex; align-items:center; justify-content:center; height:100%; color:#ffd24a; font-weight:900; font-size:14px; }
+  .win.red { background: linear-gradient(180deg, #c62828, #7f0000); box-shadow: 0 0 8px #ff3b30; }
+  .ground {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 140px;
+    background: linear-gradient(180deg, #1a1520 0%, #0d1018 100%);
+    border-top: 2px solid rgba(255,138,60,.25);
+  }
+  .trampoline {
+    position: absolute;
+    left: 50%; bottom: 92px;
+    transform: translateX(-50%);
+    width: 120px; height: 18px;
+    background: repeating-linear-gradient(90deg, #ffd24a 0 10px, #1a1a1a 10px 20px);
+    border-radius: 4px;
+    box-shadow: 0 4px 0 #8d6e00, 0 0 12px rgba(255,210,74,.35);
+  }
+  .hero-dot {
+    position: absolute;
+    left: 50%; bottom: 118px;
+    transform: translateX(-50%);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffcc80, #ffb74d 40%, #e64a19 70%);
+    border: 2px solid #fff3;
+    box-shadow: 0 4px 10px rgba(0,0,0,.4);
+  }
+  .hero-dot .helm {
+    position: absolute; top: -6px; left: 4px; right: 4px; height: 10px;
+    background: #e64a19; border-radius: 6px 6px 2px 2px;
+  }
+
+  /* HUD */
+  .hud {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    padding: 14px 12px 10px;
+    background: linear-gradient(180deg, rgba(8,12,24,.85), transparent);
+  }
+  .pill {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(10,14,26,.55);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 12px; font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  }
+  .pill .ic { font-size: 13px; }
+  .pill.gold { color: #ffd24a; }
+  .pill.life { color: #ff8a80; }
+  .pill.goal { color: #7ef0a0; }
+  .hud-right { display: flex; gap: 6px; align-items: center; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 999px;
+    background: rgba(255,255,255,.16);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .skill-btn {
+    width: 34px; height: 34px; border-radius: 999px;
+    background: linear-gradient(180deg, #ff8a3c, #d84315);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800;
+    box-shadow: 0 4px 12px rgba(216,67,21,.45);
+  }
+
+  /* overlay panel */
+  .ov {
+    position: absolute; inset: 0; z-index: 10;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 28px 22px;
+    text-align: center;
+    background: rgba(6,9,18,.78);
+  }
+  .ov.soft { background: rgba(6,9,18,.62); }
+  .title {
+    font-size: 34px; font-weight: 900; color: #fff;
+    text-shadow: 0 4px 18px rgba(255,138,60,.35);
+    letter-spacing: 1px;
+  }
+  .title.sm { font-size: 26px; }
+  .title.fail { color: #ff5a4d; text-shadow: 0 4px 18px rgba(255,90,77,.35); }
+  .title.ok { color: #7ef0a0; text-shadow: 0 4px 18px rgba(126,240,160,.3); }
+  .sub {
+    color: #ffe9c9; font-size: 13px; font-weight: 600; line-height: 1.7;
+    opacity: .92; max-width: 360px;
+  }
+  .stat {
+    color: #fff; font-size: 15px; font-weight: 700; line-height: 1.8;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 10px 16px;
+    min-width: 260px;
+  }
+  .badge {
+    background: rgba(255,210,74,.12);
+    border: 1px solid rgba(255,210,74,.35);
+    color: #ffd24a;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px; font-weight: 700;
+  }
+  .tag {
+    font-size: 11px; color: rgba(255,233,201,.65); font-weight: 600;
+  }
+  .btn {
+    min-width: 280px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    font-size: 16px; font-weight: 800; color: #fff;
+    border: none;
+    box-shadow: 0 6px 0 rgba(0,0,0,.25), 0 10px 24px rgba(0,0,0,.3);
+  }
+  .btn-main {
+    background: linear-gradient(180deg, #ff8a3c 0%, #e65100 100%);
+  }
+  .btn-ad {
+    background: linear-gradient(180deg, #5c6bc0 0%, #3949ab 100%);
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 4px 0 rgba(0,0,0,.15);
+  }
+  .btn.sm { min-width: 0; padding: 8px 14px; font-size: 12px; }
+  .btn.disabled { opacity: .4; }
+
+  /* character cards */
+  .char-list {
+    display: flex; flex-direction: column; gap: 8px;
+    width: 100%; max-width: 380px;
+    max-height: 420px;
+  }
+  .char-card {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  .char-card.active {
+    border-color: #ffd24a;
+    box-shadow: 0 0 0 2px rgba(255,210,74,.25);
+    background: rgba(255,210,74,.1);
+  }
+  .char-card.locked { opacity: .75; }
+  .avatar {
+    width: 52px; height: 64px; border-radius: 12px;
+    display: flex; align-items: flex-end; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    border: 2px solid rgba(255,255,255,.15);
+  }
+  .avatar .face {
+    font-size: 28px; line-height: 1; margin-bottom: 6px;
+  }
+  .avatar .cap {
+    position: absolute; top: 4px; left: 10px; right: 10px; height: 12px;
+    border-radius: 6px 6px 2px 2px;
+  }
+  .char-meta { flex: 1; min-width: 0; }
+  .char-name { font-size: 15px; font-weight: 800; }
+  .char-abi { font-size: 11px; color: #ffe9c9; line-height: 1.4; margin-top: 2px; opacity: .9; }
+  .char-status {
+    font-size: 11px; font-weight: 800;
+    padding: 4px 8px; border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .st-own { background: rgba(126,240,160,.18); color: #7ef0a0; }
+  .st-cur { background: rgba(255,210,74,.2); color: #ffd24a; }
+  .st-coin { background: rgba(255,138,60,.18); color: #ffb74d; }
+  .st-ad { background: rgba(92,107,192,.25); color: #9fa8da; }
+
+  /* shop */
+  .shop-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    width: 100%; max-width: 380px;
+  }
+  .shop-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 12px 10px;
+    min-height: 110px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  }
+  .shop-card.hero {
+    grid-column: 1 / -1;
+    flex-direction: row; justify-content: flex-start; gap: 12px;
+    text-align: left; padding: 12px 14px;
+  }
+  .shop-ic { font-size: 28px; }
+  .shop-name { font-size: 14px; font-weight: 800; }
+  .shop-desc { font-size: 11px; color: #ffe9c9; opacity: .85; }
+  .price {
+    font-size: 13px; font-weight: 800; color: #ffd24a;
+    background: rgba(255,210,74,.12);
+    border-radius: 999px; padding: 4px 10px;
+  }
+
+  .float-goal {
+    position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+    z-index: 4;
+    background: rgba(10,14,26,.7);
+    border: 1px solid rgba(126,240,160,.35);
+    color: #7ef0a0;
+    font-size: 12px; font-weight: 700;
+    padding: 6px 12px; border-radius: 999px;
+  }
+  .smoke {
+    position: absolute; top: 70px; left: 50%; width: 80px; height: 40px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(180,180,180,.35), transparent 70%);
+    filter: blur(4px);
+  }
+  .section-note {
+    margin-top: 48px;
+    color: rgba(255,233,201,.55);
+    font-size: 12px;
+    max-width: 960px;
+    line-height: 1.6;
+  }
+
+.phone { margin: 0; box-shadow: none; border-radius: 0; }
+.label { display: none !important; }
+</style>
+</head>
+<body>
+<div class="phone" data-name="06-失败复活">
+      <div class="label">06 失败 / 复活 GameOver</div>
+      <div class="bg"></div>
+      <div class="ov">
+        <div class="title fail sm">任务失败…</div>
+        <div class="stat">
+          关卡 3 · 得分 1980<br>
+          剩余火 2 · 未救 1<br>
+          本关已用复活：0/1
+        </div>
+        <div class="badge">最高分 12840</div>
+        <div class="btn btn-ad">看广告复活 +1 命</div>
+        <div class="btn btn-main">重新开始</div>
+        <div class="btn btn-ghost">主菜单</div>
+      </div>
+    </div>
+</body>
+</html>

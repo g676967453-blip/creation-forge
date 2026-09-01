@@ -1,0 +1,15 @@
+﻿Strictly match the attached reference image art style (same linework, coloring, cartoon illustration look). Do NOT switch to 3D, realistic, or Lovart-like glossy style.
+
+Create ONE vertical mobile game screenshot concept for the casual game "Fire Hero / 救火英雄", aspect 9:16.
+
+Composition rules (must follow):
+- Full front orthographic view of a tall building facade, NO perspective, NO tilt.
+- Building window grid fills about 85%+ of the frame like classic FC Flying Hero / Arkanoid layout.
+- Very thin bottom play area only.
+- Top thin HUD bar: level, score, coins, lives icons+numbers (simple clean UI).
+- Upper windows on fire with orange glow and smoke on roof.
+- Some rescue windows with tiny people calling for help.
+- Bottom: yellow-black hazard-stripe trampoline; tiny chibi cat firefighter (red helmet, reflective suit) on the trampoline; optional tiny fire truck corner accent, never dominating.
+- Bright readable colors, clear outlines, cute cartoon, no watermark, no logos, no gibberish text.
+
+Output a single polished in-game concept frame that feels like it shares the EXACT visual DNA of the reference attachment.

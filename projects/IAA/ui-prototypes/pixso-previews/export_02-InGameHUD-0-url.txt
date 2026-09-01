@@ -1,0 +1,8 @@
+http://localhost:3667/export/27ce5245-6422-47c8-8cd3-8ef528aba316.png
+
+IMPORTANT: This is a temporary direct-download URL for the exported PNG file.
+To save locally, use a raw HTTP client such as curl or wget:
+  curl -O "http://localhost:3667/export/27ce5245-6422-47c8-8cd3-8ef528aba316.png"
+(-O uses the last path segment, e.g. <id>.png, as the local filename.)
+Do NOT use AI-powered fetch tools (e.g. WebFetch) - they process/summarize the response and will corrupt the binary content.
+The URL is ephemeral and may expire. Download it IMMEDIATELY.
