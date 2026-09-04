@@ -4,7 +4,7 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import { execSync } from "child_process";
+import { execSync, execFileSync } from "child_process";
 
 const ROOT = path.resolve(__dirname, "../..");  // 仓库根（本文件在 造化仪表盘/tools/）
 
@@ -59,6 +59,70 @@ export function gitLog(count: number): { date: string; msg: string; hash: string
 export function gitCommitCount(): number {
   try { return parseInt(execSync("git rev-list --count HEAD", { cwd: ROOT, timeout: 3000 }).toString().trim(), 10) || 0; }
   catch { return 0; }
+}
+
+/** ---- B4 板块化：五板块 git 变动监控 ---- */
+
+export interface BoardDef {
+  id: string;
+  name: string;        // 板块名（展示）
+  emoji: string;
+  dir: string;         // 相对仓库根的目录（git pathspec）
+  desc: string;
+  legacyPaths: string[]; // 迁移前历史路径（git log 回溯别名——rename 不回溯历史）
+}
+
+/** 板块注册表：新增/改名板块时在此登记（goals-issues I13） */
+export const BOARDS: BoardDef[] = [
+  { id: "b1", name: "造化仪表盘", emoji: "🧭", dir: "造化仪表盘", desc: "中枢：日程/任务/日志/仪表盘", legacyPaths: ["works", "reports", "docs/目标规划.md", "docs/个人待办.md", "tools/dsh-harness", "tools/collect-data.ts", "tools/generate-dashboard.ts", "tools/dashboard-server.ts", "tools/todo-file.ts", "tools/new-journal.ts"] },
+  { id: "b2", name: "projects", emoji: "🚀", dir: "projects", desc: "项目库", legacyPaths: [] },
+  { id: "b3", name: "docs", emoji: "📚", dir: "docs", desc: "知识库", legacyPaths: [] },
+  { id: "b4", name: "asset-pipeline", emoji: "🎨", dir: "asset-pipeline", desc: "美术制作", legacyPaths: ["projects/asset-pipeline"] },
+  { id: "b5", name: "xiaohongshu", emoji: "📱", dir: "xiaohongshu", desc: "自媒体", legacyPaths: ["projects/xiaohongshu"] },
+];
+
+export interface BoardStat {
+  id: string; name: string; emoji: string; dir: string; desc: string;
+  status: "活跃" | "平静";
+  lastWorkDate: string;          // 板块1 = 最新工作日志日期；其余 = 最近提交日
+  lastCommit: { date: string; msg: string; hash: string } | null;
+  recentCommits: { date: string; msg: string; hash: string }[];
+  commitTotal: number;
+  uncommitted: number;
+}
+
+/** git 命令直跑（execFileSync 不经 shell，避免中文 pathspec 被 cmd 转码） */
+function gitRun(args: string[], timeoutMs = 6000): string {
+  try {
+    return execFileSync("git", args, { cwd: ROOT, timeout: timeoutMs, encoding: "utf-8" })
+      .toString().replace(/\r/g, "").trim();
+  } catch { return ""; }
+}
+
+function boardSpecs(b: BoardDef): string[] { return [b.dir, ...b.legacyPaths]; }
+
+function collectBoardStats(worksFiles: string[]): BoardStat[] {
+  const newestWorks = worksFiles.length > 0 ? worksFiles[0].substring(0, 10) : "";
+  return BOARDS.map((b) => {
+    const specs = boardSpecs(b);
+    const logOut = gitRun(["log", "-6", "--format=%ad|%s|%h", "--date=short", "--", ...specs]);
+    const commits = logOut
+      ? logOut.split("\n").map((line) => { const [date, msg, hash] = line.split("|"); return { date, msg, hash }; })
+      : [];
+    const last = commits[0] || null;
+    const totalStr = gitRun(["rev-list", "--count", "HEAD", "--", ...specs]);
+    const dirtyStr = gitRun(["status", "--porcelain", "--", ...specs]);
+    const uncommitted = dirtyStr ? dirtyStr.split("\n").filter(Boolean).length : 0;
+    const active = last ? (Date.now() - new Date(last.date).getTime()) <= 14 * 86400_000 : false;
+    return {
+      id: b.id, name: b.name, emoji: b.emoji, dir: b.dir, desc: b.desc,
+      status: active ? "活跃" : "平静",
+      lastWorkDate: b.id === "b1" ? newestWorks : (last ? last.date : "—"),
+      lastCommit: last, recentCommits: commits,
+      commitTotal: parseInt(totalStr, 10) || 0,
+      uncommitted,
+    };
+  });
 }
 
 export function writeLog(date: string, title: string, problem: string, ai: string, output: string, project: string): string {
@@ -220,8 +284,8 @@ const SKILL_DESC_ZH: Record<string, string> = {
   "steam-publish": "Steam 发布：Steamworks 配置、商店页面、成就/统计 API、测试分支、Early Access 策略",
   // 项目自定义扁平 SKILL
   "git-commit": "Git 提交推送：检查变更 → 生成约定式提交 → 确认 → commit → push 到远程仓库",
-  "new-post": "小红书帖子制作：works/ 选材 → 文案撰写 → HTML 排版 → Puppeteer 截图导出（6 PNG）→ Pixso 导入（可选）",
-  "update-dashboard": "仪表盘更新：检查数据源 → 更新脚本 → 生成 HTML 仪表盘（7 页签：系统总览/项目状态/工作流/个人待办/目标计划/知识库/资产地址）",
+  "new-post": "小红书帖子制作：造化仪表盘/works/ 选材 → 文案撰写 → HTML 排版 → Puppeteer 截图导出（6 PNG）→ Pixso 导入（可选）",
+  "update-dashboard": "仪表盘更新：检查数据源 → 更新脚本 → 生成 HTML 仪表盘（7 页签：板块总览/个人待办/目标计划/项目状态/工作流/知识库/资产地址）",
   "item-icon": "游戏道具图标生产：道具清单 → Lovart AI 生成 → Photoshop 抠图 → 切片输出",
   "libtv": "LibTV 媒体生产集成：视频/音频/AI 内容生成，含命令、示例、模型 schema、节点类型",
   "router": "SKILL 路由引擎：根据用户请求匹配并路由到正确的游戏开发 SKILL",
@@ -498,7 +562,7 @@ export function loadProjectsFromJson(): ProjectDef[] {
   return projects.sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
-/** 解析 docs/目标规划.md 中的季度目标（goalsUser） */
+/** 解析 造化仪表盘/目标规划.md 中的季度目标（goalsUser） */
 export function loadGoalsFromMarkdown(): {
   goalsUser: any[]; longTermGoals: any; goalsArchived: any[];
 } {
@@ -606,33 +670,42 @@ export function loadGoalsFromMarkdown(): {
   }
 }
 
-/** 当 docs/目标规划.md 不可用时的默认季度目标 */
+/** 当 造化仪表盘/目标规划.md 不可用时的默认季度目标 */
 function defaultGoalsUser(): any[] {
   return [
-    { id: "U1", task: "GAME-002 V0.1 核心循环", detail: "见 docs/目标规划.md", priority: "🔴 P0", progress: 80, todos: 0, pnas: null },
-    { id: "U2", task: "小红书持续内容产出", detail: "见 docs/目标规划.md", priority: "🟡 持续", progress: 90, todos: 1, pnas: null },
-    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "见 docs/目标规划.md", priority: "🟢 远期", progress: 20, todos: 1, pnas: null },
+    { id: "U1", task: "GAME-002 V0.1 核心循环", detail: "见 造化仪表盘/目标规划.md", priority: "🔴 P0", progress: 80, todos: 0, pnas: null },
+    { id: "U2", task: "小红书持续内容产出", detail: "见 造化仪表盘/目标规划.md", priority: "🟡 持续", progress: 90, todos: 1, pnas: null },
+    { id: "U3", task: "asset-pipeline 对接 GAME-002", detail: "见 造化仪表盘/目标规划.md", priority: "🟢 远期", progress: 20, todos: 1, pnas: null },
   ];
 }
-/** 当 docs/目标规划.md 不可用时的默认长期目标 */
+/** 当 造化仪表盘/目标规划.md 不可用时的默认长期目标 */
 function defaultLongTermGoals(): any {
   return {
     dimensions: [
-      { dim: "🎮 产品", vision: "见 docs/目标规划.md", status: "—", items: [] },
-      { dim: "📡 内容与影响力", vision: "见 docs/目标规划.md", status: "—", items: [] },
-      { dim: "💰 可持续", vision: "见 docs/目标规划.md", status: "—", items: [] },
-      { dim: "⚙️ 系统", vision: "见 docs/目标规划.md", status: "—", items: [] },
-      { dim: "🤖 AI进化", vision: "见 docs/目标规划.md", status: "—", items: [] },
+      { dim: "🎮 产品", vision: "见 造化仪表盘/目标规划.md", status: "—", items: [] },
+      { dim: "📡 内容与影响力", vision: "见 造化仪表盘/目标规划.md", status: "—", items: [] },
+      { dim: "💰 可持续", vision: "见 造化仪表盘/目标规划.md", status: "—", items: [] },
+      { dim: "⚙️ 系统", vision: "见 造化仪表盘/目标规划.md", status: "—", items: [] },
+      { dim: "🤖 AI进化", vision: "见 造化仪表盘/目标规划.md", status: "—", items: [] },
     ],
-    strategicTriangle: { valueProposition: "见 docs/目标规划.md", differentiation: "见 docs/目标规划.md", growthEngine: "见 docs/目标规划.md" },
+    strategicTriangle: { valueProposition: "见 造化仪表盘/目标规划.md", differentiation: "见 造化仪表盘/目标规划.md", growthEngine: "见 造化仪表盘/目标规划.md" },
     formula: "R = E × T",
   };
 }
-/** 当 docs/目标规划.md 不可用时的默认已归档目标 */
+/** 当 造化仪表盘/目标规划.md 不可用时的默认已归档目标 */
 function defaultGoalsArchived(): any[] {
   return [
-    { task: "完善造化坊「目标计划」板块", detail: "见 docs/目标规划.md", completedDate: "2026-07-30" },
+    { task: "完善造化坊「目标计划」板块", detail: "见 造化仪表盘/目标规划.md", completedDate: "2026-07-30" },
   ];
+}
+
+/** 读取板块1 data/ 下的 JSON（缺失/损坏时返回空数组） */
+function loadJsonList(name: string): any[] {
+  try {
+    const raw = fs.readFileSync(path.join(ROOT, "造化仪表盘", "data", name), "utf-8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch { return []; }
 }
 
 // Scan projects/*/PROGRESS.md for progress metadata
@@ -672,32 +745,17 @@ export function collectData() {
   const skillsRaw = listSkills(skillsDir);
   const skills = skillsRaw.map(s => ({ ...s, linkedWorkflow: linkSkillToWorkflow(s.name) }));
 
-  // 目标：从 docs/目标规划.md 动态解析
+  // 目标：从 造化仪表盘/目标规划.md 动态解析
   const goalsData = loadGoalsFromMarkdown();
   const goalsUser = goalsData.goalsUser.length > 0 ? goalsData.goalsUser : defaultGoalsUser();
   const longTermGoals = goalsData.longTermGoals || defaultLongTermGoals();
   const goalsArchived = goalsData.goalsArchived.length > 0 ? goalsData.goalsArchived : defaultGoalsArchived();
 
-  const goalsIssues = [
-    { id: "I2", issue: "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", source: "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", severity: "🟡 累积" },
-    { id: "I4", issue: "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", source: "文件扫描 07-23", severity: "🟢 远期" },
-    { id: "I5", issue: "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", source: "文档审计 07-23", severity: "🟢 远期" },
-    { id: "I8", issue: "仪表盘部分数据硬编码，未与实际文件系统同步", source: "仪表盘全局审查 07-31", severity: "🔴 本周" },
-    { id: "I9", issue: "工作流计数不一致 —— 宣称 16 个，实际定义 20 个，仪表盘 countFiles() 把 README/变更日志/改进追踪也计入", source: "全盘检查 08-02", severity: "🟡 累积" },
-    { id: "I10", issue: "仪表盘注释/标题过时 —— 注释写「8 Tab」实为 7，页签标题「5 分类」已扩至 6", source: "全盘检查 08-02", severity: "🟡 累积" },
-    { id: "I11", issue: "SKILL 数量声明偏差 —— CLAUDE.md 称「11 SKILL + library」，实际含 library 共 ~50 个", source: "全盘检查 08-02", severity: "🟢 远期" },
-    { id: "I12", issue: ".ai-locks/ .lobster/ .trea/ 未加入 .gitignore，出现在 untracked files 中", source: "全盘检查 08-02", severity: "🟢 远期" },
-  ];
+  // 数据源：造化仪表盘/data/goals-issues.json（B4 起硬编码迁出）
+  const goalsIssues = loadJsonList("goals-issues.json");
 
-  const goalsAI = [
-    { id: "A1", suggestion: "【P0 本周】推 GAME-002 M1 祝福3选1面板", detail: "P0 卡在 ~80% 已有一段时间。这是最小交付单元：创建 .tscn 场景 → 三选一交互 → 连接 BlessingManager。每天推 1 个待办，不要等大块时间。", priority: "🔴 优先" },
-    { id: "A2", suggestion: "【P0 本周】暂停新增工作流/SKILL，专注执行", detail: "16 workflows + 205 skills 已足够支撑全部产出。继续基建是「为系统建系统」。把精力转向用现有系统推 GAME-002 V0.1 完成。", priority: "🔴 优先" },
-    { id: "A3", suggestion: "【内容】调参工具 → 小红书新帖", detail: "今天（8/2）完工的调参工具就是最佳素材：一个滑块写实切Q版。三幕结构已写好，/new-post 生成，明天发。8 月不能断档。", priority: "🟡 建议" },
-    { id: "A4", suggestion: "【内容】选题从「做了什么」→「学到了什么」", detail: "当前 16 粉丝不急着追量。每期提炼一个金句（来自宣言或工作日志），侧重「解决问题的过程」而非「交付了什么」。这才是造化坊的差异化内容。", priority: "🟡 建议" },
-    { id: "A5", suggestion: "【系统】暂搁 .lobster / .trea 多 AI 编排", detail: "框架已搭好但实际利用率存疑。维护多 AI 协作协议会吃掉执行时间。当前单 Claude + 16 workflows 已很强。等 GAME-002 V0.1 交付后再启动多 AI。", priority: "🟢 长期" },
-    { id: "A6", suggestion: "【系统】设定 asset-pipeline 明确解锁条件", detail: "当前解锁条件模糊（「等 V0.1 稳定」）。建议改为：主战斗场景可运行即可解锁 asset-pipeline M1（提取道具清单+风格参考），不必等到全部 bug 修完。", priority: "🟢 长期" },
-    { id: "A7", suggestion: "【复盘】8月首周执行首次月度复盘", detail: "7 月是造化坊基建月（16 workflows + 仪表盘 + 多 AI 协议）。用 /goals 做首次正式月度复盘：检查 7 月成果、Q3 目标进度偏差、8 月重点（从基建转向产品交付）。", priority: "🔴 优先" },
-  ];
+  // 数据源：造化仪表盘/data/goals-ai.json
+  const goalsAI = loadJsonList("goals-ai.json");
 
   const toolGuides = [
     { tool: "Git", intro: "01-git-intro.md", ops: "02-git-operations.md", collab: "03-git-human-ai-collab.md", desc: "分布式版本控制系统", docs: 3 },
@@ -708,40 +766,24 @@ export function collectData() {
     { tool: "个人工作记录", intro: "README.md", ops: "docs/personal-work-records/", collab: "—", desc: "7 大类工作文档：美术规范/团队管理/项目成本/任务规划/校企合作/行业认知/AI工具", docs: 31 },
   ];
 
-  const assets = [
-    { layer: "系统层", name: "CLAUDE.md", path: "CLAUDE.md", desc: "AI 行为规范（项目入口）" },
-    { layer: "系统层", name: "docs/workflows/", path: "docs/workflows/", desc: `标准化工作流（${workflowCount} 文档）` },
-    { layer: "系统层", name: "docs/tool-guides/", path: "docs/tool-guides/", desc: `工具知识库（${guideCount} 文档）` },
-    { layer: "系统层", name: "docs/personal-work-records/", path: "docs/personal-work-records/", desc: "个人工作记录：美术规范/团队管理/项目成本/任务规划/校企合作/行业认知/AI工具" },
-    { layer: "系统层", name: ".claude/skills/", path: ".claude/skills/", desc: "SKILL 定义文件（/xxx CLI 命令的底层实现）" },
-    { layer: "系统层", name: "works/", path: "works/", desc: "工作日志（一事一记）" },
-    { layer: "系统层", name: "reports/", path: "reports/", desc: "汇报仪表盘" },
-    { layer: "项目层", name: "GAME-002「开仙门」", path: "projects/GAME-002/", desc: "Godot 修仙 Roguelike 塔防 → 吸血鬼+放置" },
-    { layer: "项目层", name: "小红书自媒体", path: "projects/xiaohongshu/", desc: "AI 协作内容创作 — 15 期帖子" },
-    { layer: "项目层", name: "asset-pipeline", path: "projects/asset-pipeline/", desc: "游戏道具图标 + 建筑资产管线" },
-    { layer: "项目层", name: "秦王殿奏对", path: "projects/qin-court-audience/", desc: "HTML/CSS/JS 打字答题游戏 — 300 题库 + 10 分类" },
-    { layer: "项目层", name: "交互规范系统", path: "projects/interaction-spec-system/", desc: "MD 驱动游戏交互规范生产线 — 模板+生成器+技能包" },
-    { layer: "项目层", name: "美术AI协作中台", path: "projects/游戏美术部门AI协作中台/", desc: "美术部门 AI 协作平台 — 资产管理+AI生成+管线集成（已完成）" },
-    { layer: "项目层", name: "情景认知小程序", path: "projects/情景认知小程序/", desc: "情景认知训练小程序 — 产品概念+原型验证中" },
-    { layer: "—", name: "GitHub", path: "https://github.com/g676967453-blip/creation-forge", desc: "远程仓库" },
-  ];
+  // 数据源：造化仪表盘/data/assets.json（图层：平台层/板块1…板块5）
+  const assets = loadJsonList("assets.json");
 
-  const external = [
-    { cat: "设计工具", name: "Pixso (MCP)", addr: "http://127.0.0.1:3667/mcp", desc: "UI 设计工具" },
-    { cat: "代码仓库", name: "GitHub", addr: "main 分支 / g676967453-blip/creation-forge", desc: "远程仓库" },
-    { cat: "自媒体", name: "小红书", addr: "projects/xiaohongshu/", desc: "15 期帖子，/new-post SKILL" },
-    { cat: "AI 图像", name: "Lovart", addr: "lovart.ai", desc: "AI 图像/视频/音频生成，道具图标+概念图" },
-  ];
+  // 数据源：造化仪表盘/data/external.json
+  const external = loadJsonList("external.json");
 
   // 个人待办数据
   const personalTasks = loadPersonalTasks();
+
+  // 五板块变动统计（B4：git 层面监控各板块目录）
+  const boards = collectBoardStats(worksFiles);
 
   return {
     today, worksData, gitCommits, commitCount,
     skillCount, skillStandard: skillsCount.standard, skillFlat: skillsCount.flat,
     workflowCount, guideCount, worksCount: worksFiles.length,
     projects, workflows, skills, goalsUser, longTermGoals, goalsArchived, goalsIssues, goalsAI,
-    toolGuides, assets, external,
+    toolGuides, assets, external, boards,
     personalTasks,
   };
 }

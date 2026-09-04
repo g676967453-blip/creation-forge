@@ -1,0 +1,7 @@
+[
+  { "id": "A1", "suggestion": "【P0 本周】推 GAME-002 M1 祝福3选1面板", "detail": "P0 卡在 ~80% 已有一段时间。这是最小交付单元：创建 .tscn 场景 → 三选一交互 → 连接 BlessingManager。每天推 1 个待办，不要等大块时间。", "priority": "🔴 优先" },
+  { "id": "A2", "suggestion": "【P0 本周】暂停新增工作流/SKILL，专注执行", "detail": "16 workflows + 200+ skills 已足够支撑全部产出。继续基建是「为系统建系统」。把精力转向用现有系统推项目交付。", "priority": "🔴 优先" },
+  { "id": "A4", "suggestion": "【内容】选题从「做了什么」→「学到了什么」", "detail": "每期提炼一个金句（来自宣言或工作日志），侧重「解决问题的过程」而非「交付了什么」。这才是造化坊的差异化内容。", "priority": "🟡 建议" },
+  { "id": "A8", "suggestion": "【系统】五板块重构合并后先观察再优化", "detail": "2026-09-04 五板块拆分（造化仪表盘/projects/docs/asset-pipeline/xiaohongshu）合并后，前 2 周观察板块自治是否成立：日志是否都进板块1、断链是否复现、仪表盘变动监控是否有噪音（大搬移首跑会把板块计为 dirty）。等数据说话，不再提前加规则。", "priority": "🟡 建议" },
+  { "id": "A9", "suggestion": "【项目】IAA 救火英雄推到最小可玩", "detail": "09-04 已建 Godot 工程 + 好友排行 UI（iCloud/GameCenter 接入验证中）。下一步：核心玩法最小可玩闭环 → 试玩 → 再谈渠道 IAA 变现。", "priority": "🔴 优先" }
+]

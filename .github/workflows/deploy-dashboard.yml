@@ -8,10 +8,10 @@ on:
   push:
     branches: [main]
     paths:
-      - 'tools/collect-data.ts'
-      - 'tools/generate-dashboard.ts'
-      - 'docs/个人待办.md'
-      - 'docs/目标规划.md'
+      - '造化仪表盘/tools/*.ts'
+      - '造化仪表盘/data/*.json'
+      - '造化仪表盘/目标规划.md'
+      - '造化仪表盘/个人待办.md'
       - '.github/workflows/deploy-dashboard.yml'
 
 jobs:
@@ -28,23 +28,21 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 板块 git 统计需要全历史
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
 
-      - name: 安装依赖
-        run: npm install
+      # 注意：仓库根无 package.json，CI 不自带 node_modules —— 用 npx --yes 在线取 tsx，禁止 npm install
+      - name: 生成仪表盘（板块1 工具链，输出 造化仪表盘/reports/）
+        run: npx --yes tsx 造化仪表盘/tools/generate-dashboard.ts
 
-      - name: 生成仪表盘
-        run: npx tsx tools/generate-dashboard.ts
-
-      - name: 复制到 docs/ 并修复路径
+      - name: 组装 Pages 站点（_site 仅含 index.html）
         run: |
-          cp reports/造化坊仪表盘.html docs/index.html
-          sed -i 's|../docs/workflows/变更日志.md|workflows/变更日志.md|g' docs/index.html
+          mkdir -p _site
+          cp 造化仪表盘/reports/造化坊仪表盘.html _site/index.html
 
       - name: 配置 Pages
         uses: actions/configure-pages@v4
@@ -52,7 +50,7 @@ jobs:
       - name: 上传 artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/
+          path: _site/
 
       - name: 发布到 GitHub Pages
         id: deployment

@@ -1,0 +1,7 @@
+[
+  { "id": "I2", "issue": "GAME-002 祝福选择 UI 仍复用旧卡牌面板（需独立面板）", "source": "Phase 2 用卡牌面板桥接显示祝福，UI 体验待优化", "severity": "🟡 累积" },
+  { "id": "I4", "issue": "shared/assets/ 全部空 —— fonts/audio/sprites 仅 .gitkeep", "source": "文件扫描 07-23", "severity": "🟢 远期" },
+  { "id": "I5", "issue": "docs/en/ 14:1 严重不同步 —— 仅 README 无实际文档", "source": "文档审计 07-23", "severity": "🟢 远期" },
+  { "id": "I13", "issue": "五板块拆分后 collect-data 的历史统计依赖 legacyPaths 回溯别名，新增板块目录须同步维护 BOARDS 表", "source": "板块重构 B4 09-04", "severity": "🟡 累积" },
+  { "id": "I14", "issue": "docs/README 等门户仍引向未建成的板块1 CLAUDE.md/README.md（B5 创建后闭环）", "source": "平台文档切换 B3 09-04", "severity": "🟢 远期" }
+]

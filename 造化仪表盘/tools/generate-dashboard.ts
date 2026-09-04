@@ -1,10 +1,10 @@
 /**
  * 造化坊仪表盘生成器
- * 生成独立 HTML 文件（侧栏导航 · 任务默认首页 · 暗色系）
+ * 生成独立 HTML 文件（侧栏导航 · 板块总览默认首页 · 暗色系）
  *
- * 使用: npx tsx tools/generate-dashboard.ts
- * 输出: reports/造化坊仪表盘.html
- * 本地服务（完成/取消秒级生效）: npx tsx tools/dashboard-server.ts → http://127.0.0.1:3456
+ * 使用: npx tsx 造化仪表盘/tools/generate-dashboard.ts
+ * 输出: 造化仪表盘/reports/造化坊仪表盘.html
+ * 本地服务（完成/取消秒级生效 + /api/activity 变动监控）: npx tsx 造化仪表盘/tools/dashboard-server.ts → http://127.0.0.1:3456
  */
 
 import * as fs from "fs";
@@ -61,6 +61,17 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .card .value{font-size:28px;font-weight:700;color:#ff6b6b}
 .card .detail{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
 
+/* B4: 五板块总览卡片 */
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:8px}
+.board-card{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:7px}
+.board-card .bd-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.board-card .bd-name{font-size:15px;font-weight:600;color:#fff}
+.board-card .bd-dir{font-size:10px;color:rgba(255,255,255,.3);font-family:monospace}
+.board-card .bd-desc{font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+.board-card .bd-dirty{font-size:11px;color:#ff9800}
+.board-card .bd-commits{border-top:1px dashed rgba(255,255,255,.07);padding-top:7px;font-size:11px;line-height:1.8;color:rgba(255,255,255,.35);min-height:20px}
+.board-card .bd-commits .hash{font-family:monospace;color:#ff6b6b;margin-right:4px}
+
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
 .tbl th{text-align:left;padding:10px 14px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);font-weight:500;font-size:12px}
 .tbl td{padding:10px 14px;border-top:1px solid rgba(255,255,255,.05)}
@@ -111,6 +122,12 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .layer-tag{padding:4px 12px;border-radius:4px;font-size:11px}
 .layer-sys{background:rgba(255,107,107,.1);color:#ff6b6b}
 .layer-proj{background:rgba(76,175,80,.1);color:#4caf50}
+.layer-plat{background:rgba(255,255,255,.07);color:rgba(255,255,255,.55)}
+.layer-b1{background:rgba(255,107,107,.1);color:#ff6b6b}
+.layer-b2{background:rgba(76,175,80,.1);color:#4caf50}
+.layer-b3{background:rgba(66,165,245,.1);color:#42a5f5}
+.layer-b4{background:rgba(255,152,0,.1);color:#ff9800}
+.layer-b5{background:rgba(255,193,7,.1);color:#ffc107}
 .footer{padding:40px 0 20px;text-align:center;font-size:12px;color:rgba(255,255,255,.2)}
 .footer a{color:rgba(255,255,255,.3)}
 
@@ -232,17 +249,18 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 <aside class="sidebar">
   <div class="sidebar-brand">
     <h1>🏭 造化坊</h1>
-    <div class="sub">${D.today}<br>系统 → 项目 → 工作流</div>
+    <div class="sub">${D.today}<br>板块总览 → 任务/目标 → 明细 → 知识</div>
   </div>
   <nav class="sidebar-nav">
-    <button class="tab active" onclick="switchTab('personal-tasks',this)">📋 任务</button>
+    <button class="tab active" onclick="switchTab('boards',this)">🧭 板块</button>
+    <button class="tab" onclick="switchTab('personal-tasks',this)">📋 任务</button>
     <button class="tab" onclick="switchTab('goals',this)">🎯 目标</button>
     <button class="tab" onclick="switchTab('projects',this)">📌 项目</button>
     <button class="tab" onclick="switchTab('workflows',this)">⚙️ 工作流</button>
     <button class="tab" onclick="switchTab('guides',this)">📚 知识库</button>
     <button class="tab" onclick="switchTab('assets',this)">🗂️ 资产地址</button>
   </nav>
-  <div class="sidebar-foot">默认打开任务页<br>本地服务可秒完成/取消</div>
+  <div class="sidebar-foot">默认打开板块总览<br>本地服务可秒完成/取消</div>
 </aside>
 <div class="main">
 <header>
@@ -254,12 +272,13 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
   </div>
 </header>
 
-<div id="tab-personal-tasks" class="panel active"><div class="section-title" style="margin:0 0 16px;padding:0;border:none">📋 个人待办</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-boards" class="panel active"><div class="section-title" style="margin:0 0 6px;padding:0;border:none">🧭 五板块总览</div><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:12px;line-height:1.6">板块 git 变动监控（含迁移前历史路径回溯）· 工作日志统一记录于 造化仪表盘/works/</div><div id="tbl-boards"></div><div class="section-title">📋 近期工作日志</div><div id="tbl-recent-works"></div></div>
+<div id="tab-personal-tasks" class="panel"><div class="section-title" style="margin:0 0 16px;padding:0;border:none">📋 个人待办</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
-<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
+<div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-b3">板块3 知识库统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
-<div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
+<div id="tab-assets" class="panel"><div class="section-title">🗺️ 资产地图（平台层 / 板块1–5）</div><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
 
 <footer class="footer">造化坊 (Creation Forge) · 生成于 ${D.today} · <a href="https://github.com/g676967453-blip/creation-forge" target="_blank">GitHub</a></footer>
 </div><!-- .main -->
@@ -291,7 +310,7 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 
 <div id="recent-logs-overlay" class="modal-overlay" onclick="if(event.target===this)closeRecentLogs()">
 <div class="modal" style="max-width:700px">
-  <h2>📋 近期工作日志（works/）</h2>
+  <h2>📋 近期工作日志（造化仪表盘/works/）</h2>
   <div id="recent-logs-body" style="max-height:60vh;overflow-y:auto"></div>
   <div class="btn-row">
     <button class="btn btn-primary" onclick="closeRecentLogs()">关闭</button>
@@ -366,7 +385,7 @@ async function doRefresh() {
     toast('✅ 数据已刷新，重新渲染页面...', 'ok');
     setTimeout(() => location.reload(), 500);
   } catch(e) {
-    toast('⚠️ 仪表盘服务器未启动。请运行: npm run dashboard', 'err');
+    toast('⚠️ 仪表盘服务器未启动。请运行: npx tsx 造化仪表盘/tools/dashboard-server.ts', 'err');
   }
 }
 
@@ -623,7 +642,7 @@ function renderProjectCards(projects) {
       }
       throw new Error((body && body.error) || '未知错误');
     } catch (e) {
-      toast('请启动本地服务: npx tsx tools/dashboard-server.ts  （' + e.message + '）', 'err');
+      toast('请启动本地服务: npx tsx 造化仪表盘/tools/dashboard-server.ts  （' + e.message + '）', 'err');
       return false;
     }
   }
@@ -698,7 +717,7 @@ function renderProjectCards(projects) {
       if (btn) { btn.disabled = false; btn.textContent = '📦 周度归档'; }
       setTimeout(function(){ location.reload(); }, 400);
     } catch (e) {
-      toast('请启动本地服务: npx tsx tools/dashboard-server.ts  （' + e.message + '）', 'err');
+      toast('请启动本地服务: npx tsx 造化仪表盘/tools/dashboard-server.ts  （' + e.message + '）', 'err');
       if (btn) { btn.disabled = false; btn.textContent = '📦 周度归档'; }
     }
   };
@@ -834,6 +853,34 @@ function renderProjectCards(projects) {
     }
   };
 })();
+// B4: 五板块总览渲染
+(function(){
+  const stCls = {活跃:'badge-active',平静:'badge-idle'};
+  const stTxt = {活跃:'● 活跃',平静:'○ 平静'};
+  const esc = function(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  const cards = D.boards.map(function(b){
+    var commits = (b.recentCommits||[]).map(function(c){
+      return '<div><span class="hash">'+esc(c.hash)+'</span>'+esc(c.date)+' · '+esc(c.msg)+'</div>';
+    }).join('');
+    if (!commits) commits = '<div style="color:rgba(255,255,255,.15)">暂无提交记录</div>';
+    var dirTxt = b.dir + '/ · 共 ' + (b.commitTotal||0) + ' 提交 · 最近工作 ' + (b.lastWorkDate||'—');
+    var dirtyHtml = (b.uncommitted > 0) ? '<div class="bd-dirty">⚠️ ' + b.uncommitted + ' 条未提交变动</div>' : '';
+    return '<div class="board-card">'+
+      '<div class="bd-head"><span style="font-size:18px">'+b.emoji+'</span><span class="bd-name">'+esc(b.name)+'</span><span class="badge '+(stCls[b.status]||'badge-empty')+'">'+(stTxt[b.status]||b.status)+'</span></div>'+
+      '<div class="bd-dir">'+esc(dirTxt)+'</div>'+
+      '<div class="bd-desc">'+esc(b.desc)+'</div>'+
+      dirtyHtml+
+      '<div class="bd-commits">'+commits+'</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('tbl-boards').innerHTML = '<div class="board-grid">'+cards+'</div>';
+
+  // 近期工作日志（最新 8 条）
+  var logs = (D.worksData||[]).slice(0,8).map(function(w){
+    return '<div class="log-item"><span class="log-date">'+esc(w.date)+'</span><span class="log-file">'+esc(w.file)+'</span><span class="log-desc">'+esc(w.desc)+'</span></div>';
+  }).join('');
+  document.getElementById('tbl-recent-works').innerHTML = logs || '<div style="padding:14px;color:rgba(255,255,255,.25)">暂无工作日志</div>';
+})();
 (function(){
   const rt=(d,c)=>'<table class="tbl"><thead><tr>'+c.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+d.map(r=>'<tr>'+r.map((v,i)=>i===c.length-1?'<td><span class="badge '+(pm[v]||'')+'">'+v+'</span></td>':'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
   document.getElementById('tbl-longterm').innerHTML=renderLongTermGoals(D.longTermGoals);
@@ -853,7 +900,7 @@ function renderProjectCards(projects) {
     D.toolGuides.map(g=>'<tr><td><strong>'+g.tool+'</strong></td><td>'+g.desc+'</td><td>'+g.intro+'</td><td>'+g.ops+'</td><td>'+g.collab+'</td><td>'+g.docs+'</td></tr>').join('')+'</tbody></table>';
 })();
 (function(){
-  const lm={系统层:'layer-sys',项目层:'layer-proj'};
+  const lm={平台层:'layer-plat',板块1:'layer-b1',板块2:'layer-b2',板块3:'layer-b3',板块4:'layer-b4',板块5:'layer-b5',系统层:'layer-sys',项目层:'layer-proj'};
   document.getElementById('tbl-assets').innerHTML='<table class="tbl"><thead><tr><th>层级</th><th>名称</th><th>路径</th><th>说明</th></tr></thead><tbody>'+
     D.assets.map(a=>'<tr><td><span class="layer-tag '+(lm[a.layer]||'')+'">'+a.layer+'</span></td><td><strong>'+a.name+'</strong></td><td><code>'+a.path+'</code></td><td>'+a.desc+'</td></tr>').join('')+'</tbody></table>';
   document.getElementById('tbl-external').innerHTML='<table class="tbl"><thead><tr><th>类别</th><th>名称</th><th>地址</th><th>说明</th></tr></thead><tbody>'+

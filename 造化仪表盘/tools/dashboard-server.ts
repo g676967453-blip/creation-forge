@@ -29,6 +29,11 @@ app.get("/api/data", (_req, res) => {
   res.json(collectData());
 });
 
+// API: 轻量板块变动监控（供外部轮询/通知使用）
+app.get("/api/activity", (_req, res) => {
+  res.json({ boards: collectData().boards });
+});
+
 // API: 完成任务（写本地 造化仪表盘/个人待办.md）
 app.post("/api/tasks/complete", (req, res) => {
   try {
@@ -78,6 +83,6 @@ app.post("/api/log", (req, res) => {
 
 app.listen(PORT, "127.0.0.1", () => {
   console.log(`🏭 造化坊仪表盘已启动: http://127.0.0.1:${PORT}`);
-  console.log("   默认页：任务 · 本地完成/取消 API 已启用");
+  console.log("   默认页：板块总览 · 本地完成/取消 API 已启用 · /api/activity 变动监控");
   console.log("   按 Ctrl+C 停止");
 });

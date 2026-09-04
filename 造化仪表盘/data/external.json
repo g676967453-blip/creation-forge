@@ -1,0 +1,6 @@
+[
+  { "cat": "设计工具", "name": "Pixso (MCP)", "addr": "http://127.0.0.1:3667/mcp", "desc": "UI 设计工具" },
+  { "cat": "代码仓库", "name": "GitHub", "addr": "main 分支 / g676967453-blip/creation-forge", "desc": "远程仓库" },
+  { "cat": "自媒体", "name": "小红书", "addr": "xiaohongshu/", "desc": "素材源声明 → 帖子，/new-post SKILL" },
+  { "cat": "AI 图像", "name": "Lovart", "addr": "lovart.ai", "desc": "AI 图像/视频/音频生成，道具图标+概念图" }
+]

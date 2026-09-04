@@ -1,0 +1,20 @@
+[
+  { "layer": "平台层", "name": "CLAUDE.md", "path": "CLAUDE.md", "desc": "Claude 配置入口（五板块地图 + 协作规则）" },
+  { "layer": "平台层", "name": "memory/", "path": "memory/", "desc": "跨 AI 共享记忆（MEMORY.md 索引）" },
+  { "layer": "平台层", "name": "templates/", "path": "templates/", "desc": "项目模板（game-phaser / game-godot / PROGRESS）" },
+  { "layer": "平台层", "name": "tools/", "path": "tools/", "desc": "平台级工具（scaffold-game / check / _archive）" },
+  { "layer": "板块1", "name": "造化仪表盘/", "path": "造化仪表盘/", "desc": "中枢：目标/待办/works/reports/仪表盘工具链" },
+  { "layer": "板块1", "name": "目标规划.md", "path": "造化仪表盘/目标规划.md", "desc": "长期目标（AI原生五维）+ 季度项目（PNAS）+ 历史目标" },
+  { "layer": "板块1", "name": "个人待办.md", "path": "造化仪表盘/个人待办.md", "desc": "循环/主美/小红书/游戏/造化坊/日常 六类待办" },
+  { "layer": "板块1", "name": "works/", "path": "造化仪表盘/works/", "desc": "工作日志（一事一记 + 视频草案）" },
+  { "layer": "板块1", "name": "reports/", "path": "造化仪表盘/reports/", "desc": "仪表盘 HTML（GH Pages 每小时部署源）" },
+  { "layer": "板块1", "name": "data/", "path": "造化仪表盘/data/", "desc": "仪表盘数据文件（goals-issues/goals-ai/assets/external）" },
+  { "layer": "板块1", "name": "tools/collect-data.ts", "path": "造化仪表盘/tools/collect-data.ts", "desc": "数据采集（五板块 git 变动监控）" },
+  { "layer": "板块2", "name": "projects/", "path": "projects/", "desc": "项目库：GAME-002 / IAA / interaction-spec-system / game-bot 等" },
+  { "layer": "板块2", "name": "GAME-002 开仙门", "path": "projects/GAME-002/", "desc": "Godot 修仙 Roguelike 塔防 → 吸血鬼+放置" },
+  { "layer": "板块2", "name": "IAA 救火英雄", "path": "projects/IAA/", "desc": "Godot 工程 + 好友排行（09-04）" },
+  { "layer": "板块2", "name": "交互规范系统", "path": "projects/interaction-spec-system/", "desc": "MD 驱动游戏交互规范生产线 — 模板+生成器+技能包" },
+  { "layer": "板块3", "name": "docs/", "path": "docs/", "desc": "知识库：zh-CN/workflows/tool-guides/specs/knowledge/personal-work-records" },
+  { "layer": "板块4", "name": "asset-pipeline/", "path": "asset-pipeline/", "desc": "AI 美术生产线（Prompt 模板 + 后处理；产出在桌面 asset-pipeline-outputs/）" },
+  { "layer": "板块5", "name": "xiaohongshu/", "path": "xiaohongshu/", "desc": "小红书内容创作 — 各期目录 + 发布记录" }
+]
