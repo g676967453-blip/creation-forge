@@ -254,7 +254,7 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
   </div>
 </header>
 
-<div id="tab-personal-tasks" class="panel active"><div id="mini-stats" class="mini-stats"></div><div class="credo" style="margin-bottom:16px"><p><strong>定一个项目 → 遇到问题 → 学需要的知识 → 解决问题 → 完成</strong> · 匠心造化，万物可成</p></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px"><div class="section-title" style="margin:0;padding:0;border:none">📋 个人待办</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px" title="静态 HTML 用 GitHub Token；本地服务无需 Token">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button></div></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-personal-tasks" class="panel active"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px"><div class="section-title" style="margin:0;padding:0;border:none">📋 个人待办</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px" title="静态 HTML 用 GitHub Token；本地服务无需 Token">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button></div></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
@@ -531,24 +531,6 @@ function renderGoalCards(goals) {
   }).join('');
 }
 
-(function(){
-  // 原总览统计 → 任务页顶部 mini-stats
-  var ms = document.getElementById('mini-stats');
-  if (ms) {
-    var activeN = D.projects.filter(function(p){return p.status==='active'}).length;
-    var items = [
-      {label:'SKILL', value: D.skillCount},
-      {label:'工作流', value: D.workflowCount},
-      {label:'知识库', value: D.guideCount},
-      {label:'日志', value: D.worksCount},
-      {label:'提交', value: D.commitCount},
-      {label:'活跃项目', value: activeN},
-    ];
-    ms.innerHTML = items.map(function(c){
-      return '<div class="mini-stat"><div class="ms-label">'+c.label+'</div><div class="ms-value">'+c.value+'</div></div>';
-    }).join('');
-  }
-})();
 // 项目卡片渲染：引擎 + 状态 + 进度 + 产出 + 阻塞
 function renderProjectCards(projects) {
   var ps = {active:'badge-active',idle:'badge-idle',done:'badge-done'};
@@ -938,23 +920,7 @@ function renderProjectCards(projects) {
   const pm = {'🔴 高':'badge-prio-high','🔴高':'badge-prio-high','🟡 中':'badge-prio-mid','🟡中':'badge-prio-mid','🟢 低':'badge-prio-low','🟢低':'badge-prio-low'};
   const pmap = function(p){for(var k in pm){if(p.indexOf(k.replace(/ .+/,''))===0)return pm[k];}return '';};
 
-  // 汇总卡片
-  const cards = document.getElementById('cards-personal-tasks');
   const cats = PT.categories;
-  let allActive = 0, allTotal = 0;
-  cats.forEach(function(c){
-    const s = PT.stats.byCategory[c.key];
-    allActive += s.pending + s.active;
-    allTotal += c.tasks.length;
-  });
-  cards.innerHTML = [
-    {label:'全部活跃',value:allActive,detail:'共 '+allTotal+' 条任务',color:'#ff6b6b'},
-    {label:'🏢 主美工作',value:(PT.stats.byCategory.D||{pending:0,active:0}).pending+(PT.stats.byCategory.D||{pending:0,active:0}).active,detail:'工作主业',color:'#4caf50'},
-    {label:'📱 小红书',value:(PT.stats.byCategory.X||{pending:0,active:0}).pending+(PT.stats.byCategory.X||{pending:0,active:0}).active,detail:'自媒体内容',color:'#ff9800'},
-    {label:'🎮 游戏开发',value:(PT.stats.byCategory.G||{pending:0,active:0}).pending+(PT.stats.byCategory.G||{pending:0,active:0}).active,detail:'独立游戏',color:'#42a5f5'},
-    {label:'🔧 造化坊',value:(PT.stats.byCategory.F||{pending:0,active:0}).pending+(PT.stats.byCategory.F||{pending:0,active:0}).active,detail:'迭代优化',color:'#ce93d8'},
-    {label:'🏠 日常管理',value:(PT.stats.byCategory.L||{pending:0,active:0}).pending+(PT.stats.byCategory.L||{pending:0,active:0}).active,detail:'生活杂项',color:'#78909c'},
-  ].map(function(c){return '<div class="card"><div class="label" style="color:'+c.color+'">'+c.label+'</div><div class="value" style="color:'+c.color+'">'+c.value+'</div><div class="detail">'+c.detail+'</div></div>';}).join('');
 
   // 待归档徽标：活跃区里已完成/已取消的任务数（提醒用户执行周度归档）
   (function(){
@@ -1010,54 +976,7 @@ function renderProjectCards(projects) {
       }).join('')+'</tbody></table>';
   }
 
-  // 今日推荐：按能量时段推荐任务
-  function renderRecommend() {
-    var now = new Date().getHours();
-    var period, energyFilter, abcPref;
-    if (now < 12) { period = '🌅 上午（高能时段）'; energyFilter = '高能'; abcPref = 'A'; }
-    else if (now < 18) { period = '☀️ 下午（中能时段）'; energyFilter = '中能'; abcPref = 'A'; }
-    else { period = '🌙 晚上（低能时段）'; energyFilter = '低能'; abcPref = 'B'; }
-
-    var candidates = [];
-    cats.forEach(function(c){
-      c.tasks.forEach(function(t){
-        if (t.status === 'pending' || t.status === 'active') {
-          candidates.push({cat:c, task:t, score: 0});
-        }
-      });
-    });
-
-    // 评分：ABC 匹配 + 能量匹配
-    candidates.forEach(function(c){
-      if (c.task.abc === 'A') c.score += 3;
-      if (c.task.abc === 'B') c.score += 1;
-      if (c.task.energy === energyFilter) c.score += 2;
-      if (c.task.priority.includes('🔴')) c.score += 1;
-    });
-    candidates.sort(function(a,b){return b.score - a.score;});
-    var top = candidates.slice(0, 5);
-
-    if (top.length === 0) return '';
-    var enBadge = function(e) {
-      if (!e || e === '—') return '';
-      var cls = e === '高能' ? 'badge-energy-high' : e === '中能' ? 'badge-energy-mid' : 'badge-energy-low';
-      return '<span class="badge-energy '+cls+'">'+e+'</span>';
-    };
-    var abcBadge = function(a) {
-      if (!a || a === '—') return '';
-      var cls = a === 'A' ? 'badge-abc-A' : a === 'B' ? 'badge-abc-B' : 'badge-abc-C';
-      return '<span class="badge-abc '+cls+'">'+a+'</span>';
-    };
-    return '<div class="recommend-box">'+
-      '<div class="recommend-header">📋 '+period+' — 今日推荐</div>'+
-      top.map(function(r){
-        return '<div class="recommend-item">'+abcBadge(r.task.abc)+enBadge(r.task.energy)+'<span style="flex:1">'+r.task.task+'</span><span style="font-size:11px;color:rgba(255,255,255,.3)">'+r.cat.emoji+' '+r.cat.label+'</span></div>';
-      }).join('')+
-    '</div>';
-  }
-
   // 初始渲染
-  document.getElementById('tbl-recommend').innerHTML = renderRecommend();
   document.getElementById('tbl-personal-tasks').innerHTML = renderPtTable('all');
 
   // 更新子页签计数
