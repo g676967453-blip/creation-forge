@@ -35,23 +35,23 @@ description: 创建项目：确定方向 → 选择类型和技术栈（4类：�
 - **必须**：从 `templates/PROGRESS.md` 复制进度表模板，填写初始状态
 
 ### 4. 注册到体系
-- `tools/collect-data.ts` projects[] 追加条目
+- `造化仪表盘/tools/collect-data.ts` projects[] 追加条目
 - `docs/workflows/变更日志.md` 追加记录
 
 ### 5. 创建项目 CLAUDE.md
 按类型参考现有项目结构生成初稿，用户补充特有规则。
 
 ### 6. 第一份工作记录
-按 `works/_template.md` 生成 `works/YYYY-MM-DD-创建{项目名}.md`
+按 `造化仪表盘/works/_template.md` 生成 `造化仪表盘/works/YYYY-MM-DD-创建{项目名}.md`
 
 ### 7. 同步仪表盘
 执行 `/update-dashboard`，用户验证。
 
 ## 约束
 - 先问后建：不能根据一句话直接创建
-- 必须写入 `projects/`，必须在 `collect-data.ts` 注册
+- 必须写入 `projects/`，必须在 `造化仪表盘/tools/collect-data.ts` 注册
 - 每个项目必须有 CLAUDE.md
 - 目录名 kebab-case，不破坏现有三个项目
 - Godot 模板占位警告必须告知用户
 
-> 完整流程见 [docs/workflows/创建项目.md](../docs/workflows/创建项目.md)
+> 完整流程见 [docs/workflows/创建项目.md](../../docs/workflows/创建项目.md)

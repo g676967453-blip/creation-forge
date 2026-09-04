@@ -1,6 +1,6 @@
 # [2026-07-27] GitHub：AI 能力的应用商店
 
-> 来源：`works/2026-07-26-v01-phase0-3.md` + `docs/tool-guides/game-dev-skills.md` + Godot MCP 安装
+> 来源：`造化仪表盘/works/2026-07-26-v01-phase0-3.md` + `docs/tool-guides/game-dev-skills.md` + Godot MCP 安装
 
 ## 一句话总结
 

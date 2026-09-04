@@ -157,4 +157,4 @@ lark-cli base +record-search --base-token <token> --table-id <table_id> --as use
 - **多项目分别报告**：如审查"全部"，每个项目一份独立报告。
 - **文件路径用相对路径**：lark-cli 的路径参数只接受相对路径。
 
-> 完整流程见 [docs/workflows/美术任务表审查.md](../docs/workflows/美术任务表审查.md)
+> 完整流程见 [docs/workflows/美术任务表审查.md](../../docs/workflows/美术任务表审查.md)

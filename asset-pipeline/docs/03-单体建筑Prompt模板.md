@@ -158,5 +158,5 @@ game asset for 2D isometric mobile SLG world map city skin
 
 - [02-Prompt工程.md](02-Prompt工程.md) — Prompt 工程方法论
 - [07-建筑工作流.md](07-建筑工作流.md) — 建筑生产完整工作流
-- [../../造化仪表盘/works/2026-08-11-claude-ai-building-prompt-v3.md](../../造化仪表盘/works/2026-08-11-claude-ai-building-prompt-v3.md) — 今日工作日志
+- [../../造化仪表盘/works/2026-08-11-[claude]-ai-building-prompt-v3.md](../../造化仪表盘/works/2026-08-11-[claude]-ai-building-prompt-v3.md) — 今日工作日志
 - `../templates/building-grid.md` — 2×2 网格模板

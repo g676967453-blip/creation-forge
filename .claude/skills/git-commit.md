@@ -41,4 +41,4 @@ description: Git 提交并推送到 GitHub：检查变更 → 生成约定式提
 - 不提交 `.gitignore` 中的文件
 - 不提交 Token/API Key/密码
 
-> 完整流程见 [docs/workflows/Git-提交推送.md](../docs/workflows/Git-提交推送.md)
+> 完整流程见 [docs/workflows/Git-提交推送.md](../../docs/workflows/Git-提交推送.md)

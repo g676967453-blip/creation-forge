@@ -52,4 +52,4 @@
 
 - 2026-07-31：项目正式注册到造化坊体系（CLAUDE.md + README.md + 仪表盘）
 - 项目索引：`projects/qin-court-audience/`
-- 数据源：`tools/collect-data.ts` → `reports/造化坊仪表盘.html`
+- 数据源：`造化仪表盘/tools/collect-data.ts` → `造化仪表盘/reports/造化坊仪表盘.html`

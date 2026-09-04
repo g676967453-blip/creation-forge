@@ -5,8 +5,8 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const ROOT = path.resolve(__dirname, "..");
-export const TODO_FILE = path.join(ROOT, "docs", "个人待办.md");
+const ROOT = path.resolve(__dirname, "../..");  // 仓库根（本文件在 造化仪表盘/tools/）
+export const TODO_FILE = path.join(ROOT, "造化仪表盘", "个人待办.md");
 
 const STATUS_TEXT: Record<string, string> = {
   pending: "📋 待办",

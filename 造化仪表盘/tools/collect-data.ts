@@ -6,17 +6,17 @@ import * as fs from "fs";
 import * as path from "path";
 import { execSync } from "child_process";
 
-const ROOT = path.resolve(__dirname, "..");
+const ROOT = path.resolve(__dirname, "../..");  // 仓库根（本文件在 造化仪表盘/tools/）
 
 export function listWorks(): string[] {
-  const d = path.join(ROOT, "works");
+  const d = path.join(ROOT, "造化仪表盘", "works");
   try { return fs.readdirSync(d).filter(f => f.endsWith(".md") && f !== "README.md" && f !== "_template.md").sort().reverse(); }
   catch { return []; }
 }
 
 export function autoDesc(filename: string): string {
   try {
-    const c = fs.readFileSync(path.join(ROOT, "works", filename), "utf-8");
+    const c = fs.readFileSync(path.join(ROOT, "造化仪表盘", "works", filename), "utf-8");
     const m = c.match(/^#\s*(?:\[[\d-]+\]\s*)?(.+)/m);
     if (m) return m[1].trim().replace(/^[\d-]+\s*/, "");
   } catch {}
@@ -85,7 +85,7 @@ ${output}
 ${project}
 `;
   const filename = date + "-" + title.replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, "-").substring(0, 40) + ".md";
-  const filepath = path.join(ROOT, "works", filename);
+  const filepath = path.join(ROOT, "造化仪表盘", "works", filename);
   fs.writeFileSync(filepath, md, "utf-8");
   return filename;
 }
@@ -269,7 +269,7 @@ export interface PersonalTasksData {
 
 /** 解析 docs/个人待办.md，返回结构化任务数据 */
 export function loadPersonalTasks(): PersonalTasksData {
-  const filePath = path.join(ROOT, "docs", "个人待办.md");
+  const filePath = path.join(ROOT, "造化仪表盘", "个人待办.md");
   const CATEGORY_MAP: Record<string, { key: string; label: string; emoji: string; color: string }> = {
     "🔄": { key: "R", label: "循环任务", emoji: "🔄", color: "#ff6b6b" },
     "🏢": { key: "D", label: "主美工作", emoji: "🏢", color: "#4caf50" },
@@ -502,7 +502,7 @@ export function loadProjectsFromJson(): ProjectDef[] {
 export function loadGoalsFromMarkdown(): {
   goalsUser: any[]; longTermGoals: any; goalsArchived: any[];
 } {
-  const filePath = path.join(ROOT, "docs", "目标规划.md");
+  const filePath = path.join(ROOT, "造化仪表盘", "目标规划.md");
   const defaults = { goalsUser: [] as any[], longTermGoals: null as any, goalsArchived: [] as any[] };
   try {
     const content = fs.readFileSync(filePath, "utf-8");

@@ -10,8 +10,8 @@
 
 | 会同步（Git） | 不会同步（需本机处理） |
 |---|---|
-| 项目资料（`projects/`、`docs/`、`works/` 等） | API Key / `.credentials.yaml` |
-| Harness 便携包 `tools/dsh-harness/` | 聊天记录 `~/.dsh/sessions` |
+| 项目资料（`projects/`、`docs/`、`造化仪表盘/works/` 等） | API Key / `.credentials.yaml` |
+| Harness 便携包 `造化仪表盘/tools/dsh-harness/` | 聊天记录 `~/.dsh/sessions` |
 | 已优化的 `dsh-worktable` 插件 | `node_modules`、DSH 缓存/日志 |
 | （可选）工作台状态 JSON | 各机器本地密钥与登录态 |
 
@@ -48,8 +48,8 @@ git stash pop
 确认便携包已存在：
 
 ```powershell
-dir tools\dsh-harness
-dir tools\dsh-harness\plugins\dsh-worktable\lib
+dir 造化仪表盘\tools\dsh-harness
+dir 造化仪表盘\tools\dsh-harness\plugins\dsh-worktable\lib
 ```
 
 应能看到：
@@ -77,7 +77,7 @@ dsh --help
 ### 2.2 一键安装（推荐）
 
 ```powershell
-cd <你的-ceshi-路径>\tools\dsh-harness\scripts
+cd <你的-ceshi-路径>\造化仪表盘\tools\dsh-harness\scripts
 
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 ```
@@ -129,7 +129,7 @@ Git **不会**带来密钥。家里需要自行配置：
 
 参考模板（无密钥）：
 
-`tools/dsh-harness/templates/settings.yaml.example`
+`造化仪表盘/tools/dsh-harness/templates/settings.yaml.example`
 
 **不要**把真实 `settings.yaml` / `.credentials.yaml` 提交进仓库。
 
@@ -143,12 +143,12 @@ Git **不会**带来密钥。家里需要自行配置：
 
 仓库中若有：
 
-`tools/dsh-harness/state/worktable-state.json`
+`造化仪表盘/tools/dsh-harness/state/worktable-state.json`
 
 则在家里导入：
 
 1. 用 **DSH Desktop** 打开：  
-   `tools/dsh-harness/scripts/worktable-state-tool.html`  
+   `造化仪表盘/tools/dsh-harness/scripts/worktable-state-tool.html`  
    （可复制到当前工作区，或在资源管理器中打开；必须在 Desktop 环境内，localStorage 才是同一份）
 2. 「选择 JSON 文件」选 `worktable-state.json`，或粘贴内容到文本框
 3. 若公司是 `J:\ceshi`、家里盘符不同，先填路径映射，例如：  
@@ -191,20 +191,20 @@ git push
 ### 6.1 导出 Harness 包（插件又改过时）
 
 ```powershell
-cd J:\ceshi\tools\dsh-harness\scripts
+cd J:\ceshi\造化仪表盘\tools\dsh-harness\scripts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\export-from-machine.ps1
 ```
 
 ### 6.2 导出工作台状态（可选）
 
 1. Desktop 打开 `worktable-state-tool.html`
-2. 导出 → 保存为 `tools/dsh-harness/state/worktable-state.json`
+2. 导出 → 保存为 `造化仪表盘/tools/dsh-harness/state/worktable-state.json`
 
 ### 6.3 提交并推送
 
 ```powershell
 cd J:\ceshi
-git add tools/dsh-harness
+git add 造化仪表盘/tools/dsh-harness
 git commit -m "chore(dsh): update harness portable pack"
 git add <项目文件...>
 git commit -m "docs/feat: 项目更新说明"
@@ -217,10 +217,10 @@ git push origin main
 
 ```text
 1. cd <ceshi路径> && git pull
-2. powershell -NoProfile -ExecutionPolicy Bypass -File tools\dsh-harness\scripts\install-to-machine.ps1
+2. powershell -NoProfile -ExecutionPolicy Bypass -File 造化仪表盘\tools\dsh-harness\scripts\install-to-machine.ps1
 3. 完全退出并重启 DSH Desktop
 4. Ctrl+F5
-5. （可选）导入 tools\dsh-harness\state\worktable-state.json
+5. （可选）导入 造化仪表盘\tools\dsh-harness\state\worktable-state.json
 6. （如需要）设置里配置 API Key
 7. 验证：工作台 / 资源管理器地址栏 / 右键菜单
 ```
@@ -254,10 +254,10 @@ git push origin main
 | 说明 | 路径 |
 |---|---|
 | 本说明（仓库根） | `家里同步-DSH与项目操作说明.md` |
-| 便携包详细说明 | `tools/dsh-harness/README.md` |
-| 安装脚本 | `tools/dsh-harness/scripts/install-to-machine.ps1` |
-| 导出脚本 | `tools/dsh-harness/scripts/export-from-machine.ps1` |
-| 工作台状态工具 | `tools/dsh-harness/scripts/worktable-state-tool.html` |
+| 便携包详细说明 | `造化仪表盘/tools/dsh-harness/README.md` |
+| 安装脚本 | `造化仪表盘/tools/dsh-harness/scripts/install-to-machine.ps1` |
+| 导出脚本 | `造化仪表盘/tools/dsh-harness/scripts/export-from-machine.ps1` |
+| 工作台状态工具 | `造化仪表盘/tools/dsh-harness/scripts/worktable-state-tool.html` |
 | 本机 DSH 数据 | `%USERPROFILE%\.dsh\` |
 
 ---
@@ -269,7 +269,7 @@ git push origin main
 
 ```powershell
 cd <ceshi路径>
-git grep -i "sk-\|api_key\|password" -- tools/dsh-harness
+git grep -i "sk-\|api_key\|password" -- 造化仪表盘/tools/dsh-harness
 ```
 
 不应出现真实密钥。

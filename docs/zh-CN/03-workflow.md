@@ -14,7 +14,7 @@
    └──────────────────────────────┘
 ```
 
-日常「遇问题 → 交付 → 记 works」见 [operational-loop.md](./operational-loop.md)。
+日常「遇问题 → 交付 → 记 造化仪表盘/works」见 [operational-loop.md](./operational-loop.md)。
 
 ---
 

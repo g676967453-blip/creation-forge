@@ -12,7 +12,7 @@ description: >-
 
 ## 数据文件
 
-`docs/个人待办.md` — 所有操作仅在此文件中进行。表格 8 列：ID/任务/状态/ABC/能量/优先级/截止日/备注。
+`造化仪表盘/个人待办.md` — 所有操作仅在此文件中进行。表格 8 列：ID/任务/状态/ABC/能量/优先级/截止日/备注。
 
 ## 执行步骤
 
@@ -77,9 +77,9 @@ description: >-
 **⚠️ 绝不主动执行。提取的候选清单必须经用户确认后才导入。**
 
 **扫描源：**
-- 📱 小红书：`xiaohongshu/` 帖子目录（发布频率）+ `works/` 近 7 天日志（未转化素材）
+- 📱 小红书：`xiaohongshu/` 帖子目录（发布频率）+ `造化仪表盘/works/` 近 7 天日志（未转化素材）
 - 🎮 游戏开发：`GAME-002/策划文档/05-元文档/路线图/开仙门-V0.1-任务管理表.md`（未完成高优先级条目）
-- 🔧 造化坊：`docs/workflows/改进追踪.md`（进行中改进项）+ `tools/collect-data.ts` issues/suggestions + `works/` 近期日志
+- 🔧 造化坊：`docs/workflows/改进追踪.md`（进行中改进项）+ `造化仪表盘/tools/collect-data.ts` issues/suggestions + `造化仪表盘/works/` 近期日志
 
 **去重**：与已有任务对比，相似者跳过并标注 "⚠️ 已存在"
 
@@ -118,21 +118,21 @@ description: >-
 
 ### 8. 仪表盘同步（默认开启）
 
-在 **添加 / 完成 / 取消 / 导入 / 归档** 成功写入 `docs/个人待办.md` 之后：
+在 **添加 / 完成 / 取消 / 导入 / 归档** 成功写入 `造化仪表盘/个人待办.md` 之后：
 
-1. 执行：`npx tsx tools/generate-dashboard.ts`
-2. 将 `reports/造化坊仪表盘.html` 与待办 MD **一并提交**（或同一次 commit）
+1. 执行：`npx tsx 造化仪表盘/tools/generate-dashboard.ts`
+2. 将 `造化仪表盘/reports/造化坊仪表盘.html` 与待办 MD **一并提交**（或同一次 commit）
 3. 用户说「只改待办 / 跳过仪表盘 / 先别刷盘」时 **跳过** 本步
 
-> 网页端完成/取消/归档：仅使用本地服务 `npx tsx tools/dashboard-server.ts`（http://127.0.0.1:3456），写本地 MD，**不经 GitHub**。
+> 网页端完成/取消/归档：仅使用本地服务 `npx tsx 造化仪表盘/tools/dashboard-server.ts`（http://127.0.0.1:3456），写本地 MD，**不经 GitHub**。
 
 ## 约束
 
-- **仅在 `docs/个人待办.md` 中操作**（仪表盘 HTML 为衍生文件，由生成器写出）
+- **仅在 `造化仪表盘/个人待办.md` 中操作**（仪表盘 HTML 为衍生文件，由生成器写出）
 - **ID 不可重复，不可重用已归档 ID**
 - **不主动操作**：所有操作由用户指令触发
 - **提取必确认**：扫描的候选任务必须经用户勾选后才写入
 - **表格格式**：修改时重写整个分类表格确保对齐
 - **默认刷盘**：记任务后默认同步仪表盘，除非用户明确跳过
 
-> 完整流程见 [docs/workflows/个人待办管理.md](../docs/workflows/个人待办管理.md)
+> 完整流程见 [docs/workflows/个人待办管理.md](../../docs/workflows/个人待办管理.md)

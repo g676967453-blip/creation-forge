@@ -21,11 +21,11 @@ updated: 2026-08-02
 | 目录 | 内容 | 读写策略 |
 |------|------|---------|
 | `docs/` | 文档中心 + 目标规划.md（权威数据源） | 大多只读，目标规划/待办可写 |
-| `works/` | 每日工作记录 | 全部可写（带 AI 身份） |
+| `造化仪表盘/works/` | 每日工作记录 | 全部可写（带 AI 身份） |
 | `memory/` | 跨 AI 共享记忆 | 全部可读写 |
 | `projects/` | 5 个活跃项目 | 按项目分工 |
 | `tools/` | 开发工具脚本 | collect-data.ts 需锁 |
-| `reports/` | 仪表盘和审查报告 | 按需写入 |
+| `造化仪表盘/reports/` | 仪表盘和审查报告 | 按需写入 |
 | `.ai-locks/` | 文件锁 | 自动管理 |
 | `.claude/` | Claude 专属配置 | 其他 AI 只读 |
 
@@ -37,5 +37,5 @@ updated: 2026-08-02
 - `projects/qin-court-audience/` — HTML5 问答游戏 (v1.0 已完成)
 - `xiaohongshu/` — 小红书内容创作 (15 期)
 
-**来源：** CLAUDE.md · docs/zh-CN/04-project-structure.md · docs/目标规划.md
+**来源：** CLAUDE.md · docs/zh-CN/04-project-structure.md · 造化仪表盘/目标规划.md
 **适用 AI：** 全部

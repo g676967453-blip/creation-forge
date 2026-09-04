@@ -11,8 +11,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { collectData } from "./collect-data";
 
-const ROOT = path.resolve(__dirname, "..");
-const OUT_DIR = path.join(ROOT, "reports");
+const ROOT = path.resolve(__dirname, "../..");  // 仓库根（本文件在 造化仪表盘/tools/）
+const OUT_DIR = path.join(ROOT, "造化仪表盘", "reports");
 const OUT_FILE = path.join(OUT_DIR, "造化坊仪表盘.html");
 
 export function generateHTML() {

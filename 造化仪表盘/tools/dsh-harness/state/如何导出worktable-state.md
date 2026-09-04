@@ -5,15 +5,15 @@
 ## 方法 A（推荐）：状态工具页
 
 1. 在 DSH Desktop 中打开：
-   `tools/dsh-harness/scripts/worktable-state-tool.html`
+   `造化仪表盘/tools/dsh-harness/scripts/worktable-state-tool.html`
 2. 点击「导出到文本框 + 下载 JSON」
 3. 将下载的文件保存为：
-   `tools/dsh-harness/state/worktable-state.json`
+   `造化仪表盘/tools/dsh-harness/state/worktable-state.json`
 4. 回到终端：
 
 ```powershell
 cd <ceshi路径>
-git add tools/dsh-harness/state/worktable-state.json
+git add 造化仪表盘/tools/dsh-harness/state/worktable-state.json
 git commit -m "chore(dsh): export worktable localStorage state"
 git push
 ```
@@ -38,4 +38,4 @@ git push
 })();
 ```
 
-把得到的 `worktable-state.json` 放到 `tools/dsh-harness/state/` 后 commit + push。
+把得到的 `worktable-state.json` 放到 `造化仪表盘/tools/dsh-harness/state/` 后 commit + push。

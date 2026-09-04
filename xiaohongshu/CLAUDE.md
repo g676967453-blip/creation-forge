@@ -117,5 +117,5 @@ xiaohongshu/
 - 工作流文档：[docs/workflows/小红书-制作帖子.md](../docs/workflows/小红书-制作帖子.md) · SKILL：`/new-post`
 - 截图模板：[`_screenshot.mjs`](_screenshot.mjs)（Puppeteer 逐卡截图）
 - Pixso 导入：[docs/workflows/Pixso-导入操作.md](../docs/workflows/Pixso-导入操作.md)（可选）
-- Pixso 指南：[Pixso 人机协作指南](../docs/zh-CN/pixso-human-ai-collaboration.md)
+- Pixso 指南：[Pixso 人机协作指南](../docs/tool-guides/pixso-human-ai-collaboration.md)
 - 运转线路图：[日常运转线路图](../docs/zh-CN/operational-loop.md)

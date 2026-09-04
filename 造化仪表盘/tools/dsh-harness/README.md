@@ -12,7 +12,7 @@
 ## 目录
 
 ```text
-tools/dsh-harness/
+造化仪表盘/tools/dsh-harness/
   profiles/desktop|web/   # package.json + cordis.patch.yml
   plugins/dsh-worktable/  # 当前优化后的插件（含 lib/）
   templates/settings.yaml.example
@@ -26,7 +26,7 @@ tools/dsh-harness/
 ## 机器 A（导出）
 
 ```powershell
-cd J:\ceshi\tools\dsh-harness\scripts
+cd J:\ceshi\造化仪表盘\tools\dsh-harness\scripts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\export-from-machine.ps1
 ```
 
@@ -36,13 +36,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\export-from-machine.ps1
    - 可将该 HTML 拖到 Desktop 窗口，或复制到工作区后用 file 协议/本地静态页打开（必须同源 localStorage）
    - 最稳妥：在 Desktop 会话里让 AI/开发者工具执行导出逻辑，或把 HTML 放到当前 workspace 用资源管理器打开为站点
 2. 点击「导出」得到 `worktable-state.json`
-3. 保存到 `tools/dsh-harness/state/worktable-state.json`
+3. 保存到 `造化仪表盘/tools/dsh-harness/state/worktable-state.json`
 
 然后 Git：
 
 ```powershell
 cd J:\ceshi
-git add tools/dsh-harness
+git add 造化仪表盘/tools/dsh-harness
 git commit -m "chore(dsh): portable harness pack + worktable"
 git push
 ```
@@ -50,7 +50,7 @@ git push
 ## 机器 B（安装）
 
 ```powershell
-cd <你的 ceshi 克隆路径>\tools\dsh-harness\scripts
+cd <你的 ceshi 克隆路径>\造化仪表盘\tools\dsh-harness\scripts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 ```
 
@@ -80,8 +80,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 ## 安全
 
 - 仓库请保持 **private**（状态 JSON 含本机路径）
-- 提交前自查：`git grep -i "apiKey\|sk-\|password" tools/dsh-harness`
+- 提交前自查：`git grep -i "apiKey\|sk-\|password" 造化仪表盘/tools/dsh-harness`
 
 ---
 
-更多「家里 pull 后逐步操作」见仓库根目录：[家里同步-DSH与项目操作说明.md](../../家里同步-DSH与项目操作说明.md)。
+更多「家里 pull 后逐步操作」见仓库根目录：[家里同步-DSH与项目操作说明.md](../../../家里同步-DSH与项目操作说明.md)。

@@ -46,4 +46,4 @@ qin-court-audience/
 ### 相关资源
 
 - 项目创建流程：[docs/workflows/创建项目.md](../../docs/workflows/创建项目.md)
-- 仪表盘数据：[tools/collect-data.ts](../../tools/collect-data.ts)
+- 仪表盘数据：[tools/collect-data.ts](../../造化仪表盘/tools/collect-data.ts)

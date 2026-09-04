@@ -18,11 +18,11 @@ updated: 2026-08-14
 | Codex | `[codex]` | 工具链工程（TypeScript） | interaction-spec-system 工具链、spec 生成器、代码工程维护 | 🟢 已有 4 条日志 |
 | LobsterAl | `[lobster]` | 市场调研 + 数据分析 | TBH 复刻（调研线）、竞品/市场分析、内容选题研究 | 🟢 已完成 TBH 调研 |
 | TREA | `[trea]` | 内容创作 + 知识库整理 | 小红书内容线、docs/personal-work-records 整理 | ⚪ 未启动，待首次会话确认 |
-| Libtv | `[libtv]` | 视频生产 | 三幕结构视频、游戏宣传素材、works/ 日志转视频（Libtv skill 自带视频/音频工作流） | ⚪ 未启动，待首次会话确认 |
+| Libtv | `[libtv]` | 视频生产 | 三幕结构视频、游戏宣传素材、造化仪表盘/works/ 日志转视频（Libtv skill 自带视频/音频工作流） | ⚪ 未启动，待首次会话确认 |
 
 ## 协作边界
 
-- 各 AI 在自己领域内主导；跨领域改动前先查 `works/` 最近日志 + `memory/` 确认无冲突
+- 各 AI 在自己领域内主导；跨领域改动前先查 `造化仪表盘/works/` 最近日志 + `memory/` 确认无冲突
 - 共享文件（目标规划/待办/MEMORY 等）一律走 `.ai-locks/` 锁协议
 - 分工可调整：用户可随时改；AI 提议调整需用户确认
 - 首次会话的 AI：先读 ONBOARDING.md → AI_COLLABORATION.md → MEMORY.md → 本文件，然后向用户确认自己的领域
@@ -32,5 +32,5 @@ updated: 2026-08-14
 - [ ] TREA / Libtv 首次会话时向用户确认分工是否合适（领域可调）
 - [ ] LobsterAl 的 TBH 复刻若立项，按立项流程（docs/workflows/06-立项流程.md）推进
 
-**来源：** AI_COLLABORATION.md 身份表 · works/ 各 AI 日志分布（2026-08-14 统计）
+**来源：** AI_COLLABORATION.md 身份表 · 造化仪表盘/works/ 各 AI 日志分布（2026-08-14 统计）
 **适用 AI：** 全部

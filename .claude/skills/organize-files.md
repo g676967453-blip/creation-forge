@@ -13,7 +13,7 @@ description: 文件梳理：全面扫描项目目录结构 → 诊断问题（�
 用 `find` + `ls` 扫描整个项目目录树：
 - 根目录文件清单（标记散落杂物）
 - 对比 `CLAUDE.md` 声明的结构 vs 实际目录
-- 深入 `docs/`、`projects/`、`works/`、`shared/`、`templates/`、`tools/`、`reports/`
+- 深入 `docs/`、`projects/`、`造化仪表盘/works/`、`shared/`、`templates/`、`tools/`、`造化仪表盘/reports/`
 - 检查 `.claude/`、`.workbuddy/` 等隐藏目录
 - 检查命名一致性、空目录、嵌套 `.git`
 
@@ -39,13 +39,13 @@ description: 文件梳理：全面扫描项目目录结构 → 诊断问题（�
 3. 全局搜索并更新所有引用（`CLAUDE.md`、SKILL 文件、仪表盘、工作流文档）
 
 ### 5. 同步仪表盘
-执行 `npx tsx tools/generate-dashboard.ts` 更新仪表盘。
+执行 `npx tsx 造化仪表盘/tools/generate-dashboard.ts` 更新仪表盘。
 
 ## 约束
 - 绝不跳过扫描直接修改
 - 结构性变更必须用户批准
 - 移动文件后必须全局搜索更新引用
 - 删除 `.git/` 等不可逆操作需单独 ⚠️ 确认
-- 完成后在 `works/` 生成整理日志
+- 完成后在 `造化仪表盘/works/` 生成整理日志
 
-> 完整流程见 [docs/workflows/文件梳理.md](../docs/workflows/文件梳理.md)
+> 完整流程见 [docs/workflows/文件梳理.md](../../docs/workflows/文件梳理.md)

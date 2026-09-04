@@ -21,9 +21,9 @@ expires_at: <ISO 8601 时间戳，建议 locked_at + 30分钟>
 ## 需要锁的共享文件
 
 - `ONBOARDING.md`
-- `docs/目标规划.md`
-- `docs/个人待办.md`
-- `tools/collect-data.ts`
+- `造化仪表盘/目标规划.md`
+- `造化仪表盘/个人待办.md`
+- `造化仪表盘/tools/collect-data.ts`
 - `CLAUDE.md`
 - `AI_COLLABORATION.md`
 - `.claude/settings.json`

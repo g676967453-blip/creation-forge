@@ -22,7 +22,7 @@
 | IAA 买量数据模型认知（新人版） | [../zh-CN/IAA买量数据模型认知.md](../zh-CN/IAA买量数据模型认知.md) | 买量全流程、四层漏斗、CPI/LTV 等 |
 | IAA 软著申请流程与周期 | [../zh-CN/IAA软著申请流程与周期梳理.md](../zh-CN/IAA软著申请流程与周期梳理.md) | 软著路径与周期 |
 | 手游付费认知框架（主美知识库） | [../personal-work-records/08-商业化与付费设计/_rewritten/mobile-game-monetization-framework.md](../personal-work-records/08-商业化与付费设计/_rewritten/mobile-game-monetization-framework.md) | 付费路径 × 入口 × 数据；《英雄没有闪》拆解 |
-| 相关报告（仓根 reports） | `reports/手游付费认知框架与英雄没有闪拆解.md` 等 | 分析稿，非流程 |
+| 相关报告（仓根 造化仪表盘/reports） | `造化仪表盘/reports/手游付费认知框架与英雄没有闪拆解.md` 等 | 分析稿，非流程 |
 
 ---
 

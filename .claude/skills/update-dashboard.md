@@ -1,5 +1,5 @@
 ---
-description: 仪表盘更新：检查 collect-data.ts 数据一致性 → 更新过时数据 → 生成 HTML 仪表盘（侧栏导航 · 默认任务页）。当用户说"仪表盘更新""更新仪表盘""更新数据"时使用。
+description: 仪表盘更新：检查 造化仪表盘/tools/collect-data.ts 数据一致性 → 更新过时数据 → 生成 HTML 仪表盘（侧栏导航 · 默认任务页）。当用户说"仪表盘更新""更新仪表盘""更新数据"时使用。
 ---
 
 # /update-dashboard — 仪表盘更新
@@ -18,26 +18,26 @@ description: 仪表盘更新：检查 collect-data.ts 数据一致性 → 更新
 - **知识库**：工具指南
 - **资产地址**：内部路径 + 外部平台
 
-数据：`docs/个人待办.md`、`docs/目标规划.md` 等动态解析；硬编码仅 goalsIssues/goalsAI 等需人工校对。
+数据：`造化仪表盘/个人待办.md`、`造化仪表盘/目标规划.md` 等动态解析；硬编码仅 goalsIssues/goalsAI 等需人工校对。
 
 ### 2. 更新脚本
-- 发现过时硬编码 → 告知用户 → 修改 `tools/collect-data.ts`
-- 动态数据（SKILL/works/Git）自动采集
+- 发现过时硬编码 → 告知用户 → 修改 `造化仪表盘/tools/collect-data.ts`
+- 动态数据（SKILL/造化仪表盘/works/Git）自动采集
 
 ### 3. 生成
 ```bash
-npx tsx tools/generate-dashboard.ts
-# 输出 reports/造化坊仪表盘.html
+npx tsx 造化仪表盘/tools/generate-dashboard.ts
+# 输出 造化仪表盘/reports/造化坊仪表盘.html
 ```
 
 ### 4. 本地发布（唯一推荐；不经 GitHub 写网页）
 ```bash
-npx tsx tools/dashboard-server.ts
+npx tsx 造化仪表盘/tools/dashboard-server.ts
 # http://127.0.0.1:3456
-# POST /api/tasks/complete|cancel|archive  → 直接写本地 docs/个人待办.md
+# POST /api/tasks/complete|cancel|archive  → 直接写本地 造化仪表盘/个人待办.md
 ```
 - **不要**再用浏览器 GitHub Token / Contents API 改待办或「发布」仪表盘。
-- 静态打开 `reports/造化坊仪表盘.html` 仅只读浏览；完成/取消/归档需本地服务。
+- 静态打开 `造化仪表盘/reports/造化坊仪表盘.html` 仅只读浏览；完成/取消/归档需本地服务。
 
 ### 5. 验证
 打开本地服务：默认 **任务** 页；侧栏导航；无「操作说明」按钮行。
@@ -48,7 +48,7 @@ npx tsx tools/dashboard-server.ts
 
 ## 约束
 - HTML 是衍生文件；权威源是 MD + collect-data
-- 布局与交互改动在 `tools/generate-dashboard.ts`；任务写文件在 `tools/todo-file.ts`
+- 布局与交互改动在 `造化仪表盘/tools/generate-dashboard.ts`；任务写文件在 `造化仪表盘/tools/todo-file.ts`
 - 网页端任务操作 **仅本地 API**，不经 Git
 
-> 完整流程见 [docs/workflows/仪表盘更新.md](../docs/workflows/仪表盘更新.md)
+> 完整流程见 [docs/workflows/仪表盘更新.md](../../docs/workflows/仪表盘更新.md)

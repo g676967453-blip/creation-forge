@@ -30,13 +30,13 @@
 ### 步骤 1：复制模板
 
 ```
-cp works/_template.md works/YYYY-MM-DD-简短描述.md
+cp 造化仪表盘/works/_template.md 造化仪表盘/works/YYYY-MM-DD-简短描述.md
 ```
 
 例如：
 
 ```
-cp works/_template.md works/2026-07-16-phaser-collision-detection.md
+cp 造化仪表盘/works/_template.md 造化仪表盘/works/2026-07-16-phaser-collision-detection.md
 ```
 
 ### 步骤 2：和 AI 协作解决问题
@@ -61,11 +61,11 @@ cp works/_template.md works/2026-07-16-phaser-collision-detection.md
 
 | 你在做什么 | 文件放哪 | 命名规则 |
 |------------|----------|----------|
-| 解决具体问题 | `works/` | `YYYY-MM-DD-简短描述.md` |
+| 解决具体问题 | `造化仪表盘/works/` | `YYYY-MM-DD-简短描述.md` |
 | 宏观选题素材 | `xiaohongshu/` | 编号 + 主题 |
-| 小红书视频草案 | 直接在 works/ 文件里（区块二） | 同上 |
+| 小红书视频草案 | 直接在 造化仪表盘/works/ 文件里（区块二） | 同上 |
 
-### works/ 文件就是你的工作日志 + 内容素材库
+### 造化仪表盘/works/ 文件就是你的工作日志 + 内容素材库
 
 不需要维护两个地方。做完一件事，一个文件搞定。
 
@@ -83,7 +83,7 @@ cp works/_template.md works/2026-07-16-phaser-collision-detection.md
 
 ### 草案 → 制作 → 发布
 
-1. 从 works/ 里的视频草案出发
+1. 从 造化仪表盘/works/ 里的视频草案出发
 2. 把三幕扩展为完整旁白（可丢给 AI 写）
 3. 收集素材：AI 对话截图、代码对比、效果 GIF
 4. 制作 PPT 式视频或图文（工具自选）
@@ -104,7 +104,7 @@ cp works/_template.md works/2026-07-16-phaser-collision-detection.md
 
 ```bash
 # 创建新的工作单元
-cp works/_template.md works/$(date +%Y-%m-%d)-描述.md
+cp 造化仪表盘/works/_template.md 造化仪表盘/works/$(date +%Y-%m-%d)-描述.md
 
 # 创建新的游戏项目
 npm run scaffold
@@ -143,7 +143,7 @@ AI 掌握的信息越多，给出的方案越精准。「贴代码 + 贴报错 +
 
 ### 多线并行时
 
-**💡 一条线一个 works/ 文件，不要混。**
+**💡 一条线一个 造化仪表盘/works/ 文件，不要混。**
 
 同一天做了三件不相关的事 → 三个文件。每条线独立闭环。后续做视频时不用拆解。
 

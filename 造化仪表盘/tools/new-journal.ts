@@ -10,7 +10,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as readline from 'node:readline';
 
-const ROOT = path.resolve(import.meta.dirname!, '..');
+const ROOT = path.resolve(import.meta.dirname!, '../..');  // 仓库根（本文件在 造化仪表盘/tools/）
 const JOURNALS = path.join(ROOT, 'journals');
 const TEMPLATE = path.join(JOURNALS, 'template.md');
 

@@ -1,6 +1,6 @@
 /**
  * 造化坊仪表盘本地服务器
- * 启动: npx tsx tools/dashboard-server.ts
+ * 启动: npx tsx 造化仪表盘/tools/dashboard-server.ts
  * 访问: http://localhost:3456
  *
  * 本地任务 API（快速完成/取消，不依赖 GitHub Token）：
@@ -29,7 +29,7 @@ app.get("/api/data", (_req, res) => {
   res.json(collectData());
 });
 
-// API: 完成任务（写本地 docs/个人待办.md）
+// API: 完成任务（写本地 造化仪表盘/个人待办.md）
 app.post("/api/tasks/complete", (req, res) => {
   try {
     const id = String(req.body?.id || "").trim();
