@@ -8,6 +8,9 @@ tags: []
 
 # [YYYY-MM-DD] 问题标题
 
+> 📌 本文件存放于 `造化仪表盘/works/`；文件名 = `YYYY-MM-DD-[ai标签]-简述.md`（ai 标签：claude/trea/lobster/codex）。
+> 产出链接用**相对路径**指向目标文件（跨板块用 `../../projects/...` 式显式链接）。
+
 ---
 
 ## 📋 问题解决日志
