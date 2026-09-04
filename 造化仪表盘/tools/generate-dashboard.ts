@@ -249,18 +249,18 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 <aside class="sidebar">
   <div class="sidebar-brand">
     <h1>🏭 造化坊</h1>
-    <div class="sub">${D.today}<br>板块总览 → 任务/目标 → 明细 → 知识</div>
+    <div class="sub">${D.today}<br>任务/目标 → 板块 → 明细 → 知识</div>
   </div>
   <nav class="sidebar-nav">
-    <button class="tab active" onclick="switchTab('boards',this)">🧭 板块</button>
-    <button class="tab" onclick="switchTab('personal-tasks',this)">📋 任务</button>
+    <button class="tab" onclick="switchTab('boards',this)">🧭 板块</button>
+    <button class="tab active" onclick="switchTab('personal-tasks',this)">📋 任务</button>
     <button class="tab" onclick="switchTab('goals',this)">🎯 目标</button>
     <button class="tab" onclick="switchTab('projects',this)">📌 项目</button>
     <button class="tab" onclick="switchTab('workflows',this)">⚙️ 工作流</button>
     <button class="tab" onclick="switchTab('guides',this)">📚 知识库</button>
     <button class="tab" onclick="switchTab('assets',this)">🗂️ 资产地址</button>
   </nav>
-  <div class="sidebar-foot">默认打开板块总览<br>本地服务可秒完成/取消</div>
+  <div class="sidebar-foot">默认打开任务总览<br>本地服务可秒完成/取消</div>
 </aside>
 <div class="main">
 <header>
@@ -272,8 +272,8 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
   </div>
 </header>
 
-<div id="tab-boards" class="panel active"><div class="section-title" style="margin:0 0 6px;padding:0;border:none">🧭 五板块总览</div><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:12px;line-height:1.6">板块 git 变动监控（含迁移前历史路径回溯）· 工作日志统一记录于 造化仪表盘/works/</div><div id="tbl-boards"></div><div class="section-title">📋 近期工作日志</div><div id="tbl-recent-works"></div></div>
-<div id="tab-personal-tasks" class="panel"><div class="section-title" style="margin:0 0 16px;padding:0;border:none">📋 个人待办</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-boards" class="panel"><div class="section-title" style="margin:0 0 6px;padding:0;border:none">🧭 五板块总览</div><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:12px;line-height:1.6">板块 git 变动监控（含迁移前历史路径回溯）· 工作日志统一记录于 造化仪表盘/works/</div><div id="tbl-boards"></div><div class="section-title">📋 近期工作日志</div><div id="tbl-recent-works"></div></div>
+<div id="tab-personal-tasks" class="panel active"><div class="section-title" style="margin:0 0 16px;padding:0;border:none">📋 个人待办</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-b3">板块3 知识库统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
