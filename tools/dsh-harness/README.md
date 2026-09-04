@@ -27,7 +27,7 @@ tools/dsh-harness/
 
 ```powershell
 cd J:\ceshi\tools\dsh-harness\scripts
-pwsh -File .\export-from-machine.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\export-from-machine.ps1
 ```
 
 工作台项目/绑定/布局（localStorage）：
@@ -51,7 +51,7 @@ git push
 
 ```powershell
 cd <你的 ceshi 克隆路径>\tools\dsh-harness\scripts
-pwsh -File .\install-to-machine.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 ```
 
 然后：
