@@ -92,6 +92,119 @@ function escapeReg(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * 将活跃区中 ✅/❌ 任务移入周度归档（本地写盘，不经 GitHub）
+ */
+export function archiveCompletedTasks():
+  | { ok: true; count: number }
+  | { ok: false; error: string } {
+  let content = readTodoRaw();
+  const lines = content.split(/\r?\n/);
+  const archived: { source: string; id: string; task: string; result: string }[] = [];
+  const newLines: string[] = [];
+  let inArchive = false;
+  let inTable = false;
+  let currentCat = "";
+
+  const today = new Date();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const dateShort = `${mm}-${dd}`;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("## 📦")) {
+      inArchive = true;
+      inTable = false;
+    }
+    if (inArchive) {
+      newLines.push(line);
+      continue;
+    }
+
+    if (trimmed.startsWith("## ")) {
+      currentCat = trimmed.replace(/^## /, "").trim();
+      inTable = false;
+      newLines.push(line);
+      continue;
+    }
+
+    if (/^\|[-|\s]+\|$/.test(trimmed)) {
+      inTable = true;
+      newLines.push(line);
+      continue;
+    }
+
+    if (inTable && trimmed.startsWith("|") && !/^\|[-|\s]+\|$/.test(trimmed)) {
+      const cells = trimmed.split("|").map((c) => c.trim()).filter(Boolean);
+      // 跳过表头
+      if (cells[0] === "ID" || cells[0] === "来源") {
+        newLines.push(line);
+        continue;
+      }
+      if (cells.length >= 3 && (cells[2].includes("✅") || cells[2].includes("❌"))) {
+        const emoji = currentCat.substring(0, 2);
+        archived.push({
+          source: emoji + " " + currentCat.replace(emoji, "").trim(),
+          id: cells[0],
+          task: cells[1],
+          result: cells[2],
+        });
+        continue;
+      }
+    }
+
+    newLines.push(line);
+  }
+
+  if (archived.length === 0) {
+    return { ok: true, count: 0 };
+  }
+
+  // 插入归档块：在 ## 📦 之后
+  let archiveIdx = newLines.findIndex((l) => l.trim().startsWith("## 📦"));
+  if (archiveIdx === -1) {
+    newLines.push("", "## 📦 周度归档", "");
+    archiveIdx = newLines.length - 3;
+  }
+
+  const stamp = `${today.getFullYear()}-${mm}-${dd}`;
+  const block = [
+    "",
+    `> ${dateShort} 归档：${archived.length} 条，从活跃区移入归档。`,
+    "",
+    "| 来源 | ID | 任务 | 完成日 | 结果 |",
+    "|------|----|------|--------|------|",
+    ...archived.map(
+      (a) =>
+        `| ${a.source} | ${a.id} | ${a.task} | ${dateShort} | ${a.result} |`,
+    ),
+    "",
+  ];
+
+  // 插在归档标题后、第一个已有 ### 或表格前
+  let insertAt = archiveIdx + 1;
+  while (
+    insertAt < newLines.length &&
+    (newLines[insertAt].trim() === "" ||
+      newLines[insertAt].trim().startsWith(">"))
+  ) {
+    insertAt++;
+  }
+  // 若紧跟的是旧说明文字，插在 ## 📦 下一行
+  insertAt = archiveIdx + 1;
+  newLines.splice(insertAt, 0, ...block);
+
+  let out = newLines.join("\n");
+  out = touchLastUpdated(out);
+  // 顺带刷新最后更新里的日期格式
+  out = out.replace(/> 最后更新：.*/, `> 最后更新：${stamp}`);
+  writeTodoRaw(out);
+  return { ok: true, count: archived.length };
+}
+
 export function getTodoFilePath(): string {
   return TODO_FILE;
 }

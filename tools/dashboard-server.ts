@@ -11,7 +11,7 @@
 import express from "express";
 import { generateHTML } from "./generate-dashboard";
 import { collectData, writeLog } from "./collect-data";
-import { updateTaskStatus } from "./todo-file";
+import { updateTaskStatus, archiveCompletedTasks } from "./todo-file";
 
 const app = express();
 const PORT = 3456;
@@ -46,6 +46,17 @@ app.post("/api/tasks/cancel", (req, res) => {
   try {
     const id = String(req.body?.id || "").trim();
     const result = updateTaskStatus(id, "cancelled");
+    if (!result.ok) return res.status(400).json(result);
+    res.json({ ...result, personalTasks: collectData().personalTasks });
+  } catch (e: any) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// API: 周度归档（本地写盘）
+app.post("/api/tasks/archive", (_req, res) => {
+  try {
+    const result = archiveCompletedTasks();
     if (!result.ok) return res.status(400).json(result);
     res.json({ ...result, personalTasks: collectData().personalTasks });
   } catch (e: any) {

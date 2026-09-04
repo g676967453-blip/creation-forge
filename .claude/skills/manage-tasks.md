@@ -124,7 +124,7 @@ description: >-
 2. 将 `reports/造化坊仪表盘.html` 与待办 MD **一并提交**（或同一次 commit）
 3. 用户说「只改待办 / 跳过仪表盘 / 先别刷盘」时 **跳过** 本步
 
-> 网页端完成/取消：优先使用本地服务 `npx tsx tools/dashboard-server.ts`（http://127.0.0.1:3456），秒级写本地 MD，无需 GitHub Token。
+> 网页端完成/取消/归档：仅使用本地服务 `npx tsx tools/dashboard-server.ts`（http://127.0.0.1:3456），写本地 MD，**不经 GitHub**。
 
 ## 约束
 

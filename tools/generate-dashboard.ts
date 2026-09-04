@@ -247,14 +247,14 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 <div class="main">
 <header>
   <div class="top-actions">
-    <button class="btn" onclick="openOpsGuide()" title="造化坊操作说明">📖 操作说明</button>
     <button class="btn" onclick="openIssues()" title="系统诊断问题">🔍 系统问题</button>
     <button class="btn" onclick="openAiSuggest()" title="AI 方向建议">💡 AI 建议</button>
     <button class="btn btn-primary" onclick="openRecentLogs()" title="查看近期工作日志">📋 近期日志</button>
+    <button class="btn" onclick="archiveTasks(this)" title="将已完成/已取消移入本周归档（本地）">📦 周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button>
   </div>
 </header>
 
-<div id="tab-personal-tasks" class="panel active"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px"><div class="section-title" style="margin:0;padding:0;border:none">📋 个人待办</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px" title="静态 HTML 用 GitHub Token；本地服务无需 Token">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button></div></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
+<div id="tab-personal-tasks" class="panel active"><div class="section-title" style="margin:0 0 16px;padding:0;border:none">📋 个人待办</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
@@ -602,108 +602,30 @@ function renderProjectCards(projects) {
 })();
 // 个人待办面板
 (function(){
-  // --- GitHub API 任务操作 ---
-  const REPO = 'g676967453-blip/creation-forge';
-  const FILE_PATH = 'docs/个人待办.md';
-  const STATUS_MAP = { pending: '📋 待办', active: '🟢 进行中', done: '✅ 已完成', cancelled: '❌ 已取消' };
-
-  function getToken() { return localStorage.getItem('gh_pat'); }
-  function hasToken() { return !!getToken(); }
-
-  // 优先本地 dashboard-server API；失败再走 GitHub Token
+  // --- 本地任务操作（不经 GitHub；请用 dashboard-server）---
   async function updateTaskStatus(taskId, newStatus, newStatusText) {
-    // 1) 本地 API（秒级）
+    var endpoint = newStatus === 'done' ? '/api/tasks/complete' : (newStatus === 'cancelled' ? '/api/tasks/cancel' : null);
+    if (!endpoint) { toast('不支持的状态', 'err'); return false; }
     try {
-      var endpoint = newStatus === 'done' ? '/api/tasks/complete' : (newStatus === 'cancelled' ? '/api/tasks/cancel' : null);
-      if (endpoint) {
-        var localRes = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: taskId })
-        });
-        if (localRes.ok) {
-          var body = await localRes.json();
-          if (body && body.ok) {
-            if (body.personalTasks) D.personalTasks = body.personalTasks;
-            return true;
-          }
-        }
-        // 404/非 JSON：可能不是 dashboard-server，继续 fallback
-      }
-    } catch (e) {
-      // file:// 或静态托管会失败，走 GitHub
-    }
-
-    // 2) GitHub Contents API
-    const token = getToken();
-    if (!token) {
-      showTokenSetup();
-      toast('本地服务未开且无 Token。请运行: npx tsx tools/dashboard-server.ts', 'err');
-      return false;
-    }
-    const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
-    try {
-      const getRes = await fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
-      if (!getRes.ok) throw new Error('GET failed: ' + getRes.status);
-      const fileData = await getRes.json();
-      const content = fromBase64(fileData.content);
-      const sha = fileData.sha;
-      const NL = String.fromCharCode(10);
-      const CR = String.fromCharCode(13);
-      const lines = content.split(CR).join('').split(NL);
-      let found = false;
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].indexOf('| ' + taskId + ' |') === 0 || lines[i].indexOf('|' + taskId + '|') === 0) {
-          const cells = lines[i].split('|').map(function(c){return c.trim();}).filter(Boolean);
-          if (cells.length >= 3) {
-            const oldStatus = cells[2];
-            lines[i] = lines[i].replace('| ' + oldStatus + ' |', '| ' + newStatusText + ' |');
-            found = true;
-          }
-          break;
-        }
-      }
-      if (!found) { toast('未找到任务 ' + taskId, 'err'); return false; }
-      const newContent = lines.join(NL);
-      const putBody = {
-        message: '✅ ' + taskId + ' → ' + newStatusText + ' [via 仪表盘]',
-        content: toBase64(newContent),
-        sha: sha,
-        branch: 'main'
-      };
-      const putRes = await fetch(url, {
-        method: 'PUT',
-        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', Accept: 'application/vnd.github+json' },
-        body: JSON.stringify(putBody)
+      var localRes = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: taskId })
       });
-      if (!putRes.ok) {
-        const err = await putRes.json().catch(function(){return {};});
-        if (putRes.status === 409) {
-          toast('文件已被修改，正在重试...', '');
-          await new Promise(r => setTimeout(r, 1000));
-          return await updateTaskStatus(taskId, newStatus, newStatusText);
-        }
-        throw new Error(err.message || 'PUT failed: ' + putRes.status);
+      if (!localRes.ok) {
+        var errBody = await localRes.json().catch(function(){ return {}; });
+        throw new Error(errBody.error || ('HTTP ' + localRes.status));
       }
-      return true;
-    } catch(e) {
-      toast('操作失败: ' + e.message, 'err');
+      var body = await localRes.json();
+      if (body && body.ok) {
+        if (body.personalTasks) D.personalTasks = body.personalTasks;
+        return true;
+      }
+      throw new Error((body && body.error) || '未知错误');
+    } catch (e) {
+      toast('请启动本地服务: npx tsx tools/dashboard-server.ts  （' + e.message + '）', 'err');
       return false;
     }
-  }
-
-  // 正确的 UTF-8 Base64 编解码（兼容中文/emoji）
-  function toBase64(str) {
-    const bytes = new TextEncoder().encode(str);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-    return btoa(binary);
-  }
-  function fromBase64(b64) {
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return new TextDecoder().decode(bytes);
   }
 
   async function reloadPersonalTasksFromServer() {
@@ -759,158 +681,29 @@ function renderProjectCards(projects) {
     }
   };
 
-  // --- 周度归档 ---
+  // --- 周度归档（本地 API，不经 GitHub）---
   window.archiveTasks = async function(btn) {
-    const token = getToken();
-    if (!token) { showTokenSetup(); toast('请先设置 GitHub Token', 'err'); return; }
     if (!confirm('将当前所有 ✅ 完成 / ❌ 已取消 的任务移至本周归档？')) return;
     if (btn) { btn.disabled = true; btn.textContent = '归档中...'; }
-
-    const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
     try {
-      // 1. GET 文件
-      const getRes = await fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
-      if (!getRes.ok) throw new Error('GET failed: ' + getRes.status);
-      const fileData = await getRes.json();
-      const content = fromBase64(fileData.content);
-      const sha = fileData.sha;
-      const CR = String.fromCharCode(13);
-      const NL = String.fromCharCode(10);
-      const lines = content.split(CR).join('').split(NL);
-
-      // 2. 收集已完成/已取消的任务，并移除
-      const archived = [];
-      const newLines = [];
-      let inArchive = false;
-      let inTable = false;
-      let currentCat = '';
-      const today = new Date().toLocaleDateString('zh-CN').split('/').join('-');
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmed = line.trim();
-
-        // 检测进入归档区
-        if (trimmed.startsWith('## 📦')) { inArchive = true; inTable = false; }
-        if (inArchive) { newLines.push(line); continue; }
-
-        // 检测分类标题
-        if (trimmed.startsWith('## ')) { currentCat = trimmed.replace(/^## /, '').trim(); inTable = false; newLines.push(line); continue; }
-
-        // 检测表格开始
-        if (trimmed.match(/^\|[-|\s]+\|$/)) { inTable = true; newLines.push(line); continue; }
-
-        // 表格行
-        if (inTable && trimmed.startsWith('|') && !trimmed.match(/^\|[-|\s]+\|$/)) {
-          const cells = trimmed.split('|').map(c => c.trim()).filter(Boolean);
-          if (cells.length >= 3 && (cells[2].includes('✅') || cells[2].includes('❌'))) {
-            // 归档此行
-            const emoji = currentCat.substring(0, 2); // 取分类 emoji
-            archived.push({ source: emoji + ' ' + currentCat.replace(emoji, '').trim(), id: cells[0], task: cells[1], date: today, result: cells[2] });
-            continue; // 跳过此行（不加入输出）
-          }
-        }
-
-        newLines.push(line);
+      var res = await fetch('/api/tasks/archive', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      if (!res.ok) {
+        var err = await res.json().catch(function(){ return {}; });
+        throw new Error(err.error || ('HTTP ' + res.status));
       }
-
-      if (archived.length === 0) {
-        if (btn) { btn.disabled = false; btn.textContent = '📦 执行周度归档'; }
-        toast('没有需要归档的任务', '');
-        return;
-      }
-
-      // 3. 生成归档条目，追加到归档区
-      const now = new Date();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay() + 1); // 周一
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6); // 周日
-      const fmt = (d) => (d.getMonth() + 1) + '/' + d.getDate();
-      const weekLabel = '第' + Math.ceil((now.getDate() + (new Date(now.getFullYear(), now.getMonth(), 1).getDay() || 7) - 1) / 7) + '周（' + fmt(weekStart) + ' ~ ' + fmt(weekEnd) + '）';
-
-      // 找到归档区 ## 📦 之后的 ### 或直接追加
-      let archiveIdx = -1;
-      for (let i = 0; i < newLines.length; i++) {
-        if (newLines[i].trim().startsWith('## 📦')) { archiveIdx = i; break; }
-      }
-      if (archiveIdx === -1) {
-        // 没有归档区，创建
-        newLines.push('', '---', '', '## 📦 周度归档', '');
-        archiveIdx = newLines.length - 1;
-      }
-
-      // 检查当前周是否已有归档
-      let weekIdx = -1;
-      for (let i = archiveIdx; i < newLines.length; i++) {
-        if (newLines[i].trim().startsWith('### ') && newLines[i].includes(weekLabel)) {
-          weekIdx = i; break;
-        }
-      }
-
-      if (weekIdx === -1) {
-        // 插入新周
-        const insertAt = archiveIdx + 1;
-        newLines.splice(insertAt, 0, '', '### ' + weekLabel, '', '| 来源 | ID | 任务 | 完成日 | 结果 |', '|------|----|------|--------|------|');
-      }
-
-      // 追加归档条目
-      for (const a of archived) {
-        newLines.push('| ' + a.source + ' | ' + a.id + ' | ' + a.task + ' | ' + a.date + ' | ' + a.result + ' |');
-      }
-
-      const newContent = newLines.join(NL);
-
-      // 4. PUT
-      const putBody = {
-        message: '📦 周度归档 — ' + archived.length + ' 条',
-        content: toBase64(newContent),
-        sha: sha,
-        branch: 'main'
-      };
-      const putRes = await fetch(url, {
-        method: 'PUT',
-        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', Accept: 'application/vnd.github+json' },
-        body: JSON.stringify(putBody)
-      });
-      if (!putRes.ok) throw new Error('PUT failed: ' + putRes.status);
-
-      toast('✅ 已归档 ' + archived.length + ' 条任务', 'ok');
-      if (btn) { btn.disabled = false; btn.textContent = '📦 执行周度归档'; }
-      // 刷新页面以显示最新数据
-      setTimeout(() => location.reload(), 1500);
-    } catch(e) {
-      toast('归档失败: ' + e.message, 'err');
-      if (btn) { btn.disabled = false; btn.textContent = '📦 执行周度归档'; }
+      var body = await res.json();
+      if (!body.ok) throw new Error(body.error || '归档失败');
+      if (body.count === 0) toast('没有需要归档的任务', '');
+      else toast('✅ 已归档 ' + body.count + ' 条任务', 'ok');
+      if (btn) { btn.disabled = false; btn.textContent = '📦 周度归档'; }
+      setTimeout(function(){ location.reload(); }, 400);
+    } catch (e) {
+      toast('请启动本地服务: npx tsx tools/dashboard-server.ts  （' + e.message + '）', 'err');
+      if (btn) { btn.disabled = false; btn.textContent = '📦 周度归档'; }
     }
   };
-
-  // 保存 Token
-  window.saveToken = function() {
-    const input = document.getElementById('token-input');
-    const val = input.value.trim();
-    if (val) {
-      localStorage.setItem('gh_pat', val);
-      document.getElementById('token-setup-row').style.display = 'none';
-      document.getElementById('token-help').style.display = 'none';
-      toast('✅ Token 已保存', 'ok');
-    }
-  };
-
-  window.clearToken = function() {
-    localStorage.removeItem('gh_pat');
-    document.getElementById('token-setup-row').style.display = 'flex';
-    toast('Token 已清除', '');
-  };
-
-  function showTokenSetup() {
-    document.getElementById('token-setup-row').style.display = 'flex';
-    document.getElementById('token-help').style.display = 'block';
-  }
-  window.showTokenSetup = showTokenSetup;
 
   function refreshTaskCards() {
-    // 本地 API 已写 MD 时，短延迟刷新即可；GitHub 路径稍长
     setTimeout(function(){ location.reload(); }, 400);
   }
 
