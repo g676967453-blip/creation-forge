@@ -1,5 +1,8 @@
 # 03 — 开发工作流
 
+> 本文是**工程向摘要**。完整可触发流程见 [../workflows/README.md](../workflows/README.md)；建项权威步骤见 [../workflows/创建项目.md](../workflows/创建项目.md)。  
+> Git **格式约定**以 [06-git-conventions.md](./06-git-conventions.md) 为准。
+
 ## 日常开发循环
 
 ```
@@ -11,41 +14,45 @@
    └──────────────────────────────┘
 ```
 
+日常「遇问题 → 交付 → 记 works」见 [operational-loop.md](./operational-loop.md)。
+
 ---
 
 ## 创建新游戏项目
 
-### 方式一：手动复制模板
+> **现行结构（2026-08 起）：** 所有项目扁平放在 `projects/<项目名>/`（如 `projects/GAME-002/`、`projects/xiaohongshu/`）。  
+> ~~`projects/originals/`、`projects/sandbox/`~~ 为历史分层，**不要再新建**。
+
+### 方式一：按工作流创建（推荐）
+
+走 [../workflows/创建项目.md](../workflows/创建项目.md)（`/new-project`）：定类型 → 选模板 → 初始化 → 注册到体系。
+
+### 方式二：手动复制模板
 
 ```bash
-# 1. 确定项目位置
+# 1. 在 projects/ 下建目录（名称用英文或项目代号）
+#    例：projects/my-roguelike/  或  projects/GAME-003/
 
-#    original  → projects/originals/<名称>
-#    sandbox   → projects/sandbox/<名称>
-#    独立游戏  → projects/GAME-XXX/<名称>（如 GAME-002/开仙门）
+# 2. 复制模板（Phaser 或 Godot）
+cp -r templates/game-phaser projects/<项目名>
+# 或：cp -r templates/game-godot projects/<项目名>
 
-# 2. 复制模板（以 Phaser 为例）
-cp -r templates/game-phaser projects/<项目路径>
+# 3. 修改 package.json / project.godot 中的项目名与描述
+#    Phaser：name 建议 "@creation-forge/<项目名>"
 
-# 3. 修改 package.json
-#    把 "name" 改成 "@creation-forge/<项目名>"
-#    更新 "description"
-
-# 4. 安装依赖
-cd projects/<项目路径>
+# 4. 安装依赖并启动（Phaser）
+cd projects/<项目名>
 npm install
-
-# 5. 启动开发
 npm run dev
 ```
 
-### 方式二：使用脚手架脚本
+### 方式三：脚手架脚本
 
 ```bash
 npm run scaffold
 ```
 
-按提示选择项目类型、输入名称即可。
+若脚手架仍提示 `originals`/`sandbox`，以**扁平 `projects/<名>`** 为准，或先手动建项再改脚手架（见创建项目工作流中的已知债）。
 
 ---
 

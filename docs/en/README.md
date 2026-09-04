@@ -1,5 +1,7 @@
 # Creation Forge (造化坊)
 
+> **Maintenance status:** English here is a **minimal overview only**. Full docs are Chinese under `docs/zh-CN/` and the [docs hub](../README.md). We do **not** keep bilingual parity.
+
 > _A single spark can start a prairie fire._ — Chinese proverb
 
 Creation Forge is the practice ground for **a new learning philosophy for the AI era**:
@@ -51,7 +53,8 @@ npm run dev
 
 ## Documentation
 
-Primary documentation is in **Chinese** (`docs/zh-CN/`). This English README is a minimal overview.
+Primary documentation is in **Chinese**. Start at **[docs/README.md](../README.md)** (hub).  
+`docs/zh-CN/` = philosophy + engineering conventions. This English README is a minimal overview only.
 
 | # | Document | Description |
 |---|----------|-------------|

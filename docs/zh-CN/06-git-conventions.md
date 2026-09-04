@@ -1,5 +1,8 @@
 # 06 — Git 提交规范
 
+> **本页 = Git 分支命名与提交格式的权威约定。**  
+> 工具教程：[../tool-guides/git/01-git-intro.md](../tool-guides/git/01-git-intro.md) · 提交推送流程：[../workflows/Git-提交推送.md](../workflows/Git-提交推送.md)
+
 ## 分支策略
 
 ```
