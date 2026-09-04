@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>救火英雄 · 关卡编辑器</title>
+<style>
+:root{
+  --bg:#0f1419;--panel:#1a2332;--panel2:#243044;--line:#2e3d52;
+  --text:#e8eef7;--muted:#8b9bb4;--accent:#ffb020;--ok:#3dd68c;--danger:#ff5c5c;
+  --fire1:#ff6b35;--fire2:#ff3b30;--fire3:#c41e3a;--rescue:#4fc3f7;--redwin:#ff5252;--empty:#3a4556;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button,select,input{font:inherit}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:280px 1fr 320px;gap:0;min-height:100vh}
+@media(max-width:1100px){.app{grid-template-columns:1fr;}}
+.side,.main,.right{padding:16px;border-right:1px solid var(--line)}
+.right{border-right:0;border-left:1px solid var(--line)}
+@media(max-width:1100px){.side,.right{border:0;border-bottom:1px solid var(--line)}}
+h1{font-size:18px;margin-bottom:4px}
+.sub{color:var(--muted);font-size:12px;line-height:1.5;margin-bottom:14px}
+.sec{margin-bottom:16px}
+.sec h2{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:8px 12px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--text);cursor:pointer;font-size:13px;
+}
+.btn:hover{border-color:var(--accent);color:#fff}
+.btn.primary{background:linear-gradient(180deg,#ffc14d,#e89a10);color:#1a1200;border-color:#c88700;font-weight:600}
+.btn.danger{background:#3a1c1c;border-color:#7a3030;color:#ffb4b4}
+.btn.ok{background:#163528;border-color:#2a6b4a;color:#9dffc9}
+.btn.sm{padding:5px 8px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.level-list{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow:auto;padding-right:4px}
+.level-item{
+  display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;
+  background:var(--panel);border:1px solid transparent;cursor:pointer;
+}
+.level-item:hover{border-color:var(--line)}
+.level-item.active{border-color:var(--accent);background:#2a2418}
+.level-item .idx{width:28px;height:28px;border-radius:6px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.level-item .meta{flex:1;min-width:0}
+.level-item .meta b{display:block;font-size:13px}
+.level-item .meta span{font-size:11px;color:var(--muted)}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool{
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+  padding:10px;border-radius:10px;border:2px solid transparent;background:var(--panel);cursor:pointer;text-align:left;
+}
+.tool.active{border-color:var(--accent);box-shadow:0 0 0 1px rgba(255,176,32,.25)}
+.tool .swatch{width:100%;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.tool small{color:var(--muted);font-size:11px}
+.canvas-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.board-frame{
+  background:linear-gradient(180deg,#1e2a3a,#15202c);border:1px solid var(--line);border-radius:16px;
+  padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.35)
+}
+.hud-fake{width:100%;max-width:420px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:8px}
+.grid{
+  display:grid;gap:4px;user-select:none;touch-action:none;
+  background:#0c121a;padding:8px;border-radius:8px;
+}
+.cell{
+  width:52px;height:52px;border-radius:6px;border:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  cursor:crosshair;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);position:relative;
+}
+.cell:hover{outline:2px solid rgba(255,255,32,.55);outline-offset:1px;z-index:1}
+.cell .tag{font-size:10px;opacity:.9}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+}
+.stat b{display:block;font-size:20px;line-height:1.2}
+.stat span{font-size:11px;color:var(--muted)}
+.stat.warn b{color:#ffb020}
+.stat.bad b{color:var(--danger)}
+.stat.good b{color:var(--ok)}
+textarea{
+  width:100%;min-height:180px;resize:vertical;background:#0c121a;color:#d7e3f4;
+  border:1px solid var(--line);border-radius:10px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.45
+}
+label.field{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+input[type=number],input[type=text]{
+  width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text)
+}
+.hint{font-size:12px;color:var(--muted);line-height:1.55}
+.hint code{background:#0c121a;padding:1px 5px;border-radius:4px;color:#ffd79a}
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);
+  background:#102018;color:#b6ffd6;border:1px solid #2a6b4a;padding:10px 16px;border-radius:999px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:99;font-size:13px
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.footer-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 左：关卡列表 -->
+  <aside class="side">
+    <h1>🚒 关卡编辑器</h1>
+    <p class="sub">点格子刷窗 · 多关编排 · 导出给 <code>fire-hero-iaa.html</code> 使用</p>
+
+    <div class="sec">
+      <h2>关卡列表</h2>
+      <div class="row">
+        <button class="btn primary sm" id="btnAdd">＋ 新关</button>
+        <button class="btn sm" id="btnDup">复制</button>
+        <button class="btn danger sm" id="btnDel">删除</button>
+      </div>
+      <div class="row">
+        <button class="btn sm" id="btnUp">↑</button>
+        <button class="btn sm" id="btnDown">↓</button>
+        <button class="btn sm" id="btnResetDefault">恢复默认 6 关</button>
+      </div>
+      <div class="level-list" id="levelList"></div>
+    </div>
+
+    <div class="sec">
+      <h2>画布尺寸</h2>
+      <div class="row">
+        <div style="flex:1">
+          <label class="field">列（固定 7，与游戏一致）</label>
+          <input type="number" id="inpCols" value="7" min="7" max="7" disabled title="游戏 BRICK_COLS=7，不可改"/>
+        </div>
+        <div style="flex:1">
+          <label class="field">行数</label>
+          <input type="number" id="inpRows" value="3" min="1" max="12"/>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn sm" id="btnApplyRows">应用行数</button>
+        <button class="btn sm" id="btnClear">清空本关</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>说明</h2>
+      <p class="hint">
+        字符规则与游戏 <code>LEVEL_LAYOUTS</code> 一致：<br/>
+        <code>F</code> 火1 · <code>f</code> 火2 · <code>g</code> 火3<br/>
+        <code>R</code> 救援 · <code>r</code> 红窗 · <code>.</code> 空<br/>
+        超过手配关数后游戏会走程序化生成。
+      </p>
+    </div>
+  </aside>
+
+  <!-- 中：画布 -->
+  <main class="main">
+    <div class="canvas-wrap">
+      <div class="hud-fake">
+        <span id="titleLevel">关卡 1</span>
+        <span>拖拽涂抹 · 右键/橡皮 = 空</span>
+      </div>
+      <div class="board-frame">
+        <div class="grid" id="grid" style="grid-template-columns:repeat(7,52px)"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:#ff6b35"></i>F 火1</span>
+        <span><i style="background:#ff3b30"></i>f 火2</span>
+        <span><i style="background:#c41e3a"></i>g 火3</span>
+        <span><i style="background:#4fc3f7"></i>R 救援</span>
+        <span><i style="background:#ff5252"></i>r 红窗</span>
+        <span><i style="background:#3a4556"></i>. 空</span>
+      </div>
+      <div class="stats" style="width:min(100%,420px);margin-top:8px">
+        <div class="stat" id="stFire"><b>0</b><span>燃烧窗（灭火通道）</span></div>
+        <div class="stat" id="stRescue"><b>0</b><span>救援窗（不含红窗）</span></div>
+        <div class="stat" id="stRed"><b>0</b><span>红窗（跳楼加分，非硬目标）</span></div>
+        <div class="stat" id="stBalance"><b>—</b><span>双通道平衡提示</span></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 右：笔刷与导出 -->
+  <aside class="right">
+    <div class="sec">
+      <h2>笔刷</h2>
+      <div class="tools" id="tools"></div>
+      <p class="hint" style="margin-top:8px">快捷键：1–6 切换笔刷，Z 撤销，Ctrl+S 保存到浏览器</p>
+    </div>
+
+    <div class="sec">
+      <h2>本机关卡名（可选）</h2>
+      <input type="text" id="inpName" placeholder="例如：入门教学"/>
+    </div>
+
+    <div class="sec">
+      <h2>导入 / 导出</h2>
+      <div class="row">
+        <button class="btn ok sm" id="btnSaveLS">保存到浏览器</button>
+        <button class="btn sm" id="btnLoadLS">读取浏览器</button>
+      </div>
+      <div class="row">
+        <button class="btn sm" id="btnExportJson">下载 JSON</button>
+        <button class="btn sm" id="btnImportJson">导入 JSON</button>
+        <input type="file" id="fileJson" accept="application/json,.json" hidden/>
+      </div>
+      <div class="row">
+        <button class="btn primary sm" id="btnExportJs">复制 JS 数组</button>
+        <button class="btn sm" id="btnApplyGame">写入试玩（localStorage）</button>
+      </div>
+      <div class="row">
+        <a class="btn sm" id="linkPlay" href="./fire-hero-iaa.html" target="_blank">打开游戏试玩</a>
+        <button class="btn danger sm" id="btnClearGame">清除游戏自定义关卡</button>
+      </div>
+      <label class="field" style="margin-top:10px">预览 / 粘贴区（可改完再「从文本解析」）</label>
+      <textarea id="out" spellcheck="false"></textarea>
+      <div class="footer-actions">
+        <button class="btn sm" id="btnFromText">从文本解析</button>
+        <button class="btn sm" id="btnRefreshOut">刷新预览</button>
+      </div>
+      <p class="hint" style="margin-top:8px">
+        <b>推荐流程：</b>编好 →「写入试玩」→「打开游戏试玩」。游戏会优先读自定义关卡。<br/>
+        定稿后点「复制 JS 数组」，粘贴替换 <code>fire-hero-iaa.html</code> 里的 <code>LEVEL_LAYOUTS</code>。
+      </p>
+    </div>
+  </aside>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var COLS=7;
+  var LS_EDITOR='fireHeroLevelEditor.v1';
+  var LS_GAME='fireHeroCustomLevels'; // 游戏读取此 key
+
+  var TYPES={
+    '.':{ch:'.',name:'空',color:'#3a4556',label:''},
+    'F':{ch:'F',name:'火1',color:'#ff6b35',label:'F1'},
+    'f':{ch:'f',name:'火2',color:'#ff3b30',label:'F2'},
+    'g':{ch:'g',name:'火3',color:'#c41e3a',label:'F3'},
+    'R':{ch:'R',name:'救援',color:'#4fc3f7',label:'救'},
+    'r':{ch:'r',name:'红窗',color:'#ff5252',label:'红'}
+  };
+  var BRUSH_ORDER=['F','f','g','R','r','.'];
+
+  // 从游戏同款短行格式解析默认关
+  function parseShortLayout(lines){
+    return lines.map(function(line){
+      var row=[];
+      for(var c=0;c<COLS;c++){
+        row.push(c<line.length?line.charAt(c):'.');
+      }
+      return row;
+    });
+  }
+
+  var DEFAULT_SHORT=[
+    {name:'L1 入门', layout:['FFF','F.F','R.R']},
+    {name:'L2 二级火+红窗', layout:['FFR','FfF','RFr','...']},
+    {name:'L3 三级火', layout:['FfR','RgF','fF.','RrR']},
+    {name:'L4 混编', layout:['gFR','fgr','FRf','rRF']},
+    {name:'L5 火人平衡', layout:['RrR','FgF','fRf','gRg','RrR']},
+    {name:'L6 高压', layout:['ffR','ggr','FFr','fRg','rRf','RrF']}
+  ];
+
+  function fromShortPack(pack){
+    return pack.map(function(p){
+      return {name:p.name, rows:parseShortLayout(p.layout)};
+    });
+  }
+
+  var state={
+    levels:fromShortPack(DEFAULT_SHORT),
+    cur:0,
+    brush:'F',
+    painting:false,
+    paintChar:null,
+    history:[]
+  };
+
+  var el={
+    list:$('levelList'), grid:$('grid'), tools:$('tools'), out:$('out'),
+    title:$('titleLevel'), toast:$('toast'),
+    stFire:$('stFire'), stRescue:$('stRescue'), stRed:$('stRed'), stBalance:$('stBalance'),
+    inpRows:$('inpRows'), inpName:$('inpName')
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  function toast(msg){
+    el.toast.textContent=msg;
+    el.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t=setTimeout(function(){ el.toast.classList.remove('show'); },1800);
+  }
+
+  function curLevel(){ return state.levels[state.cur]; }
+
+  function cloneRows(rows){
+    return rows.map(function(r){ return r.slice(); });
+  }
+
+  function pushHistory(){
+    state.history.push({cur:state.cur, rows:cloneRows(curLevel().rows)});
+    if(state.history.length>80) state.history.shift();
+  }
+
+  function undo(){
+    var h=state.history.pop();
+    if(!h) return;
+    if(state.levels[h.cur]) state.levels[h.cur].rows=h.rows;
+    state.cur=h.cur;
+    renderAll();
+    toast('已撤销');
+  }
+
+  function emptyRow(){
+    var r=[]; for(var i=0;i<COLS;i++) r.push('.'); return r;
+  }
+
+  function ensureRows(n){
+    var lv=curLevel();
+    while(lv.rows.length<n) lv.rows.push(emptyRow());
+    if(lv.rows.length>n) lv.rows=lv.rows.slice(0,n);
+  }
+
+  function setCell(r,c,ch){
+    var lv=curLevel();
+    if(r<0||c<0||r>=lv.rows.length||c>=COLS) return false;
+    if(lv.rows[r][c]===ch) return false;
+    lv.rows[r][c]=ch;
+    return true;
+  }
+
+  function statsOf(lv){
+    var fire=0,rescue=0,red=0,empty=0;
+    for(var r=0;r<lv.rows.length;r++){
+      for(var c=0;c<COLS;c++){
+        var ch=lv.rows[r][c]||'.';
+        if(ch==='F'||ch==='f'||ch==='g') fire++;
+        else if(ch==='R') rescue++;
+        else if(ch==='r') red++;
+        else empty++;
+      }
+    }
+    return {fire:fire,rescue:rescue,red:red,empty:empty,rows:lv.rows.length};
+  }
+
+  function balanceTip(s){
+    if(s.fire===0 && s.rescue===0) return {text:'无效关',cls:'bad'};
+    if(s.fire===0) return {text:'仅救人',cls:'warn'};
+    if(s.rescue===0) return {text:'仅灭火',cls:'warn'};
+    var ratio=s.fire/Math.max(1,s.rescue);
+    if(ratio>=0.6 && ratio<=2.2) return {text:'较均衡',cls:'good'};
+    if(s.fire>s.rescue*2.5) return {text:'偏灭火',cls:'warn'};
+    if(s.rescue>s.fire*2.5) return {text:'偏救人',cls:'warn'};
+    return {text:'可玩',cls:'good'};
+  }
+
+  // —— 序列化 ——
+  function rowsToShortLines(rows){
+    return rows.map(function(row){
+      var s=row.join('');
+      // 去掉行尾多余 '.'，保持与现有源码风格接近；但至少保留 1 个字符
+      s=s.replace(/\.+$/,'');
+      if(s==='') s='.';
+      // 游戏用 charAt 读，短行右侧视为 '.'
+      return s;
+    });
+  }
+
+  function levelsToShortPack(levels){
+    return levels.map(function(lv,i){
+      return {name:lv.name||('L'+(i+1)), layout:rowsToShortLines(lv.rows)};
+    });
+  }
+
+  function toJsArray(levels){
+    var pack=levelsToShortPack(levels);
+    var lines=['var LEVEL_LAYOUTS=['];
+    pack.forEach(function(p,i){
+      var arr=p.layout.map(function(s){ return JSON.stringify(s); }).join(',');
+      var comma=i<pack.length-1?',':'';
+      lines.push('  ['+arr+']'+comma+'  // '+(p.name||('L'+(i+1))));
+    });
+    lines.push('];');
+    return lines.join('\n');
+  }
+
+  function toJson(levels){
+    return JSON.stringify({version:1,cols:COLS,levels:levelsToShortPack(levels)},null,2);
+  }
+
+  function parseLayoutLines(lines){
+    if(!Array.isArray(lines) || !lines.length) throw new Error('关卡为空');
+    return lines.map(function(line){
+      line=String(line||'');
+      var row=[];
+      for(var c=0;c<COLS;c++){
+        var ch=c<line.length?line.charAt(c):'.';
+        if(!TYPES[ch]) ch='.';
+        row.push(ch);
+      }
+      return row;
+    });
+  }
+
+  function parseJsOrJsonText(text){
+    text=(text||'').trim();
+    if(!text) throw new Error('文本为空');
+
+    // JSON
+    if(text[0]==='{' || text[0]==='['){
+      var data=JSON.parse(text);
+      var list=data.levels || data;
+      if(!Array.isArray(list)) throw new Error('JSON 格式无效');
+      return list.map(function(item,i){
+        if(Array.isArray(item)) return {name:'L'+(i+1), rows:parseLayoutLines(item)};
+        return {name:item.name||('L'+(i+1)), rows:parseLayoutLines(item.layout||item.rows||[])};
+      });
+    }
+
+    // 提取 LEVEL_LAYOUTS = [ ... ]
+    var m=text.match(/LEVEL_LAYOUTS\s*=\s*(\[[\s\S]*?\]);/);
+    var arrText=m?m[1]:null;
+    if(!arrText){
+      // 尝试整段就是数组
+      if(text[0]==='[') arrText=text.replace(/;?\s*$/,'');
+    }
+    if(!arrText) throw new Error('未找到 LEVEL_LAYOUTS 数组');
+
+    // 用 Function 解析字面量（仅本地工具）
+    var arr=Function('"use strict"; return ('+arrText+');')();
+    if(!Array.isArray(arr)) throw new Error('解析结果不是数组');
+    return arr.map(function(layout,i){
+      return {name:'L'+(i+1), rows:parseLayoutLines(layout)};
+    });
+  }
+
+  // —— 渲染 ——
+  function renderTools(){
+    el.tools.innerHTML='';
+    BRUSH_ORDER.forEach(function(ch,idx){
+      var t=TYPES[ch];
+      var b=document.createElement('button');
+      b.type='button';
+      b.className='tool'+(state.brush===ch?' active':'');
+      b.innerHTML='<div class="swatch" style="background:'+t.color+'">'+(t.label||'空')+'</div><b>'+t.name+'</b><small>键 '+(idx+1)+' · 字符 '+ch+'</small>';
+      b.onclick=function(){ state.brush=ch; renderTools(); };
+      el.tools.appendChild(b);
+    });
+  }
+
+  function renderList(){
+    el.list.innerHTML='';
+    state.levels.forEach(function(lv,i){
+      var s=statsOf(lv);
+      var item=document.createElement('div');
+      item.className='level-item'+(i===state.cur?' active':'');
+      item.innerHTML='<div class="idx">'+(i+1)+'</div><div class="meta"><b>'+(lv.name||('关卡 '+(i+1)))+'</b><span>'+s.rows+'行 · 火'+s.fire+' · 救'+s.rescue+' · 红'+s.red+'</span></div>';
+      item.onclick=function(){ state.cur=i; renderAll(); };
+      el.list.appendChild(item);
+    });
+  }
+
+  function cellStyle(ch){
+    var t=TYPES[ch]||TYPES['.'];
+    return t;
+  }
+
+  function renderGrid(){
+    var lv=curLevel();
+    el.title.textContent='关卡 '+(state.cur+1)+(lv.name?(' · '+lv.name):'');
+    el.inpName.value=lv.name||'';
+    el.inpRows.value=String(lv.rows.length);
+    el.grid.style.gridTemplateColumns='repeat('+COLS+',52px)';
+    el.grid.innerHTML='';
+
+    lv.rows.forEach(function(row,r){
+      for(var c=0;c<COLS;c++){
+        (function(r,c){
+          var ch=row[c]||'.';
+          var t=cellStyle(ch);
+          var cell=document.createElement('div');
+          cell.className='cell';
+          cell.style.background=t.color;
+          cell.innerHTML='<span class="tag">'+(t.label||'')+'</span>';
+          cell.title='('+c+','+r+') '+t.name;
+
+          cell.addEventListener('mousedown',function(e){
+            e.preventDefault();
+            pushHistory();
+            state.painting=true;
+            // 右键或中键当橡皮
+            state.paintChar=(e.button===2 || e.button===1)? '.': state.brush;
+            if(setCell(r,c,state.paintChar)) { renderGridCellsOnly(); renderStats(); renderList(); refreshOut(); }
+          });
+          cell.addEventListener('mouseenter',function(){
+            if(!state.painting) return;
+            if(setCell(r,c,state.paintChar||state.brush)) { renderGridCellsOnly(); renderStats(); renderList(); refreshOut(); }
+          });
+          el.grid.appendChild(cell);
+        })(r,c);
+      }
+    });
+    renderStats();
+  }
+
+  function renderGridCellsOnly(){
+    // 轻量刷新：仅更新已有 cell 的样式（行数不变时）
+    var lv=curLevel();
+    var cells=el.grid.children;
+    var i=0;
+    for(var r=0;r<lv.rows.length;r++){
+      for(var c=0;c<COLS;c++,i++){
+        var ch=lv.rows[r][c]||'.';
+        var t=cellStyle(ch);
+        var cell=cells[i];
+        if(!cell) return renderGrid();
+        cell.style.background=t.color;
+        cell.innerHTML='<span class="tag">'+(t.label||'')+'</span>';
+      }
+    }
+  }
+
+  function renderStats(){
+    var s=statsOf(curLevel());
+    var b=balanceTip(s);
+    el.stFire.innerHTML='<b>'+s.fire+'</b><span>燃烧窗（灭火通道）</span>';
+    el.stRescue.innerHTML='<b>'+s.rescue+'</b><span>救援窗（不含红窗）</span>';
+    el.stRed.innerHTML='<b>'+s.red+'</b><span>红窗（跳楼加分，非硬目标）</span>';
+    el.stBalance.className='stat '+b.cls;
+    el.stBalance.innerHTML='<b>'+b.text+'</b><span>双通道平衡提示</span>';
+  }
+
+  function refreshOut(){
+    el.out.value=toJsArray(state.levels);
+  }
+
+  function renderAll(){
+    renderTools();
+    renderList();
+    renderGrid();
+    refreshOut();
+  }
+
+  // —— 操作 ——
+  function addLevel(){
+    state.levels.push({name:'新关卡', rows:[emptyRow(),emptyRow(),emptyRow()]});
+    state.cur=state.levels.length-1;
+    state.history=[];
+    renderAll();
+    toast('已添加关卡 '+state.levels.length);
+  }
+
+  function dupLevel(){
+    var lv=curLevel();
+    state.levels.splice(state.cur+1,0,{name:(lv.name||'关卡')+' 副本', rows:cloneRows(lv.rows)});
+    state.cur++;
+    renderAll();
+    toast('已复制');
+  }
+
+  function delLevel(){
+    if(state.levels.length<=1){ toast('至少保留 1 关'); return; }
+    state.levels.splice(state.cur,1);
+    if(state.cur>=state.levels.length) state.cur=state.levels.length-1;
+    state.history=[];
+    renderAll();
+    toast('已删除');
+  }
+
+  function moveLevel(delta){
+    var j=state.cur+delta;
+    if(j<0||j>=state.levels.length) return;
+    var t=state.levels[state.cur];
+    state.levels[state.cur]=state.levels[j];
+    state.levels[j]=t;
+    state.cur=j;
+    renderAll();
+  }
+
+  function applyRows(){
+    var n=parseInt(el.inpRows.value,10)||3;
+    n=Math.max(1,Math.min(12,n));
+    pushHistory();
+    ensureRows(n);
+    renderAll();
+    toast('行数 = '+n);
+  }
+
+  function clearLevel(){
+    pushHistory();
+    var n=curLevel().rows.length;
+    curLevel().rows=[];
+    for(var i=0;i<n;i++) curLevel().rows.push(emptyRow());
+    renderAll();
+    toast('本关已清空');
+  }
+
+  function saveLS(){
+    localStorage.setItem(LS_EDITOR, toJson(state.levels));
+    toast('已保存到浏览器');
+  }
+
+  function loadLS(){
+    var raw=localStorage.getItem(LS_EDITOR);
+    if(!raw){ toast('浏览器里没有存档'); return; }
+    try{
+      state.levels=parseJsOrJsonText(raw);
+      state.cur=0; state.history=[];
+      renderAll();
+      toast('已读取浏览器存档');
+    }catch(e){ toast('读取失败：'+e.message); }
+  }
+
+  function exportJson(){
+    var blob=new Blob([toJson(state.levels)],{type:'application/json'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='fire-hero-levels.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('已下载 JSON');
+  }
+
+  function importJsonFile(file){
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        state.levels=parseJsOrJsonText(String(reader.result||''));
+        state.cur=0; state.history=[];
+        renderAll();
+        toast('导入成功 · '+state.levels.length+' 关');
+      }catch(e){ toast('导入失败：'+e.message); }
+    };
+    reader.readAsText(file,'utf-8');
+  }
+
+  function copyJs(){
+    refreshOut();
+    var text=el.out.value;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast('已复制 LEVEL_LAYOUTS'); }).catch(function(){ fallbackCopy(text); });
+    }else fallbackCopy(text);
+  }
+
+  function fallbackCopy(text){
+    el.out.focus(); el.out.select();
+    try{ document.execCommand('copy'); toast('已复制'); }catch(e){ toast('请手动复制文本框'); }
+  }
+
+  function applyToGame(){
+    var payload={
+      version:1,
+      updatedAt:new Date().toISOString(),
+      levels:levelsToShortPack(state.levels)
+    };
+    localStorage.setItem(LS_GAME, JSON.stringify(payload));
+    // 同步编辑器存档
+    localStorage.setItem(LS_EDITOR, toJson(state.levels));
+    toast('已写入试玩 · 共 '+state.levels.length+' 关，请打开游戏');
+  }
+
+  function clearGameCustom(){
+    localStorage.removeItem(LS_GAME);
+    toast('已清除游戏自定义关卡（恢复内置）');
+  }
+
+  function fromText(){
+    try{
+      state.levels=parseJsOrJsonText(el.out.value);
+      state.cur=0; state.history=[];
+      renderAll();
+      toast('解析成功 · '+state.levels.length+' 关');
+    }catch(e){ toast('解析失败：'+e.message); }
+  }
+
+  function resetDefault(){
+    if(!confirm('恢复为游戏默认 6 关？未导出的修改会丢失。')) return;
+    state.levels=fromShortPack(DEFAULT_SHORT);
+    state.cur=0; state.history=[];
+    renderAll();
+    toast('已恢复默认 6 关');
+  }
+
+  // —— 事件绑定 ——
+  document.addEventListener('mouseup',function(){ state.painting=false; state.paintChar=null; });
+  document.addEventListener('contextmenu',function(e){ if(e.target.closest&&e.target.closest('#grid')) e.preventDefault(); });
+
+  $('btnAdd').onclick=addLevel;
+  $('btnDup').onclick=dupLevel;
+  $('btnDel').onclick=delLevel;
+  $('btnUp').onclick=function(){ moveLevel(-1); };
+  $('btnDown').onclick=function(){ moveLevel(1); };
+  $('btnResetDefault').onclick=resetDefault;
+  $('btnApplyRows').onclick=applyRows;
+  $('btnClear').onclick=clearLevel;
+  $('btnSaveLS').onclick=saveLS;
+  $('btnLoadLS').onclick=loadLS;
+  $('btnExportJson').onclick=exportJson;
+  $('btnImportJson').onclick=function(){ $('fileJson').click(); };
+  $('fileJson').onchange=function(){ if(this.files&&this.files[0]) importJsonFile(this.files[0]); this.value=''; };
+  $('btnExportJs').onclick=copyJs;
+  $('btnApplyGame').onclick=applyToGame;
+  $('btnClearGame').onclick=clearGameCustom;
+  $('btnFromText').onclick=fromText;
+  $('btnRefreshOut').onclick=function(){ refreshOut(); toast('预览已刷新'); };
+
+  el.inpName.addEventListener('change',function(){
+    curLevel().name=el.inpName.value.trim();
+    renderList(); refreshOut();
+  });
+  el.inpName.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){ curLevel().name=el.inpName.value.trim(); renderList(); refreshOut(); el.inpName.blur(); }
+  });
+
+  document.addEventListener('keydown',function(e){
+    var tag=(e.target&&e.target.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='textarea') return;
+    if(e.key>='1'&&e.key<='6'){
+      state.brush=BRUSH_ORDER[parseInt(e.key,10)-1];
+      renderTools();
+    }
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); saveLS(); }
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ e.preventDefault(); undo(); }
+    if(e.key.toLowerCase()==='z' && !e.ctrlKey && !e.metaKey){ undo(); }
+  });
+
+  // 启动：优先编辑器存档
+  try{
+    var raw=localStorage.getItem(LS_EDITOR);
+    if(raw) state.levels=parseJsOrJsonText(raw);
+  }catch(e){}
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>09-FriendRank</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 450px; height: 800px; overflow: hidden; background: transparent;
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+}
+.phone {
+  width: 450px; height: 800px; overflow: hidden; position: relative;
+  background: #0b0f1a; border-radius: 0;
+}
+.bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% -10%, #2a1a12 0%, transparent 55%),
+    linear-gradient(180deg, #0b0f1a 0%, #12182b 45%, #1a2340 100%);
+}
+.stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 40px 60px, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 120px 30px, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 220px 90px, rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 320px 50px, rgba(255,255,255,.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 380px 120px, rgba(255,255,255,.5) 50%, transparent 51%);
+  pointer-events: none;
+}
+.facade {
+  position: absolute; left: 36px; right: 36px; top: 88px; bottom: 150px;
+  background: linear-gradient(180deg, #1a2340 0%, #12182b 100%);
+  border: 2px solid rgba(255,255,255,.08); border-radius: 6px 6px 0 0; opacity: .45;
+}
+.win-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 10px 8px; }
+.win { aspect-ratio: 1; border-radius: 4px; background: #2a3355; border: 1px solid rgba(255,255,255,.1); }
+.win.fire { background: linear-gradient(180deg, #ff8a3c, #ff3b30); }
+.ground {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 140px;
+  background: linear-gradient(180deg, #1a1520 0%, #0d1018 100%);
+  border-top: 2px solid rgba(255,138,60,.25);
+}
+.mask {
+  position: absolute; inset: 0; z-index: 8;
+  background: rgba(6,9,18,.72);
+}
+.sheet {
+  position: absolute; left: 18px; right: 18px; top: 88px; bottom: 28px; z-index: 10;
+  background: linear-gradient(180deg, rgba(26,35,64,.97) 0%, rgba(12,16,28,.98) 100%);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 16px 10px; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.head-left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.title {
+  font-size: 22px; font-weight: 900; color: #fff;
+  text-shadow: 0 3px 12px rgba(255,138,60,.3);
+}
+.sub { font-size: 12px; font-weight: 700; color: #ffe9c9; opacity: .85; }
+.close {
+  width: 32px; height: 32px; border-radius: 999px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16);
+  color: #fff; font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.tabs {
+  display: flex; gap: 8px; padding: 12px 16px 8px;
+}
+.tab {
+  flex: 1; text-align: center; padding: 8px 6px; border-radius: 999px;
+  font-size: 13px; font-weight: 800; color: rgba(255,233,201,.75);
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+}
+.tab.on {
+  color: #0b0f1a;
+  background: linear-gradient(180deg, #ffd24a 0%, #ffb300 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 0 rgba(180,120,0,.35);
+}
+.me-card {
+  margin: 4px 16px 8px;
+  padding: 12px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,138,60,.18), rgba(255,210,74,.08));
+  border: 1px solid rgba(255,210,74,.35);
+  display: flex; align-items: center; gap: 10px;
+}
+.rank-no {
+  width: 28px; text-align: center; font-size: 15px; font-weight: 900; color: #ffd24a; flex-shrink: 0;
+}
+.rank-no.top1 { color: #ffd24a; }
+.rank-no.top2 { color: #cfd8dc; }
+.rank-no.top3 { color: #ff8a3c; }
+.avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: #1a1208;
+  border: 2px solid rgba(255,255,255,.2); flex-shrink: 0;
+}
+.meta { flex: 1; min-width: 0; text-align: left; }
+.name { font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.desc { font-size: 11px; font-weight: 700; color: #ffe9c9; opacity: .8; margin-top: 2px; }
+.score {
+  font-size: 14px; font-weight: 900; color: #ffd24a; flex-shrink: 0;
+  background: rgba(255,210,74,.12); border-radius: 999px; padding: 5px 10px;
+}
+.list {
+  flex: 1; overflow: hidden; padding: 4px 16px 8px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.row-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  text-align: left;
+}
+.row-item.me {
+  border-color: rgba(255,210,74,.45);
+  background: rgba(255,210,74,.1);
+}
+.row-item.top {
+  border-color: rgba(255,138,60,.28);
+}
+.foot {
+  padding: 10px 16px 16px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.hint {
+  font-size: 11px; font-weight: 700; color: rgba(255,233,201,.65); text-align: center;
+}
+.btns { display: flex; gap: 10px; }
+.btn {
+  flex: 1; text-align: center; padding: 12px 10px; border-radius: 999px;
+  font-size: 14px; font-weight: 800; color: #fff;
+  box-shadow: 0 5px 0 rgba(0,0,0,.22);
+}
+.btn-main { background: linear-gradient(180deg, #ff8a3c 0%, #e65100 100%); }
+.btn-ghost {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 4px 0 rgba(0,0,0,.15);
+}
+.btn-ad { background: linear-gradient(180deg, #5c6bc0 0%, #3949ab 100%); }
+.badge-self {
+  font-size: 10px; font-weight: 800; color: #0b0f1a;
+  background: #ffd24a; border-radius: 999px; padding: 2px 6px; margin-left: 6px;
+}
+</style>
+</head>
+<body>
+<div class="phone" data-name="09-FriendRank">
+  <div class="bg"></div>
+  <div class="stars"></div>
+  <div class="facade">
+    <div class="win-grid">
+      <div class="win fire"></div><div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div><div class="win"></div>
+      <div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div>
+      <div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div>
+    </div>
+  </div>
+  <div class="ground"></div>
+  <div class="mask"></div>
+
+  <div class="sheet">
+    <div class="head">
+      <div class="head-left">
+        <div class="title">好友排行榜</div>
+        <div class="sub">本周最高分 · 好友对决</div>
+      </div>
+      <div class="close">X</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on">好友</div>
+      <div class="tab">全服</div>
+      <div class="tab">本周</div>
+    </div>
+
+    <div class="me-card">
+      <div class="rank-no">12</div>
+      <div class="avatar" style="background:#ffb74d">我</div>
+      <div class="meta">
+        <div class="name">我（小猫）<span class="badge-self">YOU</span></div>
+        <div class="desc">关卡 18 · 连续登录 3 天</div>
+      </div>
+      <div class="score">12840</div>
+    </div>
+
+    <div class="list">
+      <div class="row-item top">
+        <div class="rank-no top1">1</div>
+        <div class="avatar" style="background:#ffd24a">金</div>
+        <div class="meta">
+          <div class="name">火焰队长</div>
+          <div class="desc">哪吒 · 关卡 42</div>
+        </div>
+        <div class="score">48620</div>
+      </div>
+      <div class="row-item top">
+        <div class="rank-no top2">2</div>
+        <div class="avatar" style="background:#cfd8dc">银</div>
+        <div class="meta">
+          <div class="name">水枪小妹</div>
+          <div class="desc">小狗 · 关卡 36</div>
+        </div>
+        <div class="score">39210</div>
+      </div>
+      <div class="row-item top">
+        <div class="rank-no top3">3</div>
+        <div class="avatar" style="background:#ff8a3c">铜</div>
+        <div class="meta">
+          <div class="name">卡皮救火团</div>
+          <div class="desc">卡皮巴拉 · 关卡 31</div>
+        </div>
+        <div class="score">35100</div>
+      </div>
+      <div class="row-item">
+        <div class="rank-no">4</div>
+        <div class="avatar" style="background:#a1887f">阿</div>
+        <div class="meta">
+          <div class="name">阿柴冲分</div>
+          <div class="desc">小狗 · 关卡 28</div>
+        </div>
+        <div class="score">30440</div>
+      </div>
+      <div class="row-item">
+        <div class="rank-no">5</div>
+        <div class="avatar" style="background:#eceff1;color:#37474f">熊</div>
+        <div class="meta">
+          <div class="name">熊猫灭火队</div>
+          <div class="desc">熊猫 · 关卡 25</div>
+        </div>
+        <div class="score">27680</div>
+      </div>
+      <div class="row-item me">
+        <div class="rank-no">12</div>
+        <div class="avatar" style="background:#ffb74d">我</div>
+        <div class="meta">
+          <div class="name">我（小猫）</div>
+          <div class="desc">当前名次 · 距上一名 860 分</div>
+        </div>
+        <div class="score">12840</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="hint">分享成绩可邀请好友 · 每周一 0 点重置周榜</div>
+      <div class="btns">
+        <div class="btn btn-ghost">邀请好友</div>
+        <div class="btn btn-ad">看广告刷新</div>
+        <div class="btn btn-main">继续灭火</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

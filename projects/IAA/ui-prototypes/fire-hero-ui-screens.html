@@ -317,13 +317,46 @@
     max-width: 960px;
     line-height: 1.6;
   }
+
+  /* friend rank popup */
+  .mask { position:absolute;inset:0;z-index:8;background:rgba(6,9,18,.72); }
+  .sheet {
+    position:absolute;left:18px;right:18px;top:88px;bottom:28px;z-index:10;
+    background:linear-gradient(180deg,rgba(26,35,64,.97) 0%,rgba(12,16,28,.98) 100%);
+    border:1px solid rgba(255,255,255,.14);border-radius:22px;
+    box-shadow:0 18px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .head { display:flex;align-items:center;justify-content:space-between;padding:16px 16px 10px;gap:10px;border-bottom:1px solid rgba(255,255,255,.08); }
+  .head-left { display:flex;flex-direction:column;align-items:flex-start;gap:4px; }
+  .close { width:32px;height:32px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .tabs { display:flex;gap:8px;padding:12px 16px 8px; }
+  .tab { flex:1;text-align:center;padding:8px 6px;border-radius:999px;font-size:13px;font-weight:800;color:rgba(255,233,201,.75);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08); }
+  .tab.on { color:#0b0f1a;background:linear-gradient(180deg,#ffd24a 0%,#ffb300 100%);border-color:transparent;box-shadow:0 4px 0 rgba(180,120,0,.35); }
+  .me-card { margin:4px 16px 8px;padding:12px;border-radius:16px;background:linear-gradient(135deg,rgba(255,138,60,.18),rgba(255,210,74,.08));border:1px solid rgba(255,210,74,.35);display:flex;align-items:center;gap:10px; }
+  .rank-no { width:28px;text-align:center;font-size:15px;font-weight:900;color:#ffd24a;flex-shrink:0; }
+  .rank-no.top1 { color:#ffd24a; } .rank-no.top2 { color:#cfd8dc; } .rank-no.top3 { color:#ff8a3c; }
+  .avatar { width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#1a1208;border:2px solid rgba(255,255,255,.2);flex-shrink:0; }
+  .meta { flex:1;min-width:0;text-align:left; }
+  .name { font-size:14px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .desc { font-size:11px;font-weight:700;color:#ffe9c9;opacity:.8;margin-top:2px; }
+  .score { font-size:14px;font-weight:900;color:#ffd24a;flex-shrink:0;background:rgba(255,210,74,.12);border-radius:999px;padding:5px 10px; }
+  .list { flex:1;overflow:hidden;padding:4px 16px 8px;display:flex;flex-direction:column;gap:8px; }
+  .row-item { display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);text-align:left; }
+  .row-item.me { border-color:rgba(255,210,74,.45);background:rgba(255,210,74,.1); }
+  .row-item.top { border-color:rgba(255,138,60,.28); }
+  .foot { padding:10px 16px 16px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:10px; }
+  .hint { font-size:11px;font-weight:700;color:rgba(255,233,201,.65);text-align:center; }
+  .btns { display:flex;gap:10px; }
+  .btn { flex:1;text-align:center;padding:12px 10px;border-radius:999px;font-size:14px;font-weight:800;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.22); }
+  .badge-self { font-size:10px;font-weight:800;color:#0b0f1a;background:#ffd24a;border-radius:999px;padding:2px 6px;margin-left:6px; }
 </style>
 </head>
 <body>
   <div class="board-title">救火英雄 IAA · 游戏界面原型（竖屏 450×800）</div>
   <div class="board-sub">
     对齐：企划 §4 / 微创新规格 / 美术色板（bg.night #0B0F1A · fire.main #FF8A3C · gold #FFD24A · safe #7EF0A0）· 逻辑画布与 fire-hero-iaa.html 一致<br>
-    场景：主菜单 · 局内 HUD · 角色选择 · 通关结算 · 补给队 · 失败复活 · 激励视频 · 暂停
+    场景：主菜单 · 局内 HUD · 角色选择 · 通关结算 · 补给队 · 失败复活 · 激励视频 · 暂停 · 好友排行榜
   </div>
 
   <div class="row">
@@ -556,9 +589,9 @@
       </div>
     </div>
 
-    <!-- 8. 暂停 -->
-    <div class="phone" data-name="08-暂停">
-      <div class="label">08 暂停 Pause</div>
+    <!-- 8. 暂停 · 好友排行榜 -->
+    <div class="phone" data-name="08-暂停 · 好友排行榜">
+      <div class="label">08 暂停 · 好友排行榜 Pause</div>
       <div class="bg"></div>
       <div class="stars"></div>
       <div class="facade" style="opacity:.35">
@@ -567,7 +600,7 @@
         </div>
       </div>
       <div class="ov">
-        <div class="title sm">已暂停</div>
+        <div class="title sm">已暂停 · 好友排行榜</div>
         <div class="sub">局内状态保留 · 可继续或回主菜单</div>
         <div class="btn btn-main">继续游戏</div>
         <div class="btn btn-ghost">主菜单</div>
@@ -576,7 +609,114 @@
 
   </div>
 
-  <div class="section-note">
+  
+    <!-- 9. 好友排行榜 -->
+    <div class="phone" data-name="09-FriendRank">`n      <div class="label">09 好友排行榜 FriendRank</div>
+  <div class="bg"></div>
+  <div class="stars"></div>
+  <div class="facade">
+    <div class="win-grid">
+      <div class="win fire"></div><div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div><div class="win"></div>
+      <div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div>
+      <div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div><div class="win"></div><div class="win"></div><div class="win fire"></div>
+    </div>
+  </div>
+  <div class="ground"></div>
+  <div class="mask"></div>
+
+  <div class="sheet">
+    <div class="head">
+      <div class="head-left">
+        <div class="title">好友排行榜</div>
+        <div class="sub">本周最高分 · 好友对决</div>
+      </div>
+      <div class="close">X</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab on">好友</div>
+      <div class="tab">全服</div>
+      <div class="tab">本周</div>
+    </div>
+
+    <div class="me-card">
+      <div class="rank-no">12</div>
+      <div class="avatar" style="background:#ffb74d">我</div>
+      <div class="meta">
+        <div class="name">我（小猫）<span class="badge-self">YOU</span></div>
+        <div class="desc">关卡 18 · 连续登录 3 天</div>
+      </div>
+      <div class="score">12840</div>
+    </div>
+
+    <div class="list">
+      <div class="row-item top">
+        <div class="rank-no top1">1</div>
+        <div class="avatar" style="background:#ffd24a">金</div>
+        <div class="meta">
+          <div class="name">火焰队长</div>
+          <div class="desc">哪吒 · 关卡 42</div>
+        </div>
+        <div class="score">48620</div>
+      </div>
+      <div class="row-item top">
+        <div class="rank-no top2">2</div>
+        <div class="avatar" style="background:#cfd8dc">银</div>
+        <div class="meta">
+          <div class="name">水枪小妹</div>
+          <div class="desc">小狗 · 关卡 36</div>
+        </div>
+        <div class="score">39210</div>
+      </div>
+      <div class="row-item top">
+        <div class="rank-no top3">3</div>
+        <div class="avatar" style="background:#ff8a3c">铜</div>
+        <div class="meta">
+          <div class="name">卡皮救火团</div>
+          <div class="desc">卡皮巴拉 · 关卡 31</div>
+        </div>
+        <div class="score">35100</div>
+      </div>
+      <div class="row-item">
+        <div class="rank-no">4</div>
+        <div class="avatar" style="background:#a1887f">阿</div>
+        <div class="meta">
+          <div class="name">阿柴冲分</div>
+          <div class="desc">小狗 · 关卡 28</div>
+        </div>
+        <div class="score">30440</div>
+      </div>
+      <div class="row-item">
+        <div class="rank-no">5</div>
+        <div class="avatar" style="background:#eceff1;color:#37474f">熊</div>
+        <div class="meta">
+          <div class="name">熊猫灭火队</div>
+          <div class="desc">熊猫 · 关卡 25</div>
+        </div>
+        <div class="score">27680</div>
+      </div>
+      <div class="row-item me">
+        <div class="rank-no">12</div>
+        <div class="avatar" style="background:#ffb74d">我</div>
+        <div class="meta">
+          <div class="name">我（小猫）</div>
+          <div class="desc">当前名次 · 距上一名 860 分</div>
+        </div>
+        <div class="score">12840</div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="hint">分享成绩可邀请好友 · 每周一 0 点重置周榜</div>
+      <div class="btns">
+        <div class="btn btn-ghost">邀请好友</div>
+        <div class="btn btn-ad">看广告刷新</div>
+        <div class="btn btn-main">继续灭火</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-note">
     导入说明：本文件供 Pixso MCP <code>code_to_design</code> 使用。图层建议命名：Frame 用界面英文名；按钮 <code>*-Btn</code>；文案 <code>*-Text</code>；列表项 <code>*-Item</code>。
     非最终立绘——角色位用色块+文字占位，后续替换 char_*_card。开发可对照 fire-hero-iaa.html 的 ovMenu / ovChar / ovShop / ovLevel / ovOver / ovAd / ovPause。
   </div>

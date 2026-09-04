@@ -198,7 +198,6 @@ var neZhaUsed=false; // 哪吒技能本关是否已用
 var ball2=null; // 哪吒双球技能的第二球
 
 // 手配关卡布局（每行 7 字符：F=火1级 f=火2级 g=火3级 R=救援窗 r=红窗 .=空）
-// 可用 level-editor.html 可视化编辑；写入 localStorage.fireHeroCustomLevels 后优先加载
 var LEVEL_LAYOUTS=[
   ['FFF','F.F','R.R'],                        // L1 入门
   ['FFR','FfF','RFr','...'],                  // L2 引入2级火+红窗
@@ -207,30 +206,6 @@ var LEVEL_LAYOUTS=[
   ['RrR','FgF','fRf','gRg','RrR'],            // L5 火人平衡
   ['ffR','ggr','FFr','fRg','rRf','RrF']       // L6 高压
 ];
-(function loadCustomLevels(){
-  try{
-    var raw=localStorage.getItem('fireHeroCustomLevels');
-    if(!raw) return;
-    var data=JSON.parse(raw);
-    var list=data&&data.levels?data.levels:null;
-    if(!list||!list.length) return;
-    var parsed=[];
-    for(var i=0;i<list.length;i++){
-      var item=list[i];
-      var layout=item&&item.layout?item.layout:(Array.isArray(item)?item:null);
-      if(!layout||!layout.length) continue;
-      var rows=[];
-      for(var r=0;r<layout.length;r++){
-        rows.push(String(layout[r]==null?'':layout[r]));
-      }
-      if(rows.length) parsed.push(rows);
-    }
-    if(parsed.length){
-      LEVEL_LAYOUTS=parsed;
-      console.log('[fire-hero] 已加载自定义关卡 ×'+parsed.length+'（level-editor）');
-    }
-  }catch(e){ console.warn('[fire-hero] 自定义关卡加载失败',e); }
-})();
 
 // ===== 音频（简单合成音效）=====
 var actx=null;
