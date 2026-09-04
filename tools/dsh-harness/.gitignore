@@ -1,0 +1,12 @@
+# never commit machine secrets
+**/.credentials.yaml
+**/settings.yaml
+!templates/settings.yaml.example
+
+# deps / build junk
+**/node_modules/
+**/*.map
+lib/client.css
+
+# optional personal live state (uncomment to ignore)
+# state/worktable-state.json\n

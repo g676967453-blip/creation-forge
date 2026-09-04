@@ -1,0 +1,96 @@
+# DSH settings TEMPLATE (no secrets).
+# Copy to %USERPROFILE%\.dsh\settings.yaml on a new machine if needed,
+# then set API keys via environment variables / DSH credentials UI.
+# DO NOT put real API keys in this file or in Git.
+
+ui-onboarding:
+  welcomeNoticeVersion: 2026-08-13.1
+agent-presets:
+  default: cordis
+permission:
+  defaultPreset: danger-full-access
+ui-theme:
+  preference: light
+ui-conversation:
+  busyEnter: steer
+agent-default-model:
+  provider: grok
+  model: grok-4.5
+dsh-desktop:
+  mode: compatibility
+  macosMaterial: transparent
+  windowsMaterial: acrylic
+  openBrowser: false
+  networkExposure: loopback
+dsh-desktop-notifications:
+  enabled: true
+  notifyOnTurnCompletion: true
+  notifyOnTurnFailure: true
+  notifyOnJobCompletion: true
+  notifyOnJobFailure: true
+llm-pi-ai:
+  providers:
+    youkia-gpt:
+      apiKeyEnv: YOUKIA_GPT_API_KEY
+      displayName: 优刻得网关
+      api: openai-responses
+      baseURL: https://lapi.youkia.net:8443
+      models:
+        - id: gpt-5.5
+          input: [ text, image ]
+    rehdasu:
+      apiKeyEnv: REHDASU_API_KEY
+      displayName: Rehdasu 网关
+      api: openai-completions
+      baseURL: https://rehdasu.cn/v1
+      models:
+        - id: gpt-5.5
+          contextWindow: 1050000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.4
+          contextWindow: 1050000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.4-mini
+          contextWindow: 400000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.6
+          contextWindow: 1050000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.6-sol
+          contextWindow: 1050000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.6-terra
+          contextWindow: 1050000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.6-luna
+          contextWindow: 1050000
+          maxTokens: 128000
+          input: [ text, image ]
+        - id: gpt-5.3-codex-spark
+          contextWindow: 128000
+          maxTokens: 32000
+          input: [ text, image ]
+    grok:
+      apiKeyEnv: XAI_API_KEY
+      displayName: Grok 网关
+      api: openai-responses
+      baseURL: https://lapi4157.youkia.net:8443/v1
+      models:
+        - id: grok-4.5
+          contextWindow: 500000
+          input: [ text ]
+        - id: grok-build-0.1
+          contextWindow: 256000
+          input: [ text ]
+        - id: grok-4.20-multi-agent-0309
+          contextWindow: 1000000
+          input: [ text ]
+        - id: grok-4.3
+          contextWindow: 1000000
+          input: [ text ]

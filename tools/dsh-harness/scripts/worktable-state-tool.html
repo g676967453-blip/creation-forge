@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DSH Worktable State Import/Export</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+    body { margin: 0; background: #0b0e14; color: #e8eef8; }
+    main { max-width: 880px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p, li { color: #9aa4b2; line-height: 1.5; font-size: 13px; }
+    .card { border: 1px solid #2a3344; border-radius: 12px; padding: 14px; background: #121826; margin: 14px 0; }
+    button, label.btn { cursor: pointer; border: 0; border-radius: 8px; padding: 8px 12px; font-weight: 700; }
+    .primary { background: linear-gradient(135deg,#3d8bfd,#6aa8ff); color: #061018; }
+    .ghost { background: transparent; color: #e8eef8; border: 1px solid #3a455a; }
+    textarea { width: 100%; min-height: 220px; box-sizing: border-box; border-radius: 8px; border: 1px solid #3a455a; background: #0b0e14; color: #e8eef8; padding: 10px; font: 12px/1.4 ui-monospace, Consolas, monospace; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    input[type=text] { flex: 1; min-width: 180px; border-radius: 8px; border: 1px solid #3a455a; background: #0b0e14; color: #e8eef8; padding: 8px 10px; }
+    .ok { color: #3dcf8a; } .err { color: #f07178; }
+    code { color: #9ecbff; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>DSH 工作台状态 导入/导出</h1>
+  <p>请在 <b>DSH Desktop 应用内</b>打开本页（或把本文件内容贴到 Desktop 可访问位置）。外部浏览器打开 <code>127.0.0.1:43120</code> 会被 403 拦截，且 localStorage 不互通。</p>
+  <p>导出键前缀：<code>dsh.worktable</code>（含 projects/view/split 等）。</p>
+
+  <div class="card">
+    <h3>1. 导出</h3>
+    <div class="row">
+      <button class="primary" id="btnExport">导出到文本框 + 下载 JSON</button>
+      <button class="ghost" id="btnList">仅列出键</button>
+    </div>
+    <div id="exportMsg"></div>
+  </div>
+
+  <div class="card">
+    <h3>2. 路径盘符映射（导入前可选）</h3>
+    <p>公司/家里盘符不同时，批量替换 JSON 中的绝对路径前缀。</p>
+    <div class="row">
+      <input id="mapFrom" type="text" placeholder="旧前缀 例如 J:\\ceshi" />
+      <input id="mapTo" type="text" placeholder="新前缀 例如 D:\\ceshi" />
+      <button class="ghost" id="btnMap">对文本框做替换</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3. 导入</h3>
+    <div class="row">
+      <label class="btn ghost"><input id="file" type="file" accept="application/json,.json" hidden />选择 JSON 文件</label>
+      <button class="primary" id="btnImport">从文本框写入 localStorage</button>
+      <button class="ghost" id="btnClear">清除本机 dsh.worktable* 键</button>
+    </div>
+    <div id="importMsg"></div>
+  </div>
+
+  <div class="card">
+    <h3>JSON</h3>
+    <textarea id="io" placeholder="export / import JSON 出现在这里"></textarea>
+  </div>
+</main>
+<script>
+const PREFIX = 'dsh.worktable';
+const io = document.getElementById('io');
+const exportMsg = document.getElementById('exportMsg');
+const importMsg = document.getElementById('importMsg');
+
+function listKeys() {
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.indexOf(PREFIX) === 0) keys.push(k);
+  }
+  return keys.sort();
+}
+
+function collect() {
+  const keys = {};
+  listKeys().forEach((k) => { keys[k] = localStorage.getItem(k); });
+  return {
+    exportedAt: new Date().toISOString(),
+    origin: location.origin,
+    userAgent: navigator.userAgent,
+    keys
+  };
+}
+
+function download(obj) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'worktable-state.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+document.getElementById('btnList').onclick = () => {
+  const keys = listKeys();
+  exportMsg.innerHTML = keys.length ? ('<span class="ok">找到 ' + keys.length + ' 个键</span><pre>' + keys.join('\n') + '</pre>') : '<span class="err">未找到 dsh.worktable* 键。请确认在 DSH Desktop 内打开。</span>';
+};
+
+document.getElementById('btnExport').onclick = () => {
+  const data = collect();
+  io.value = JSON.stringify(data, null, 2);
+  download(data);
+  exportMsg.innerHTML = '<span class="ok">已导出 ' + Object.keys(data.keys).length + ' 个键</span>';
+};
+
+document.getElementById('btnMap').onclick = () => {
+  const from = document.getElementById('mapFrom').value;
+  const to = document.getElementById('mapTo').value;
+  if (!from) { importMsg.innerHTML = '<span class="err">请填写旧前缀</span>'; return; }
+  io.value = io.value.split(from).join(to);
+  importMsg.innerHTML = '<span class="ok">已替换文本框中的路径前缀</span>';
+};
+
+document.getElementById('file').onchange = async (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  io.value = await f.text();
+  importMsg.innerHTML = '<span class="ok">已载入文件 ' + f.name + '</span>';
+};
+
+document.getElementById('btnImport').onclick = () => {
+  try {
+    const data = JSON.parse(io.value);
+    if (!data || typeof data.keys !== 'object') throw new Error('JSON 需要 { keys: { ... } }');
+    let n = 0;
+    Object.keys(data.keys).forEach((k) => {
+      if (k.indexOf(PREFIX) !== 0) return;
+      localStorage.setItem(k, data.keys[k]);
+      n++;
+    });
+    importMsg.innerHTML = '<span class="ok">已写入 ' + n + ' 个键。请刷新 DSH 页面。</span>';
+  } catch (err) {
+    importMsg.innerHTML = '<span class="err">' + String(err.message || err) + '</span>';
+  }
+};
+
+document.getElementById('btnClear').onclick = () => {
+  if (!confirm('确定删除本机所有 dsh.worktable* localStorage 键？')) return;
+  listKeys().forEach((k) => localStorage.removeItem(k));
+  importMsg.innerHTML = '<span class="ok">已清除</span>';
+};
+</script>
+</body>
+</html>

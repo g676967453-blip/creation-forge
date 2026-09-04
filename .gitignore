@@ -60,8 +60,14 @@ tmp/
 *.swp
 *.swo
 
-# lovart ¹Ù·½ skill ¿ËÂ¡£¨×Ô´øÔ¶¶Ë²Ö¿â£¬²»Èë¿â£©
+# lovart ï¿½Ù·ï¿½ skill ï¿½ï¿½Â¡ï¿½ï¿½ï¿½Ô´ï¿½Ô¶ï¿½Ë²Ö¿â£¬ï¿½ï¿½ï¿½ï¿½â£©
 lovart-skill/
 
-# lovart Éú³ÉÍ¼Æ¬²ú³ö£¨¿ÉÔÙÉú£¬²»Èë¿â£©
+# lovart ï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£©
 lovart/output/
+# DSH harness portable pack
+tools/dsh-harness/**/node_modules/
+tools/dsh-harness/**/.credentials.yaml
+tools/dsh-harness/**/settings.yaml
+# optional: uncomment to keep live worktable state out of git
+# tools/dsh-harness/state/worktable-state.json

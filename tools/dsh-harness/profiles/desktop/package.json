@@ -1,0 +1,16 @@
+{
+    "private":  true,
+    "name":  "dsh-profile-desktop",
+    "dependencies":  {
+                         "dsh-worktable":  "link:../../plugins/dsh-worktable"
+                     },
+    "dsh":  {
+                "profile":  {
+                                "bundles":  [
+                                                "@deepseek-ai/dsh-base",
+                                                "@deepseek-ai/dsh-web-app",
+                                                "dsh-worktable"
+                                            ]
+                            }
+            }
+}
