@@ -81,3 +81,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 
 - 仓库请保持 **private**（状态 JSON 含本机路径）
 - 提交前自查：`git grep -i "apiKey\|sk-\|password" tools/dsh-harness`
+
+---
+
+更多「家里 pull 后逐步操作」见仓库根目录：[家里同步-DSH与项目操作说明.md](../../家里同步-DSH与项目操作说明.md)。
