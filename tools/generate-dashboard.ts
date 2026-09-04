@@ -1,9 +1,10 @@
 /**
  * 造化坊仪表盘生成器
- * 生成独立 HTML 文件（7 Tab 切页，暗色系）
+ * 生成独立 HTML 文件（侧栏导航 · 任务默认首页 · 暗色系）
  *
  * 使用: npx tsx tools/generate-dashboard.ts
  * 输出: reports/造化坊仪表盘.html
+ * 本地服务（完成/取消秒级生效）: npx tsx tools/dashboard-server.ts → http://127.0.0.1:3456
  */
 
 import * as fs from "fs";
@@ -27,16 +28,32 @@ export function generateHTML() {
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#141414;color:#e0e0e0;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
-.container{max-width:1200px;margin:0 auto;padding:24px}
-header{padding:32px 0 20px}
-header h1{font-size:28px;font-weight:700;color:#fff}
-header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
-.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:24px;flex-wrap:wrap}
-.tab{padding:12px 20px;font-size:13px;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
-.tab:hover{color:rgba(255,255,255,.7)}
-.tab.active{color:#ff6b6b;border-bottom-color:#ff6b6b}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:#101010;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;padding:20px 12px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-brand{padding:8px 12px 20px}
+.sidebar-brand h1{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
+.sidebar-brand .sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;line-height:1.4}
+.sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1}
+.tab{padding:11px 14px;font-size:13px;color:rgba(255,255,255,.45);cursor:pointer;border-radius:8px;border:none;background:transparent;text-align:left;font-family:inherit;transition:all .15s;width:100%}
+.tab:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.04)}
+.tab.active{color:#ff6b6b;background:rgba(255,107,107,.1)}
+.sidebar-foot{padding:12px;font-size:10px;color:rgba(255,255,255,.25);line-height:1.5;border-top:1px solid rgba(255,255,255,.06);margin-top:12px}
+.main{flex:1;min-width:0;padding:20px 28px 40px;max-width:1100px}
+header{padding:8px 0 16px}
+header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .panel{display:none}
 .panel.active{display:block}
+.mini-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.mini-stat{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px 12px;min-width:88px}
+.mini-stat .ms-label{font-size:10px;color:rgba(255,255,255,.35)}
+.mini-stat .ms-value{font-size:18px;font-weight:700;color:#ff6b6b;margin-top:2px}
+@media (max-width:900px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:relative;border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:12px}
+  .sidebar-nav{flex-direction:row;flex-wrap:wrap;gap:6px}
+  .tab{width:auto;padding:8px 12px}
+  .main{padding:16px}
+}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
 .card{background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px}
@@ -211,46 +228,42 @@ header .sub{font-size:14px;color:rgba(255,255,255,.4);margin-top:4px}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="app">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>🏭 造化坊</h1>
+    <div class="sub">${D.today}<br>系统 → 项目 → 工作流</div>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="tab active" onclick="switchTab('personal-tasks',this)">📋 任务</button>
+    <button class="tab" onclick="switchTab('goals',this)">🎯 目标</button>
+    <button class="tab" onclick="switchTab('projects',this)">📌 项目</button>
+    <button class="tab" onclick="switchTab('workflows',this)">⚙️ 工作流</button>
+    <button class="tab" onclick="switchTab('guides',this)">📚 知识库</button>
+    <button class="tab" onclick="switchTab('assets',this)">🗂️ 资产地址</button>
+  </nav>
+  <div class="sidebar-foot">默认打开任务页<br>本地服务可秒完成/取消</div>
+</aside>
+<div class="main">
 <header>
-  <div style="display:flex;justify-content:space-between;align-items:flex-start">
-    <div>
-      <h1>🏭 造化坊 · 仪表盘</h1>
-      <div class="sub">${D.today} · 三层管理：系统层 → 项目层 → 工作流层</div>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn" onclick="openOpsGuide()" title="造化坊操作说明">📖 操作说明</button>
-      <button class="btn" onclick="openIssues()" title="系统诊断问题">🔍 系统问题</button>
-      <button class="btn" onclick="openAiSuggest()" title="AI 方向建议">💡 AI 建议</button>
-      <button class="btn btn-primary" onclick="openRecentLogs()" title="查看近期工作日志">📋 近期日志</button>
-    </div>
+  <div class="top-actions">
+    <button class="btn" onclick="openOpsGuide()" title="造化坊操作说明">📖 操作说明</button>
+    <button class="btn" onclick="openIssues()" title="系统诊断问题">🔍 系统问题</button>
+    <button class="btn" onclick="openAiSuggest()" title="AI 方向建议">💡 AI 建议</button>
+    <button class="btn btn-primary" onclick="openRecentLogs()" title="查看近期工作日志">📋 近期日志</button>
   </div>
 </header>
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('overview',this)">总览</button>
-  <button class="tab" onclick="switchTab('goals',this)">目标</button>
-  <button class="tab" onclick="switchTab('projects',this)">项目</button>
-  <button class="tab" onclick="switchTab('personal-tasks',this)">任务</button>
-  <button class="tab" onclick="switchTab('workflows',this)">工作流</button>
-  <button class="tab" onclick="switchTab('guides',this)">知识库</button>
-  <button class="tab" onclick="switchTab('assets',this)">资产地址</button>
-</div>
-
-<div id="tab-overview" class="panel active">
-  <div class="credo"><p><strong>定一个项目 → 遇到问题 → 学需要的知识 → 解决问题 → 完成</strong> · 匠心造化，万物可成</p></div>
-  <div class="cards" id="cards-overview"></div>
-  <div class="tbl" id="tbl-overview-info"></div>
-</div>
+<div id="tab-personal-tasks" class="panel active"><div id="mini-stats" class="mini-stats"></div><div class="credo" style="margin-bottom:16px"><p><strong>定一个项目 → 遇到问题 → 学需要的知识 → 解决问题 → 完成</strong> · 匠心造化，万物可成</p></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px"><div class="section-title" style="margin:0;padding:0;border:none">📋 个人待办</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px" title="静态 HTML 用 GitHub Token；本地服务无需 Token">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button></div></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-projects" class="panel"><div class="section-title">📌 活跃项目</div><div id="tbl-projects"></div></div>
 <div id="tab-workflows" class="panel"><div class="layers"><span class="layer-tag layer-sys">系统层统一管理 · 过程归系统，产出归项目</span></div><div class="sub-tabs" id="wf-sub-tabs"><button class="sub-tab active" onclick="switchWfSub('all',this)">全部<span class="sub-count" id="wf-count-all"></span></button><button class="sub-tab" onclick="switchWfSub('自媒体',this)">自媒体<span class="sub-count" id="wf-count-zimeiti"></span></button><button class="sub-tab" onclick="switchWfSub('游戏开发',this)">游戏开发<span class="sub-count" id="wf-count-gamedev"></span></button><button class="sub-tab" onclick="switchWfSub('skill',this)">SKILL仓库<span class="sub-count" id="wf-count-skill"></span></button></div><div id="tbl-workflows"></div></div>
-<div id="tab-personal-tasks" class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div class="section-title" style="margin:0;padding:0;border:none">📋 6 分类个人待办</div><button class="btn" onclick="openGuideModal()" style="font-size:12px">📖 操作说明</button><button class="btn" onclick="showTokenSetup()" style="font-size:12px;margin-left:6px" title="设置 GitHub Token 以启用网页端任务操作">⚙️ 设置</button><button class="btn" onclick="archiveTasks(this)" style="font-size:12px;margin-left:6px" title="将已完成/已取消的任务移至本周归档">📦 执行周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button></div><div id="token-setup-row" class="token-setup" style="display:none"><span>🔑 GitHub Token</span><input id="token-input" type="password" placeholder="ghp_..." onkeydown="if(event.key==='Enter'){event.preventDefault();saveToken();return false}"><button onclick="saveToken()">保存</button><button onclick="clearToken()" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.5)">清除</button></div><div id="token-help" class="token-help" style="display:none">→ <a href="https://github.com/settings/tokens?type=beta" target="_blank">创建细粒度 Token</a>，权限选 <code>Contents: Read and write</code>，仅限此仓库。Token 仅保存在浏览器本地。</div><div id="tbl-recommend"></div><div id="cards-personal-tasks" class="cards"></div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">📦 周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
 <div id="tab-goals" class="panel"><div class="section-title">🎯 长期目标（1年+） — AI原生五维关注</div><div id="tbl-longterm"></div><div class="section-title">📌 季度项目（3个月）— PNAS 驱动</div><div id="tbl-quarterly-goals"></div><div class="section-title" onclick="document.getElementById('goals-archived').classList.toggle('hidden');this.classList.toggle('collapsed')" style="cursor:pointer;user-select:none">📦 已归档目标 <span style="font-size:11px;color:rgba(255,255,255,.3)">（点击展开）</span></div><div id="goals-archived" class="hidden"><div id="tbl-goals-archived"></div></div></div>
 <div id="tab-guides" class="panel"><div class="section-title">工具知识库（docs/tool-guides/）</div><div class="credo"><p>每个工具覆盖三个维度：<strong>是什么</strong> · <strong>怎么用</strong> · <strong>AI 怎么配合</strong></p></div><div id="tbl-guides"></div></div>
 <div id="tab-assets" class="panel"><div id="tbl-assets"></div><div class="section-title">外部平台</div><div id="tbl-external"></div></div>
 
 <footer class="footer">造化坊 (Creation Forge) · 生成于 ${D.today} · <a href="https://github.com/g676967453-blip/creation-forge" target="_blank">GitHub</a></footer>
-</div>
+</div><!-- .main -->
+</div><!-- .app -->
 
 <div id="toast" class="toast"></div>
 
@@ -431,9 +444,10 @@ function closeWfDetail() { document.getElementById('wf-detail-overlay').classLis
 
 function switchTab(name, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  el.classList.add('active');
+  document.querySelectorAll('.sidebar-nav .tab').forEach(t => t.classList.remove('active'));
+  var panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  if (el) el.classList.add('active');
 }
 // 全局：优先级徽章映射
 const pm={"🔴 紧急":"badge-active-task","🔴 阻塞":"badge-active-task","🔴 优先":"badge-active-task","🔴 P0":"badge-active-task","🟡 本周":"badge-idle","🟡 持续":"badge-idle","🟡 累积":"badge-idle","🟡 便利性":"badge-idle","🟡 建议":"badge-idle","🟢 远期":"badge-empty","🔴 本周":"badge-active-task","✅ 已完成":"badge-done"};
@@ -518,27 +532,22 @@ function renderGoalCards(goals) {
 }
 
 (function(){
-  document.getElementById('cards-overview').innerHTML = [
-    {label:'SKILL 文件',value:D.skillCount,detail:'标准 '+D.skillStandard+' · 扁平 '+D.skillFlat+' · <a href=\"../docs/workflows/变更日志.md\" style=\"color:#ff6b6b\">变更日志</a>'},
-    {label:'工作流数量',value:D.workflowCount,detail:'标准化流程'},
-    {label:'工具知识库',value:D.guideCount,detail:'操作指南'},
-    {label:'works 日志',value:D.worksCount,detail:'一事一记'},
-    {label:'Git 提交',value:D.commitCount,detail:'版本记录'},
-    {label:'活跃项目',value:D.projects.filter(function(p){return p.status==='active'}).length,detail:D.projects.filter(function(p){return p.status==='active'}).map(function(p){return p.name.split('（')[0].split('「')[0];}).join(' + ')},
-  ].map(c=>'<div class="card"><div class="label">'+c.label+'</div><div class="value">'+c.value+'</div><div class="detail">'+c.detail+'</div></div>').join('');
-
-  document.getElementById('tbl-overview-info').innerHTML =
-    '<table class="tbl"><thead><tr><th>板块</th><th>内容</th></tr></thead><tbody>'+
-    '<tr><td>AI 模式</td><td>协作者 · 导师 · 加速器</td></tr>'+
-    '<tr><td>SKILL</td><td>/new-post · /git-commit · /update-dashboard · /todo · /goals</td></tr>'+
-    '<tr><td>项目结构</td><td>系统层 → 项目层 → 工作流层</td></tr></tbody></table>'+
-    '<div class="section-title" style="margin-top:24px">🚀 活跃项目速览</div>'+
-    '<table class="tbl"><thead><tr><th>项目</th><th>引擎</th><th>进度</th><th>状态</th></tr></thead><tbody>'+
-    D.projects.map(function(p){
-      var sb = p.status==='active'?'badge-active':'badge-idle';
-      var st = p.status==='active'?'🟢 活跃':'🟡 暂停';
-      return '<tr><td><strong>'+p.name+'</strong></td><td>'+p.engine+'</td><td>'+p.progress+'</td><td><span class="badge '+sb+'">'+st+'</span></td></tr>';
-    }).join('')+'</tbody></table>';
+  // 原总览统计 → 任务页顶部 mini-stats
+  var ms = document.getElementById('mini-stats');
+  if (ms) {
+    var activeN = D.projects.filter(function(p){return p.status==='active'}).length;
+    var items = [
+      {label:'SKILL', value: D.skillCount},
+      {label:'工作流', value: D.workflowCount},
+      {label:'知识库', value: D.guideCount},
+      {label:'日志', value: D.worksCount},
+      {label:'提交', value: D.commitCount},
+      {label:'活跃项目', value: activeN},
+    ];
+    ms.innerHTML = items.map(function(c){
+      return '<div class="mini-stat"><div class="ms-label">'+c.label+'</div><div class="ms-value">'+c.value+'</div></div>';
+    }).join('');
+  }
 })();
 // 项目卡片渲染：引擎 + 状态 + 进度 + 产出 + 阻塞
 function renderProjectCards(projects) {
@@ -619,34 +628,53 @@ function renderProjectCards(projects) {
   function getToken() { return localStorage.getItem('gh_pat'); }
   function hasToken() { return !!getToken(); }
 
-  // 调用 GitHub Contents API 更新任务状态
+  // 优先本地 dashboard-server API；失败再走 GitHub Token
   async function updateTaskStatus(taskId, newStatus, newStatusText) {
+    // 1) 本地 API（秒级）
+    try {
+      var endpoint = newStatus === 'done' ? '/api/tasks/complete' : (newStatus === 'cancelled' ? '/api/tasks/cancel' : null);
+      if (endpoint) {
+        var localRes = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: taskId })
+        });
+        if (localRes.ok) {
+          var body = await localRes.json();
+          if (body && body.ok) {
+            if (body.personalTasks) D.personalTasks = body.personalTasks;
+            return true;
+          }
+        }
+        // 404/非 JSON：可能不是 dashboard-server，继续 fallback
+      }
+    } catch (e) {
+      // file:// 或静态托管会失败，走 GitHub
+    }
+
+    // 2) GitHub Contents API
     const token = getToken();
-    if (!token) { showTokenSetup(); toast('请先设置 GitHub Token', 'err'); return false; }
+    if (!token) {
+      showTokenSetup();
+      toast('本地服务未开且无 Token。请运行: npx tsx tools/dashboard-server.ts', 'err');
+      return false;
+    }
     const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE_PATH;
     try {
-      // 1. GET 当前文件
       const getRes = await fetch(url, { headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' } });
       if (!getRes.ok) throw new Error('GET failed: ' + getRes.status);
       const fileData = await getRes.json();
       const content = fromBase64(fileData.content);
       const sha = fileData.sha;
-
-      // 2. 找到任务行并替换状态
       const NL = String.fromCharCode(10);
       const CR = String.fromCharCode(13);
-      // 统一换行符：去掉 CR，按 LF 分割
       const lines = content.split(CR).join('').split(NL);
       let found = false;
       for (let i = 0; i < lines.length; i++) {
-        // 匹配表格行: | ID | 任务 | 状态 | ...
-        if (lines[i].indexOf('| ' + taskId + ' |') === 0) {
-          // split('|') 首元素为空（行首是 |），需 filter(Boolean) 修正索引
+        if (lines[i].indexOf('| ' + taskId + ' |') === 0 || lines[i].indexOf('|' + taskId + '|') === 0) {
           const cells = lines[i].split('|').map(function(c){return c.trim();}).filter(Boolean);
           if (cells.length >= 3) {
-            // cells[2] 是状态列（0=ID, 1=任务, 2=状态）
             const oldStatus = cells[2];
-            // 替换整个状态文本
             lines[i] = lines[i].replace('| ' + oldStatus + ' |', '| ' + newStatusText + ' |');
             found = true;
           }
@@ -655,8 +683,6 @@ function renderProjectCards(projects) {
       }
       if (!found) { toast('未找到任务 ' + taskId, 'err'); return false; }
       const newContent = lines.join(NL);
-
-      // 3. PUT 更新
       const putBody = {
         message: '✅ ' + taskId + ' → ' + newStatusText + ' [via 仪表盘]',
         content: toBase64(newContent),
@@ -669,8 +695,8 @@ function renderProjectCards(projects) {
         body: JSON.stringify(putBody)
       });
       if (!putRes.ok) {
-        const err = await putRes.json();
-        if (putRes.status === 409) { // SHA 冲突，重试一次
+        const err = await putRes.json().catch(function(){return {};});
+        if (putRes.status === 409) {
           toast('文件已被修改，正在重试...', '');
           await new Promise(r => setTimeout(r, 1000));
           return await updateTaskStatus(taskId, newStatus, newStatusText);
@@ -698,12 +724,35 @@ function renderProjectCards(projects) {
     return new TextDecoder().decode(bytes);
   }
 
+  async function reloadPersonalTasksFromServer() {
+    try {
+      const r = await fetch('/api/data');
+      if (!r.ok) return false;
+      const nd = await r.json();
+      if (nd && nd.personalTasks) {
+        D.personalTasks = nd.personalTasks;
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
   window.completeTask = async function(taskId, catKey, btn) {
     if (btn) { btn.classList.add('loading'); btn.textContent = '...'; }
     const ok = await updateTaskStatus(taskId, 'done', '✅ 已完成');
     if (btn) { btn.classList.remove('loading'); btn.textContent = '✓'; }
     if (ok) {
-      toast('✅ ' + taskId + ' 已完成，正在刷新数据...', 'ok');
+      toast('✅ ' + taskId + ' 已完成', 'ok');
+      await reloadPersonalTasksFromServer();
+      // 就地更新内存状态后重绘
+      try {
+        var cats = D.personalTasks && D.personalTasks.categories || [];
+        cats.forEach(function(c){
+          c.tasks.forEach(function(t){
+            if (t.id === taskId) { t.status = 'done'; t.statusText = '✅ 已完成'; }
+          });
+        });
+      } catch(e){}
       refreshTaskCards();
     }
   };
@@ -714,7 +763,16 @@ function renderProjectCards(projects) {
     const ok = await updateTaskStatus(taskId, 'cancelled', '❌ 已取消');
     if (btn) { btn.classList.remove('loading'); btn.textContent = '✗'; }
     if (ok) {
-      toast('❌ ' + taskId + ' 已取消，正在刷新数据...', 'ok');
+      toast('❌ ' + taskId + ' 已取消', 'ok');
+      await reloadPersonalTasksFromServer();
+      try {
+        var cats = D.personalTasks && D.personalTasks.categories || [];
+        cats.forEach(function(c){
+          c.tasks.forEach(function(t){
+            if (t.id === taskId) { t.status = 'cancelled'; t.statusText = '❌ 已取消'; }
+          });
+        });
+      } catch(e){}
       refreshTaskCards();
     }
   };
@@ -870,8 +928,8 @@ function renderProjectCards(projects) {
   window.showTokenSetup = showTokenSetup;
 
   function refreshTaskCards() {
-    // 状态已通过 GitHub API 写入远端，本地 D 数据已过期——整页刷新拉取最新数据
-    setTimeout(function(){ location.reload(); }, 1200);
+    // 本地 API 已写 MD 时，短延迟刷新即可；GitHub 路径稍长
+    setTimeout(function(){ location.reload(); }, 400);
   }
 
   // --- 个人待办面板渲染 ---
