@@ -46,40 +46,43 @@ Co-Authored-By: AI名称 <邮箱>
 
 允许的 type：`feat` / `fix` / `docs` / `refactor` / `test` / `chore` / `learn` / `journal` / `assets`
 
-### 2.3 目录结构约定
+### 2.3 五板块结构约定（2026-09-04 起）
 
 ```
-ever-forge/
-├── ONBOARDING.md        ← 🔴 新 AI 首次对话强制入口（所有 AI 先读这个）
-├── AI_COLLABORATION.md  ← 你在这里（所有 AI 的共同协议）
-├── CLAUDE.md            ← Claude 专属配置（其他 AI 有自己的配置入口）
-├── memory/              ← 🆕 跨 AI 共享记忆（所有 AI 读写）
-├── .ai-locks/           ← 🆕 文件锁目录（修改共享文件前检查）
-├── docs/                ← 文档中心（只读为主，目标规划和待办除外）
-├── works/               ← 工作记录（每天写入，带 AI 身份）
-├── projects/            ← 所有项目（唯一合法项目存放位置）
-├── shared/              ← 共享代码库
-├── templates/           ← 项目模板
-├── tools/               ← 开发工具（所有工具脚本放这里，不要另建 scripts/）
-├── reports/             ← 报告与仪表盘
-└── .github/             ← GitHub Actions CI/CD（标准路径）
+ever-forge/                    ← 平台共享层（ONBOARDING/AI_COLLABORATION/CLAUDE.md · memory/ · .ai-locks/
+│   │                             .claude/ · templates/ · shared/ · tools/ 平台工具 · pdf_libs/）
+├── 造化仪表盘/                ← 🧭 板块1 · 中枢：个人日程/任务 + 各板块变动检测 → 工作日志 + Git 管理
+│   │                             （CLAUDE.md README.md 目标规划.md 个人待办.md · works/ · reports/ ·
+│   │                              data/ · tools/{collect-data,generate-dashboard,dashboard-server,
+│   │                              todo-file,new-journal}.ts + dsh-harness/）
+├── projects/                  ← 🚀 板块2 · 项目库（GAME-002/IAA/interaction-spec-system/game-bot/
+│   │                             qin-court-audience/情景认知小程序/概念设计工作流 等全部项目）
+├── docs/                      ← 📚 板块3 · 知识库（纯知识：zh-CN/workflows/tool-guides/specs/
+│   │                             knowledge/personal-work-records/en）
+├── asset-pipeline/            ← 🎨 板块4 · 美术制作（自 projects/ 升根）
+└── xiaohongshu/               ← 📱 板块5 · 自媒体（自 projects/ 升根）
 ```
 
-> 详见 [docs/zh-CN/04-project-structure.md](./docs/zh-CN/04-project-structure.md)
+> 📐 完整板块结构说明见 [docs/zh-CN/04-project-structure.md](./docs/zh-CN/04-project-structure.md)
 
 #### 🔴 硬性目录规则（所有 AI 必须遵守）
 
 | 规则 | 说明 |
 |------|------|
-| **项目必须放 `projects/` 下** | 任何新项目的唯一合法位置是 `projects/<项目名>/` |
-| **禁止在根目录新建一级文件夹** | 除了上述列出的目录，不得在根目录创建任何新目录 |
-| **工具脚本放 `tools/`** | 不要另建 `scripts/`、`bin/` 等目录 |
-| **文档放 `docs/`** | 不在根目录散落 `.md` 文件（ONBOARDING.md / CLAUDE.md / AI_COLLABORATION.md / README.md 除外） |
-| **资产管线产出不进仓库** | `asset-pipeline/` 生成的图片/视频/音频存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流文档、规则、过程数据、参考图 |
+| **新板块目录必须用户批准** | 板块白名单 = `造化仪表盘/ projects/ docs/ asset-pipeline/ xiaohongshu/`；新增一级目录须先向用户说明理由并获取批准 |
+| **项目必须放板块2 `projects/` 下** | 任何新项目的唯一合法位置是 `projects/<项目名>/` |
+| **日志/待办/目标放板块1** | 工作记录 `造化仪表盘/works/`；活数据 `造化仪表盘/目标规划.md`、`造化仪表盘/个人待办.md`；不在 docs/ 或根目录新建这些表 |
+| **工具脚本随板块走** | 属于哪个板块的工具放该板块 `tools/`；平台级工具才放根 `tools/`，不另建 `scripts/`、`bin/` |
+| **知识文档放板块3 `docs/`** | 不在板块外散落知识正文 `.md`（平台文档 ONBOARDING/AI_COLLABORATION/CLAUDE.md 除外） |
+| **资产管线产出不进仓库** | `asset-pipeline/` 生成的图片/视频/音频存桌面 `asset-pipeline-outputs/`；仓库内只保留工作流文档、规则、过程数据、参考图 |
 
-**违反目录规则 = 打乱项目结构，会被用户要求回滚修改。**
+**违反目录规则 = 打乱板块结构，会被用户要求回滚修改。**
 
-> 💡 若有合理需求需要新增一级目录，必须先向用户说明理由并获取批准。
+#### 跨板块引用约定
+
+- 板块间一律写**显式相对链接**（从源文件深度算 `../`），禁止写歧义短路径
+- 数据依赖单向下沉：板块2–5 依赖板块1 日志/待办时，在板块 CLAUDE.md/README 中声明素材源路径；板块1 不反向依赖板块知识正文
+- 结构性改动其他板块的文件，先向用户说明再动手；断链/路径小修可直接顺手修
 
 ### 2.4 不可随意修改的文件
 
@@ -89,7 +92,7 @@ ever-forge/
 - `docs/zh-CN/operational-loop.md` — 运转线路图
 - `package.json` / `tsconfig.base.json` / `eslint.config.mjs` — 构建配置
 - `.claude/settings.json` — Claude 专属配置（其他 AI 可读不可改）
-- 其他 AI 的配置文件（如 `.trea/config.md`、`.lobster/config.md`）
+- 其他 AI 的配置文件（`.trea/config.md`、`.lobster/config.md`、`.libtv/`、`.workbuddy/`）——除非用户一次性授权（2026-09-04 已授权五板块重构同步），禁止 AI 互改
 
 ---
 
@@ -97,13 +100,13 @@ ever-forge/
 
 每个 AI 在所有操作中使用统一的身份标签：
 
-| AI | 身份标签 | 提交签名 | 配置文件 | 工作记录前缀 |
+| AI | 身份标签 | 提交签名 | 配置文件 | 工作记录前缀（板块1） |
 |----|---------|---------|---------|------------|
-| Claude | `[claude]` | `Co-Authored-By: Claude <noreply@anthropic.com>` | [CLAUDE.md](./CLAUDE.md) | `works/YYYY-MM-DD-[claude]-*.md` |
-| 字节 TREA | `[trea]` | `Co-Authored-By: TREA <noreply@bytedance.com>` | [.trea/config.md](./.trea/config.md) | `works/YYYY-MM-DD-[trea]-*.md` |
-| LobsterAl | `[lobster]` | `Co-Authored-By: LobsterAl <noreply@lobster.ai>` | [.lobster/config.md](./.lobster/config.md) | `works/YYYY-MM-DD-[lobster]-*.md` |
-| Codex | `[codex]` | `Co-Authored-By: Codex <noreply@openai.com>` | Codex Desktop / CLI 会话配置 | `works/YYYY-MM-DD-[codex]-*.md` |
-| Libtv | `[libtv]` | `Co-Authored-By: Libtv <noreply@libtv.dev>` | [.libtv/README.md](./.libtv/README.md) | `works/YYYY-MM-DD-[libtv]-*.md` |
+| Claude | `[claude]` | `Co-Authored-By: Claude <noreply@anthropic.com>` | [CLAUDE.md](./CLAUDE.md) | `造化仪表盘/works/YYYY-MM-DD-[claude]-*.md` |
+| 字节 TREA | `[trea]` | `Co-Authored-By: TREA <noreply@bytedance.com>` | [.trea/config.md](./.trea/config.md) | `造化仪表盘/works/YYYY-MM-DD-[trea]-*.md` |
+| LobsterAl | `[lobster]` | `Co-Authored-By: LobsterAl <noreply@lobster.ai>` | [.lobster/config.md](./.lobster/config.md) | `造化仪表盘/works/YYYY-MM-DD-[lobster]-*.md` |
+| Codex | `[codex]` | `Co-Authored-By: Codex <noreply@openai.com>` | Codex Desktop / CLI 会话配置 | `造化仪表盘/works/YYYY-MM-DD-[codex]-*.md` |
+| Libtv | `[libtv]` | `Co-Authored-By: Libtv <noreply@libtv.dev>` | [.libtv/README.md](./.libtv/README.md) | `造化仪表盘/works/YYYY-MM-DD-[libtv]-*.md` |
 
 > 💡 新增 AI 助手时，在此表追加一行，并创建对应的配置文件。
 
@@ -116,9 +119,9 @@ ever-forge/
 修改以下**共享状态文件**前，必须检查并获取锁：
 
 - `ONBOARDING.md`
-- `docs/目标规划.md`
-- `docs/个人待办.md`
-- `tools/collect-data.ts`
+- `造化仪表盘/目标规划.md`
+- `造化仪表盘/个人待办.md`
+- `造化仪表盘/tools/collect-data.ts`
 - `CLAUDE.md`
 - `AI_COLLABORATION.md`（本文档）
 - `.claude/settings.json`
@@ -132,7 +135,7 @@ ever-forge/
 ```yaml
 ---
 ai: claude
-file: docs/目标规划.md
+file: 造化仪表盘/目标规划.md
 operation: 更新季度目标
 locked_at: 2026-08-02T14:30:00+08:00
 expires_at: 2026-08-02T15:00:00+08:00  # 30分钟自动过期
@@ -164,13 +167,13 @@ expires_at: 2026-08-02T15:00:00+08:00  # 30分钟自动过期
 ### 5.1 文件命名
 
 ```
-works/YYYY-MM-DD-[身份标签]-简短描述.md
+造化仪表盘/works/YYYY-MM-DD-[身份标签]-简短描述.md
 ```
 
 示例：
-- `works/2026-08-03-[claude]-重构spec渲染器.md`
-- `works/2026-08-03-[trea]-设计新关卡.md`
-- `works/2026-08-06-[codex]-添加协作身份.md`
+- `造化仪表盘/works/2026-08-03-[claude]-重构spec渲染器.md`
+- `造化仪表盘/works/2026-08-03-[trea]-设计新关卡.md`
+- `造化仪表盘/works/2026-08-06-[codex]-添加协作身份.md`
 
 ### 5.2 Frontmatter 格式
 
@@ -188,7 +191,7 @@ tags: [interaction-spec-system, 重构]
 
 ### 5.3 内容结构
 
-遵循 [works/_template.md](./works/_template.md) 定义的两区块结构：
+遵循 [造化仪表盘/works/_template.md](./造化仪表盘/works/_template.md) 定义的两区块结构：
 1. 问题解决日志（遇到了什么 / AI 怎么协作 / 产出结果 / 关联项目）
 2. 视频生产草案（三幕结构 + 金句候选 + 素材清单）
 
@@ -209,7 +212,7 @@ tags: [interaction-spec-system, 重构]
 
 当你的修改可能与其他 AI 的工作产生逻辑冲突时（即使没有 git 冲突）：
 
-1. 检查 `works/` 最近的工作记录，了解其他 AI 在做什么
+1. 检查 `造化仪表盘/works/` 最近的工作记录，了解其他 AI 在做什么
 2. 检查 `memory/` 共享记忆，了解项目当前状态
 3. 如有疑问，在修改前向用户确认
 

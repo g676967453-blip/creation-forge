@@ -29,7 +29,7 @@
 | 属性 | 值 |
 |------|-----|
 | 标签 | `[trea]` |
-| 工作记录前缀 | `works/YYYY-MM-DD-[trea]-*.md` |
+| 工作记录前缀 | `造化仪表盘/works/YYYY-MM-DD-[trea]-*.md` |
 | 提交签名 | `Co-Authored-By: TREA <noreply@bytedance.com>` |
 
 ---
@@ -38,11 +38,11 @@
 
 | 规则 | 说明 |
 |------|------|
-| 📁 项目位置 | **所有项目放 `projects/`**，禁止在根目录新建文件夹 |
-| 📁 工具脚本 | 放 `tools/`，不要另建 `scripts/` |
-| 🔒 文件锁 | 修改 8 个共享文件前，检查 `.ai-locks/` |
+| 🗺️ 五板块 | 板块白名单：`造化仪表盘/`(中枢) `projects/`(项目) `docs/`(知识) `asset-pipeline/`(美术) `xiaohongshu/`(自媒体)；新增一级目录须用户批准 |
+| 📁 项目位置 | 所有项目放板块2 `projects/` 下 |
+| 📝 工作记录 | 写入板块1 `造化仪表盘/works/YYYY-MM-DD-[trea]-*.md`，按 `_template.md` 格式 |
+| 🔒 文件锁 | 修改共享文件（`造化仪表盘/目标规划.md`/`个人待办.md`/`collect-data.ts`、`CLAUDE.md`、`AI_COLLABORATION.md`、`ONBOARDING.md`、`memory/`）前检查 `.ai-locks/` |
 | 🏷️ 提交格式 | `[trea] type: 中文描述` + Co-Authored-By 签名 |
-| 📝 工作记录 | `works/YYYY-MM-DD-[trea]-*.md`，按 `_template.md` 格式 |
 | ⚔️ Git 冲突 | **不要自动解决**，保留标记让用户决策 |
 | 🧠 共享记忆 | 有价值的发现写入 `memory/` |
 

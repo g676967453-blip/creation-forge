@@ -8,11 +8,12 @@
 
 | 类别 | 规则 | 后果 |
 |------|------|------|
-| 📁 目录 | **所有项目必须放在 `projects/` 下** | 根目录建项目 = 违规 |
-| 📁 目录 | **禁止在根目录新建一级文件夹**（除非用户明确要求） | 打乱项目结构 |
-| 🔒 锁 | 修改 8 个共享文件前必须获取 `.ai-locks/` 锁 | 两个 AI 互相覆盖 |
+| 📁 板块 | 仓库是**五板块自治**（造化仪表盘/projects/docs/asset-pipeline/xiaohongshu） | 项目/日志/知识放错桶 = 违规 |
+| 📁 目录 | **禁止在根目录新建一级文件夹**，新增板块白名单外目录须用户批准 | 打乱板块结构 |
+| 📁 项目 | 所有项目必须放在板块2 `projects/` 下 | 板块外建项目 = 违规 |
+| 📁 日志 | 工作记录写入板块1 `造化仪表盘/works/YYYY-MM-DD-[身份标签]-*.md` | 日志归属混乱 |
+| 🔒 锁 | 修改共享文件前必须获取 `.ai-locks/` 锁 | 两个 AI 互相覆盖 |
 | 🏷️ 标签 | Git 提交必须带 `[身份标签]` 前缀 + `Co-Authored-By` 签名 | 无法追溯谁做了什么 |
-| 📝 日志 | 工作记录写入 `works/YYYY-MM-DD-[身份标签]-*.md` | 日志归属混乱 |
 | ⚔️ 冲突 | Git 冲突**禁止自动解决**，保留标记让用户决策 | 静默丢失他人工作 |
 
 ---
@@ -53,13 +54,19 @@
 
 ```
 ❌ 禁止：在根目录创建新的一级文件夹
-   正确做法：项目 → projects/；工具脚本 → tools/；文档 → docs/
+   正确做法：板块白名单 = 造化仪表盘/ projects/ docs/ asset-pipeline/ xiaohongshu/；
+             新增一级目录须用户明确批准
 
-❌ 禁止：在 projects/ 外创建项目目录
+❌ 禁止：在板块2 projects/ 外创建项目目录
    正确做法：所有项目统一放在 projects/<项目名>/
 
-❌ 禁止：删除或移动以下目录（除非用户明确指示）
-   docs/、works/、projects/、shared/、templates/、tools/、reports/、memory/
+❌ 禁止：把板块数据放到别处
+   工作记录 → 造化仪表盘/works/；待办/目标 → 造化仪表盘/个人待办.md · 目标规划.md；
+   知识正文 → docs/；工具随板块走或放根 tools/（平台级）
+
+❌ 禁止：删除或移动板块目录（除非用户明确指示）
+   造化仪表盘/ projects/ docs/ asset-pipeline/ xiaohongshu/
+   shared/ templates/ tools/ memory/（平台层）
 ```
 
 ### 文件操作
@@ -77,13 +84,13 @@
 
 在开始执行任何任务前，确认以下所有项：
 
-- [ ] 已读 AI_COLLABORATION.md（重点是 2.3 目录结构 + 2.4 不可修改文件 + 4 文件锁）
+- [ ] 已读 AI_COLLABORATION.md（重点是 2.3 五板块结构 + 2.4 不可修改文件 + 4 文件锁）
 - [ ] 已读 memory/MEMORY.md（了解当前活跃项目和待办）
 - [ ] 知道自己的身份标签和提交签名
-- [ ] 知道工作记录的文件命名格式
+- [ ] 知道工作记录写入 `造化仪表盘/works/YYYY-MM-DD-[身份标签]-*.md`
 - [ ] 知道哪些文件修改前需要获取锁
-- [ ] 知道「所有项目放在 projects/ 下」
-- [ ] 知道「禁止在根目录新建一级文件夹」
+- [ ] 知道五板块白名单（造化仪表盘/projects/docs/asset-pipeline/xiaohongshu）与各自职责
+- [ ] 知道「项目放 projects/」「日志/待办放 造化仪表盘/」
 
 ---
 
@@ -100,12 +107,12 @@ Co-Authored-By: AI名称 <邮箱>
 ### 工作记录文件名
 
 ```
-works/YYYY-MM-DD-[身份标签]-简短描述.md
+造化仪表盘/works/YYYY-MM-DD-[身份标签]-简短描述.md
 ```
 
 ### 需要锁的共享文件
 
-`docs/目标规划.md`、`docs/个人待办.md`、`tools/collect-data.ts`、`CLAUDE.md`、`AI_COLLABORATION.md`、`.claude/settings.json`、`memory/MEMORY.md`、`memory/` 下 `.md` 文件
+`造化仪表盘/目标规划.md`、`造化仪表盘/个人待办.md`、`造化仪表盘/tools/collect-data.ts`、`CLAUDE.md`、`AI_COLLABORATION.md`、`ONBOARDING.md`、`.claude/settings.json`、`memory/MEMORY.md`、`memory/` 下 `.md` 文件
 
 ---
 

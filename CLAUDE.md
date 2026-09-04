@@ -11,19 +11,50 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 
 核心理念：**匠心造化，万物可成** —— 每一个小项目都是创造的淬炼。
 
+---
+
+## 五板块架构（2026-09-04 起）
+
+单 git 仓库内的五板块自治 + 平台共享层。**每个板块自带 CLAUDE.md/README.md 管理入口，板块间只经显式相对路径链接引用，互不越权。**
+
+| 板块 | 路径 | 职责 | 权威数据 | 入口 |
+|------|------|------|----------|------|
+| 1 · 中枢 | [造化仪表盘/](./造化仪表盘/) | 个人日程/任务管理 + 检测各板块工作变动 → 工作日志 + Git 管理 | `目标规划.md`、`个人待办.md`、`works/`、`reports/`、仪表盘工具链 | [造化仪表盘/CLAUDE.md](./造化仪表盘/CLAUDE.md) |
+| 2 · 项目库 | [projects/](./projects/) | 所有独立游戏与工具项目（GAME-002 / IAA / interaction-spec-system / game-bot / qin-court-audience / 情景认知小程序 / 概念设计工作流） | 各项目自身 | [projects/README.md](./projects/README.md) |
+| 3 · 知识库 | [docs/](./docs/) | 纯知识文档（zh-CN 规范 / workflows / tool-guides / specs / knowledge / personal-work-records / en） | 各文档自身 | [docs/README.md](./docs/README.md) |
+| 4 · 美术制作 | [asset-pipeline/](./asset-pipeline/) | AI 美术生产线（Lovart + Prompt 模板 + 后处理管线） | 工作流文档与过程数据（产出在桌面） | [asset-pipeline/CLAUDE.md](./asset-pipeline/CLAUDE.md) |
+| 5 · 自媒体 | [xiaohongshu/](./xiaohongshu/) | 小红书内容生产（素材源声明 → 帖子 → 发布） | 各期目录自含 | [xiaohongshu/CLAUDE.md](./xiaohongshu/CLAUDE.md) |
+
+### 平台共享层（仓库根）
+
+- 平台文档：`CLAUDE.md`、[AI_COLLABORATION.md](./AI_COLLABORATION.md)、[ONBOARDING.md](./ONBOARDING.md)
+- 平台目录：`memory/`（跨 AI 记忆）、`.ai-locks/`（文件锁）、`.claude/`（Claude Code 配置/SKILL）、`templates/`（项目模板）、`shared/`（共享库）、`tools/`（平台工具：scaffold-game.ts / check / convert-encoding / extract_pdf.py / batch-removebg.py / _archive）、`pdf_libs/`、`node_modules/`
+- **根目录不是任何板块的数据区** — 不在此放工作日志、项目、知识正文或管理数据
+
+### 🔴 目录规则（所有 AI 必须遵守）
+
+| 规则 | 说明 |
+|------|------|
+| 新板块目录必须批准 | 板块白名单 = `造化仪表盘/ projects/ docs/ asset-pipeline/ xiaohongshu/`；新增一级目录须用户明确批准 |
+| 项目放板块2 | 任何新项目唯一合法位置是 `projects/<项目名>/` |
+| 工具脚本放板块内 tools/ | 属于哪个板块的工具随板块走；平台级工具才放根 `tools/` |
+| 日志/待办/目标放板块1 | `造化仪表盘/works/`、`造化仪表盘/个人待办.md`、`造化仪表盘/目标规划.md` |
+| 资产产出不进仓库 | `asset-pipeline/` 生成产出存桌面 `asset-pipeline-outputs/`（详见 asset-pipeline/CLAUDE.md） |
+
+**违反目录规则 = 打乱板块结构，会被用户要求回滚。**
+
+---
+
 ## 会话启动检查清单 (Session Startup Checklist)
 
 > ⚠️ 每次会话开始时，在回答用户的第一个问题前，确认以下事项：
 
 - [ ] 已读 [memory/MEMORY.md](./memory/MEMORY.md) — 了解项目当前状态、活跃项目、待办事项
-- [ ] 已确认今日日期，检查 `works/` 是否有今日日志，没有则准备提醒用户
-- [ ] 状态文档滞后检查（[状态同步工作流](./docs/workflows/状态同步.md)）：核对 `docs/目标规划.md`「最后更新」vs 最近工作日志，滞后 >3 天则提醒用户并执行同步
-- [ ] 回顾 [AI_COLLABORATION.md](./AI_COLLABORATION.md) Section 2.3 目录规则：
-  - **所有项目必须放在 `projects/` 下** — 不在根目录新建项目
-  - **禁止在根目录新建一级文件夹** — 除非用户明确要求
-  - **工具脚本放 `tools/`** — 不要另建 `scripts/`、`bin/` 等
-- [ ] 涉及共享文件修改前，检查 `.ai-locks/` 是否有锁
-- [ ] 检查 `docs/个人待办.md` 活跃区是否有 ✅/❌ 未归档任务，有则提醒用户「有 N 条任务待归档」
+- [ ] 已确认今日日期，检查 `造化仪表盘/works/` 是否有今日日志，没有则准备提醒用户
+- [ ] 状态文档滞后检查（[状态同步工作流](./docs/workflows/状态同步.md)）：核对 [造化仪表盘/目标规划.md](./造化仪表盘/目标规划.md)「最后更新」vs 最近工作日志，滞后 >3 天则提醒用户并执行同步
+- [ ] 回顾 [AI_COLLABORATION.md](./AI_COLLABORATION.md) Section 2.3 目录规则（五板块白名单）
+- [ ] 涉及共享文件修改前，检查 [.ai-locks/](./.ai-locks/) 是否有锁
+- [ ] 检查 [造化仪表盘/个人待办.md](./造化仪表盘/个人待办.md) 活跃区是否有 ✅/❌ 未归档任务，有则提醒用户「有 N 条任务待归档」
 
 > 📖 完整入门指引见 [ONBOARDING.md](./ONBOARDING.md)
 
@@ -34,7 +65,7 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 本项目的日常运转遵循 [运转线路图](./docs/zh-CN/operational-loop.md) 定义的循环：
 
 ```
-遇到问题 → AI 协作解决 → 产出交付 → 写入 works/（一事一记）
+遇到问题 → AI 协作解决 → 产出交付 → 写入 造化仪表盘/works/（一事一记）
                                         ↓
                                视频生产草案（三幕结构）
                                         ↓
@@ -42,10 +73,10 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 ```
 
 - 问题来源：项目执行中自然遇到，大到架构设计，小到字体下载
-- 记录方式：[`works/_template.md`](./works/_template.md) — 一个文件 = 日志 + 视频草案
+- 记录方式：[`造化仪表盘/works/_template.md`](./造化仪表盘/works/_template.md) — 一个文件 = 日志 + 视频草案
 - 文件命名：`YYYY-MM-DD-[ai标签]-简短描述.md`
 - 多线并行：各线独立运转，互不交叉
-- **每日日志**：AI 每天首次对话时检查当日是否有 `works/YYYY-MM-DD-*.md` 文件，没有则主动提醒"今天的工作记录在哪里？"
+- **每日日志**：AI 每天首次对话时检查当日是否有 `造化仪表盘/works/YYYY-MM-DD-*.md` 文件，没有则主动提醒"今天的工作记录在哪里？"
 
 ---
 
@@ -175,44 +206,47 @@ AI 不是替代人类创造力，而是放大它。它同时扮演两个底层�
 - 不在场景中直接操作 DOM —— 使用 Phaser 的 UI 系统
 - 物理计算放在 `update()` 中，渲染由 Phaser 自动处理
 
+### Godot
+
+- 节点命名使用 snake_case；脚本类名 PascalCase
+- 场景间通过信号（signal）通信，避免直接引用兄弟节点
+- 每个游戏项目必须有 README.md（中文）说明玩法和开发笔记
+
 ### 通用
 
 - 注释用中文（团队沟通语言），代码标识符用英文（行业标准）
-- 提交前运行 `npm run lint` 和 `npm run test`
-- 每个游戏项目必须有 README.md（中文）说明玩法和开发笔记
+- 提交前运行 `npm run lint` 和 `npm run test`（如项目有配置）
+
+---
+
+## 跨板块引用约定
+
+- **板块间一律显式相对链接** — 不写裸 `works/`、`docs/` 之类会歧义的短路径，从源文件深度出发写 `../` 相对路径
+- **数据依赖单向下沉** — 板块2/3/4/5 依赖板块1 的日志/待办时声明"素材源：`造化仪表盘/works/`"（见 xiaohongshu/CLAUDE.md 模式）；板块1 不反向依赖板块知识正文
+- **改动别的板块文件** = 需要用户知情：小修（断链/路径）可顺手，结构性修改须先提方案
+- **禁止跨 AI 改配置**：其他 AI 的配置（.trea/ .lobster/ .libtv/ .workbuddy/）除非用户授权（见 ONBOARDING）
 
 ---
 
 ## 项目结构
 
 ```
-creation-forge/
-├── docs/
-│   ├── zh-CN/          ← 📚 核心文档（哲学/技术栈/工作流/规范）
-│   │   └── manifesto.md ← 🔥 AI时代的新学习思想宣言
-│   ├── workflows/      ← 🔄 标准化协作流程（26 个工作流文档 + 4 模板）
-│   ├── tool-guides/    ← 📖 工具知识库（Git/GitHub/Pixso 操作与人机协作）
-│   ├── personal-work-records/ ← 📁 个人工作记录知识库（33 文档）
-│   ├── specs/          ← 📐 技术规范（资产输出与切图命名）
-│   └── en/             ← 🌐 英文文档
-├── shared/             ← 📦 共享库（跨项目复用的 types/utils/assets）
-├── templates/          ← 🔧 项目模板（Phaser / Godot 快速启动）
-├── projects/           ← 🚀 所有项目
-│   ├── GAME-002/       ← 🎮 开仙门（Godot 4.7 独立游戏）
-│   ├── xiaohongshu/    ← 📱 小红书自媒体内容创作
-│   ├── asset-pipeline/ ← 🔧 资产生产管线（产出媒体→桌面 asset-pipeline-outputs/，不进仓库）
-│   ├── interaction-spec-system/ ← 📐 游戏交互规范生成系统
-│   ├── qin-court-audience/ ← 🏛️ 秦殿听政（HTML 原型）
-│   ├── game-bot/       ← 🤖 游戏自动化机器人（流程脚本入库，运行产出忽略）
-│   └── 情景认知小程序/  ← 🧠 情景认知训练小程序（原型验证中）
-├── works/              ← 📝 每日工作记录（一事一记 + 视频草案）
-├── reports/            ← 📊 报告与仪表盘
-├── tools/              ← 🛠️ 开发工具脚本（数据采集/仪表盘生成/Pixso导入等）
-├── .claude/            ← ⚙️ Claude Code 配置（SKILL/记忆/settings）
-└── .workbuddy/         ← 🔗 工作伙伴集成
+ever-forge/                    ← 平台共享层（平台文档/记忆/锁/模板/共享库/平台工具）
+├── 造化仪表盘/                ← 🧭 板块1 · 中枢（CLAUDE.md README.md 目标规划.md 个人待办.md
+│   │                             works/ reports/ data/ tools/{5 个 TS + dsh-harness/}）
+├── projects/                  ← 🚀 板块2 · 项目库（GAME-002/IAA/interaction-spec-system/
+│   │                             game-bot/qin-court-audience/情景认知小程序/概念设计工作流）
+├── docs/                      ← 📚 板块3 · 知识库（zh-CN/workflows/tool-guides/specs/
+│   │                             knowledge/personal-work-records/en）
+├── asset-pipeline/            ← 🎨 板块4 · 美术制作（Prompt 模板 + 后处理管线 + docs/）
+├── xiaohongshu/               ← 📱 板块5 · 自媒体（各期内容 + 发布流程）
+├── memory/  .ai-locks/  .claude/  templates/  shared/  tools/  node_modules/  pdf_libs/
+└── docs/zh-CN/manifesto.md 等平台文档
 ```
 
-> 🔑 **全局规则（2026-08-20 起）**：`asset-pipeline/` 的生成产出（图片/视频/音频）不入仓库，统一存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流 MD 文档、规则、过程数据（映射表/批次状态）与参考图。详见 `asset-pipeline/CLAUDE.md`。
+> 📐 完整板块结构图见 [docs/zh-CN/04-project-structure.md](./docs/zh-CN/04-project-structure.md)
+
+---
 
 ## 开发工作流
 
@@ -247,6 +281,8 @@ journal: 添加2026-07-15学习日志
 assets: 添加玩家精灵素材
 ```
 
+多 AI 协作的提交格式（带身份标签）见 [AI_COLLABORATION.md](./AI_COLLABORATION.md) §2.2。
+
 ### 创建交互规范文档
 
 交互规范系统 v2.x 以 MD 为单一数据源（`projects/interaction-spec-system/`），HTML 预览页手工维护：
@@ -255,21 +291,21 @@ assets: 添加玩家精灵素材
 2. 新增/修改规范时同步更新 README.md 与 docs/ 下的模式、组件文档
 3. 可视化预览直接打开 docs/ 下的 HTML 预览页（v2 无构建步骤）
 
-> 📖 v1.0 的 MD→HTML 构建工具链（spec-parser / spec-renderer / build-spec）已归档至 `projects/interaction-spec-system/_archive/v1.0/tools/`，package.json 中对应 script 已移除。
+> 📖 v1.0 的 MD→HTML 构建工具链已归档至 `projects/interaction-spec-system/_archive/v1.0/tools/`。
 
 ---
 
 ## 当前任务上下文
 
-> 📌 **当前阶段：** 游戏交互规范生成系统 v2.1 — 组件库 + 场景界面模式库（2026-08-06）
-> 📌 **状态：** v1.0 MD→HTML 工具链已归档（2026-08-05 起以本地工作站迁入版本为新基线）
-> 📌 **最新完成：** 全项目诊断修复（2026-08-20）— 文档口径统一、game-bot 路径改造、仓库卫生
+> 📌 **当前阶段：** 五板块拆分重构（B0–B5 批次，refactor/zaohua-board-split 分支，完成后一次 merge main）
+> 📌 **板块状态：** 板块1 造化仪表盘/ 已建立（B2 ✅）；板块4/5 已升根级（B1 ✅）；平台文档切换（B3 进行中）
+> 📌 **最新完成：** 全库诊断 → 五板块目标结构 → 批 B0/B1/B2 提交（详见造化仪表盘/works/ 日志）
 
 ---
 
 ## 多 AI 协作
 
-本项目同时由多个 AI 助手协作（Claude / TREA / LobsterAl）。
+本项目同时由多个 AI 助手协作（Claude / TREA / LobsterAl / Codex / Libtv）。
 所有 AI 遵守 [AI_COLLABORATION.md](./AI_COLLABORATION.md) 定义的共享协议。
 
 ### 本 AI 身份
@@ -277,14 +313,14 @@ assets: 添加玩家精灵素材
 | 属性 | 值 |
 |------|-----|
 | 标签 | `[claude]` |
-| 工作记录前缀 | `works/YYYY-MM-DD-[claude]-*.md` |
+| 工作记录前缀 | `造化仪表盘/works/YYYY-MM-DD-[claude]-*.md` |
 | 提交签名 | `Co-Authored-By: Claude <noreply@anthropic.com>` |
 
 ### 操作前检查
 
 - 修改共享状态文件前，检查 [.ai-locks/](./.ai-locks/) 是否有对应锁文件
 - 获取锁 → 修改 → 释放锁
-- 需要锁的文件：`docs/目标规划.md`、`docs/个人待办.md`、`tools/collect-data.ts`、`CLAUDE.md`、`AI_COLLABORATION.md`、`memory/` 下文件
+- 需要锁的文件：`造化仪表盘/目标规划.md`、`造化仪表盘/个人待办.md`、`造化仪表盘/tools/collect-data.ts`、`CLAUDE.md`、`AI_COLLABORATION.md`、`ONBOARDING.md`、`.claude/settings.json`、`memory/` 下文件
 
 ### 跨 AI 共享记忆
 
