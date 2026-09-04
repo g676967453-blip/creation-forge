@@ -28,7 +28,8 @@ AI 让这种「做中学」第一次真正可行。落地载体是独立游戏�
 ### 平台共享层（仓库根）
 
 - 平台文档：`CLAUDE.md`、[AI_COLLABORATION.md](./AI_COLLABORATION.md)、[ONBOARDING.md](./ONBOARDING.md)
-- 平台目录：`memory/`（跨 AI 记忆）、`.ai-locks/`（文件锁）、`.claude/`（Claude Code 配置/SKILL）、`templates/`（项目模板）、`shared/`（共享库）、`tools/`（平台工具：scaffold-game.ts / check / convert-encoding / extract_pdf.py / batch-removebg.py / _archive）、`pdf_libs/`、`node_modules/`
+- 平台目录：`memory/`（跨 AI 记忆）、`.ai-locks/`（文件锁）、`.claude/`（Claude Code 配置/SKILL）、`.github/`（CI：仪表盘 GH Pages 部署）、`.vscode/`（编辑器配置）、`templates/`（项目模板）、`shared/`（共享库）、`tools/`（平台工具：scaffold-game.ts / check / convert-encoding / extract_pdf.py / batch-removebg.py / _archive）、`pdf_libs/`、`node_modules/`
+- 其他 AI 配置：`.trea/` `.lobster/` `.libtv/` `.workbuddy/` —— 仅属各自 AI，禁止互改（一次性授权除外，见 [AI_COLLABORATION.md](./AI_COLLABORATION.md) §2.4）
 - **根目录不是任何板块的数据区** — 不在此放工作日志、项目、知识正文或管理数据
 
 ### 🔴 目录规则（所有 AI 必须遵守）

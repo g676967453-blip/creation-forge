@@ -84,4 +84,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 
 ---
 
-更多「家里 pull 后逐步操作」见仓库根目录：[家里同步-DSH与项目操作说明.md](../../../家里同步-DSH与项目操作说明.md)。
+更多「家里 pull 后逐步操作」见 [家里同步-DSH与项目操作说明.md](../../../docs/workflows/家里同步-DSH与项目操作说明.md)。

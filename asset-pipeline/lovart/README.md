@@ -9,7 +9,7 @@ Lovart（https://www.lovart.ai）AI 设计平台已通过官方 `lovart-skill` �
 |------|------|
 | `.env` | AK/SK 密钥 + 代理配置（**敏感，勿提交版本库**） |
 | `lovart.ps1` | 包装脚本：读 `.env` → 设环境变量 → 调官方 `agent_skill.py` |
-| `../lovart-skill/` | 官方 skill 仓库（已克隆，含 `skills/lovart-skill/scripts/agent_skill.py`） |
+| `lovart-skill/`（仓库同级） | 官方 skill 克隆（含 `skills/lovart-skill/scripts/agent_skill.py`）。`lovart.ps1` 依次查找：仓库同级 → 仓库内 → `J:\ceshi\`；缺失会提示 clone（`git clone https://github.com/lovartai/lovart-skill`，本地源勿入库） |
 
 ## 关键网络问题（重要）
 

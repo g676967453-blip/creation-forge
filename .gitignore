@@ -60,11 +60,11 @@ tmp/
 *.swp
 *.swo
 
-# lovart �ٷ� skill ��¡���Դ�Զ�˲ֿ⣬����⣩
+# lovart 官方 skill 克隆（本地源，勿入库）
 lovart-skill/
 
-# lovart ����ͼƬ������������������⣩
-lovart/output/
+# lovart 生成的图片/视频产物（板块4，勿入库）
+asset-pipeline/lovart/output/
 # DSH harness portable pack
 tools/dsh-harness/**/node_modules/
 tools/dsh-harness/**/.credentials.yaml
