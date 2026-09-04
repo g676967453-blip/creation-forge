@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://0flthr6gwtx5" path="res://scripts/game/game_root.gd" id="1_game"]
 [ext_resource type="Script" uid="uid://c8mx4q846ievf" path="res://scripts/game/paddle.gd" id="2_paddle"]
 [ext_resource type="Script" uid="uid://dx30n4mdexkmj" path="res://scripts/game/ball.gd" id="3_ball"]
-[ext_resource type="Texture2D" uid="uid://cnmnorvfwtysa" path="res://assets/props/trampoline/mat.png" id="4_tipki"]
+[ext_resource type="Texture2D" uid="uid://ct84hjimb6fo4" path="res://assets/props/trampoline/mat.png" id="4_tipki"]
 [ext_resource type="Script" uid="uid://ikvi5wpywgvk" path="res://scripts/ui/main_ui.gd" id="4_ui"]
 [ext_resource type="Texture2D" uid="uid://ce16v6xy6cidp" path="res://assets/backgrounds/bg_level_default.png" id="5_bg"]
 [ext_resource type="FontFile" path="res://assets/fonts/zpix.ttf" id="6_font"]
