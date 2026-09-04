@@ -22,7 +22,7 @@ trigger: 纯人工操作，无对应 SKILL
 
 - Pixso 桌面端已打开目标 `.pixso` 文件
 - MCP 连接正常（`http://127.0.0.1:3667/mcp`，Streamable HTTP 协议；请求需带 `Accept: application/json, text/event-stream`）
-- HTML 文件已准备好（`projects/xiaohongshu/YYYY-MM-DD-主题/index.html`）
+- HTML 文件已准备好（`xiaohongshu/YYYY-MM-DD-主题/index.html`）
 
 ## 人机分工
 
@@ -63,7 +63,7 @@ AI 通过 MCP 调用 `code_to_design`，将 `index.html` 导入 Pixso。
 | 产出 | 位置 |
 |------|------|
 | Pixso frame | 画布上以 `日期-主题` 命名的 frame |
-| 导出 PNG | `projects/xiaohongshu/Pixso截图/日期-主题/卡片N-描述.png` |
+| 导出 PNG | `xiaohongshu/Pixso截图/日期-主题/卡片N-描述.png` |
 
 ## 约束与规则
 

@@ -23,8 +23,8 @@ description: 创建项目：确定方向 → 选择类型和技术栈（4类：�
 | 类型 | 技术栈 | 模板 |
 |------|--------|------|
 | 🎮 游戏 | Phaser/Godot/Three.js | `templates/game-phaser/`（完整） / `templates/game-godot/`（占位） |
-| 📱 自媒体 | HTML/CSS + Puppeteer | 参考 `projects/xiaohongshu/` |
-| 🔧 工具/管线 | Node.js/TypeScript | 参考 `projects/asset-pipeline/` |
+| 📱 自媒体 | HTML/CSS + Puppeteer | 参考 `xiaohongshu/` |
+| 🔧 工具/管线 | Node.js/TypeScript | 参考 `asset-pipeline/` |
 | 📝 其他 | 按需 | 无模板 |
 
 推荐时给出：推荐理由 + 替代选项 + 选型风险。Godot 模板必须警告是占位符。

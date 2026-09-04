@@ -1,6 +1,6 @@
 # 资产管线 · 进度表
 
-> 最后更新：2026-08-16 | 关联目标：[docs/目标规划.md](../../docs/目标规划.md)
+> 最后更新：2026-08-16 | 关联目标：[目标规划](../造化仪表盘/目标规划.md)
 
 ## 当前状态
 
@@ -42,4 +42,4 @@
 |---------|-----------|-----------|---------|
 | 道具图标 (4×4) | `templates/item-grid.md` | `docs/06-道具图标工作流.md` | `scripts/slice_grid.py` |
 | 建筑 (2×2) | `templates/building-grid.md` | `docs/07-建筑工作流.md` | `scripts/slice_grid_2x2.py` |
-| 角色原画 (全身像) | `templates/character-portrait.md` | `docs/09-角色原画工作流.md` | `tools/batch100_helper.py` |
+| 角色原画 (全身像) | `templates/character-portrait.md` | `docs/09-角色原画工作流.md` | `scripts/batch100_helper.py` |

@@ -1,6 +1,6 @@
 # [YYYY-MM-DD] [主题 — 一个问题一个主题]
 
-> 来源：`works/YYYY-MM-DD-xxx.md` — [遇到什么问题]
+> 来源：`造化仪表盘/works/YYYY-MM-DD-xxx.md` — [遇到什么问题]
 
 ## 一句话总结
 

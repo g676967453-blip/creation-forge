@@ -212,7 +212,7 @@ creation-forge/
 └── .workbuddy/         ← 🔗 工作伙伴集成
 ```
 
-> 🔑 **全局规则（2026-08-20 起）**：`projects/asset-pipeline/` 的生成产出（图片/视频/音频）不入仓库，统一存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流 MD 文档、规则、过程数据（映射表/批次状态）与参考图。详见 `projects/asset-pipeline/CLAUDE.md`。
+> 🔑 **全局规则（2026-08-20 起）**：`asset-pipeline/` 的生成产出（图片/视频/音频）不入仓库，统一存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流 MD 文档、规则、过程数据（映射表/批次状态）与参考图。详见 `asset-pipeline/CLAUDE.md`。
 
 ## 开发工作流
 

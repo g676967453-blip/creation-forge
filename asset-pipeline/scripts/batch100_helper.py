@@ -15,7 +15,8 @@ import random
 import sys
 from pathlib import Path
 
-BASE = Path(r"c:/项目资料/ceshi/projects/asset-pipeline")
+# 项目根 = 本脚本所在目录的上一级（兼容本机 ever-forge / 公司 ceshi 双环境，不硬编码盘符）
+BASE = Path(__file__).resolve().parent.parent
 OUT = BASE / "outputs/demo-character-concept/portraits/batch-100"
 TABLE = OUT / "batch_table.csv"
 GROUPS = OUT / "batch_groups.json"

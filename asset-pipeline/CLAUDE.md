@@ -234,7 +234,7 @@ python3 {baseDir}/agent_skill.py chat \
   --json --download
 
 # 后处理：PS 色彩范围抠图 → ps_chroma_slice.jsx 切片
-# 详见 docs/workflows/道具图标-生产.md（系统层工作流）
+# 详见 ../docs/workflows/道具图标-生产.md（系统层工作流）
 ```
 
 ### 建筑 2×2 网格
@@ -250,7 +250,7 @@ python3 {baseDir}/agent_skill.py chat \
   --json --download
 
 # 后处理：PS 色彩范围抠图 → slice_grid_2x2.py 切片
-# 详见 docs/workflows/建筑-生产.md（系统层工作流）
+# 详见 ../docs/workflows/建筑-生产.md（系统层工作流）
 ```
 
 ### 下载到指定目录
@@ -320,8 +320,8 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 
 - **Lovart Skill 目录**：`C:\Users\admin\.claude\skills\lovart-api\`
 - **Lovart 状态文件**：`~/.lovart/state.json`
-- **GAME-002 美术规范**：`../GAME-002/美术制作/`
-- **造化坊主 CLAUDE.md**：`../../CLAUDE.md`
+- **GAME-002 美术规范**：`../projects/GAME-002/美术制作/`
+- **造化坊主 CLAUDE.md**：`../CLAUDE.md`
 
 ---
 

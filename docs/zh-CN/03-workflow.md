@@ -20,7 +20,7 @@
 
 ## 创建新游戏项目
 
-> **现行结构（2026-08 起）：** 所有项目扁平放在 `projects/<项目名>/`（如 `projects/GAME-002/`、`projects/xiaohongshu/`）。  
+> **现行结构（2026-08 起）：** 所有项目扁平放在 `projects/<项目名>/`（如 `projects/GAME-002/`、`xiaohongshu/`）。  
 > ~~`projects/originals/`、`projects/sandbox/`~~ 为历史分层，**不要再新建**。
 
 ### 方式一：按工作流创建（推荐）

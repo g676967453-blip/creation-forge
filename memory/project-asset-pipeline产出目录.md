@@ -24,7 +24,7 @@ metadata:
 
 - `AI_COLLABORATION.md` §2.3 硬性目录规则表 +1 行（所有 AI 必须遵守）
 - 主 `CLAUDE.md` 项目结构区块全局规则备注
-- `projects/asset-pipeline/CLAUDE.md` 资产目录约定（含修复 `j:/ceshi` 旧路径）
+- `asset-pipeline/CLAUDE.md` 资产目录约定（含修复 `j:/ceshi` 旧路径）
 
 ## 注意事项
 

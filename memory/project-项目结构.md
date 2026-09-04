@@ -33,9 +33,9 @@ updated: 2026-08-02
 
 - `projects/GAME-002/开仙门/` — Godot 4.7 独立游戏 (~80%)
 - `projects/interaction-spec-system/` — 交互规范生成工具 (v1.0)
-- `projects/asset-pipeline/` — 资产生产管线 (等 GAME-002 稳定)
+- `asset-pipeline/` — 资产生产管线 (等 GAME-002 稳定)
 - `projects/qin-court-audience/` — HTML5 问答游戏 (v1.0 已完成)
-- `projects/xiaohongshu/` — 小红书内容创作 (15 期)
+- `xiaohongshu/` — 小红书内容创作 (15 期)
 
 **来源：** CLAUDE.md · docs/zh-CN/04-project-structure.md · docs/目标规划.md
 **适用 AI：** 全部

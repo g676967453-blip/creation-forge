@@ -41,7 +41,7 @@ description: 批量生成游戏道具图标：4×4 绿底网格 → Lovart 生�
 | 像素艺术 | `pixel art, limited color palette, clean pixel edges, no anti-aliasing` |
 
 ### 3. 组装 Prompt
-从模板 `projects/asset-pipeline/templates/item-grid.md` 组装：
+从模板 `asset-pipeline/templates/item-grid.md` 组装：
 ```text
 16 game item icons in 4 rows of 4, evenly spaced, no grid lines,
 items: {16 个道具英文名，逗号分隔},
@@ -95,7 +95,7 @@ python3 {baseDir}/agent_skill.py download \
 非 4 倍数时切片会逐格累积偏移、右下角图标被截断，且脚本静默不报错。
 
 ```bash
-python3 projects/asset-pipeline/scripts/normalize_icons.py --square 1024 \
+python3 asset-pipeline/scripts/normalize_icons.py --square 1024 \
   --input grid_raw.png --output grid_1024.png
 ```
 
@@ -163,7 +163,7 @@ python3 scripts/normalize_icons.py --pad 256 --margin 16 \
 | 非像素模型 | GPT Image 2 |
 | 像素模型 | Nano Banana Pro（草稿）→ Midjourney（成品） |
 | PS 抠图 | 色彩范围 → 容差 200 → 反选 → Ctrl+J |
-| PS 切图 | `ps_chroma_slice.jsx`（位于 `projects/asset-pipeline/scripts/`） |
+| PS 切图 | `ps_chroma_slice.jsx`（位于 `asset-pipeline/scripts/`） |
 
 ## 约束
 - **风格锁定后一个字不改** — 后续只换 `items:` 列表，风格部分永久锁死
@@ -175,5 +175,5 @@ python3 scripts/normalize_icons.py --pad 256 --margin 16 \
 - **目录名用英文** — 中文路径会导致 Python 编码错误
 
 > 完整流程见 [docs/workflows/道具图标-生产.md](../../docs/workflows/道具图标-生产.md)
-> 协作模型见 [projects/asset-pipeline/docs/01-协作模型.md](../../projects/asset-pipeline/docs/01-协作模型.md)
-> Prompt 模板见 [projects/asset-pipeline/templates/item-grid.md](../../projects/asset-pipeline/templates/item-grid.md)
+> 协作模型见 [asset-pipeline/docs/01-协作模型.md](../../asset-pipeline/docs/01-协作模型.md)
+> Prompt 模板见 [asset-pipeline/templates/item-grid.md](../../asset-pipeline/templates/item-grid.md)

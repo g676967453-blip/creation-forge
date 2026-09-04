@@ -153,7 +153,7 @@ game asset / game key visual / character illustration
 - [03-工作流阶段.md](03-工作流阶段.md) — 草稿→成品→集成
 - [07-建筑工作流.md](07-建筑工作流.md) — 建筑生产工作流
 - `templates/` — 各资产类型的具体 Prompt 模板
-- [../../works/2026-08-11-claude-ai-building-prompt-insights.md](../../works/2026-08-11-claude-ai-building-prompt-insights.md) — 建筑出图实战心得
+- [../../造化仪表盘/works/2026-08-11-claude-ai-building-prompt-insights.md](../../造化仪表盘/works/2026-08-11-claude-ai-building-prompt-insights.md) — 建筑出图实战心得
 
 ---
 

@@ -75,7 +75,7 @@ ever-forge/
 | **禁止在根目录新建一级文件夹** | 除了上述列出的目录，不得在根目录创建任何新目录 |
 | **工具脚本放 `tools/`** | 不要另建 `scripts/`、`bin/` 等目录 |
 | **文档放 `docs/`** | 不在根目录散落 `.md` 文件（ONBOARDING.md / CLAUDE.md / AI_COLLABORATION.md / README.md 除外） |
-| **资产管线产出不进仓库** | `projects/asset-pipeline/` 生成的图片/视频/音频存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流文档、规则、过程数据、参考图 |
+| **资产管线产出不进仓库** | `asset-pipeline/` 生成的图片/视频/音频存桌面 `C:\Users\admin\Desktop\asset-pipeline-outputs\`；仓库内只保留工作流文档、规则、过程数据、参考图 |
 
 **违反目录规则 = 打乱项目结构，会被用户要求回滚修改。**
 
@@ -234,9 +234,9 @@ tags: [interaction-spec-system, 重构]
 |------|------|------|
 | 开仙门 (GAME-002) | `projects/GAME-002/` | 🟡 开发中 — V0.1 核心循环 ~80%，08-14 祝福系统规则收敛 |
 | 交互规范系统 | `projects/interaction-spec-system/` | 🟢 运转中 — v2.1 组件库 + 调参工具 |
-| 资产管线 | `projects/asset-pipeline/` | 🟢 投产中 — 图标/建筑双管线，08-14 鲤鱼花灯批次 |
+| 资产管线 | `asset-pipeline/` | 🟢 投产中 — 图标/建筑双管线，08-14 鲤鱼花灯批次 |
 | 秦王殿奏对 | `projects/qin-court-audience/` | 🟢 已完成 — v1.0 |
-| 小红书 | `projects/xiaohongshu/` | 🟢 运转中 — 15 期已发布 |
+| 小红书 | `xiaohongshu/` | 🟢 运转中 — 15 期已发布 |
 | game-bot | `projects/game-bot/` | 🟢 在役 — AI 游戏自动化工作流（08-10 仪表盘注册） |
 | 情景认知小程序 | `projects/情景认知小程序/` | 🟡 原型验证中 — prototype/sim.js 原型验证 |
 | TBH 复刻 | 调研完成，待立项 | 🔵 调研完成 — 市场+实机分析（08-06） |

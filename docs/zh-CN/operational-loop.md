@@ -78,7 +78,7 @@ YYYY-MM-DD-简短描述.md
 - 第二幕：AI 怎么协作解决的（亮点/对话）
 - 第三幕：效果展示（成果展示）
 
-> 📋 具体格式见 [`works/_template.md`](../../works/_template.md)
+> 📋 具体格式见 [`works/_template.md`](../../造化仪表盘/works/_template.md)
 
 ---
 
@@ -118,7 +118,7 @@ YYYY-MM-DD-简短描述.md
 | 目录/文档 | 定位 | 与本循环的关系 |
 |-----------|------|----------------|
 | `works/` | 🆕 日常运转核心 | 循环的执行层 |
-| `projects/xiaohongshu/` | 内容素材库 | 宏观选题，由 works/ 积攒的素材驱动 |
+| `xiaohongshu/` | 内容素材库 | 宏观选题，由 works/ 积攒的素材驱动 |
 | `docs/zh-CN/manifesto.md` | 核心理念 | WHY — 为什么要这么学 |
 | 本文档 | 操作手册 | HOW — 每天怎么运转 |
 

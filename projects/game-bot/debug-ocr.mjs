@@ -23,8 +23,8 @@ if (r.ok && existsSync(shotPath)) {
   const ocrPath = join(import.meta.dirname, 'debug_ocr.txt');
   const result = spawnSync('powershell', [
     '-NoProfile', '-ExecutionPolicy', 'Bypass',
-    // ocr.ps1 位于仓库根 tools/tbh/ 下，从 game-bot/ 向上两级
-    '-File', winPath(join(import.meta.dirname, '../../tools/tbh/ocr.ps1')),
+    // ocr.ps1 位于同目录 game-bot/tbh/ 下，与本文件同级
+    '-File', winPath(join(import.meta.dirname, 'tbh/ocr.ps1')),
     '-ImagePath', shotPath,
     '-OutFile', ocrPath
   ], { timeout: 20000, encoding: 'utf8', windowsHide: true });

@@ -77,7 +77,7 @@ description: >-
 **⚠️ 绝不主动执行。提取的候选清单必须经用户确认后才导入。**
 
 **扫描源：**
-- 📱 小红书：`projects/xiaohongshu/` 帖子目录（发布频率）+ `works/` 近 7 天日志（未转化素材）
+- 📱 小红书：`xiaohongshu/` 帖子目录（发布频率）+ `works/` 近 7 天日志（未转化素材）
 - 🎮 游戏开发：`GAME-002/策划文档/05-元文档/路线图/开仙门-V0.1-任务管理表.md`（未完成高优先级条目）
 - 🔧 造化坊：`docs/workflows/改进追踪.md`（进行中改进项）+ `tools/collect-data.ts` issues/suggestions + `works/` 近期日志
 

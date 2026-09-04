@@ -62,7 +62,7 @@ cp works/_template.md works/2026-07-16-phaser-collision-detection.md
 | 你在做什么 | 文件放哪 | 命名规则 |
 |------------|----------|----------|
 | 解决具体问题 | `works/` | `YYYY-MM-DD-简短描述.md` |
-| 宏观选题素材 | `projects/xiaohongshu/` | 编号 + 主题 |
+| 宏观选题素材 | `xiaohongshu/` | 编号 + 主题 |
 | 小红书视频草案 | 直接在 works/ 文件里（区块二） | 同上 |
 
 ### works/ 文件就是你的工作日志 + 内容素材库

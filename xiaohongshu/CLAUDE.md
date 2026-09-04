@@ -1,14 +1,14 @@
 # 小红书自媒体内容线 - CLAUDE.md
 
 > 造化坊 · 小红书自媒体内容创作项目
-> 将 works/ 工作日志中的实战问题转化为可发布的小红书图文帖子
+> 将造化仪表盘工作日志（`../造化仪表盘/works/`）中的实战问题转化为可发布的小红书图文帖子
 
 ---
 
 ## ⚠️ AI 行为规则
 
 ### 内容规范
-1. **素材来源**：从 `works/` 工作日志中提炼「遇到什么问题」作为选题，不从宣言直接取材
+1. **素材来源**：从 `造化仪表盘/works/` 工作日志中提炼「遇到什么问题」作为选题，不从宣言直接取材
 2. **先文案后 HTML**：不要跳过文案直接写 HTML。确认选题和卡片方向后再生成
 3. **CTA 固定口号**：「关注我：每天解决一个问题」（所有帖子尾页，永远不变）
 4. **品牌标记**：底部 `.creation-badge`「造化坊」
@@ -107,15 +107,15 @@ xiaohongshu/
 5. 导出 PNG
 ```
 
-> 详细流程见 [Pixso-导入操作](../../docs/workflows/Pixso-导入操作.md)
+> 详细流程见 [Pixso-导入操作](../docs/workflows/Pixso-导入操作.md)
 
 ---
 
 ## 关联资源
 
-- 素材来源：[works/](../works/) 工作日志
-- 工作流文档：[docs/workflows/小红书-制作帖子.md](../../docs/workflows/小红书-制作帖子.md) · SKILL：`/new-post`
+- 素材来源：[工作日志](../造化仪表盘/works/) 工作日志
+- 工作流文档：[docs/workflows/小红书-制作帖子.md](../docs/workflows/小红书-制作帖子.md) · SKILL：`/new-post`
 - 截图模板：[`_screenshot.mjs`](_screenshot.mjs)（Puppeteer 逐卡截图）
-- Pixso 导入：[docs/workflows/Pixso-导入操作.md](../../docs/workflows/Pixso-导入操作.md)（可选）
-- Pixso 指南：[Pixso 人机协作指南](../../docs/zh-CN/pixso-human-ai-collaboration.md)
-- 运转线路图：[日常运转线路图](../../docs/zh-CN/operational-loop.md)
+- Pixso 导入：[docs/workflows/Pixso-导入操作.md](../docs/workflows/Pixso-导入操作.md)（可选）
+- Pixso 指南：[Pixso 人机协作指南](../docs/zh-CN/pixso-human-ai-collaboration.md)
+- 运转线路图：[日常运转线路图](../docs/zh-CN/operational-loop.md)

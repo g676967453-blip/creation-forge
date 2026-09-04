@@ -29,7 +29,7 @@ description: 创建小红书图文笔记的完整工作流：从 works/ 选材 �
 文案确认后：
 - 询问 accent 色（默认珊瑚红 `#ff6b6b`）
 - 从最新帖子拷贝样式，生成单文件 `index.html`
-- 放入 `projects/xiaohongshu/YYYY-MM-DD-主题/`
+- 放入 `xiaohongshu/YYYY-MM-DD-主题/`
 - 自动用浏览器打开预览
 
 ### 4. Pixso 导入

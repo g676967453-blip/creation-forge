@@ -31,7 +31,7 @@
 | UI 协作规范（rewritten） | [../personal-work-records/01-美术规范与标准/_rewritten/game-ui-collaboration-spec.md](../personal-work-records/01-美术规范与标准/_rewritten/game-ui-collaboration-spec.md) | 网格、安全区、双分辨率等 |
 | UI 生产管线（rewritten） | [../personal-work-records/01-美术规范与标准/_rewritten/game-ui-production-pipeline.md](../personal-work-records/01-美术规范与标准/_rewritten/game-ui-production-pipeline.md) | 五阶段包装流程 |
 | UI 外包指南（rewritten） | [../personal-work-records/01-美术规范与标准/_rewritten/game-ui-outsourcing-guide.md](../personal-work-records/01-美术规范与标准/_rewritten/game-ui-outsourcing-guide.md) | 外包生命周期 |
-| asset-pipeline 产出规则 | `projects/asset-pipeline/CLAUDE.md` + memory | 媒体产出不进仓库，桌面目录 |
+| asset-pipeline 产出规则 | `asset-pipeline/CLAUDE.md` + memory | 媒体产出不进仓库，桌面目录 |
 
 ---
 
