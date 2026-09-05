@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>板块4 · 美术产线仪表盘 — 模型工作流</title>
+<style>
+  :root{
+    --bg:#0e1320; --bg2:#121a2c; --card:#161f33; --card2:#1b2640;
+    --line:#2a3656; --txt:#dfe7f5; --muted:#8fa3c4; --dim:#5d6f93;
+    --gold:#f0b35c; --cyan:#5ad1e6; --violet:#a78bfa; --green:#4ade80; --red:#f87171; --blue:#60a5fa;
+    --grad:linear-gradient(135deg,#f0b35c,#e879f9 60%,#60a5fa);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1200px 500px at 15% -10%,#1b2a4a 0%,var(--bg) 55%) fixed,var(--bg);color:var(--txt);
+    font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;line-height:1.55;padding:28px 20px 60px}
+  .wrap{max-width:1180px;margin:0 auto}
+  /* ---------- header ---------- */
+  header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;
+    border:1px solid var(--line);border-radius:16px;padding:22px 26px;background:linear-gradient(180deg,var(--card2),var(--card));
+    box-shadow:0 10px 40px #0008}
+  h1{font-size:26px;letter-spacing:.5px}
+  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .badge{font-size:12px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:#101a30;color:var(--txt)}
+  .badge.ok{color:#0d1f12;background:var(--green);border-color:var(--green);font-weight:600}
+  .badge.warn{color:#261503;background:var(--gold);border-color:var(--gold);font-weight:600}
+  .badge.wip{color:#0b1526;background:var(--blue);border-color:var(--blue);font-weight:600}
+  .snapshot{font-size:12px;color:var(--dim);text-align:right}
+  .snapshot b{color:var(--gold)}
+  /* ---------- generic ---------- */
+  section{margin-top:26px}
+  h2{font-size:17px;display:flex;align-items:center;gap:9px;margin-bottom:12px;color:var(--txt)}
+  h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .grid{display:grid;gap:12px}
+  .card{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--card),#131b2e);padding:16px 18px}
+  .card h3{font-size:14px;color:var(--gold);margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{color:var(--muted);text-align:left;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:9px 10px;border-bottom:1px solid #1e2a44;vertical-align:top}
+  tr:hover td{background:#141e36}
+  .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);margin:1px 0;white-space:nowrap}
+  .tag.g{color:var(--green);border-color:#1f5131}
+  .tag.c{color:var(--cyan);border-color:#1d4d5c}
+  .tag.v{color:var(--violet);border-color:#463a76}
+  .tag.o{color:var(--gold);border-color:#5c4a26}
+  .tag.r{color:var(--red);border-color:#6e2b2b}
+  .tag.b{color:var(--blue);border-color:#244a76}
+  a{color:var(--cyan);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:12px}
+  /* ---------- stages ---------- */
+  .stages{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .stage{border:1px solid var(--line);border-radius:12px;padding:12px;background:#131c30;position:relative}
+  .stage .no{font-size:20px;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stage b{display:block;font-size:13px;margin:6px 0 4px}
+  .stage span{font-size:11px;color:var(--muted)}
+  .owner{font-size:11px;color:var(--dim);margin-top:6px}
+  @media(max-width:900px){.stages{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:560px){.stages{grid-template-columns:repeat(2,1fr)}}
+  /* ---------- model chips ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:150px;background:#111a2e}
+  .chip .nm{font-size:14px;font-weight:600}
+  .chip .use{font-size:11px;color:var(--muted)}
+  .chip .day{font-size:11px;margin-top:4px;color:var(--dim)}
+  .chip .day b{color:var(--green)}
+  .chip.main{border-color:#3d5b93;box-shadow:0 0 0 1px #3d5b9355 inset}
+  /* ---------- tasks ---------- */
+  ul.tasks{list-style:none}
+  ul.tasks li{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-bottom:1px dashed #223052;font-size:13.5px}
+  ul.tasks li:last-child{border-bottom:none}
+  .dot{flex:none;width:9px;height:9px;border-radius:50%;margin-top:6px}
+  .dot.w{background:var(--gold)} .dot.h{background:var(--red)} .dot.d{background:var(--dim)} .dot.b{background:var(--blue)}
+  /* ---------- recipe ---------- */
+  pre{background:#0a101e;border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow:auto;color:#b9e8d8;font-size:12px;line-height:1.7}
+  pre .c{color:#54698f}
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+  .kv div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#101a30}
+  .kv b{color:var(--gold);font-size:12px;display:block;margin-bottom:3px}
+  .kv span{font-size:12px;color:var(--txt);word-break:break-all}
+  footer{margin-top:34px;color:var(--dim);font-size:12px;text-align:center;border-top:1px solid #1c2740;padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <header>
+    <div>
+      <h1>🎨 板块4 · <span class="grad">美术产线仪表盘</span></h1>
+      <div class="sub">asset-pipeline — 人 · Claude/DSH · Lovart 三角协作生产线 · 游戏美术生产工作台</div>
+      <div class="badges">
+        <span class="badge ok">♾ 无限模式</span>
+        <span class="badge ok">✓ 网络已恢复（代理 7897）</span>
+        <span class="badge wip">标准工作流 v5 已成文</span>
+        <span class="badge warn">对接 GAME-002：40%</span>
+      </div>
+    </div>
+    <div class="snapshot">数据快照：<b>2026-09-05</b>（Lovart query-mode 实测）<br>
+      权威源：<a href="docs/10-美术生产标准工作流.md">docs/10</a> · <a href="PROGRESS.md">PROGRESS</a> · <a href="CLAUDE.md">CLAUDE.md</a></div>
+  </header>
+
+  <!-- ============ 1 六段标准循环 ============ -->
+  <section>
+    <h2>⏱ 标准工作流 · 六段循环（docs/10）</h2>
+    <div class="stages">
+      <div class="stage"><div class="no">①</div><b>需求输入</b><span>需求/参考图/项目规范</span><div class="owner">👤 人类发起</div></div>
+      <div class="stage"><div class="no">②</div><b>规格化</b><span>型号·尺寸·命名 → 批次规格表</span><div class="owner">🤖 起草 · 👤 确认</div></div>
+      <div class="stage"><div class="no">③</div><b>Prompt 工程</b><span>模板变量 + 色彩约束 + 强制关键词</span><div class="owner">🤖 AI</div></div>
+      <div class="stage"><div class="no">④</div><b>生成迭代</b><span>草稿 NBP → 成品模型 · 同主题复用 thread</span><div class="owner">🤖 执行 · 👤 选向</div></div>
+      <div class="stage"><div class="no">⑤</div><b>验收</b><span>人眼 + 04 质量清单 · 横向一致性</span><div class="owner">👤 人类终审</div></div>
+      <div class="stage"><div class="no">⑥</div><b>归档交付</b><span>后处理 → 桌面落盘 → 汇报 → 登记</span><div class="owner">🤖 AI</div></div>
+    </div>
+  </section>
+
+  <!-- ============ 2 模型工作流矩阵（核心） ============ -->
+  <section>
+    <h2>🧩 模型工作流矩阵（按资产类型）</h2>
+    <div class="card" style="overflow:auto">
+      <table>
+        <thead><tr>
+          <th>资产类型</th><th>Prompt 模板</th><th>草稿模型</th><th>成品模型</th>
+          <th>规格（生成 → 交付）</th><th>后处理 / 切片</th><th>工作流文档</th><th>状态</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><b>道具图标 4×4</b></td>
+            <td><a href="templates/item-grid.md">item-grid.md</a></td>
+            <td><span class="tag c">Nano Banana Pro</span></td>
+            <td><span class="tag g">GPT Image 2</span></td>
+            <td class="mono">1024 绿底 → 16×256px</td>
+            <td class="mono">normalize_icons → ps_chroma_slice / slice_grid</td>
+            <td><a href="docs/06-道具图标工作流.md">docs/06</a></td>
+            <td><span class="tag g">✅ 投产</span></td>
+          </tr>
+          <tr>
+            <td><b>3D 等距建筑 2×2</b></td>
+            <td><a href="templates/building-grid.md">building-grid.md</a></td>
+            <td><span class="tag c">Nano Banana Pro</span></td>
+            <td><span class="tag g">GPT Image 2</span></td>
+            <td class="mono">2048 绿底 → 4×1024px</td>
+            <td class="mono">PS 色键抠图 → slice_grid_2x2</td>
+            <td><a href="docs/07-建筑工作流.md">docs/07</a></td>
+            <td><span class="tag g">✅ 投产</span></td>
+          </tr>
+          <tr>
+            <td><b>角色原画</b><br><span class="tag">胸像/半身/全身</span></td>
+            <td><a href="templates/character-portrait.md">character-portrait.md</a></td>
+            <td><span class="tag c">Nano Banana Pro</span></td>
+            <td><span class="tag o">Midjourney</span><br><span class="tag g">GPT Image 2</span></td>
+            <td class="mono">按构图 · NEAREST 缩放</td>
+            <td class="mono">postprocess / batch100_helper</td>
+            <td><a href="docs/09-角色原画工作流.md">docs/09</a></td>
+            <td><span class="tag g">✅ 投产</span><br><span class="tag r">禁 3 组合*</span></td>
+          </tr>
+          <tr>
+            <td><b>单枚图标</b></td>
+            <td><a href="templates/icon.md">icon.md</a></td>
+            <td><span class="tag c">Nano Banana Pro</span></td>
+            <td><span class="tag v">默认 / MJ</span></td>
+            <td class="mono">80 / 128px 正方</td>
+            <td class="mono">postprocess</td>
+            <td>—</td>
+            <td><span class="tag g">✅ 验证</span></td>
+          </tr>
+          <tr>
+            <td><b>精灵表</b><br><span class="tag">角色/怪物/NPC</span></td>
+            <td><a href="templates/sprite-sheet.md">sprite-sheet.md</a></td>
+            <td><span class="tag c">Nano Banana Pro</span></td>
+            <td><span class="tag v">默认 / MJ</span></td>
+            <td class="mono">水平 N 帧 stripe</td>
+            <td class="mono">按帧切片</td>
+            <td>—</td>
+            <td><span class="tag b">模板就绪</span></td>
+          </tr>
+          <tr>
+            <td><b>特效帧动画 VFX</b></td>
+            <td><a href="templates/vfx.md">vfx.md</a></td>
+            <td><span class="tag c">Nano Banana Pro</span></td>
+            <td><span class="tag v">默认</span></td>
+            <td class="mono">水平 N 帧 · 半透明</td>
+            <td class="mono">按帧切片</td>
+            <td>—</td>
+            <td><span class="tag b">模板就绪</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size:11.5px;color:var(--dim);margin-top:10px">
+        * 角色原画禁用组合：MJ×3D · GPT2×3D · MJ×韩系（头身比钟摆，见 PROGRESS 已验证表）。精确规格以模板头部与批次规格表为准。
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 账号与模型可用性 ============ -->
+  <section>
+    <h2>🪄 Lovart 账号 · 模型可用性（2026-09-05 实测）</h2>
+    <div class="grid" style="grid-template-columns:240px 1fr;align-items:start">
+      <div class="card">
+        <h3>生成模式</h3>
+        <div style="font-size:22px;font-weight:700;color:var(--green)">♾ 无限模式</div>
+        <div style="font-size:12px;color:var(--muted);margin:6px 0 10px">免费排队 · 不耗积分 · 09-05 从 fast 切回</div>
+        <div style="font-size:12px;color:var(--muted)">画布：<a href="https://www.lovart.ai/canvas" target="_blank">www.lovart.ai/canvas ↗</a></div>
+      </div>
+      <div class="card">
+        <h3>可用图片模型（无限模式额度）</h3>
+        <div class="chips">
+          <div class="chip main"><div class="nm">GPT Image 2</div><div class="use">成品：图标 4×4 / 建筑 2×2</div><div class="day">剩余 <b>251</b> 天</div></div>
+          <div class="chip main"><div class="nm">Midjourney</div><div class="use">成品：角色原画 / 像素</div><div class="day">剩余 <b>89</b> 天</div></div>
+          <div class="chip main"><div class="nm">Nano Banana Pro</div><div class="use">草稿探索（默认首选）</div><div class="day">剩余 <b>89</b> 天</div></div>
+          <div class="chip"><div class="nm">Nano Banana 2</div><div class="use">高质量升级项</div><div class="day">剩余 <b>176</b> 天</div></div>
+          <div class="chip"><div class="nm">GPT Image 1.5</div><div class="use">备选</div><div class="day">剩余 <b>104</b> 天</div></div>
+          <div class="chip"><div class="nm">Nano Banana</div><div class="use">备选</div><div class="day">剩余 <b>89</b> 天</div></div>
+          <div class="chip"><div class="nm">Seedream 4.5</div><div class="use">备选</div><div class="day">剩余 <b>90</b> 天</div></div>
+          <div class="chip"><div class="nm">Seedream 4</div><div class="use">备选</div><div class="day">剩余 <b>89</b> 天</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4 管线里程碑 ============ -->
+  <section>
+    <h2>🚩 管线版本路线（PROGRESS.md）</h2>
+    <div class="kv">
+      <div><b>v1 · 道具图标管线</b><span>Lovart→PS→256px 切片 — ✅ 验证</span></div>
+      <div><b>v3 · 3D 等距建筑管线</b><span>2048 2×2 → 4×1024 — ✅ 投产（鲤鱼花灯 + 城堡皮肤系列）</span></div>
+      <div><b>v4 · 角色原画管线</b><span>100 角色随机批量 + 头身比校准 — ✅ 探索线跑通</span></div>
+      <div><b>v5 · 标准工作流</b><span>docs/10 六段总纲成文（09-05）— ✅</span></div>
+      <div><b>v2 · 对接 GAME-002</b><span>道具图标第一批量产 — 🔲 等 GAME-002 V0.1 稳定（当前 40%）</span></div>
+      <div><b>下一步试点</b><span>器灵「百世书」胸像 → 回填首张批次规格表</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 5 挂起任务 ============ -->
+  <section>
+    <h2>📌 挂起任务与待办</h2>
+    <div class="card">
+      <ul class="tasks">
+        <li><span class="dot w"></span><span><b>🟡 器灵「百世书」胸像</b>（08-17 搁置，方案与 Prompt 已就绪）→ 按 docs/10 试点第一单，方案见 <a href="outputs/GAME-002/portraits/百世书角色设计-生成方案.md">百世书生成方案</a></span></li>
+        <li><span class="dot h"></span><span><b>🔴 G-016 救火英雄美术概念图</b>（IAA 项目，板块2 待办）</span></li>
+        <li><span class="dot b"></span><span><b>幽灵项目清理</b>：云端已删但本地登记残留 2 个（<span class="mono">8baaacfe…</span>、<span class="mono">xianxia-icons-2026</span>）→ project-remove（只动本地 state）</span></li>
+        <li><span class="dot d"></span><span><b>Phase 2（可选，待批）</b>：系统层 docs/workflows 图标/建筑两篇指针化到板块 docs/10</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 6 本机运行配方 ============ -->
+  <section>
+    <h2>⚙️ 本机运行配方（2026-09-05 实测）</h2>
+    <div class="grid" style="grid-template-columns:1fr 1fr;align-items:start">
+      <div>
+        <pre><span class="c"># Lovart 每次执行前</span>
+$env:PYTHONUTF8=1
+$env:HTTPS_PROXY='http://127.0.0.1:7897'
+$env:HTTP_PROXY=$env:HTTPS_PROXY
+<span class="c"># 装载 ~/.lovart/credentials.env 的 AK/SK 后：</span>
+python "C:\Users\Administrator\.agents\skills\lovart-api\agent_skill.py" chat --prompt "…" --json --download</pre>
+      </div>
+      <div class="kv" style="grid-template-columns:1fr">
+        <div><b>桌面产出根（硬规则，媒体不入仓库）</b><span class="mono">C:\Users\Administrator\Desktop\asset-pipeline-outputs\{项目}\{类型}\</span></div>
+        <div><b>批次规格表存放</b><span class="mono">asset-pipeline\outputs\{项目}\_batches\{YYYY-MM-DD}-{批次}.md</span></div>
+        <div><b>Lovart skill 基址</b><span class="mono">C:\Users\Administrator\.agents\skills\lovart-api\</span></div>
+        <div><b>活跃画布（本地 state）</b><span class="mono">46f30e5f…「概念设计」（最近活动 08-26）</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    美术产线仪表盘 · 数据快照 2026-09-05 · 权威源：<a href="docs/10-美术生产标准工作流.md">docs/10</a> / <a href="PROGRESS.md">PROGRESS</a> /
+    <a href="CLAUDE.md">CLAUDE.md</a> / <a href="README.md">README</a> · 数据更新 = 人工同步快照（Lovart 侧无公开列表 API）
+  </footer>
+</div>
+</body>
+</html>
