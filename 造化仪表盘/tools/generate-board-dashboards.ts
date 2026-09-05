@@ -12,14 +12,23 @@ import { generateAssetHTML } from "./board4-asset-dashboard";
 import { generateXhsHTML } from "./board5-xiaohongshu-dashboard";
 import { ROOT, REPORTS_DIR } from "./board-dashboard-lib";
 
-export interface BoardTarget { id: string; file: string; gen: () => string; title: string }
+export interface BoardTarget { id: string; file: string; gen: () => string; title: string; emoji: string }
 
 export const BOARD_TARGETS: BoardTarget[] = [
-  { id: "b2", file: "板块2-项目库仪表盘.html", gen: generateProjectsHTML, title: "板块2 项目库" },
-  { id: "b3", file: "板块3-知识库仪表盘.html", gen: generateDocsHTML, title: "板块3 知识库" },
-  { id: "b4", file: "板块4-美术产线仪表盘.html", gen: generateAssetHTML, title: "板块4 美术产线" },
-  { id: "b5", file: "板块5-小红书仪表盘.html", gen: generateXhsHTML, title: "板块5 小红书" },
+  { id: "b2", file: "板块2-项目库仪表盘.html", gen: generateProjectsHTML, title: "板块2 · 项目库", emoji: "🚀" },
+  { id: "b3", file: "板块3-知识库仪表盘.html", gen: generateDocsHTML, title: "板块3 · 知识库", emoji: "📚" },
+  { id: "b4", file: "板块4-美术产线仪表盘.html", gen: generateAssetHTML, title: "板块4 · 美术产线", emoji: "🎨" },
+  { id: "b5", file: "板块5-小红书仪表盘.html", gen: generateXhsHTML, title: "板块5 · 小红书", emoji: "📱" },
 ];
+
+/** 本机模式入口条（dashboard-server GET / 注入侧栏底部；静态产物不含此内容） */
+export function boardEntryBarHtml(): string {
+  const rows = BOARD_TARGETS.map(t =>
+    `<a class="tab" style="display:block;padding:9px 12px;font-size:12px" href="/board/${encodeURIComponent(t.file)}">${t.emoji} ${t.title}</a>`).join("");
+  return `<div style="margin-top:6px;padding:4px 0 8px;border-top:1px solid rgba(255,255,255,.08)">
+  <div style="padding:6px 12px;font-size:10px;color:rgba(255,255,255,.28)">板块独立盘 · 本机模式</div>
+  ${rows}</div>`;
+}
 
 /** 生成板块盘：不传 ids = 全部；传如 ["b2","b4"] = 仅指定盘（server 启动刷新 / CLI 共用），返回成功数 */
 export function writeAllBoardDashboards(ids?: string[]): number {
