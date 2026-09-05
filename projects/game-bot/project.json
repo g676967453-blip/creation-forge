@@ -1,0 +1,7 @@
+{
+  "name": "game-bot 游戏自动化机器人",
+  "engine": "Node.js + MuMu 模拟器 + OCR/录屏",
+  "status": "active",
+  "output": "AI 驱动模拟器+OCR+录屏自动试玩流程（已适配 4 款候选游戏，在役）",
+  "sortOrder": 6
+}

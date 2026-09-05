@@ -18851,6 +18851,10 @@ function ExplorerPane(props) {
   const [ctxMenu, setCtxMenu] = (0, import_react.useState)(null);
   const [, setTick] = (0, import_react.useState)(0);
   const rerender = () => setTick((t) => t + 1);
+  // 记忆每个资源管理器窗（按 会话目录|布局|行|位 区分）上次浏览目录；切换窗口/页面回来后恢复，而不是重置回默认目录
+  const memKey = "dsh.worktable.explorer.path." + (splitEnv?.getScope()?.cwd ?? "") + "|" + (splitStore?.spec?.id ?? "") + "|" + (props.row ?? "") + "|" + (props.index ?? 0);
+  const readMemPath = () => { try { return localStorage.getItem(memKey) || "" } catch { return "" } };
+  const writeMemPath = (p) => { try { if (p) localStorage.setItem(memKey, p); else localStorage.removeItem(memKey) } catch {} };
   const joinPathLocal = (base, name) => {
     if (!base) return name;
     const sep = base.indexOf("\\") >= 0 ? "\\" : "/";
@@ -18937,13 +18941,22 @@ function ExplorerPane(props) {
     rerender();
   }, [fetchDir, rootPath]);
   const initRoot = (0, import_react.useCallback)(async () => {
-    const r = await fetchDir(splitEnv?.getScope()?.cwd ?? "");
+    const scopeCwd = splitEnv?.getScope()?.cwd ?? "";
+    let target = scopeCwd;
+    const saved = readMemPath();
+    if (saved && saved !== scopeCwd) {
+      try {
+        const d = await postJson("/api/worktable/fs", { path: saved, sessionId: splitEnv?.getScope()?.sessionId ?? "", cwd: scopeCwd });
+        if (d && !d.error && Array.isArray(d.entries)) target = saved;
+      } catch {}
+    }
+    const r = await fetchDir(target);
     setRootPath(r.path);
     setPathDraft(r.path || "");
     rerender();
   }, [fetchDir]);
   (0, import_react.useEffect)(() => { initRoot(); }, [initRoot]);
-  (0, import_react.useEffect)(() => { if (rootPath) setPathDraft(rootPath); }, [rootPath]);
+  (0, import_react.useEffect)(() => { if (rootPath) { setPathDraft(rootPath); writeMemPath(rootPath); } }, [rootPath]);
   (0, import_react.useEffect)(() => {
     if (!ctxMenu) return;
     let alive = true;
@@ -21973,14 +21986,20 @@ function WorktableSection(props) {
       }
       return false;
     };
-    // 1) workspaces.pickDirectory
+    // 1) workspaces.pickDirectory（去重后逐一尝试；原生对话框在部分环境会挂起不返回，超时视为不可用，落到内置路径编辑器）
+    const withTimeout = (p, ms) => Promise.race([p, new Promise((resolve) => setTimeout(() => resolve({ __wt_timeout: true }), ms))]);
     const cands = [];
     try { if (sessionBridge?.workspaces) cands.push(sessionBridge.workspaces); } catch {}
     try { if (window.__dshWorkspaces) cands.push(window.__dshWorkspaces); } catch {}
+    const seenWs = new Set();
     for (const ws of cands) {
+      if (!ws || seenWs.has(ws)) continue;
+      seenWs.add(ws);
       try {
         if (ws && typeof ws.pickDirectory === "function") {
-          const p = await ws.pickDirectory();
+          const pick = await withTimeout(ws.pickDirectory(), 2500);
+          if (pick && pick.__wt_timeout) { try { console.log("[dsh-worktable] native picker timeout, fallback"); } catch {} continue; }
+          const p = pick;
           if (p === null || p === undefined) return; // cancelled
           if (tryApply(p)) return;
         }
@@ -21993,8 +22012,9 @@ function WorktableSection(props) {
       const api = hostApi || window.__dshHostApi;
       const host = api && api.host;
       if (host && typeof host.pickDirectory === "function") {
-        const response = await host.pickDirectory({});
-        if (response && response.result && response.result.ok === false) {
+        const response = await withTimeout(host.pickDirectory({}), 2500);
+        if (response && response.__wt_timeout) { try { console.log("[dsh-worktable] host picker timeout, fallback"); } catch {} }
+        else if (response && response.result && response.result.ok === false) {
           // unavailable -> fall through
         } else {
           const path = response && response.result && response.result.value ? response.result.value.path : null;
