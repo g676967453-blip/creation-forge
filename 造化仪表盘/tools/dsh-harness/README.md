@@ -19,9 +19,28 @@
   scripts/
     export-from-machine.ps1
     install-to-machine.ps1
+    dashboard-service.ps1 # 仪表盘本地服务(:3456) 登录自启管理
     worktable-state-tool.html
   state/worktable-state.example.json
 ```
+
+## 仪表盘本地服务登录自启（dashboard-server :3456）
+
+仪表盘的「任务 ✓/✗ 完成/取消」等操作需要本地服务跑在 `http://127.0.0.1:3456`。
+`scripts/dashboard-service.ps1` 用**当前用户「启动文件夹」**实现登录级自启（无需管理员权限），
+并自行以仓库根为工作目录定位 `造化仪表盘/tools/dashboard-server.ts`（可随仓库换盘符）。
+
+```powershell
+cd <仓库>\造化仪表盘\tools\dsh-harness\scripts
+powershell -NoProfile -ExecutionPolicy Bypass -File .\dashboard-service.ps1 -Action install    # 注册自启 + 立即启动
+powershell -NoProfile -ExecutionPolicy Bypass -File .\dashboard-service.ps1 -Action uninstall  # 移除自启 + 停止
+powershell -NoProfile -ExecutionPolicy Bypass -File .\dashboard-service.ps1 -Action status     # 查状态
+```
+
+- 幂等：3456 已在监听时重复 install/start 不会重启。
+- 日志：`造化仪表盘/reports/dashboard-service.{out,err}.log`。
+- 装好后**下次登录**自动生效；当前立即启动可跑一次 `-Action start`。
+- 注意：Windows PowerShell 5.1 需 UTF-8 带 BOM 解析中文脚本；若改了本脚本请保持 BOM。
 
 ## 机器 A（导出）
 

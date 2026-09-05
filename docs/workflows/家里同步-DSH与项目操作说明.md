@@ -88,6 +88,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 2. 合并写入 `profiles\desktop` / `profiles\web` 的 `package.json`（加入 worktable）
 3. 执行 `dsh plugin --profile desktop|web add "link:..."`
 
+### 2.2b 仪表盘本地服务登录自启（可选）
+
+若想让仪表盘任务操作（✓/✗ 完成/取消）所在的服务随登录自动启动：
+
+```powershell
+cd <你的-ceshi-路径>\造化仪表盘\tools\dsh-harness\scripts
+powershell -NoProfile -ExecutionPolicy Bypass -File .\dashboard-service.ps1 -Action install
+```
+
+无需管理员权限（用当前用户「启动文件夹」）。卸载用 `-Action uninstall`，查状态用 `-Action status`。
+
 ### 2.3 安装后必做
 
 1. **完全退出 DSH Desktop**（任务栏托盘图标右键退出）  
