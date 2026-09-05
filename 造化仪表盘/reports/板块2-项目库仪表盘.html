@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>板块2 · 项目库 — 造化坊板块仪表盘</title>
+<style>:root{
+  --bg:#0e1320;--bg2:#121a2c;--card:#161f33;--card2:#1b2640;
+  --line:#2a3656;--txt:#dfe7f5;--muted:#8fa3c4;--dim:#5d6f93;
+  --gold:#f0b35c;--cyan:#5ad1e6;--violet:#a78bfa;--green:#4ade80;--red:#f87171;--blue:#60a5fa;
+  --grad:linear-gradient(135deg,#f0b35c,#e879f9 60%,#60a5fa);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 500px at 15% -10%,#1b2a4a 0%,var(--bg) 55%) fixed,var(--bg);color:var(--txt);
+  font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;line-height:1.55;padding:28px 20px 60px}
+.wrap{max-width:1180px;margin:0 auto}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+.mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:12px}
+header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;
+  border:1px solid var(--line);border-radius:16px;padding:22px 26px;background:linear-gradient(180deg,var(--card2),var(--card));
+  box-shadow:0 10px 40px #0008}
+h1{font-size:26px;letter-spacing:.5px}
+h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{font-size:12px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:#101a30;color:var(--txt)}
+.badge.ok{color:#0d1f12;background:var(--green);border-color:var(--green);font-weight:600}
+.badge.warn{color:#261503;background:var(--gold);border-color:var(--gold);font-weight:600}
+.badge.wip{color:#0b1526;background:var(--blue);border-color:var(--blue);font-weight:600}
+.badge.dim{color:var(--muted);background:transparent}
+.snapshot{font-size:12px;color:var(--dim);text-align:right}
+.snapshot b{color:var(--gold)}
+section{margin-top:26px}
+h2{font-size:17px;display:flex;align-items:center;gap:9px;margin-bottom:12px}
+h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.grid{display:grid;gap:12px}
+.card{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--card),#131b2e);padding:16px 18px}
+.card h3{font-size:14px;color:var(--gold);margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--muted);text-align:left;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #1e2a44;vertical-align:top}
+tr:hover td{background:#141e36}
+tr.stale td{background:rgba(240,179,92,.07)}
+tr.stale:hover td{background:rgba(240,179,92,.12)}
+.tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);margin:1px 0;white-space:nowrap}
+.tag.g{color:var(--green);border-color:#1f5131}
+.tag.c{color:var(--cyan);border-color:#1d4d5c}
+.tag.v{color:var(--violet);border-color:#463a76}
+.tag.o{color:var(--gold);border-color:#5c4a26}
+.tag.r{color:var(--red);border-color:#6e2b2b}
+.tag.b{color:var(--blue);border-color:#244a76}
+.mini-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;background:#131c30;padding:11px 16px}
+.stat .num{font-size:21px;font-weight:700;color:var(--gold)}
+.stat .lb{font-size:12px;color:var(--muted);margin-top:2px}
+.stat .num.sub{font-size:15px;color:var(--cyan);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:150px;background:#111a2e}
+.chip .nm{font-size:14px;font-weight:600}
+.chip .use{font-size:11px;color:var(--muted)}
+.chip .day{font-size:11px;margin-top:4px;color:var(--dim)}
+.chip .day b{color:var(--green)}
+.chip.main{border-color:#3d5b93;box-shadow:0 0 0 1px #3d5b9355 inset}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.kv div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#101a30}
+.kv b{color:var(--gold);font-size:12px;display:block;margin-bottom:3px}
+.kv span{font-size:12px;color:var(--txt);word-break:break-all}
+ul.tasks{list-style:none}
+ul.tasks li{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-bottom:1px dashed #223052;font-size:13.5px}
+ul.tasks li:last-child{border-bottom:none}
+.dot{flex:none;width:9px;height:9px;border-radius:50%;margin-top:6px}
+.dot.w{background:var(--gold)} .dot.h{background:var(--red)} .dot.d{background:var(--dim)} .dot.b{background:var(--blue)}
+.stages{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.stage{border:1px solid var(--line);border-radius:12px;padding:12px;background:#131c30}
+.stage .no{font-size:20px;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stage b{display:block;font-size:13px;margin:6px 0 4px}
+.stage span{font-size:11px;color:var(--muted)}
+.owner{font-size:11px;color:var(--dim);margin-top:6px}
+.bar{height:8px;background:#101a30;border-radius:99px;overflow:hidden;min-width:90px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--violet))}
+.bar.g i{background:linear-gradient(90deg,#2f9e57,var(--green))}
+.draft-row{opacity:.55}
+.footnote{font-size:11.5px;color:var(--dim);margin-top:10px}
+.empty{color:var(--dim);font-size:13px;padding:10px 2px}
+details{border:1px solid var(--line);border-radius:12px;background:#131c30;padding:10px 14px}
+summary{cursor:pointer;font-size:13px;color:var(--cyan);user-select:none}
+pre{background:#0a101e;border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow:auto;color:#b9e8d8;font-size:12px;line-height:1.7}
+pre .c{color:#54698f}
+footer{margin-top:34px;color:var(--dim);font-size:12px;text-align:center;border-top:1px solid #1c2740;padding-top:16px}
+@media(max-width:900px){.stages{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.stages{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.kv,.chips,.grid{grid-template-columns:1fr}}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🚀 <span class="grad">板块2 · 项目库</span></h1>
+      <div class="sub">projects/ — 独立游戏与工具项目总览（GAME-002 / IAA / game-bot / 交互规范系统 / 立项组合等）</div>
+      <div class="badges"><span class="badge ok">6 活跃</span><span class="badge dim">0 有阻塞</span><span class="badge dim">未提交改动 0 项</span></div>
+    </div>
+    <div class="snapshot">板块目录 projects/ · 最近提交 2026-09-05 84bb7e6 · 数据实时采集<br>权威源：<a href="../../projects/README.md">projects/README.md</a></div>
+  </header>
+<section><div class="mini-stats">
+    <div class="stat"><div class="num">8</div><div class="lb">项目总数</div></div>
+    <div class="stat"><div class="num" style="color:var(--green)">6</div><div class="lb">活跃</div></div>
+    <div class="stat"><div class="num" style="color:var(--cyan)">1</div><div class="lb">已规划</div></div>
+    <div class="stat"><div class="num " style="">0</div><div class="lb">有阻塞</div></div>
+    <div class="stat"><div class="num " style="color:var(--dim)">0</div><div class="lb">缺元数据</div></div>
+  </div></section><section>
+    <h2>📊 引擎分布</h2>
+    <div class="chips"><div class="chip"><div class="nm">小程序</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">Godot 4.7</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">Godot 4.7（fire-hero-godot）</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">HTML/CSS/JS</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">Lovart 概念图画布 + Prompt 模板</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">Markdown（templates/立项/08-统一立项案模板.md）</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">Node.js + MuMu 模拟器 + OCR/录屏</div><div class="day">1 个项目</div></div><div class="chip"><div class="nm">TypeScript + HTML/CSS</div><div class="day">1 个项目</div></div></div>
+    <div style="margin-top:10px"><span class="tag g">活跃 × 6</span> <span class="tag ">原型验证 × 1</span> <span class="tag c">已规划 × 1</span></div>
+  </section><section>
+    <h2>🗂 项目一览（元数据权威源：projects/*/project.json + PROGRESS.md）</h2>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(360px,1fr))">
+      <div class="card">
+    <h3>GAME-002「开仙门」<span class="tag g">活跃</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>Godot 4.7</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>闭环+MCP+5层防御+15波+6功法+35/93任务✅+文档修复+方向重构完成</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-09-04 eb9bcfa</span> refactor: 建立板块1 造化仪表盘/ — works/reports/管理数据/仪表盘工具链收拢  · <a href="../../projects/GAME-002">目录</a></div>
+  </div><div class="card">
+    <h3>救火英雄 IAA (Fire Hero)<span class="tag g">活跃</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>Godot 4.7（fire-hero-godot）</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>Godot 可玩核心循环 v0.1.3（双通道胜利/抓人救援/手配 6 关）+ IAA 企划/成本/美术输出规格文档成套</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-09-05 84bb7e6</span> feat(projects): 补齐 IAA/game-bot/概念设计工作流/立项组合 project.json 并清理空壳  · <a href="../../projects/IAA">目录</a></div>
+  </div><div class="card">
+    <h3>秦王殿奏对 (qin-court-audience)<span class="tag g">活跃</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>HTML/CSS/JS</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>300 题库 + 10 分类 + 打字答题</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-09-04 eb9bcfa</span> refactor: 建立板块1 造化仪表盘/ — works/reports/管理数据/仪表盘工具链收拢  · <a href="../../projects/qin-court-audience">目录</a></div>
+  </div><div class="card">
+    <h3>交互规范系统 (interaction-spec-system)<span class="tag g">活跃</span><span class="tag">运转中</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>TypeScript + HTML/CSS</td></tr>
+      <tr><th>进度</th><td>v2.0.0 完成（设计系统总则 + 组件母版库 + 页面模板 + 交互规范 + HTML 预览页）</td></tr>
+      <tr><th>产出</th><td>MD→HTML生成器 + 竖版/横版规范 + 低保真原型技能包 + 7/31 项目化完成</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-08-20 164d4b3</span> [claude] fix: 全项目诊断修复 — 文档口径统一 + 陈旧路径清理 + 运行产出移出索引  · <a href="../../projects/interaction-spec-system">目录</a> · <a href="../../projects/interaction-spec-system/PROGRESS.md">PROGRESS</a></div>
+  </div><div class="card">
+    <h3>game-bot 游戏自动化机器人<span class="tag g">活跃</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>Node.js + MuMu 模拟器 + OCR/录屏</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>AI 驱动模拟器+OCR+录屏自动试玩流程（已适配 4 款候选游戏，在役）</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-09-05 84bb7e6</span> feat(projects): 补齐 IAA/game-bot/概念设计工作流/立项组合 project.json 并清理空壳  · <a href="../../projects/game-bot">目录</a></div>
+  </div><div class="card">
+    <h3>情景认知小程序 (scenario-cognition)<span class="tag ">原型验证</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>小程序</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>prototype/sim.js 原型验证</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-08-30 d749526</span> feat: 情景认知小程序新增竖版9:16 HTML可玩原型（含README更新）  · <a href="../../projects/情景认知小程序">目录</a></div>
+  </div><div class="card">
+    <h3>概念设计工作流<span class="tag g">进行中</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>Lovart 概念图画布 + Prompt 模板</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>游戏概念设计工作流沉淀 + Lovart 概念图画布试点（2026-08-26 建立）</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-09-05 84bb7e6</span> feat(projects): 补齐 IAA/game-bot/概念设计工作流/立项组合 project.json 并清理空壳  · <a href="../../projects/概念设计工作流">目录</a></div>
+  </div><div class="card">
+    <h3>2026-09 立项组合<span class="tag c">组合评审中</span></h3>
+    <table style="font-size:12.5px"><tbody>
+      <tr><th style="width:56px">引擎</th><td>Markdown（templates/立项/08-统一立项案模板.md）</td></tr>
+      <tr><th>进度</th><td>—</td></tr>
+      <tr><th>产出</th><td>六份立项案统一模板结构化入库 + _sources 原件索引（2026-09-01）</td></tr>
+    </tbody></table>
+    
+    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">最近提交 <span class="mono">2026-09-05 84bb7e6</span> feat(projects): 补齐 IAA/game-bot/概念设计工作流/立项组合 project.json 并清理空壳  · <a href="../../projects/立项组合-202609">目录</a></div>
+  </div>
+    </div>
+  </section><section><div class="card" style="font-size:13px;color:var(--muted)">
+    ✅ 全部 8 个子项目已登记元数据 · 状态标签以 project.json 的 <span class="mono">status</span>/<span class="mono">statusText</span> 为准，进度/阻塞读 PROGRESS.md（如有）
+  </div></section>
+  <footer>
+    板块2 · 项目库 · 生成于 2026-09-05 18:53 · 刷新：<span class="mono">npx tsx 造化仪表盘/tools/generate-board-dashboards.ts</span><br>
+    以上卡片数据采集自各项目 project.json / PROGRESS.md，修改后重新生成即可。
+  </footer>
+</div>
+</body>
+</html>
