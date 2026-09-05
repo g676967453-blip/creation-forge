@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "snapshotDate": "2026-09-05",
+  "accountMode": {
+    "mode": "无限模式",
+    "note": "免费排队 · 不耗积分 · 09-05 从 fast 切回",
+    "canvasUrl": "https://www.lovart.ai/canvas"
+  },
+  "models": [
+    { "name": "GPT Image 2", "use": "成品：图标 4×4 / 建筑 2×2", "daysLeft": 251, "main": true },
+    { "name": "Midjourney", "use": "成品：角色原画 / 像素", "daysLeft": 89, "main": true },
+    { "name": "Nano Banana Pro", "use": "草稿探索（默认首选）", "daysLeft": 89, "main": true },
+    { "name": "Nano Banana 2", "use": "高质量升级项", "daysLeft": 176, "main": false },
+    { "name": "GPT Image 1.5", "use": "备选", "daysLeft": 104, "main": false },
+    { "name": "Nano Banana", "use": "备选", "daysLeft": 89, "main": false },
+    { "name": "Seedream 4.5", "use": "备选", "daysLeft": 90, "main": false },
+    { "name": "Seedream 4", "use": "备选", "daysLeft": 89, "main": false }
+  ],
+  "matrix": [
+    {
+      "assetType": "道具图标 4×4",
+      "subTags": [],
+      "templateFile": "templates/item-grid.md",
+      "draftModel": "Nano Banana Pro",
+      "finalModels": ["GPT Image 2"],
+      "spec": "1024 绿底 → 16×256px",
+      "postprocess": "normalize_icons → ps_chroma_slice / slice_grid",
+      "docFile": "docs/06-道具图标工作流.md",
+      "status": "投产"
+    },
+    {
+      "assetType": "3D 等距建筑 2×2",
+      "subTags": [],
+      "templateFile": "templates/building-grid.md",
+      "draftModel": "Nano Banana Pro",
+      "finalModels": ["GPT Image 2"],
+      "spec": "2048 绿底 → 4×1024px",
+      "postprocess": "PS 色键抠图 → slice_grid_2x2",
+      "docFile": "docs/07-建筑工作流.md",
+      "status": "投产"
+    },
+    {
+      "assetType": "角色原画",
+      "subTags": ["胸像/半身/全身"],
+      "templateFile": "templates/character-portrait.md",
+      "draftModel": "Nano Banana Pro",
+      "finalModels": ["Midjourney", "GPT Image 2"],
+      "spec": "按构图 · NEAREST 缩放",
+      "postprocess": "postprocess / batch100_helper",
+      "docFile": "docs/09-角色原画工作流.md",
+      "status": "投产",
+      "forbidden": true
+    },
+    {
+      "assetType": "单枚图标",
+      "subTags": [],
+      "templateFile": "templates/icon.md",
+      "draftModel": "Nano Banana Pro",
+      "finalModels": ["默认 / MJ"],
+      "spec": "80 / 128px 正方",
+      "postprocess": "postprocess",
+      "docFile": "",
+      "status": "验证"
+    },
+    {
+      "assetType": "精灵表",
+      "subTags": ["角色/怪物/NPC"],
+      "templateFile": "templates/sprite-sheet.md",
+      "draftModel": "Nano Banana Pro",
+      "finalModels": ["默认 / MJ"],
+      "spec": "水平 N 帧 stripe",
+      "postprocess": "按帧切片",
+      "docFile": "",
+      "status": "模板就绪"
+    },
+    {
+      "assetType": "特效帧动画 VFX",
+      "subTags": [],
+      "templateFile": "templates/vfx.md",
+      "draftModel": "Nano Banana Pro",
+      "finalModels": ["默认"],
+      "spec": "水平 N 帧 · 半透明",
+      "postprocess": "按帧切片",
+      "docFile": "",
+      "status": "模板就绪"
+    }
+  ],
+  "matrixNote": "* 角色原画禁用组合：MJ×3D · GPT2×3D · MJ×韩系（头身比钟摆，见 PROGRESS 已验证表）。精确规格以模板头部与批次规格表为准。",
+  "tasks": [
+    {
+      "color": "w",
+      "title": "器灵「百世书」胸像",
+      "note": "08-17 搁置，方案与 Prompt 已就绪 → 按 docs/10 试点第一单",
+      "link": "outputs/GAME-002/portraits/百世书角色设计-生成方案.md"
+    },
+    { "color": "h", "title": "G-016 救火英雄美术概念图", "note": "IAA 项目，板块2 待办" },
+    {
+      "color": "b",
+      "title": "幽灵项目清理",
+      "note": "云端已删但本地登记残留 2 个：8baaacfe… / xianxia-icons-2026 → project-remove（只动本地 state）"
+    },
+    {
+      "color": "d",
+      "title": "Phase 2（可选，待批）",
+      "note": "系统层 docs/workflows 图标/建筑两篇指针化到板块 docs/10"
+    }
+  ],
+  "env": {
+    "network": "已恢复（代理 7897）",
+    "proxy": "http://127.0.0.1:7897",
+    "desktopRoot": "C:\\Users\\Administrator\\Desktop\\asset-pipeline-outputs\\{项目}\\{类型}\\",
+    "batchSpecDir": "asset-pipeline\\outputs\\{项目}\\_batches\\{YYYY-MM-DD}-{批次}.md",
+    "lovartSkillBase": "C:\\Users\\Administrator\\.agents\\skills\\lovart-api\\",
+    "activeCanvas": { "name": "概念设计", "id": "46f30e5f3ac1488c8176ebd715e8a2d3", "lastActive": "08-26" }
+  }
+}
