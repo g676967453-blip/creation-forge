@@ -7,9 +7,10 @@ Lovart（https://www.lovart.ai）AI 设计平台已通过官方 `lovart-skill` �
 
 | 文件 | 用途 |
 |------|------|
-| `.env` | AK/SK 密钥 + 代理配置（**敏感，勿提交版本库**） |
+| `.env` | AK/SK 密钥 + 代理配置（**敏感，勿提交版本库**）。⚠️ 本机（09-05 实测）缺失；AK/SK 实际在 `~/.lovart/credentials.env` |
 | `lovart.ps1` | 包装脚本：读 `.env` → 设环境变量 → 调官方 `agent_skill.py` |
 | `lovart-skill/`（仓库同级） | 官方 skill 克隆（含 `skills/lovart-skill/scripts/agent_skill.py`）。`lovart.ps1` 依次查找：仓库同级 → 仓库内 → `J:\ceshi\`；缺失会提示 clone（`git clone https://github.com/lovartai/lovart-skill`，本地源勿入库） |
+| 本机官方 skill（09-05 实测） | `C:\Users\Administrator\.agents\skills\lovart-api\agent_skill.py` —— DSH/本机实际调用基址。`lovart.ps1` 查找链不含该路径，本机请直接走仓库根 README「本机运行配方」 |
 
 ## 关键网络问题（重要）
 
@@ -41,18 +42,18 @@ $env:HTTPS_PROXY = "http://127.0.0.1:7897"
 .\lovart.ps1 set-mode --fast
 ```
 
-## 账户状态（2026-08-26 查询）
+## 账户状态（2026-09-05 实测）
 
-- 生成模式：**无限模式**（unlimited，排队、不耗积分）
+- 生成模式：**无限模式**（unlimited，排队、不耗积分；09-05 从 fast 切回）
 - 可用图片模型：GPT Image 2 / 1.5、Midjourney、Nano Banana / 2 / Pro、Seedream 4 / 4.5
-- 已有项目 2 个，活跃项目：`2e637ab783934655b86e0fe33617fa4f`（16 game item icons）
-- 最近会话：`465afa13-068b-4e9d-8a08-9f96781ca310`（游戏物品图标，2026-08-26）
+- Lovart 项目：本地登记 7 个，云端实测存活 5（`4a1e820e`=开仙门 · `2e637ab7`=asset-pipeline-buildings · `1ea4a5ad`=16 pixel icons · `acf45e04`=角色原画批量 · `d81a62e9`=新画布 · `46f30e5f`=概念设计 等）；幽灵 2 个待清（`8baaacfe…`、`xianxia-icons-2026`）
+- 活跃项目（本地 state）：`46f30e5f3ac1488c8176ebd715e8a2d3`（概念设计，最近活动 08-26）
 
 ## 凭据
 
-- 已写入用户级环境变量 `LOVART_ACCESS_KEY` / `LOVART_SECRET_KEY`（官方推荐做法，
-  新终端 / OpenClaw 可直接使用）
-- 本地状态文件：`~/.lovart/state.json`（项目、会话历史）
+- AK/SK 存放于 `~/.lovart/credentials.env`（UTF-8）。⚠️ 09-05 核查：**未**设用户级环境变量
+  `LOVART_ACCESS_KEY` / `LOVART_SECRET_KEY`，每轮执行前需手动装载（见仓库根 README「本机运行配方」）
+- 本地状态文件：`~/.lovart/state.json`（项目、会话历史；读取需 `PYTHONUTF8=1`）
 
 ## 参考
 

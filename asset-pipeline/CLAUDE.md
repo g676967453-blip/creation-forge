@@ -140,19 +140,20 @@
 
 ## 资产目录约定
 
-> 🔑 **全局规则（2026-08-20 起）：生成产出（图片/视频/音频）一律存桌面，不进 ceshi 仓库。**
-> 桌面根目录：`C:\Users\admin\Desktop\asset-pipeline-outputs\`
+> 🔑 **全局规则（2026-08-20 起）：生成产出（图片/视频/音频）一律存桌面，不进仓库。**
+> 桌面根目录：`{桌面}/asset-pipeline-outputs/` —— 本机（2026-09-05 实测）=
+> `C:\Users\Administrator\Desktop\asset-pipeline-outputs\`（用户名随机器不同而不同）
 > 仓库内只保留：工作流 MD 文档、规则、映射表/批次状态等过程数据、参考图（`_references/`、`cankao/`）。
 > 存量产出已外移（08-20：397 个媒体文件，仓库 712M → 16M）。
 >
-> ⚠️ **路径中的用户名以当前机器实际值为准**（本机为 `admin`）。换机器或交付给他人时，
+> ⚠️ **路径中的用户名以当前机器实际值为准**。换机器或交付给他人时，
 > 先用 `echo $HOME` / `%USERPROFILE%` 确认，不要照抄文档里的用户名。
-> 08-26 曾因文档残留 `Administrator` 而导致路径全线失效。
+> 08-26 曾因残留旧用户名而导致路径全线失效。
 
 ### 生成产出：桌面 `asset-pipeline-outputs/{项目名}/`
 
 ```
-C:/Users/admin/Desktop/asset-pipeline-outputs/
+C:/Users/Administrator/Desktop/asset-pipeline-outputs/   ← 本机实测（换机器以实际为准）
 └── {project-name}/
     ├── portraits/      ← 角色原画（胸像/半身像/全身像）
     ├── sprites/        ← 游戏内精灵表
@@ -183,7 +184,9 @@ C:/Users/admin/Desktop/asset-pipeline-outputs/GAME-002/portraits/GAME-002_portra
 
 ## Lovart 命令速查
 
-以下命令始终从本项目的工具目录执行。`{baseDir}` = `C:\Users\admin\.claude\skills\lovart-api\`
+以下命令始终从本项目的工具目录执行。`{baseDir}` = `C:\Users\Administrator\.agents\skills\lovart-api\`（本机 09-05 实测）
+
+> ⚠️ 执行前提（本机配方）：设 `PYTHONUTF8=1` + 本地代理 `127.0.0.1:7897` + 装载 `~/.lovart/credentials.env` 的 AK/SK。完整配方见 [README.md](README.md)「本机运行配方」。
 
 ### 会话初始化（每次对话最先执行）
 
@@ -275,6 +278,8 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 
 ## 模板使用指南
 
+> 🚀 每次生产前先读 [docs/10-美术生产标准工作流.md](docs/10-美术生产标准工作流.md)（标准六段循环 + 批次规格表模板），类型细节再回到本文档与 templates/。
+
 `templates/` 目录下的模板使用 `{VARIABLE}` 占位符。使用时：
 
 1. 找到最匹配资产类型的模板
@@ -318,7 +323,8 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 
 ## 相关项目与链接
 
-- **Lovart Skill 目录**：`C:\Users\admin\.claude\skills\lovart-api\`
+- **标准工作流总纲**：[docs/10-美术生产标准工作流.md](docs/10-美术生产标准工作流.md)
+- **Lovart Skill 目录**：`C:\Users\Administrator\.agents\skills\lovart-api\`（官方克隆勿入库；用户名以实际机器为准）
 - **Lovart 状态文件**：`~/.lovart/state.json`
 - **GAME-002 美术规范**：`../projects/GAME-002/美术制作/`
 - **造化坊主 CLAUDE.md**：`../CLAUDE.md`
