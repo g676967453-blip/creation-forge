@@ -21,7 +21,7 @@
 
 **桌面产出硬规则（意图/约定）：生成媒体一律落盘桌面 `{桌面}/asset-pipeline-outputs/{项目}/{类型}/`，不进仓库；仓库只留工作流文档、过程数据、参考图。**
 
-🖥 **可视化仪表盘**：[art-dashboard.html](art-dashboard.html)（模型工作流矩阵 / 账号状态 / 挂起任务，双击浏览器打开；数据为人工同步快照，见页脚）
+🖥 **可视化仪表盘**：[板块4 · 美术产线仪表盘](../造化仪表盘/reports/板块4-美术产线仪表盘.html)（模型工作流矩阵 / 账号状态 / 挂起任务，双击浏览器打开）。人工数据权威源 = [dashboard-data.json](dashboard-data.json)（矩阵 / 模型额度 / 挂起任务 / 环境）；改完数据后在仓库根执行 `npx tsx 造化仪表盘/tools/generate-board-dashboards.ts b4` 一键刷新（盘页脚亦附刷新命令）。历史手工版 art-dashboard.html 已于 2026-09-05 退役。
 
 ### 本机运行配方（2026-09-05 实测）
 
@@ -43,6 +43,7 @@ asset-pipeline/
 ├── README.md                 ← 本文件
 ├── PROGRESS.md               ← 进度表（版本路线/已验证/本机环境）
 ├── project.json
+├── dashboard-data.json       ← 仪表盘人工数据权威源（矩阵/模型额度/挂起任务/环境，b4 盘消费）
 ├── docs/                     ← 方法论文档（规则权威源，板块内）
 │   ├── 10-美术生产标准工作流.md  ← 🚀 标准总纲（先读）
 │   ├── 01-协作模型.md          ← 三角协作核心循环

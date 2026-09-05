@@ -17,9 +17,9 @@
 | [目标规划.md](目标规划.md) | 长期目标（AI原生五维）+ 季度项目（PNAS） | 需锁（多 AI） |
 | [个人待办.md](个人待办.md) | 六类待办活跃区 + 周度归档 | 需锁（多 AI） |
 | [works/](works/) | 工作日志（一事一记 + 视频草案），命名 `YYYY-MM-DD-[ai标签]-简述.md` | 各 AI 写自己的 |
-| [reports/](reports/) | 仪表盘 HTML（`造化坊仪表盘.html`）等生成物 | 工具生成 |
+| [reports/](reports/) | 仪表盘 HTML（主盘 `造化坊仪表盘.html` + 板块盘 `板块{2,3,4,5}-*.html`）等生成物 | 工具生成 |
 | [data/](data/) | 仪表盘数据文件：goals-issues / goals-ai / assets / external（*.json） | 需锁（collect-data 数据源） |
-| [tools/](tools/) | 仪表盘工具链（collect-data / generate-dashboard / dashboard-server / todo-file / new-journal + dsh-harness/） | collect-data.ts 需锁 |
+| [tools/](tools/) | 仪表盘工具链（collect-data / generate-dashboard / generate-board-dashboards / board-dashboard-lib / board{2-5}-dashboard / dashboard-server / todo-file / new-journal + dsh-harness/） | collect-data.ts 需锁 |
 
 ## 日常操作（中枢循环）
 
@@ -32,10 +32,12 @@
 
 | 命令 | 作用 |
 |------|------|
-| `npx tsx 造化仪表盘/tools/generate-dashboard.ts` | 生成 `reports/造化坊仪表盘.html`（静态页） |
-| `npx tsx 造化仪表盘/tools/dashboard-server.ts` | 本地服务 http://127.0.0.1:3456（任务完成/取消 + `/api/activity`） |
-| `/update-dashboard` | SKILL：检查数据源 → 更新脚本 → 重新生成 |
+| `npx tsx 造化仪表盘/tools/generate-dashboard.ts` | 生成 `reports/造化坊仪表盘.html`（主盘静态页） |
+| `npx tsx 造化仪表盘/tools/generate-board-dashboards.ts [b2\|b3\|b4\|b5]` | 生成/刷新板块2-5 独立仪表盘（不带参数 = 全量） |
+| `npx tsx 造化仪表盘/tools/dashboard-server.ts` | 本地服务 http://127.0.0.1:3456（任务完成/取消 + `/api/activity`；启动时自动刷新板块盘，`/board/` 可看，侧栏有入口条） |
+| `/update-dashboard` | SKILL：检查数据源 → 更新脚本 → 重新生成（主盘 + 板块盘） |
 
+- **板块盘零侵入**：`board{2-5}-dashboard.ts` 只读复用 [collect-data.ts](tools/collect-data.ts) 已导出纯函数（`loadProjectProgress` / `loadWorkflowsFromDocs` 等）；改 collect-data 时勿动导出签名，板块盘跟随重生成即可
 - **依赖**：本板块无独立 package.json；tsx 解析自仓库根 node_modules —— **禁止在本板块 `npm i`**
 - **CI**：`.github/workflows/deploy-dashboard.yml` 每小时（cron）+ push 触发，用 `npx --yes tsx` 自包含生成并部署 GH Pages
 - **新增/改名板块**必须同步登记 [collect-data.ts](tools/collect-data.ts) 的 `BOARDS` 注册表（`dir` + `legacyPaths` 历史回溯别名）—— git rename 不回溯历史，漏登记会让板块统计失真（见 data/goals-issues.json I13）

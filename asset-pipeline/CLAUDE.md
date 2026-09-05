@@ -321,6 +321,23 @@ python3 {baseDir}/agent_skill.py project-switch --project-id PID  # 切换项目
 
 ---
 
+## 仪表盘数据同步
+
+板块4 的独立仪表盘（美术产线）是**生成式**产物，非手工维护：
+
+- 盘文件：`../造化仪表盘/reports/板块4-美术产线仪表盘.html`（自包含单文件，双击即开）
+- 人工数据权威源：本目录 [dashboard-data.json](dashboard-data.json)（模型工作流矩阵 / 模型额度 / 挂起任务 / 环境快照）
+- 可推导数据一律不入 JSON——批次统计 / PROGRESS 阶段进度 / 文件引用校验等在生成时实时解析
+- 刷新（仓库根执行；盘页脚亦附命令）：
+
+  ```bash
+  npx tsx 造化仪表盘/tools/generate-board-dashboards.ts b4   # 仅本盘；不带参数 = 全部板块盘
+  ```
+
+- 本地服务 http://127.0.0.1:3456 启动时自动全量刷新，`/board/` 下可看，主盘侧栏有入口
+
+---
+
 ## 相关项目与链接
 
 - **标准工作流总纲**：[docs/10-美术生产标准工作流.md](docs/10-美术生产标准工作流.md)

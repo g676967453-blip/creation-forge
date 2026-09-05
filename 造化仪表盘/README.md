@@ -23,11 +23,16 @@
 # 生成静态 HTML（无需服务器即可查看 reports/造化坊仪表盘.html）
 npx tsx 造化仪表盘/tools/generate-dashboard.ts
 
+# 板块2-5 独立仪表盘（reports/板块{2,3,4,5}-*.html，file:// 直开；不带参数 = 全量）
+npx tsx 造化仪表盘/tools/generate-board-dashboards.ts [b2|b3|b4|b5]
+
 # 本地服务（支持网页里「完成/取消任务」秒级写盘 + /api/activity 变动监控）
 npx tsx 造化仪表盘/tools/dashboard-server.ts   # → http://127.0.0.1:3456
 ```
 
 页面结构：**🧭 板块总览**（五板块 git 变动卡片 + 近期工作日志，默认页）→ 📋 任务 / 🎯 目标 / 📌 项目 / ⚙️ 工作流 / 📚 知识库 / 🗂️ 资产地址。
+
+**板块独立盘**：板块2-5 每板块一扇窗（项目库 / 知识库 / 美术产线 / 小红书），与主盘同系暗色视觉、自包含单文件；数据实时采集各板块权威文件（project.json / docs 分组 / PROGRESS.md / dashboard-data.json / 期目录），生成器 `tools/generate-board-dashboards.ts`（含单盘参数）。dashboard-server 启动时自动全量刷新，`/board/` 目录可看，主盘侧栏底部注入「板块独立盘 · 本机模式」入口条。
 
 ## 给新 AI 的速记
 

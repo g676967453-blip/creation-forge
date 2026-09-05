@@ -31,11 +31,19 @@ npx tsx 造化仪表盘/tools/generate-dashboard.ts
 # 输出 造化仪表盘/reports/造化坊仪表盘.html
 ```
 
+### 3b. 板块独立盘（板块2-5 数据变动时）
+```bash
+npx tsx 造化仪表盘/tools/generate-board-dashboards.ts   # 全量；带 b2|b3|b4|b5 只刷单盘
+# 输出 造化仪表盘/reports/板块{2,3,4,5}-*.html（板块盘生成器：tools/board{2-5}-dashboard.ts + board-dashboard-lib.ts）
+```
+板块盘数据实时采集各板块权威文件，一般无需手工维护；唯一人工数据源 = `asset-pipeline/dashboard-data.json`（b4 盘），改后刷 b4。
+
 ### 4. 本地发布（唯一推荐；不经 GitHub 写网页）
 ```bash
 npx tsx 造化仪表盘/tools/dashboard-server.ts
 # http://127.0.0.1:3456
 # POST /api/tasks/complete|cancel|archive  → 直接写本地 造化仪表盘/个人待办.md
+# /board/ 板块盘目录（启动时自动刷新）· 主盘侧栏底部「板块独立盘 · 本机模式」入口条
 ```
 - **不要**再用浏览器 GitHub Token / Contents API 改待办或「发布」仪表盘。
 - 静态打开 `造化仪表盘/reports/造化坊仪表盘.html` 仅只读浏览；完成/取消/归档需本地服务。
