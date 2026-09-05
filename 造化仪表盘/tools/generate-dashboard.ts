@@ -729,9 +729,6 @@ function renderProjectCards(projects) {
   // --- 个人待办面板渲染 ---
   const PT = D.personalTasks;
   const sm = {pending:'badge-planned',active:'badge-active-task',done:'badge-done',cancelled:'badge-cancelled'};
-  const pm = {'🔴 高':'badge-prio-high','🔴高':'badge-prio-high','🟡 中':'badge-prio-mid','🟡中':'badge-prio-mid','🟢 低':'badge-prio-low','🟢低':'badge-prio-low'};
-  const pmap = function(p){for(var k in pm){if(p.indexOf(k.replace(/ .+/,''))===0)return pm[k];}return '';};
-
   const cats = PT.categories;
 
   // 待归档徽标：活跃区里已完成/已取消的任务数（提醒用户执行周度归档）
@@ -746,7 +743,7 @@ function renderProjectCards(projects) {
   var currentAbcFilter = 'all';
   var currentPtFilter = 'all';
 
-  // 筛选渲染（含 ABC + 能量列）
+  // 筛选渲染（含 ABC 筛选）
   function renderPtTable(filterKey) {
     var allRows = [];
     cats.forEach(function(c){
@@ -765,12 +762,7 @@ function renderProjectCards(projects) {
       var cls = a === 'A' ? 'badge-abc-A' : a === 'B' ? 'badge-abc-B' : 'badge-abc-C';
       return '<span class="badge-abc '+cls+'">'+a+'</span>';
     };
-    var enBadge = function(e) {
-      if (!e || e === '—') return '<span style="color:rgba(255,255,255,.15)">—</span>';
-      var cls = e === '高能' ? 'badge-energy-high' : e === '中能' ? 'badge-energy-mid' : 'badge-energy-low';
-      return '<span class="badge-energy '+cls+'">'+e+'</span>';
-    };
-    return '<table class="tbl"><thead><tr><th>ID</th><th>任务</th><th>状态</th><th>ABC</th><th>能量</th><th>优先级</th><th>截止日</th><th>备注</th><th>操作</th></tr></thead><tbody>'+
+    return '<table class="tbl"><thead><tr><th>ID</th><th>任务</th><th>状态</th><th>ABC</th><th>截止日</th><th>备注</th><th>操作</th></tr></thead><tbody>'+
       allRows.map(function(r){
         var t = r.task;
         var dline = t.deadline === '—' ? '<span style="color:rgba(255,255,255,.2)">—</span>' : '<span style="color:#ff6b6b">'+t.deadline+'</span>';
@@ -784,7 +776,7 @@ function renderProjectCards(projects) {
         } else {
           actions = '<span style="color:rgba(255,255,255,.15);font-size:11px">—</span>';
         }
-        return '<tr><td style="color:rgba(255,255,255,.4);font-size:12px">'+t.id+'</td><td>'+t.task+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td>'+abcBadge(t.abc)+'</td><td>'+enBadge(t.energy)+'</td><td><span class="badge '+pmap(t.priority)+'">'+t.priority+'</span></td><td>'+dline+'</td><td style="color:rgba(255,255,255,.35);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+t.note.replace(/"/g,'&quot;')+'">'+t.note+'</td><td>'+actions+'</td></tr>';
+        return '<tr><td style="color:rgba(255,255,255,.4);font-size:12px">'+t.id+'</td><td>'+t.task+'</td><td><span class="badge '+sm[t.status]+'">'+t.statusText+'</span></td><td>'+abcBadge(t.abc)+'</td><td>'+dline+'</td><td style="color:rgba(255,255,255,.35);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+t.note.replace(/"/g,'&quot;')+'">'+t.note+'</td><td>'+actions+'</td></tr>';
       }).join('')+'</tbody></table>';
   }
 
