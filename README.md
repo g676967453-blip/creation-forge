@@ -19,4 +19,7 @@
 
 ## 仪表盘
 
-📊 站点（GitHub Pages，每小时自动更新）：<https://g676967453-blip.github.io/creation-forge/>
+📊 仪表盘为**本机模式**：GH Pages 在线站点已于 2026-09-06 下线（网页不再公开），部署 workflow `deploy-dashboard.yml` 已删除。查看方式：
+
+- 主盘 + 板块盘静态页：`造化仪表盘/reports/`（file:// 双击即开）
+- 本地服务：`npx tsx 造化仪表盘/tools/dashboard-server.ts` → http://127.0.0.1:3456（含任务完成/取消 API、`/board/` 板块盘）

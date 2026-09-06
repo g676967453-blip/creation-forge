@@ -39,7 +39,7 @@
 
 - **板块盘零侵入**：`board{2-5}-dashboard.ts` 只读复用 [collect-data.ts](tools/collect-data.ts) 已导出纯函数（`loadProjectProgress` / `loadWorkflowsFromDocs` 等）；改 collect-data 时勿动导出签名，板块盘跟随重生成即可
 - **依赖**：本板块无独立 package.json；tsx 解析自仓库根 node_modules —— **禁止在本板块 `npm i`**
-- **CI**：`.github/workflows/deploy-dashboard.yml` 每小时（cron）+ push 触发，用 `npx --yes tsx` 自包含生成并部署 GH Pages
+- **在线部署**：已下线（2026-09-06 关闭 GH Pages + 删除 `deploy-dashboard.yml`）；仪表盘为本机模式——reports/ 产物 git 入库，dashboard-server 本地服务（:3456）
 - **新增/改名板块**必须同步登记 [collect-data.ts](tools/collect-data.ts) 的 `BOARDS` 注册表（`dir` + `legacyPaths` 历史回溯别名）—— git rename 不回溯历史，漏登记会让板块统计失真（见 data/goals-issues.json I13）
 
 ## 边界与依赖

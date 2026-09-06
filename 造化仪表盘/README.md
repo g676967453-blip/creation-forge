@@ -15,7 +15,7 @@
 
 ## 仪表盘（网页）
 
-**站点**：https://g676967453-blip.github.io/creation-forge/（GitHub Pages，每小时自动更新）
+> GH Pages 在线站点已于 2026-09-06 下线（不公开），部署 workflow 已删除，仪表盘为本机模式：
 
 **本地运行**：
 
