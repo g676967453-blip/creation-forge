@@ -88,6 +88,14 @@ func hit(damage: int = 1) -> String:
 	return "fire_down"
 
 
+## 1UP：现存所有火砖剩余需求减 1（不低于 1），对齐 HTML applyItem
+func shave_hp() -> void:
+	if brick_type != BrickType.FIRE or is_dead:
+		return
+	hp = maxi(1, hp - 1)
+	_refresh()
+
+
 func _disable_collision() -> void:
 	is_dead = true
 	collision_layer = 0

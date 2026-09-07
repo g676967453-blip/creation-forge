@@ -6,20 +6,20 @@
 
 | 项 | 值 |
 |----|-----|
-| 引擎 | **Godot 4.7 stable** |
-| 本机路径 | `F:\Godot_v4.7-stable_win64.exe` |
+| 引擎 | **Godot 4.7.1 stable** |
+| 本机路径 | `C:\软件\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64.exe` |
 | 主场景 | `res://scenes/main.tscn` |
 | 分辨率 | 450×800（canvas_items + keep） |
 
 ### 打开工程
 
 ```text
-F:\Godot_v4.7-stable_win64.exe --path "J:\ceshi\projects\IAA\fire-hero-godot"
+C:\软件\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64.exe --path "C:\项目资料\ever-forge\projects\IAA\fire-hero-godot"
 ```
 
 或在 Godot 项目管理器中 **导入 / 打开** 本目录（含 `project.godot` 的文件夹）。
 
-## 当前已实现（v0.1.3 · 背景分层 + 场景配置规则）
+## 当前已实现（v0.1.4 · 道具最小集 + 火球）
 
 - [x] 竖屏窗口与主场景
 - [x] 蹦床移动（A/D、方向键、按住鼠标拖拽）；暂停时锁定
@@ -37,6 +37,10 @@ F:\Godot_v4.7-stable_win64.exe --path "J:\ceshi\projects\IAA\fire-hero-godot"
 - [x] **弹射物换图 + 动画**：`ball.gd` 用 `AnimatedSprite2D`，随 `GameState.skin_index` 切换消防员角色；**小猫 2 帧序列动画**（6 FPS，底边对齐），其它角色单帧；带人时暖黄提示
 - [x] **拖尾特效（粒子）**：`Ball/Trail` 静态 `CPUParticles2D`（编辑器可调），用角色帧做粒子、暖橙淡出，运动时发射/静止停发
 - [x] **局内 HUD 像素化**：Zpix 中文像素字体（`assets/fonts/zpix.ttf`）+ 像素图标（`assets/pixel/ui/ui_icon_*`，关卡/分数/金币/生命）；TopBar 改「图标+数值」子 HBox，Goal 栏去 emoji
+- [x] **道具最小集（6 种）**：灭火火砖按概率掉落 → 下落反弹 → 蹦床接取（`item.gd` + `ItemHost`）
+  - 钱袋（+25/50 分 +15~30 金币）/ 长条（蹦床 +30，8 秒）/ 锤子（蹦床 -24，8 秒，负向）
+  - 灭火器（扑灭蹦床火）/ 1UP（灭火等级 +1，现存火砖需求 -1）/ 火球（蹦床着火；再吃丢 1 命，负向）
+  - 掉落率随关卡微升（28% → 45% 上限）；权重对齐 HTML 原型；道具贴图为运行时生成占位（美术定稿后换 `assets/props/items/`）
 - [x] 场景配置规则：`docs/scene-config-rules.md`
 - [x] 工具：`tools/export_psd_layers.py` / `tools/make_bg_composite.py` / `tools/make_window_textures.py` / `tools/export_trampoline.py` / `tools/export_ball_chars.py` / `tools/export_cat_frames.py` / `tools/align_cat_frames.py` / `tools/export_tramp_frames.py`
 
@@ -72,10 +76,11 @@ fire-hero-godot/
     │   └── level_db.gd    # 关卡字符布局
     ├── game/
     │   ├── constants.gd
-    │   ├── game_root.gd   # 局内循环
+    │   ├── game_root.gd   # 局内循环（含道具掉落/结算）
     │   ├── paddle.gd
     │   ├── ball.gd
     │   ├── brick.gd
+    │   ├── item.gd       # 掉落道具（6 种，运行时占位贴图）
     │   └── level_builder.gd
     └── ui/
         └── main_ui.gd
@@ -96,7 +101,7 @@ fire-hero-godot/
 
 ## 下一步（建议）
 
-1. 道具最小集（钱袋/长条/锤子/灭火器/1UP）
+1. ~~道具最小集~~ → v0.1.4 已完成（6 种：P0 5 种 + 火球；贴图为运行时占位，待美术定稿接入）
 2. 角色系统 + 补给队（见 `../微创新需求规格.md`）
 3. 美术替换 ColorRect（`../art`、`../assets`）
 4. 导出微信/抖音小游戏或 Web（按发行路径选模板）

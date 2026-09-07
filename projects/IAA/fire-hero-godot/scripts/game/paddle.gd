@@ -27,6 +27,8 @@ var _half_w: float = 46.0
 var on_fire: bool = false
 var control_enabled: bool = true
 var _bounce_tween: Tween
+var _mat_base_modulate: Color = Color.WHITE
+var _mod_captured: bool = false
 
 @onready var _collision: CollisionShape2D = $CollisionShape2D
 @onready var _visual: Node2D = $Visual
@@ -121,6 +123,11 @@ func set_width_factor(factor: float) -> void:
 	_apply_width(GameConstants.PADDLE_W * factor)
 
 
+## 道具直接指定宽度（长条 +30 / 锤子 -24，HTML 数值），超时后由 game_root 调 reset_width
+func set_effect_width(width: float) -> void:
+	_apply_width(maxf(40.0, width))
+
+
 func reset_width() -> void:
 	_apply_width(GameConstants.PADDLE_W)
 
@@ -141,8 +148,13 @@ func play_bounce() -> void:
 
 func set_on_fire(val: bool) -> void:
 	on_fire = val
-	if _mat and on_fire:
-		_mat.modulate = Color(1.0, 0.5, 0.4)
+	if _mat == null:
+		return
+	if not _mod_captured:
+		_mat_base_modulate = _mat.modulate
+		_mod_captured = true
+	# 着火：踩床偏红橙；灭火器扑灭后还原初始色调
+	_mat.modulate = Color(1.0, 0.55, 0.45) if on_fire else _mat_base_modulate
 
 
 func get_top_y() -> float:

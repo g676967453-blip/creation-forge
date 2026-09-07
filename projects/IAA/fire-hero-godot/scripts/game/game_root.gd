@@ -1,3 +1,4 @@
+class_name GameRoot
 extends Node2D
 ## 局内主循环：双通道胜利、抓人救援、生命、过关
 ## P0：状态机收口、清场同步、救人计数、双倍/复活防重入
@@ -21,6 +22,19 @@ var _double_claimed: bool = false
 var _level_closing: bool = false  ## 防止同一帧多次过关
 var _carry_is_red: bool = false   ## 当前携带是否来自红窗（不计硬目标）
 
+## 道具掉落：掉率随关卡微升（对齐 HTML maybeDropItem）
+const ITEM_CHANCE_BASE: float = 0.28
+const ITEM_CHANCE_PER_LEVEL: float = 0.015
+const ITEM_CHANCE_MAX: float = 0.45
+## 长条/锤子限时（HTML 480 帧 @60fps = 8 秒）
+const PADDLE_EFFECT_TIME: float = 8.0
+## 长条/锤子宽度（HTML：baseW+30=122 / baseW-24=68，baseW=92 恒 > 下限 40）
+const WIDE_WIDTH: float = 122.0
+const NARROW_WIDTH: float = 68.0
+
+var item_host: Node2D = null       ## 道具容器（代码创建于 _ready，排在砖层之上）
+var _paddle_timer: float = 0.0     ## 蹦床宽度道具剩余秒数（>0 生效）
+
 @onready var paddle: CharacterBody2D = $Paddle
 @onready var ball: CharacterBody2D = $Ball
 @onready var brick_host: Node2D = $BrickHost
@@ -38,6 +52,11 @@ func _ready() -> void:
 	elif bg:
 		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	# 道具容器：添加在 BrickHost 之后 → 绘制在砖层之上；不动 main.tscn
+	item_host = Node2D.new()
+	item_host.name = "ItemHost"
+	add_child(item_host)
+
 	paddle.add_to_group("paddle")
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(false)
@@ -48,9 +67,16 @@ func _ready() -> void:
 	_set_state(State.MENU)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if state != State.PLAYING:
 		return
+
+	# 长条/锤子限时倒计时（非 PLAYING 时冻结，天然暂停安全）
+	if _paddle_timer > 0.0:
+		_paddle_timer = maxf(0.0, _paddle_timer - delta)
+		if _paddle_timer <= 0.0:
+			paddle.reset_width()
+
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
 
@@ -131,6 +157,8 @@ func resume_game() -> void:
 func go_menu() -> void:
 	_level_closing = false
 	_clear_bricks()
+	_clear_items()
+	paddle.set_on_fire(false)
 	ball.reset_on_paddle(paddle)
 	ball.freeze_motion()
 	if paddle.has_method("set_control_enabled"):
@@ -179,10 +207,11 @@ func _start_level() -> void:
 	_double_claimed = false
 	_carry_is_red = false
 	_clear_bricks()
+	_clear_items()
 
 	if paddle.has_method("reset_width"):
 		paddle.reset_width()
-	paddle.on_fire = false
+	paddle.set_on_fire(false)
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(true)
 
@@ -315,7 +344,11 @@ func _on_ball_hit_brick(brick: Node) -> void:
 			GameState.add_score(pts)
 			GameState.add_coins(2)
 			if brick.has_method("extinguish"):
+				var at: Vector2 = Vector2.ZERO
+				if brick is Node2D:
+					at = (brick as Node2D).global_position
 				brick.extinguish()
+				_maybe_drop_item(at)
 			_check_win()
 		"fire_down":
 			GameState.add_score(5)
@@ -324,6 +357,86 @@ func _on_ball_hit_brick(brick: Node) -> void:
 		_:
 			pass
 	hud_refresh.emit()
+
+
+## 灭火完成按概率掉道具（位置=被灭砖中心，权重见 GameItem.pick_kind）
+func _maybe_drop_item(at: Vector2) -> void:
+	var chance: float = minf(
+		ITEM_CHANCE_BASE + float(GameState.level) * ITEM_CHANCE_PER_LEVEL,
+		ITEM_CHANCE_MAX
+	)
+	if randf() >= chance:
+		return
+	var kind: int = GameItem.pick_kind()
+	if kind < 0:
+		return
+	var it := GameItem.new()
+	it.setup(self, kind)
+	item_host.add_child(it)
+	it.position = item_host.to_local(at)
+	it.collected.connect(_on_item_collected)
+
+
+## 蹦床接住道具 → 结算效果（数值对齐 HTML applyItem）
+func _on_item_collected(it: GameItem) -> void:
+	if state != State.PLAYING or _level_closing:
+		return
+	match it.kind:
+		GameItem.Kind.BAG:
+			var pts: int = 50 if randi_range(0, 1) == 1 else 25
+			var coin_gain: int = randi_range(15, 30)
+			GameState.add_score(pts)
+			GameState.add_coins(coin_gain)
+			show_message.emit("钱袋 +%d 分 +%d 金币" % [pts, coin_gain])
+		GameItem.Kind.WIDE:
+			if paddle.has_method("set_effect_width"):
+				paddle.set_effect_width(WIDE_WIDTH)
+			_paddle_timer = PADDLE_EFFECT_TIME
+			show_message.emit("蹦床加宽 8 秒！")
+		GameItem.Kind.HAMMER:
+			if paddle.has_method("set_effect_width"):
+				paddle.set_effect_width(NARROW_WIDTH)
+			_paddle_timer = PADDLE_EFFECT_TIME
+			show_message.emit("锤子：蹦床变窄 8 秒")
+		GameItem.Kind.EXTINGUISH:
+			if paddle.on_fire:
+				paddle.set_on_fire(false)
+				show_message.emit("灭火器：火已扑灭")
+			else:
+				show_message.emit("灭火器：暂无火可灭")
+		GameItem.Kind.UP:
+			if GameState.power_level < 2:
+				GameState.power_level += 1
+				# 现存所有火砖剩余需求 -1（不低于 1），立即见效
+				for b: Node in brick_host.get_children():
+					if b is WindowBrick and not (b as WindowBrick).is_dead:
+						(b as WindowBrick).shave_hp()
+				show_message.emit("灭火等级提升，灭火更快！")
+			else:
+				GameState.add_score(50)
+				show_message.emit("灭火等级已满，+50 分")
+		GameItem.Kind.FIREBALL:
+			if paddle.on_fire:
+				GameState.lose_life()
+				if GameState.lives <= 0:
+					show_message.emit("蹦床烧毁了…")
+					_game_over()
+				else:
+					show_message.emit("蹦床再次着火，-1 命")
+			else:
+				paddle.set_on_fire(true)
+				show_message.emit("蹦床着火了！快找灭火器")
+	hud_refresh.emit()
+
+
+## 清理场上道具 + 蹦床宽度计时（新关卡/回菜单）
+func _clear_items() -> void:
+	_paddle_timer = 0.0
+	if item_host == null or not is_instance_valid(item_host):
+		return
+	for c in item_host.get_children():
+		if is_instance_valid(c):
+			c.free()
 
 
 func _on_brick_destroyed(brick: Node) -> void:
