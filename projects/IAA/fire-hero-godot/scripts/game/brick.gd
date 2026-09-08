@@ -15,8 +15,6 @@ var fire_level: int = 1
 var hp: int = 3
 var req: int = 3
 var is_red: bool = false
-var grid_col: int = 0
-var grid_row: int = 0
 var is_dead: bool = false  ## 已结算，防止 queue_free 前连撞
 
 var _collision: CollisionShape2D

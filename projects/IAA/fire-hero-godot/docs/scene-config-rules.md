@@ -1,7 +1,9 @@
 # Godot 场景配置规则（救火英雄 IAA）
 
-> 版本 v1.1 ｜ 对齐逻辑画布 **450×800**。  
+> 版本 v1.2 ｜ 对齐逻辑画布 **450×800**。  
 > 本文件固定「场景如何摆层、资源如何命名、图层裁剪规则」，作为持续开发依据。
+>
+> **v1.2 变更**：手配关窗户改为自由坐标（§4.3）；网格常量仅程序化关/兜底使用。
 
 ---
 
@@ -162,6 +164,25 @@ assets/props/windows/
 | 救援 `R` | `window_rescue.png` | 白色 |
 | 红窗 `r` | `window_rescue_red.png` | 白色 |
 
+### 4.3 手配关数据格式（自由坐标，v0.1.5 起）
+
+> 与 `../level-editor.html`（v2，自由拖拽编辑器）同语义。视觉对齐背景楼房时，位置可能不在任何网格上。
+
+**数据模型**：`LevelDB.layouts` = 每关一个数组，元素 `{type, x, y}`：
+
+| 字段 | 含义 |
+|------|------|
+| `type` | `F`火1 / `f`火2 / `g`火3 / `R`救援 / `r`红窗（表见 §4.2） |
+| `x` / `y` | **窗中心像素坐标**（整数；建砖时 `brick.position = Vector2(x, y)`，不加半砖偏移） |
+
+- 画布 450×800（`GameConstants.VIEW_W/H`），坐标落点引擎不校验——靠编辑器夹取在 `[0,450]×[0,800]`
+- 存量关初始坐标由旧 7 列网格中心迁移（编辑器/Godot 两端注释同源，勿改）：
+  `cx = 45 + col*52 + 24`、`cy = 80 + row*52 + 24`
+- **手配/程序化边界**：`LevelDB.has_hand_layout(level)` 按索引路由（手配关 = `1..layouts.size()`）。
+  **禁止用 `get_layout().is_empty()` 判定**——手配关被清空时应走空关兜底（game_root 发 1 火），而非变成程序化关
+- 程序化关（第 `layouts.size()+1` 关起）仍用 §1 `GameConstants` 网格常量（`BRICK_COLS/BRICK_W/BRICK_GAP/GRID_TOP`），不被手配坐标影响
+- 编辑器同步流程：`level-editor.html` 拖摆 →「复制 GDScript 数组」→ 替换 `level_db.gd` 的 `layouts`；编辑器旧 v1 字符网格存档启动时只读自动迁移
+
 ---
 
 ## 5. 派生与验收
@@ -178,8 +199,8 @@ assets/props/windows/
 |------|------|
 | `scripts/game/game_root.gd` | 局内状态机；背景兜底设色（仅 ColorRect 时） |
 | `scripts/game/brick.gd` | 窗类型/等级/命中 |
-| `scripts/game/level_builder.gd` | 从 `LevelDB` 字符布局生成砖 |
-| `scripts/autoload/level_db.gd` | 关卡字符库 |
+| `scripts/game/level_builder.gd` | 按 `has_hand_layout` 路由：手配关逐条 `{type,x,y}` 建砖 / 程序化关网格生成 |
+| `scripts/autoload/level_db.gd` | 手配关自由坐标库（`{type,x,y}` 数组）+ `has_hand_layout()` 边界判定 |
 | `scripts/ui/main_ui.gd` | HUD/弹窗 |
 | `tools/export_psd_layers.py` | PSD 逐层导出 |
 | `tools/make_bg_composite.py` | 纯背景组合成 |

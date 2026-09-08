@@ -1,38 +1,40 @@
 extends RefCounted
 class_name LevelBuilder
-## 根据 LevelDB / 程序化规则生成窗户
+## 根据 LevelDB 手配自由坐标 / 程序化规则生成窗户
+## 手配关：坐标直接来自 LevelDB 条目（x/y = 窗中心像素），不消耗网格常量。
+## 程序化关（≥ layouts.size()+1）：仍用 GameConstants 网格常量生成。
 
 
 static func build(parent: Node, level: int) -> Dictionary:
 	## 返回 { bricks: Array, fire_left: int, rescue_left: int }
-	var layout: Array = LevelDB.get_layout(level)
-	if layout.is_empty():
-		return _build_procedural(parent, level)
+	if LevelDB.has_hand_layout(level):
+		return _build_hand(parent, level)
+	return _build_procedural(parent, level)
 
+
+static func _build_hand(parent: Node, level: int) -> Dictionary:
+	var entries: Array = LevelDB.get_layout(level)
 	var bricks: Array = []
 	var fire_left: int = 0
 	var rescue_left: int = 0
 
-	for r in range(layout.size()):
-		for c in range(GameConstants.BRICK_COLS):
-			var ch: String = LevelDB.cell_at(layout, r, c)
-			if ch == "." or ch == "":
-				continue
-			var brick: WindowBrick = _spawn_from_char(parent, ch, c, r)
-			if brick == null:
-				continue
-			bricks.append(brick)
-			if brick.brick_type == WindowBrick.BrickType.FIRE:
-				fire_left += 1
-			elif brick.brick_type == WindowBrick.BrickType.RESCUE and not brick.is_red:
-				rescue_left += 1
+	for e in entries:
+		var brick: WindowBrick = _spawn_entry(parent, String(e.get("type", "")), float(e.get("x", 0.0)), float(e.get("y", 0.0)))
+		if brick == null:
+			continue
+		bricks.append(brick)
+		if brick.brick_type == WindowBrick.BrickType.FIRE:
+			fire_left += 1
+		elif brick.brick_type == WindowBrick.BrickType.RESCUE and not brick.is_red:
+			rescue_left += 1
 
 	return {"bricks": bricks, "fire_left": fire_left, "rescue_left": rescue_left}
 
 
-static func _spawn_from_char(parent: Node, ch: String, col: int, row: int) -> WindowBrick:
+static func _spawn_entry(parent: Node, type_char: String, x: float, y: float) -> WindowBrick:
+	## 按字符生成一扇窗；x/y = 窗中心像素坐标。非法字符返回 null（不生成）。
 	var brick: WindowBrick = _make_brick_node(parent)
-	match ch:
+	match type_char:
 		"F":
 			brick.setup(WindowBrick.BrickType.FIRE, 1, false)
 		"f":
@@ -46,10 +48,7 @@ static func _spawn_from_char(parent: Node, ch: String, col: int, row: int) -> Wi
 		_:
 			brick.queue_free()
 			return null
-	brick.grid_col = col
-	brick.grid_row = row
-	var pos: Vector2 = GameConstants.brick_pos(col, row)
-	brick.position = pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
+	brick.position = Vector2(x, y)
 	return brick
 
 
@@ -74,8 +73,6 @@ static func _build_procedural(parent: Node, level: int) -> Dictionary:
 				lev = 3
 			var brick: WindowBrick = _make_brick_node(parent)
 			brick.setup(WindowBrick.BrickType.FIRE, lev, false)
-			brick.grid_col = c
-			brick.grid_row = r
 			var pos: Vector2 = GameConstants.brick_pos(c, r)
 			brick.position = pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
 			temp.append(brick)
@@ -104,13 +101,11 @@ static func _build_procedural(parent: Node, level: int) -> Dictionary:
 	return {"bricks": bricks, "fire_left": fire_left, "rescue_left": rescue_left}
 
 
-static func spawn_single_fire(parent: Node, col: int, row: int) -> WindowBrick:
+static func spawn_single_fire(parent: Node, x: float = 225.0, y: float = 104.0) -> WindowBrick:
+	## 兜底：空手配关时放 1 扇火1窗。默认 (225,104) = 旧网格 (3,0) 格中心。
 	var brick: WindowBrick = _make_brick_node(parent)
 	brick.setup(WindowBrick.BrickType.FIRE, 1, false)
-	brick.grid_col = col
-	brick.grid_row = row
-	var pos: Vector2 = GameConstants.brick_pos(col, row)
-	brick.position = pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
+	brick.position = Vector2(x, y)
 	return brick
 
 

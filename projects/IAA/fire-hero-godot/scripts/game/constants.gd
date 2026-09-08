@@ -1,6 +1,8 @@
 class_name GameConstants
 extends Object
 ## 画布与玩法常量（对齐 HTML 原型 450×800）
+## 注：手配关（LevelDB layouts）不消耗以下网格常量——窗户坐标为自由像素（中心）。
+## 网格常量仅程序化关（≥ LevelDB 手配数+1）与空关兜底位置使用。
 
 const VIEW_W: int = 450
 const VIEW_H: int = 800
@@ -17,6 +19,8 @@ const BRICK_W: float = 48.0
 const BRICK_H: float = 48.0
 const BRICK_GAP: float = 4.0
 const GRID_TOP: float = 80.0
+
+## 手配关坐标迁移公式（编辑器同款，勿改）：cx = 45 + col*52 + 24；cy = 80 + row*52 + 24
 
 ## power_level=0 时各级火焰所需命中次数
 const FIRE_HIT_REQ: Array[int] = [3, 5, 7]

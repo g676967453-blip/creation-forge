@@ -19,7 +19,7 @@ C:\软件\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64.exe --path "C:
 
 或在 Godot 项目管理器中 **导入 / 打开** 本目录（含 `project.godot` 的文件夹）。
 
-## 当前已实现（v0.1.4 · 道具最小集 + 火球）
+## 当前已实现（v0.1.5 · 窗户自由坐标配置）
 
 - [x] 竖屏窗口与主场景
 - [x] 蹦床移动（A/D、方向键、按住鼠标拖拽）；暂停时锁定
@@ -28,6 +28,7 @@ C:\软件\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64.exe --path "C:
 - [x] **双通道胜利**（灭火完 **或** 救人完）；防连击重复过关
 - [x] **抓人救援**：撞救援窗带走 → 碰蹦床弹起获救
 - [x] 手配 6 关 + 程序化 + 空关兜底
+- [x] **窗户自由坐标配置（去网格化）**：1–6 关位置 = 450×800 画布上自由中心像素（每关独立摆放、数量不限），与背景楼房对齐；第 7 关起仍程序化生成
 - [x] HUD / 主菜单 / 过关 / 失败 / 暂停
 - [x] 金币·最高分存档（过关/失败/双倍时写入）
 - [x] 广告点位 **mock**（双倍防重领、复活每关 1 次）
@@ -73,7 +74,7 @@ fire-hero-godot/
 └── scripts/
     ├── autoload/
     │   ├── game_state.gd  # 分数/金币/生命/存档
-    │   └── level_db.gd    # 关卡字符布局
+    │   └── level_db.gd    # 手配关自由坐标布局（{type,x,y} 数组）
     ├── game/
     │   ├── constants.gd
     │   ├── game_root.gd   # 局内循环（含道具掉落/结算）
@@ -86,7 +87,19 @@ fire-hero-godot/
         └── main_ui.gd
 ```
 
-## 关卡字符（与 HTML / level-editor 一致）
+## 关卡数据（与 level-editor.html v2 同语义）
+
+手配关（1–6）窗户 = **自由坐标 dict 数组**（非字符网格）：
+
+```gdscript
+# scripts/autoload/level_db.gd  → layouts
+var layouts: Array = [
+	[ # 1 入门
+		{"type": "F", "x": 69, "y": 104},   # 火1窗，中心在 (69,104)
+		...
+	],
+]
+```
 
 | 字符 | 含义 |
 |------|------|
@@ -95,9 +108,17 @@ fire-hero-godot/
 | `g` | 火 3 级 |
 | `R` | 救援窗 |
 | `r` | 红窗（加分向，非硬目标） |
-| `.` / `N` | 空 |
 
-可用上级目录 `level-editor.html` 编辑后，把 `LEVEL_LAYOUTS` 同步进 `scripts/autoload/level_db.gd`。
+- `x/y` = **窗中心像素坐标**（整数），画布 450×800，横纵都允许超出中心窗体外缘的取整范围按 0–450 / 0–800 夹取
+- 砖由 `level_builder._spawn_entry` 直接 `brick.position = Vector2(x, y)` 生成
+- 边界路由用 `LevelDB.has_hand_layout(level)`（**勿用 `get_layout().is_empty()`**）：手配关即使被清空也走手配分支 → 空关兜底
+- 存量关坐标由旧 7 列网格中心迁移：`cx = 45 + col*52 + 24`、`cy = 80 + row*52 + 24`
+
+### 关卡同步流程（v0.1.5 起）
+
+1. 本目录上级 `../level-editor.html` 在真实背景图上自由拖摆（经 `node server.js`，http://127.0.0.1:8080/level-editor.html 才有背景/贴图）
+2. 点「复制 GDScript 数组」→ 替换 `scripts/autoload/level_db.gd` 的 `layouts` 数组
+3. Godot F5 验证；旧版 v1 字符网格存档 / 文本可在编辑器「导入 JSON / 从文本解析」自动迁移
 
 ## 下一步（建议）
 

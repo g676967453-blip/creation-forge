@@ -226,7 +226,7 @@ func _start_level() -> void:
 	if initial_fire <= 0 and initial_rescue <= 0:
 		show_message.emit("关卡数据异常，已跳过")
 		# 仍进入可玩态，点一下会因无目标——改为直接发奖励进下一关流程过重；生成一扇火
-		var fallback: WindowBrick = LevelBuilder.spawn_single_fire(brick_host, 3, 0)
+		var fallback: WindowBrick = LevelBuilder.spawn_single_fire(brick_host, 225.0, 104.0)
 		if fallback:
 			_bricks.append(fallback)
 			fire_left = 1
