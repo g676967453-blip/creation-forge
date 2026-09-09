@@ -104,11 +104,19 @@ func _process(delta: float) -> void:
 			hud_refresh.emit()  # 让技能按钮恢复可点
 
 	# 影分身更新（只存活在 PLAYING 态，天然暂停安全）
+	# 注意：不能用带类型注解的 filter（分身释放后 Object→Node 转换会抛错中断本帧）
+	var alive: Array = []
 	for c in _clones:
-		if c != null and is_instance_valid(c):
-			if not (c as SkillClone).update_clone(delta):
-				(c as SkillClone).queue_free()
-	_clones = _clones.filter(func(c: Node) -> bool: return is_instance_valid(c) and c != null)
+		if c == null or not is_instance_valid(c):
+			continue
+		var clone := c as SkillClone
+		if clone == null:
+			continue
+		if clone.update_clone(delta):
+			alive.append(clone)
+		else:
+			clone.queue_free()
+	_clones = alive
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
