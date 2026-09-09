@@ -71,3 +71,8 @@ tools/dsh-harness/**/.credentials.yaml
 tools/dsh-harness/**/settings.yaml
 # optional: uncomment to keep live worktable state out of git
 # tools/dsh-harness/state/worktable-state.json
+
+# IAA 自签 HTTPS 证书（本机密钥，勿入库）
+projects/IAA/certs/
+projects/IAA/web-build/
+

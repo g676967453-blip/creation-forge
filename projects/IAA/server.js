@@ -35,7 +35,12 @@ var MIME={
   '.pck':'application/octet-stream'
 };
 
-var server=http.createServer(function(req,res){
+// 可 gzip 压缩的扩展名（wasm/js/pck 体积大头，压缩可省 ~70% 传输量）
+var GZIPABLE={'.wasm':1,'.js':1,'.mjs':1,'.json':1,'.html':1,'.htm':1,'.css':1,'.txt':1,'.md':1,'.pck':1,'.svg':1};
+
+var zlib=require('zlib');
+
+function handle(req,res){
   var urlPath=decodeURIComponent((req.url||'/').split('?')[0]);
   // 根路径 → 默认试玩页（兼容旧行为）
   if(urlPath==='/'||urlPath==='') urlPath='/'+INDEX;
@@ -50,7 +55,7 @@ var server=http.createServer(function(req,res){
     if(!err&&st.isDirectory()){
       var idx=path.join(filePath,'index.html');
       fs.stat(idx,function(err2,st2){
-        if(!err2&&st2.isFile()){ serve(res,idx); }
+        if(!err2&&st2.isFile()){ serve(req,res,idx); }
         else{
           res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'});
           res.end('404 Not Found: '+urlPath); return;
@@ -62,25 +67,55 @@ var server=http.createServer(function(req,res){
       res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'});
       res.end('404 Not Found: '+urlPath); return;
     }
-    serve(res,filePath);
+    serve(req,res,filePath);
   });
-});
+}
 
-function serve(res,filePath){
+var server=http.createServer(handle);
+
+// ===== HTTPS（手机体验 H5 需要安全上下文；自签证书见 certs/）=====
+var https=null;
+var HTTPS_PORT=parseInt(process.argv[3],10)||8443;
+var CERT_DIR=path.join(ROOT,'certs');
+var crtPath=path.join(CERT_DIR,'server.crt');
+var keyPath=path.join(CERT_DIR,'server.key');
+if(fs.existsSync(crtPath)&&fs.existsSync(keyPath)){
+  var tlsOpts={cert:fs.readFileSync(crtPath),key:fs.readFileSync(keyPath)};
+  https=require('https').createServer(tlsOpts,handle);
+}
+
+function serve(req,res,filePath){
   var ext=path.extname(filePath).toLowerCase();
   var type=MIME[ext]||'application/octet-stream';
-  res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache'});
-  fs.createReadStream(filePath).pipe(res);
+  var acceptGzip=(req.headers['accept-encoding']||'').indexOf('gzip')>=0;
+  if(acceptGzip&&GZIPABLE[ext]){
+    var headers={'Content-Type':type,'Content-Encoding':'gzip','Cache-Control':'no-cache','Vary':'Accept-Encoding'};
+    res.writeHead(200,headers);
+    var gz=zlib.createGzip({level:6});
+    fs.createReadStream(filePath).pipe(gz).pipe(res);
+  }else{
+    res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache'});
+    fs.createReadStream(filePath).pipe(res);
+  }
 }
 
 // 监听所有网卡，让局域网内的手机也能访问
 server.listen(PORT,'0.0.0.0',function(){
   console.log('[fire-hero] 试玩服务器已启动');
-  console.log('  网页端       http://127.0.0.1:'+PORT+'/');
+  console.log('  网页端        http://127.0.0.1:'+PORT+'/');
   console.log('  手机端(局域网) http://<本机IP>:'+PORT+'/');
-  console.log('  根目录       '+ROOT);
+  if(https){
+    https.listen(HTTPS_PORT,'0.0.0.0',function(){
+      console.log('  HTTPS 体验(手机) https://<本机IP>:'+HTTPS_PORT+'/web-build/');
+      console.log('  首次访问提示不安全 → 点「高级 / 继续前往」');
+    });
+  }
 });
 
 ['SIGINT','SIGTERM'].forEach(function(sig){
-  process.on(sig,function(){ server.close(function(){ process.exit(0); }); });
+  process.on(sig,function(){
+    try{ server.close(); }catch(e){}
+    if(https){ try{ https.close(); }catch(e){} }
+    process.exit(0);
+  });
 });
