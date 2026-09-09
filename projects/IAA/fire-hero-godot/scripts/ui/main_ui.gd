@@ -41,6 +41,8 @@ var _toast_tween: Tween
 
 
 func _ready() -> void:
+	# Web/全局默认中文字体：Zpix（动态控件无显式字体时也走中文，避免 Web 无系统中文字体乱码）
+	_apply_global_font()
 	btn_start.pressed.connect(_on_start)
 	btn_next.pressed.connect(_on_next)
 	btn_double.pressed.connect(_on_double)
@@ -172,6 +174,19 @@ func _toast(text: String) -> void:
 
 
 # ===== 补给队商店（过关结算内，代码构建） =====
+
+## 全局默认字体：Zpix（Web 无系统中文字体，必须给所有 UI 子树兜底）
+func _apply_global_font() -> void:
+	var font: Font = load("res://assets/fonts/zpix.ttf") as Font
+	if font == null:
+		return
+	var th := Theme.new()
+	th.default_font = font
+	th.default_font_size = 14
+	# 给 UI 下所有直接 Control 子节点设置（子控件继承）
+	for child in get_children():
+		if child is Control:
+			(child as Control).theme = th
 
 func _box_style() -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
