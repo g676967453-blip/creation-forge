@@ -1,6 +1,6 @@
 class_name CharacterDB
 extends RefCounted
-## 角色元数据（5 角色：小猫/小狗/熊猫/卡皮巴拉/哪吒）
+## 角色元数据（5 角色：小猫/小狗/熊猫/卡皮巴拉/狐狸）
 ## 纯数据 + 静态查询。拥有/选择状态存 GameState（owned_skins / skin_index）。
 ## 能力以 kind 字段判定（避免中文字符串 indexOf 脆弱）。
 

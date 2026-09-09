@@ -360,7 +360,7 @@ func use_skill() -> void:
 
 
 func _clone_texture() -> Texture2D:
-	## 分身视觉用主球当前角色第一帧
+	## 分身兜底贴图（= 狐狸图）
 	if ball != null and is_instance_valid(ball) and ball.has_method("get_visual_frame"):
 		var t: Texture2D = ball.get_visual_frame()
 		if t != null:
