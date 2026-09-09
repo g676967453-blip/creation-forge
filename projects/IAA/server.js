@@ -28,11 +28,16 @@ var MIME={
   '.txt':'text/plain; charset=utf-8',
   '.md':'text/plain; charset=utf-8',
   '.mp3':'audio/mpeg',
-  '.mp4':'video/mp4'
+  '.ogg':'audio/ogg',
+  '.wav':'audio/wav',
+  '.mp4':'video/mp4',
+  '.wasm':'application/wasm',
+  '.pck':'application/octet-stream'
 };
 
 var server=http.createServer(function(req,res){
   var urlPath=decodeURIComponent((req.url||'/').split('?')[0]);
+  // 根路径 → 默认试玩页（兼容旧行为）
   if(urlPath==='/'||urlPath==='') urlPath='/'+INDEX;
   // 防目录穿越
   var safePath=path.normalize(urlPath).replace(/^(\.\.[/\\])+/,'');
@@ -40,17 +45,33 @@ var server=http.createServer(function(req,res){
   if(!filePath.startsWith(ROOT)){
     res.writeHead(403); res.end('Forbidden'); return;
   }
+  // 允许目录 URL 自动补 index.html：/ 或 /web-build/ → index.html
   fs.stat(filePath,function(err,st){
+    if(!err&&st.isDirectory()){
+      var idx=path.join(filePath,'index.html');
+      fs.stat(idx,function(err2,st2){
+        if(!err2&&st2.isFile()){ serve(res,idx); }
+        else{
+          res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'});
+          res.end('404 Not Found: '+urlPath); return;
+        }
+      });
+      return;
+    }
     if(err||!st.isFile()){
       res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'});
       res.end('404 Not Found: '+urlPath); return;
     }
-    var ext=path.extname(filePath).toLowerCase();
-    var type=MIME[ext]||'application/octet-stream';
-    res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache'});
-    fs.createReadStream(filePath).pipe(res);
+    serve(res,filePath);
   });
 });
+
+function serve(res,filePath){
+  var ext=path.extname(filePath).toLowerCase();
+  var type=MIME[ext]||'application/octet-stream';
+  res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache'});
+  fs.createReadStream(filePath).pipe(res);
+}
 
 // 监听所有网卡，让局域网内的手机也能访问
 server.listen(PORT,'0.0.0.0',function(){
