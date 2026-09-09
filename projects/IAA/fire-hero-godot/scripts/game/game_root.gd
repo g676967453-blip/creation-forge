@@ -35,14 +35,9 @@ var _shop_used: bool = false           ## 本关是否已弹出过商店
 const ITEM_CHANCE_BASE: float = 0.28
 const ITEM_CHANCE_PER_LEVEL: float = 0.015
 const ITEM_CHANCE_MAX: float = 0.45
-## 长条/锤子限时（HTML 480 帧 @60fps = 8 秒）
-const PADDLE_EFFECT_TIME: float = 8.0
-## 长条/锤子宽度（HTML：baseW+30=122 / baseW-24=68，baseW=92 恒 > 下限 40）
-const WIDE_WIDTH: float = 122.0
-const NARROW_WIDTH: float = 68.0
+## 长条 +30 / 螺丝(锤子) -24：永久改变蹦床长度（无时限），clamp 见 paddle.gd
 
 var item_host: Node2D = null       ## 道具容器（代码创建于 _ready，排在砖层之上）
-var _paddle_timer: float = 0.0     ## 蹦床宽度道具剩余秒数（>0 生效）
 
 @onready var paddle: CharacterBody2D = $Paddle
 @onready var ball: CharacterBody2D = $Ball
@@ -79,12 +74,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if state != State.PLAYING:
 		return
-
-	# 长条/锤子限时倒计时（非 PLAYING 时冻结，天然暂停安全）
-	if _paddle_timer > 0.0:
-		_paddle_timer = maxf(0.0, _paddle_timer - delta)
-		if _paddle_timer <= 0.0:
-			paddle.reset_width()
 
 	# 限时增益（灭火×2）倒计时
 	if _boost_timer > 0.0:
@@ -154,14 +143,15 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func start_run() -> void:
 	GameState.reset_run()
-	_start_level()
+	_start_level(true)
 
 
 func continue_next_level() -> void:
 	if state != State.LEVELUP:
 		return
 	GameState.next_level()
-	_start_level()
+	# 过关进下一关：保留整局长条/螺丝积累的蹦床宽度（跨关永久）
+	_start_level(false)
 
 
 func retry_run() -> void:
@@ -440,10 +430,10 @@ func _apply_pending_buffs() -> void:
 	for key: String in buffs:
 		match key:
 			"wide":
-				if paddle.has_method("set_effect_width"):
-					paddle.set_effect_width(GameConstants.PADDLE_W + 30.0)
-				_paddle_timer = 8.0
-				show_message.emit("长条生效：蹦床加宽 8 秒")
+				# 商店长条：下关永久加长
+				if paddle.has_method("adjust_width_permanent"):
+					paddle.adjust_width_permanent(30.0)
+				show_message.emit("长条生效：蹦床永久加长")
 			"extinguish":
 				_extinguish_pending = true
 				show_message.emit("灭火器就绪：着火自动扑灭")
@@ -455,7 +445,7 @@ func _apply_pending_buffs() -> void:
 				show_message.emit("限时增益：8 秒灭火 ×2")
 
 
-func _start_level() -> void:
+func _start_level(reset_paddle: bool = true) -> void:
 	_level_closing = false
 	_double_claimed = false
 	_carry_is_red = false
@@ -471,7 +461,7 @@ func _start_level() -> void:
 
 	if paddle.has_method("apply_skin_speed"):
 		paddle.apply_skin_speed()
-	if paddle.has_method("reset_width"):
+	if reset_paddle and paddle.has_method("reset_width"):
 		paddle.reset_width()
 	paddle.set_on_fire(false)
 	# 商店购买的道具：下一关开局生效
@@ -661,15 +651,15 @@ func _on_item_collected(it: GameItem) -> void:
 			GameState.add_coins(coin_gain)
 			show_message.emit("钱袋 +%d 分 +%d 金币" % [pts, coin_gain])
 		GameItem.Kind.WIDE:
-			if paddle.has_method("set_effect_width"):
-				paddle.set_effect_width(WIDE_WIDTH)
-			_paddle_timer = PADDLE_EFFECT_TIME
-			show_message.emit("蹦床加宽 8 秒！")
+			# 长条：永久加长蹦床（+30，无时限；顶到屏边后不再增加）
+			if paddle.has_method("adjust_width_permanent"):
+				paddle.adjust_width_permanent(30.0)
+			show_message.emit("蹦床永久加长 +30！")
 		GameItem.Kind.HAMMER:
-			if paddle.has_method("set_effect_width"):
-				paddle.set_effect_width(NARROW_WIDTH)
-			_paddle_timer = PADDLE_EFFECT_TIME
-			show_message.emit("锤子：蹦床变窄 8 秒")
+			# 螺丝（原锤子）：永久缩短蹦床（-24，无时限）
+			if paddle.has_method("adjust_width_permanent"):
+				paddle.adjust_width_permanent(-24.0)
+			show_message.emit("螺丝：蹦床永久变短 -24")
 		GameItem.Kind.EXTINGUISH:
 			if paddle.on_fire:
 				paddle.set_on_fire(false)
@@ -714,9 +704,8 @@ func _on_item_collected(it: GameItem) -> void:
 	hud_refresh.emit()
 
 
-## 清理场上道具 + 蹦床宽度计时（新关卡/回菜单）
+## 清理场上道具（新关卡/回菜单）
 func _clear_items() -> void:
-	_paddle_timer = 0.0
 	if item_host == null or not is_instance_valid(item_host):
 		return
 	for c in item_host.get_children():

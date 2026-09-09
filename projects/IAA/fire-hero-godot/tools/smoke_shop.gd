@@ -66,12 +66,28 @@ func _run() -> void:
 	checks.append(["next_level_ok", game.state == game.State.PLAYING])
 	checks.append(["pending_consumed", GameState.pending_buffs.is_empty()])
 	checks.append(["paddle_wider", absf(game.paddle.base_width - 122.0) < 0.5])
-	# 长条视觉回归：床面 mat 横向拉伸
+	# 长条永久性回归：等 30 帧真实时间后仍保持 122（不再 8 秒还原）
+	for _i in range(30):
+		await get_tree().process_frame
+	checks.append(["wide_permanent_no_revert", absf(game.paddle.base_width - 122.0) < 0.5])
+	# 连续加宽累计 → 顶到屏边 450 后不再增加
+	for _i in range(20):
+		game.paddle.adjust_width_permanent(30.0)
+	var max_w: float = game.paddle.PADDLE_MAX_W
+	checks.append(["wide_caps_at_screen", absf(game.paddle.base_width - max_w) < 0.5])
+	game.paddle.adjust_width_permanent(30.0)
+	checks.append(["wide_no_overflow_after_cap", absf(game.paddle.base_width - max_w) < 0.5])
+	# 长条视觉回归：床面 mat 横向拉伸（在加宽状态下测）
 	var mat_node: Node = game.paddle.get_node_or_null("Visual/Mat")
 	if mat_node:
 		checks.append(["mat_stretched", (mat_node as Node2D).scale.x > 1.3])
 	else:
 		checks.append(["mat_stretched", false])
+	# 螺丝（锤子）：永久缩短
+	game.paddle.adjust_width_permanent(-24.0)
+	checks.append(["screw_shrinks_permanent", absf(game.paddle.base_width - (max_w - 24.0)) < 0.5])
+	game.paddle.reset_width()  # 复原基准，避免影响后续
+	checks.append(["reset_after_test", absf(game.paddle.base_width - 92.0) < 0.5])
 
 	# 角色能力：切猫 → 移速 +25%
 	GameState.set_skin(0)

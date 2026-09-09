@@ -24,6 +24,9 @@ const FIREMAN_SCALE := Vector2(1, 1)
 @export var base_width: float = 92.0
 ## 基础移动速度（皮肤/道具叠加用，随关卡不再变化）
 var base_move_speed: float = 420.0
+## 蹦床宽度范围：基准 92；长条永久加长到顶屏边（450），螺丝永久缩短下限 40
+const PADDLE_MIN_W: float = 40.0
+const PADDLE_MAX_W: float = float(GameConstants.VIEW_W)
 
 var _half_w: float = 46.0
 var on_fire: bool = false
@@ -104,6 +107,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _apply_width(w: float) -> void:
+	w = clampf(w, PADDLE_MIN_W, PADDLE_MAX_W)
 	base_width = w
 	_half_w = w * 0.5
 	if _collision == null:
@@ -137,9 +141,14 @@ func set_width_factor(factor: float) -> void:
 	_apply_width(GameConstants.PADDLE_W * factor)
 
 
-## 道具直接指定宽度（长条 +30 / 锤子 -24，HTML 数值），超时后由 game_root 调 reset_width
+## 长条 / 螺丝：永久增减蹦床长度（无时限），clamp 到 [40, 顶屏边 450]
+func adjust_width_permanent(delta: float) -> void:
+	_apply_width(base_width + delta)
+
+
+## 旧接口保留（内部调用方若传绝对值会按 clamp 处理；现改为永久语义）
 func set_effect_width(width: float) -> void:
-	_apply_width(maxf(40.0, width))
+	_apply_width(width)
 
 
 func reset_width() -> void:
