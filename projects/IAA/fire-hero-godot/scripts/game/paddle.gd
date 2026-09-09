@@ -22,6 +22,8 @@ const FIREMAN_SCALE := Vector2(1, 1)
 
 @export var move_speed: float = 420.0
 @export var base_width: float = 92.0
+## 基础移动速度（皮肤/道具叠加用，随关卡不再变化）
+var base_move_speed: float = 420.0
 
 var _half_w: float = 46.0
 var on_fire: bool = false
@@ -49,9 +51,18 @@ func _make_frames(f0: Texture2D, f1: Texture2D) -> SpriteFrames:
 
 func _ready() -> void:
 	base_width = GameConstants.PADDLE_W
+	base_move_speed = move_speed
 	position = Vector2(float(GameConstants.VIEW_W) * 0.5, GameConstants.PADDLE_Y)
 	_setup_textures()
 	_apply_width(base_width)
+
+
+## 按角色能力重设移动速度：小猫敏捷 +25%
+func apply_skin_speed() -> void:
+	base_move_speed = GameConstants.PADDLE_SPEED_BASE
+	if CharacterDB.cur_is("cat"):
+		base_move_speed *= 1.25
+	move_speed = base_move_speed
 
 
 func _setup_textures() -> void:

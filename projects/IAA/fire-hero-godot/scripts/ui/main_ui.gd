@@ -27,6 +27,15 @@ extends CanvasLayer
 @onready var level_stats: Label = $Overlays/LevelClear/VBox/Stats
 @onready var over_stats: Label = $Overlays/GameOver/VBox/Stats
 @onready var menu_stats: Label = $Overlays/Menu/VBox/MenuStats
+@onready var level_vbox: VBoxContainer = $Overlays/LevelClear/VBox
+@onready var menu_vbox: VBoxContainer = $Overlays/Menu/VBox
+
+# 补给队商店面板（过关结算界面内，代码构建）
+var shop_panel: VBoxContainer = null
+var shop_box: VBoxContainer = null
+var shop_coins_label: Label = null
+var char_btn: Button = null
+var skill_btn: Button = null
 
 var _toast_tween: Tween
 
@@ -53,6 +62,8 @@ func _ready() -> void:
 		if ov:
 			ov.mouse_filter = Control.MOUSE_FILTER_STOP
 
+	_build_char_btn()
+	_build_skill_btn()
 	_on_state(game.state)
 	refresh_hud()
 	_toast("救火英雄 IAA · Godot 4.7")
@@ -105,6 +116,7 @@ func _on_state(s: int) -> void:
 	if s == game.State.LEVELUP:
 		level_stats.text = "本关奖励\n⭐ +%d 分　💰 +%d 金币" % [game.level_bonus, game.level_bonus]
 		_sync_double_btn()
+		_rebuild_shop()
 	if s == game.State.OVER:
 		over_stats.text = "本局得分 %d\n最高分 %d\n金币 %d\n到达第 %d 关" % [
 			GameState.score, GameState.best, GameState.coins, GameState.level
@@ -126,6 +138,7 @@ func _sync_double_btn() -> void:
 func _refresh_menu_stats() -> void:
 	if menu_stats:
 		menu_stats.text = "🏆 最高分 %d　　💰 金币 %d" % [GameState.best, GameState.coins]
+	_sync_char_btn()
 
 
 func refresh_hud() -> void:
@@ -138,6 +151,7 @@ func refresh_hud() -> void:
 		label_goal.text = game.get_goal_text()
 	if game.state == game.State.MENU:
 		_refresh_menu_stats()
+	_sync_skill_btn()
 
 
 func _toast(text: String) -> void:
@@ -148,3 +162,228 @@ func _toast(text: String) -> void:
 	_toast_tween = create_tween()
 	_toast_tween.tween_interval(1.2)
 	_toast_tween.tween_property(label_toast, "modulate:a", 0.0, 0.5)
+
+
+# ===== 补给队商店（过关结算内，代码构建） =====
+
+func _box_style() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.07, 0.11, 0.16, 0.82)
+	sb.set_border_width_all(1)
+	sb.border_color = Color(1, 0.69, 0.125, 0.6)
+	sb.set_corner_radius_all(10)
+	sb.content_margin_left = 10
+	sb.content_margin_right = 10
+	sb.content_margin_top = 8
+	sb.content_margin_bottom = 8
+	return sb
+
+
+func _btn_style(bg: Color) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = bg
+	sb.set_corner_radius_all(8)
+	sb.content_margin_left = 10
+	sb.content_margin_right = 10
+	sb.content_margin_top = 6
+	sb.content_margin_bottom = 6
+	return sb
+
+
+func _shop_clear() -> void:
+	if shop_panel != null and is_instance_valid(shop_panel):
+		shop_panel.queue_free()
+	shop_panel = null
+	shop_box = null
+	shop_coins_label = null
+
+
+func _rebuild_shop() -> void:
+	_shop_clear()
+	if game == null or not is_instance_valid(game):
+		return
+	# 商品面板容器
+	shop_panel = VBoxContainer.new()
+	shop_panel.add_theme_constant_override("separation", 6)
+	var title := Label.new()
+	title.text = "🚒 补给队 · 过关补给"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 16)
+	shop_panel.add_child(title)
+
+	# 金币余额行
+	shop_coins_label = Label.new()
+	shop_coins_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	shop_coins_label.add_theme_color_override("font_color", Color(1, 0.88, 0.45))
+	shop_panel.add_child(shop_coins_label)
+
+	# 商品行（英雄位 + 道具位）外层框
+	shop_box = VBoxContainer.new()
+	shop_box.add_theme_constant_override("separation", 6)
+	shop_box.add_theme_stylebox_override("panel", _box_style())
+	shop_panel.add_child(shop_box)
+
+	# 插入到「下一关」按钮之前（btn_next 已在 VBox 尾部）
+	level_vbox.add_child(shop_panel)
+	if is_instance_valid(btn_next):
+		level_vbox.move_child(shop_panel, btn_next.get_index())
+
+	_render_shop_rows()
+
+
+func _render_shop_rows() -> void:
+	if shop_box == null or not is_instance_valid(shop_box):
+		return
+	for c in shop_box.get_children():
+		if is_instance_valid(c):
+			c.queue_free()
+	if shop_coins_label:
+		shop_coins_label.text = "💰 金币 %d" % GameState.coins
+	if game == null or not is_instance_valid(game):
+		return
+	var stock: Dictionary = game.get_shop_stock()
+
+	# 英雄位
+	var hero: int = int(stock.get("hero", -1))
+	if hero >= 0 and not GameState.has_skin(hero):
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 8)
+		var info := Label.new()
+		info.text = "%s · %s" % [
+			str(CharacterDB.role(hero).get("name", "")),
+			str(CharacterDB.role(hero).get("ability", "")),
+		]
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		row.add_child(info)
+		var btn := Button.new()
+		var cost: int = int(CharacterDB.role(hero).get("cost", 0))
+		btn.text = "%d💰 解锁" % cost
+		btn.add_theme_stylebox_override("normal", _btn_style(Color(1, 0.69, 0.125)))
+		btn.disabled = GameState.coins < cost
+		btn.pressed.connect(func() -> void:
+			if game.buy_shop_hero():
+				_render_shop_rows()
+		)
+		row.add_child(btn)
+		shop_box.add_child(row)
+
+	# 道具位
+	var items: Array = stock.get("items", [])
+	for key: Variant in items:
+		var k: String = str(key)
+		if not ShopDB.ITEM_DEFS.has(k):
+			continue
+		var def: Dictionary = ShopDB.ITEM_DEFS[k] as Dictionary
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 8)
+		var info := Label.new()
+		info.text = "%s · %s" % [str(def.get("name", k)), str(def.get("desc", ""))]
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		row.add_child(info)
+		var btn := Button.new()
+		btn.text = "%d💰" % int(def.get("price", 100))
+		btn.add_theme_stylebox_override("normal", _btn_style(Color(0.2, 0.45, 0.32)))
+		btn.disabled = GameState.coins < int(def.get("price", 100))
+		btn.pressed.connect(func() -> void:
+			if game.buy_shop_item(k):
+				_render_shop_rows()
+		)
+		row.add_child(btn)
+		shop_box.add_child(row)
+
+	# 刷新（激励视频 mock：立即刷新）
+	var refresh_row := HBoxContainer.new()
+	var refresh_info := Label.new()
+	refresh_info.text = "商品不满意？"
+	refresh_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	refresh_row.add_child(refresh_info)
+	var refresh_btn := Button.new()
+	refresh_btn.text = "📺 看广告刷新（mock）"
+	refresh_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.2, 0.36, 0.58)))
+	refresh_btn.pressed.connect(func() -> void:
+		game.mock_refresh_shop()
+		_render_shop_rows()
+	)
+	refresh_row.add_child(refresh_btn)
+	shop_box.add_child(refresh_row)
+
+
+# ===== 主菜单角色切换 =====
+
+func _build_char_btn() -> void:
+	if char_btn != null and is_instance_valid(char_btn):
+		char_btn.queue_free()
+	char_btn = Button.new()
+	char_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.35, 0.24, 0.1)))
+	_sync_char_btn()
+	char_btn.pressed.connect(_cycle_character)
+	# 插到 StartButton 之前（menu_vbox children: Title/Sub/MenuStats/StartButton）
+	menu_vbox.add_child(char_btn)
+	if is_instance_valid(btn_start):
+		menu_vbox.move_child(char_btn, btn_start.get_index())
+
+
+func _sync_char_btn() -> void:
+	if char_btn == null or not is_instance_valid(char_btn):
+		return
+	var cur_name: String = str(CharacterDB.role(GameState.skin_index).get("name", ""))
+	var cur_kind: String = CharacterDB.kind(GameState.skin_index)
+	var ability: String = str(CharacterDB.role(GameState.skin_index).get("ability", ""))
+	var emoji := {"cat": "🐱", "dog": "🐶", "panda": "🐼", "capy": "🦫", "nezha": "🧒"}
+	char_btn.text = "🎭 %s %s：%s（点我切换）" % [str(emoji.get(cur_kind, "？")), cur_name, ability]
+	char_btn.tooltip_text = "在已拥有角色间切换"
+
+
+func _cycle_character() -> void:
+	var owned: Array = GameState.owned_skins.duplicate()
+	if owned.is_empty():
+		return
+	owned.sort()
+	var cur: int = GameState.skin_index
+	var next_idx: int = -1
+	for i in range(1, owned.size() + 1):
+		var candidate: int = int(owned[(owned.find(cur) + i) % owned.size()])
+		if candidate != cur:
+			next_idx = candidate
+			break
+	if next_idx >= 0:
+		GameState.set_skin(next_idx)
+		if game.has_method("apply_skin_change"):
+			game.apply_skin_change()
+		_sync_char_btn()
+		_refresh_menu_stats()
+		_toast("切换为：" + str(CharacterDB.role(next_idx).get("name", "")))
+
+
+# ===== 哪吒技能按钮 =====
+
+func _build_skill_btn() -> void:
+	if skill_btn != null and is_instance_valid(skill_btn):
+		skill_btn.queue_free()
+	skill_btn = Button.new()
+	skill_btn.text = "⚡ 乾坤圈"
+	skill_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.7, 0.25, 0.12)))
+	skill_btn.visible = false
+	# 右下角
+	skill_btn.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	skill_btn.offset_left = -150.0
+	skill_btn.offset_top = -70.0
+	skill_btn.offset_right = -20.0
+	skill_btn.offset_bottom = -34.0
+	skill_btn.pressed.connect(func() -> void:
+		if game.has_method("use_skill"):
+			game.use_skill()
+		_sync_skill_btn()
+	)
+	hud.add_child(skill_btn)
+
+
+func _sync_skill_btn() -> void:
+	if skill_btn == null or not is_instance_valid(skill_btn):
+		return
+	var can: bool = false
+	if game != null and is_instance_valid(game) and game.has_method("can_use_skill"):
+		can = bool(game.can_use_skill())
+	skill_btn.visible = can

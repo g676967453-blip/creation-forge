@@ -8,6 +8,7 @@ const VIEW_H: int = 800
 const PADDLE_W: float = 92.0
 const PADDLE_H: float = 18.0
 const PADDLE_Y: float = 650.0
+const PADDLE_SPEED_BASE: float = 420.0
 
 const BALL_R: float = 10.0
 const BALL_SPEED_BASE: float = 320.0

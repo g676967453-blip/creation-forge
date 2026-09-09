@@ -22,6 +22,16 @@ var _double_claimed: bool = false
 var _level_closing: bool = false  ## 防止同一帧多次过关
 var _carry_is_red: bool = false   ## 当前携带是否来自红窗（不计硬目标）
 
+## 角色/商店相关
+var _boost_timer: float = 0.0          ## 限时增益·灭火×2 剩余秒（下关生效）
+var _extinguish_pending: bool = false  ## 灭火器：下关首次着火自动扑灭
+var _capy_fire_timer: float = 0.0      ## 卡皮巴拉：着火自动熄灭倒计时（秒）
+var _nezha_ball2: Node2D = null        ## 哪吒双球第二球
+var _nezha_used: bool = false          ## 哪吒技能本关是否已用
+var _nezha_timer: float = 0.0          ## 双球剩余秒
+var _shop_stock: Dictionary = {}       ## 当前商品组 {hero,items}
+var _shop_used: bool = false           ## 本关是否已弹出过商店
+
 ## 道具掉落：掉率随关卡微升（对齐 HTML maybeDropItem）
 const ITEM_CHANCE_BASE: float = 0.28
 const ITEM_CHANCE_PER_LEVEL: float = 0.015
@@ -76,6 +86,23 @@ func _process(delta: float) -> void:
 		_paddle_timer = maxf(0.0, _paddle_timer - delta)
 		if _paddle_timer <= 0.0:
 			paddle.reset_width()
+
+	# 限时增益（灭火×2）倒计时
+	if _boost_timer > 0.0:
+		_boost_timer = maxf(0.0, _boost_timer - delta)
+
+	# 卡皮巴拉：着火 3 秒自动熄灭
+	if _capy_fire_timer > 0.0:
+		_capy_fire_timer = maxf(0.0, _capy_fire_timer - delta)
+		if _capy_fire_timer <= 0.0 and paddle.on_fire:
+			paddle.set_on_fire(false)
+			show_message.emit("卡皮巴拉：火自动熄灭")
+
+	# 哪吒双球倒计时
+	if _nezha_ball2 != null:
+		_nezha_timer = maxf(0.0, _nezha_timer - delta)
+		if _nezha_timer <= 0.0:
+			_remove_nezha_ball2()
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
@@ -202,16 +229,177 @@ func mock_revive() -> void:
 	show_message.emit("复活成功")
 
 
+# ===== 补给队商店（过关后弹出） =====
+
+func open_shop() -> void:
+	if state != State.LEVELUP:
+		return
+	_shop_used = true
+	if _shop_stock.is_empty():
+		_shop_stock = ShopDB.generate()
+	hud_refresh.emit()
+	show_message.emit("补给队到啦！")
+
+
+## 商店「继续」：跳过消费进入下一关
+func shop_continue() -> void:
+	_shop_stock = {}
+	continue_next_level()
+
+
+## 购买英雄（角色）：金币扣减 + 解锁 + 装备。返回成功
+func buy_shop_hero() -> bool:
+	if state != State.LEVELUP:
+		return false
+	var hero: int = int(_shop_stock.get("hero", -1))
+	if hero < 0:
+		return false
+	if not GameState.buy_skin_with_coins(hero):
+		return false
+	_shop_stock["hero"] = -1
+	_apply_skin_runtime()
+	hud_refresh.emit()
+	show_message.emit("解锁 " + str(CharacterDB.role(hero).get("name", "")) + "！")
+	return true
+
+
+## 购买道具：bag 即时结算；其余入 pending 下关生效。返回成功
+func buy_shop_item(key: String) -> bool:
+	if state != State.LEVELUP:
+		return false
+	if not ShopDB.ITEM_DEFS.has(key):
+		return false
+	var price: int = ShopDB.item_price(key)
+	if GameState.coins < price:
+		return false
+	GameState.coins -= price
+	if key == "bag":
+		GameState.add_score(80)
+		GameState.add_coins(8)
+		show_message.emit("钱袋 +80 分 +8 金币")
+	else:
+		GameState.pending_buffs.append(key)
+		show_message.emit("已购 " + ShopDB.item_name(key) + "（下一关生效）")
+	GameState.save()
+	hud_refresh.emit()
+	return true
+
+
+## 刷新商品（激励视频 mock：立即刷新，模拟看完广告）
+func mock_refresh_shop() -> void:
+	if state != State.LEVELUP:
+		return
+	_shop_stock = ShopDB.generate()
+	hud_refresh.emit()
+	show_message.emit("商品已刷新！")
+
+
+## 商品组查询（UI 用）
+func get_shop_stock() -> Dictionary:
+	return _shop_stock
+
+
+func shop_hero_priced() -> bool:
+	var hero: int = int(_shop_stock.get("hero", -1))
+	return hero >= 0
+
+
+## 当前角色切换后运行时重挂（移速 + 球视觉）
+func apply_skin_change() -> void:
+	if paddle.has_method("apply_skin_speed"):
+		paddle.apply_skin_speed()
+	if ball.has_method("refresh_visual"):
+		ball.refresh_visual()
+
+
+func _apply_skin_runtime() -> void:
+	apply_skin_change()
+
+
+# ===== 哪吒双球技能（每关 1 次，10 秒） =====
+
+func can_use_skill() -> bool:
+	return (
+		state == State.PLAYING
+		and CharacterDB.cur_is("nezha")
+		and not _nezha_used
+		and _nezha_ball2 == null
+		and not _waiting_launch
+	)
+
+
+func use_skill() -> void:
+	if not can_use_skill():
+		return
+	_nezha_used = true
+	_nezha_timer = 10.0
+	_nezha_ball2 = ball.duplicate()
+	_nezha_ball2.name = "Ball2"
+	add_child(_nezha_ball2)
+	# 断开主球信号重复连线，独立处理
+	if _nezha_ball2.has_signal("fell_off") and not _nezha_ball2.fell_off.is_connected(_on_ball_fell):
+		_nezha_ball2.fell_off.connect(_on_ball_fell)
+	if _nezha_ball2.has_signal("hit_brick") and not _nezha_ball2.hit_brick.is_connected(_on_ball_hit_brick):
+		_nezha_ball2.hit_brick.connect(_on_ball_hit_brick)
+	if _nezha_ball2.has_method("launch"):
+		_nezha_ball2.launch(Vector2(-0.3, -1.0))
+	show_message.emit("乾坤圈！双球 10 秒")
+	hud_refresh.emit()
+
+
+func _remove_nezha_ball2() -> void:
+	if _nezha_ball2 != null and is_instance_valid(_nezha_ball2):
+		_nezha_ball2.queue_free()
+	_nezha_ball2 = null
+	_nezha_timer = 0.0
+
+
+# ===== 下关道具生效 =====
+
+func _apply_pending_buffs() -> void:
+	if GameState.pending_buffs.is_empty():
+		return
+	var buffs: Array = GameState.pending_buffs.duplicate()
+	GameState.pending_buffs.clear()
+	for key: String in buffs:
+		match key:
+			"wide":
+				if paddle.has_method("set_effect_width"):
+					paddle.set_effect_width(GameConstants.PADDLE_W + 30.0)
+				_paddle_timer = 8.0
+				show_message.emit("长条生效：蹦床加宽 8 秒")
+			"extinguish":
+				_extinguish_pending = true
+				show_message.emit("灭火器就绪：着火自动扑灭")
+			"up":
+				GameState.power_level = mini(2, GameState.power_level + 1)
+				show_message.emit("1UP：灭火等级 +1")
+			"boost":
+				_boost_timer = 8.0
+				show_message.emit("限时增益：8 秒灭火 ×2")
+
+
 func _start_level() -> void:
 	_level_closing = false
 	_double_claimed = false
 	_carry_is_red = false
 	_clear_bricks()
 	_clear_items()
+	# 本关开始时清理双球/增益计时（商店 buff 在下关才用，这里先复位运行期状态）
+	_remove_nezha_ball2()
+	_boost_timer = 0.0
+	_extinguish_pending = false
+	_capy_fire_timer = 0.0
+	_nezha_used = false
+	_shop_used = false
 
+	if paddle.has_method("apply_skin_speed"):
+		paddle.apply_skin_speed()
 	if paddle.has_method("reset_width"):
 		paddle.reset_width()
 	paddle.set_on_fire(false)
+	# 商店购买的道具：下一关开局生效
+	_apply_pending_buffs()
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(true)
 
@@ -262,6 +450,7 @@ func _launch() -> void:
 	ball.launch(Vector2(cos(ang), sin(ang)))
 	if paddle.has_method("play_bounce"):
 		paddle.play_bounce()
+	hud_refresh.emit()
 
 
 func _on_ball_fell() -> void:
@@ -302,8 +491,10 @@ func _on_ball_paddle() -> void:
 	if not was_red and rescue_left > 0:
 		rescue_left = maxi(0, rescue_left - 1)
 
-	var pts: int = 150 if was_red else 100
-	var coin_gain: int = 12 if was_red else 10
+	# 小狗·救援：救人得分 +50%（含红窗），金币同比例
+	var dog_mult: float = 1.5 if CharacterDB.cur_is("dog") else 1.0
+	var pts: int = int(round((150.0 if was_red else 100.0) * dog_mult))
+	var coin_gain: int = int(round((12.0 if was_red else 10.0) * dog_mult))
 	GameState.add_score(pts)
 	GameState.add_coins(coin_gain)
 	show_message.emit(("红窗救人 +%d" if was_red else "救人 +%d") % pts)
@@ -321,6 +512,11 @@ func _on_ball_hit_brick(brick: Node) -> void:
 
 	# 已带人时不再抓第二人，但火窗仍可灭
 	var dmg: int = 1 + maxi(0, GameState.power_level)
+	# 熊猫·力量：灭火伤害 ×2；限时增益（boost）同样 ×2；可叠加
+	if CharacterDB.cur_is("panda"):
+		dmg *= 2
+	if _boost_timer > 0.0:
+		dmg *= 2
 	var result: String = str(brick.hit(dmg))
 
 	match result:
@@ -416,16 +612,29 @@ func _on_item_collected(it: GameItem) -> void:
 				GameState.add_score(50)
 				show_message.emit("灭火等级已满，+50 分")
 		GameItem.Kind.FIREBALL:
-			if paddle.on_fire:
-				GameState.lose_life()
-				if GameState.lives <= 0:
-					show_message.emit("蹦床烧毁了…")
-					_game_over()
+			# 卡皮巴拉·稳定：50% 概率抗火（无论着火与否）
+			var capy_safe: bool = CharacterDB.cur_is("capy") and randf() < 0.5
+			if capy_safe:
+				show_message.emit("卡皮巴拉：抗火！火苗弹开")
+			elif paddle.on_fire:
+				# 灭火器（商店购，下关）：着火自动扑灭一次
+				if _extinguish_pending:
+					_extinguish_pending = false
+					paddle.set_on_fire(false)
+					show_message.emit("灭火器：火已自动扑灭")
 				else:
-					show_message.emit("蹦床再次着火，-1 命")
+					GameState.lose_life()
+					if GameState.lives <= 0:
+						show_message.emit("蹦床烧毁了…")
+						_game_over()
+					else:
+						show_message.emit("蹦床再次着火，-1 命")
 			else:
 				paddle.set_on_fire(true)
 				show_message.emit("蹦床着火了！快找灭火器")
+				# 卡皮巴拉：着火 3 秒自动熄灭
+				if CharacterDB.cur_is("capy"):
+					_capy_fire_timer = 3.0
 	hud_refresh.emit()
 
 
@@ -471,9 +680,11 @@ func _level_complete() -> void:
 	GameState.add_score(level_bonus)
 	GameState.add_coins(level_bonus)
 	GameState.save()
+	# 每关通关刷新补给队商品
+	_shop_stock = ShopDB.generate()
 	_set_state(State.LEVELUP)
 	hud_refresh.emit()
-	show_message.emit("过关！奖励 %d" % level_bonus)
+	show_message.emit("过关！补给队已就位")
 
 
 func _game_over() -> void:
