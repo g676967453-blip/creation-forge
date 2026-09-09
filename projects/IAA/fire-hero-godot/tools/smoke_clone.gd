@@ -42,15 +42,22 @@ func _run() -> void:
 	var failures: Array = []
 	var prev_pos: Dictionary = {}
 	var stuck_frames: Dictionary = {}
-	var ok_frames: int = 0
-	var frames: int = 420
-	for f in range(frames):
+	var frames: int = 0
+	# 跑真实帧直到分身全部自灭（life=6s），上限 3000 帧兜底（headless 帧率不定）
+	var max_frames: int = 3000
+	while frames < max_frames:
 		await get_tree().process_frame
+		frames += 1
+		# 防止主球掉命导致 game over：若球落到底部附近，吸回蹦床（专注分身生命周期）
+		var b: Node2D = game.get("ball")
+		if b != null and b.position.y > 780.0:
+			b.position = Vector2(225, 600)
+			game._waiting_launch = true
+			b.stuck_to_paddle = true
 		var clones: Array = game._clones
-		# 若游戏提前过关/结束，分身为 0 即正常结束（不算失败）
-		if clones.is_empty():
-			ok_frames += 1
-			continue
+		# 分身已全部自灭 → 提前结束
+		if clones.is_empty() and frames > 60:
+			break
 		# 逐分身检查是否"滞留"：存活但位置连续 30 帧不变化（无外力应不可能完全静止，
 		# 除非它不再被驱动）
 		var any_moved: bool = false

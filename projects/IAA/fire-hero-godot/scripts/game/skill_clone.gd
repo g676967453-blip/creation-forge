@@ -1,7 +1,7 @@
 class_name SkillClone
 extends Node2D
 ## 狐狸·影分身：一个分身节点
-## 简易物理（对齐 HTML updateBall2 思路）：移动 + 顶/左右壁反弹 + 蹦床反弹
+## 与主体弹射物一致的无重力直线运动 + 顶/左右壁反弹 + 蹦床反弹
 ## + 与火砖 AABB 相交只灭火（不抓人 / 不捡道具 / 不扣命）
 ## GameRoot 统一遍历更新与销毁；超时/落屏自灭
 
@@ -9,7 +9,6 @@ const VIEW_W: float = 450.0
 const VIEW_H: float = 800.0
 const BRICK_HALF: float = 24.0   # 砖 48×48 半宽
 const PADDLE_HALF_H: float = 9.0
-const GRAVITY: float = 240.0     # 轻重力：影分身扑灭火点后自然下落消散，不做无重力悬浮
 
 var vel: Vector2 = Vector2(0, -1)
 var radius: float = 8.0
@@ -39,9 +38,7 @@ func update_clone(delta: float) -> bool:
 	if life_left <= 0.0:
 		return false
 
-	# 轻重力（限速），避免无重力无限悬浮
-	vel.y += GRAVITY * delta
-	vel.y = minf(vel.y, 320.0)
+	# 无重力直线运动（与主体弹射物一致）
 	position += vel * delta
 
 	# 顶 / 左右壁
@@ -59,7 +56,7 @@ func update_clone(delta: float) -> bool:
 	if position.y > VIEW_H + 40.0:
 		return false
 
-	# 蹦床反弹
+	# 蹦床反弹（与主体同款：按落点偏移角反弹）
 	if vel.y > 0.0 and game != null and is_instance_valid(game):
 		var paddle: Node2D = game.get_paddle_node()
 		if paddle != null:
@@ -69,8 +66,7 @@ func update_clone(delta: float) -> bool:
 				position.y = top - radius
 				var rel: float = clampf((position.x - paddle.position.x) / maxf(1.0, game.get_paddle_half_w()), -1.0, 1.0)
 				var ang: float = lerpf(deg_to_rad(-150.0), deg_to_rad(-30.0), (rel + 1.0) * 0.5)
-				vel = Vector2(cos(ang), sin(ang)) * maxf(vel.length(), 200.0)
-				vel.y = minf(vel.y, 0.0)  # 反弹必向上
+				vel = Vector2(cos(ang), sin(ang)) * vel.length()
 				return true
 
 	# 与砖 AABB：分身只对火砖造成伤害，救援窗忽略（穿行不救人）
