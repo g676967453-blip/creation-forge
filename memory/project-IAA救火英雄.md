@@ -1,58 +1,48 @@
 # IAA 救火英雄（Godot 开发中）
 
-> 最后更新：2026-09-07 | 状态：Godot 工程开发中 v0.1.4 | 待办：G-016 美术概念图（A 级高能）
+> 最后更新：2026-09-09 | 状态：Godot v0.1.5+ 商店/角色/H5 链路齐，手机内网体验中
 
 ## 是什么
 
 休闲类 IAA（广告变现）游戏《救火英雄》。竖屏 9:16，激励视频 + 插屏变现。
-**技术路线已定为 Godot 4.7.1**（非 Unity/Cocos）：工程 `projects/IAA/fire-hero-godot/`，引擎在 `C:\软件\Godot_v4.7.1-stable_win64.exe\`，数值以 HTML 原型 `fire-hero-iaa.html` 为权威源。
+**技术路线已定为 Godot 4.7**：工程 `projects/IAA/fire-hero-godot/`（本机验证路径 `J:\ceshi\projects\IAA\fire-hero-godot`），数值以 HTML 原型 `fire-hero-iaa.html` 为权威源。
+**引擎实际路径**：`F:\Godot_v4.7-stable_win64.exe\`（README 里的 C:\软件 路径已失效）。
 
 ## 已有产出（projects/IAA/）
 
-### 玩法与规则
-- `fire-hero-game-rules.md` — 游戏规则梳理（含版权红线：不抄原版《飛INGヒーロー》）
-- `fire-hero-iaa.html` — HTML 玩法原型
-- `server.js` — 原型本地服务
+### 玩法与规则 / 企划 / 美术 / UI
+- `fire-hero-iaa.html` + `server.js`（HTML 原型 + 本地服务）；规则/企划/成本/微创新规格等 MD 齐全
+- `art/`（风格锁/像素精灵集/导出）`ui-prototypes/` `audio/`（Kenney CC0 音效 wav）
 
-### 企划与立项
-- `IAA企划案.md` / `救火英雄IAA游戏企划.md` / `IAA小队价值主张.md`
-- `微创新需求规格.md` / `IAA项目开发成本清单.md`
-- `立项评审-口述稿与一页大纲.md`
-- `市场竞品调研-弹珠弹射类.md` / `市场营销数据-弹珠弹射与IAA.md`
-- `游戏测试与反馈.md`
+### Godot 工程（进行中，v0.1.4 → v0.1.5+）
+- **v0.1.4**（09-07）：道具最小集（钱袋/长条/锤子/灭火器/1UP）+ 火球
+- **v0.1.5+（09-09）**：
+  - **补给队商店 + 角色系统**：过关结算自动带商店（英雄位/道具位/刷新 mock）；5 角色（猫/狗免费、熊猫2000/卡皮3000/狐狸5000）；角色能力全接（猫移速/狗分/熊猫×2/卡皮抗火/狐狸影分身）
+  - **狐狸影分身**：分 6 分身（只灭火）CD 6 秒可重复；分身 bug 已修（filter 类型错误中断 _process）
+  - **长条/螺丝永久宽度**：整局跨关保留，顶屏边 450 封顶
+  - **H5 手机体验链路**：Web export preset（nothreads）+ gzip（wasm 37.7→9.7MB 线上）+ server.js 目录补 index + MIME；**内网自签 HTTPS 8443**（`tools/make_cert.py`，certs/ 不入库）；体验地址 `https://192.168.3.188:8443/web-build/`（同 WiFi，首次点"继续访问"）
+  - **网络音效**：Kenney CC0 14 条 WAV 放 `IAA/audio/`（不入游戏包），Sfx autoload 运行时 HTTP 下载→缓存→播放，事件全接
+  - **触屏**：左右虚拟按钮 + 道具象形图标 + 右上角临时 +500 金币测试钮（`TEST_COIN_BTN_ENABLED` 正式前关）
+  - **Web 乱码修复**：UI 全局默认 Zpix 字体
+- 冒烟：shop **31/31**、clone、sfx 全过；`tools/smoke_*.tscn`
+- 日志：`docs/dev-log-2026-09-04/07/09.md`
 
-### 美术 / 音效 / UI
-- `救火英雄美术输出规格与MVP资产清单.md` / `救火英雄音效需求清单.md`
-- `art/style/` — 风格锁候选与参考板；`art/wip/` — 生成 WIP 与脚本
-- `ui-prototypes/` — 8 场景 UI HTML + Pixso 预览与导入脚本
-- `_lovart_prompt.txt` — Lovart 概念图 prompt 草稿
-
-### Godot 工程（进行中）
-- `fire-hero-godot/` — Godot 4.7.1 竖屏工程。已完成 v0.1.3：核心循环（双通道胜利/抓人救援/复活双倍 mock）+ 背景/窗/蹦床/弹射物美术接入 + 拖尾粒子 + HUD 像素化（Zpix）
-- v0.1.4（2026-09-07）：道具最小集（钱袋/长条/锤子/灭火器/1UP）+ 火球，掉落/接取/8 秒限时/蹦床着火博弈，**冒烟 15/15 通过待本机 F5**
-- 关联：`docs/dev-log-2026-09-04.md` / `dev-log-2026-09-07.md`；P0 回归清单 `docs/P0-regression-checklist.md`；道具数值权威 = `fire-hero-iaa.html`（maybeDropItem/applyItem）
-
-### 分享
-- `md2html.py` + `share_html/` — 企划 MD→HTML 分享页
+### 窗口坐标编辑器（09-08 前后）
+- `window-editor.html`（垫背景图 + 自由坐标摆窗 + 自动/手动 + 导出 JSON）；Godot `level_db.gd`/`level_builder.gd` 支持坐标布局，自动读 `assets/levels/windows.json`
 
 ## 关键信息
-
-- 概念图风格锚点：三国诡异 Q 版 / 2 头身（概念设计工作流）；但 Godot 版实际已走像素风（Zpix + 16×16 图标 + PSD 像素素材）——两线并行时以像素工程为准
-- 成本大头在买量测试与放量，立项预算需单列
-- 版权红线：素材需全部原创或购买授权
-- 道具贴图当前为**运行时生成占位**（item.gd），美术定稿后换 `assets/props/items/`
-- 2026-09-01：从 `C:\Users\admin\IAA` 同步入仓并推送 main；G-012/G-013/G-014 已完成，G-015 每周进度同步 09-05 ✅
+- **手机内网体验现成**：`https://192.168.3.188:8443/web-build/`（需 node server.js 在跑，双击 `打开关卡配置.bat` 或 `node server.js 8080`）
+- 版权红线：素材原创/Kenney CC0；禁止原版《飛INGヒーロー》素材音乐
+- 道具贴图已换美术 64px 像素图（assets/props/items/）
+- web-build/、certs/、node 产物不入库（gitignore 已加）
 
 ## 待办 / 下一步
-
-- [ ] **v0.1.4 本机 F5 回归**（道具手感/火球博弈/暂停冻结），P0 清单第 7 节「无道具」已过时
-- [ ] 道具贴图美术定稿 + 音效素材生产（需求清单已有，事件点已就位）
-- [ ] 角色系统 + 补给队（`../微创新需求规格.md`，金币闭环依赖道具掉落）
-- [ ] G-016 美术概念图（个人待办 A 级高能，待办中）
-- [ ] 立项预算正式决策（口径：买量/放量成本大头）
+- [ ] 手机 H5 真机验收（虚拟钮/图标/影分身/乱码已修）
+- [ ] 正式发布前关测试金币钮（TEST_COIN_BTN_ENABLED=false）
+- [ ] APK 出包需装 Android 模板+SDK（约 1.5-2GB，用户未确认）
+- [ ] 音效不贴的换 Kenney 变体；角色/商店数值按反馈调
+- [ ] G-016 美术概念图；立项预算决策
 
 ## 关联
-
-- 待办：`造化仪表盘/个人待办.md` G-015/G-016
-- 日志：`造化仪表盘/works/2026-09-07-[claude]-救火英雄道具系统开发.md`（v0.1.4）、`2026-09-01-[dsh]-IAA入库与仓库同步.md`
-- 概念设计：`memory/project-概念设计工作流.md`
+- 日志：`fire-hero-godot/docs/dev-log-2026-09-09.md`（今日 16 提交汇总）
+- 记忆：`memory/project-IAA救火英雄.md`
