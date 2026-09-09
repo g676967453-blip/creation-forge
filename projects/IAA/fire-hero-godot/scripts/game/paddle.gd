@@ -15,8 +15,8 @@ const FIREMAN_FPS: float = 5.0
 ## ✅ 方向已修正：棕消防员在左、紫消防员在右、踩床居中
 ## 位置 = 你在 Godot 引擎里调好的值（main.tscn）
 const MAT_POS := Vector2(0, 9)                 # 踩床位置 (Mat)
-const FIREMAN_LEFT_POS := Vector2(-40, -2)     # 左消防员 (FiremanLeft)
-const FIREMAN_RIGHT_POS := Vector2(40, 0)      # 右消防员 (FiremanRight)
+const MAT_TEX_W: float = 74.0                  # mat.png 源图宽
+const FIREMAN_EDGE_GAP: float = 6.0            # 消防员距床面边缘的横向间距（92 宽时 =40）
 ## 消防员缩放（保持 1:1 像素，不缩放）
 const FIREMAN_SCALE := Vector2(1, 1)
 
@@ -114,18 +114,21 @@ func _apply_width(w: float) -> void:
 
 
 func _relayout() -> void:
-	# 尊重你在引擎里调好的位置（基准常量），脚本不覆盖
+	# 床面视觉宽度 = 当前碰撞宽（长条拉长 / 锤子收窄时床面可见变化）
+	var w: float = maxf(40.0, base_width)
 	if _mat:
-		_mat.scale = Vector2.ONE
+		_mat.scale = Vector2(w / MAT_TEX_W, 1.0)
 		_mat.position = MAT_POS
+	# 左右消防员贴床面两端（基准 92 宽 → ±40）
+	var edge: float = w * 0.5 - FIREMAN_EDGE_GAP
 	if _fireman_left:
 		_fireman_left.scale = FIREMAN_SCALE
-		_fireman_left.position = FIREMAN_LEFT_POS
+		_fireman_left.position = Vector2(-edge, -2.0)
 		if not _fireman_left.is_playing():
 			_fireman_left.play("run")
 	if _fireman_right:
 		_fireman_right.scale = FIREMAN_SCALE
-		_fireman_right.position = FIREMAN_RIGHT_POS
+		_fireman_right.position = Vector2(edge, 0.0)
 		if not _fireman_right.is_playing():
 			_fireman_right.play("run")
 

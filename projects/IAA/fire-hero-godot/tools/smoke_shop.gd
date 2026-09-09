@@ -66,6 +66,12 @@ func _run() -> void:
 	checks.append(["next_level_ok", game.state == game.State.PLAYING])
 	checks.append(["pending_consumed", GameState.pending_buffs.is_empty()])
 	checks.append(["paddle_wider", absf(game.paddle.base_width - 122.0) < 0.5])
+	# 长条视觉回归：床面 mat 横向拉伸
+	var mat_node: Node = game.paddle.get_node_or_null("Visual/Mat")
+	if mat_node:
+		checks.append(["mat_stretched", (mat_node as Node2D).scale.x > 1.3])
+	else:
+		checks.append(["mat_stretched", false])
 
 	# 角色能力：切猫 → 移速 +25%
 	GameState.set_skin(0)
@@ -73,31 +79,33 @@ func _run() -> void:
 	var cat_speed: float = game.paddle.base_move_speed
 	checks.append(["cat_speed_bonus", absf(cat_speed - 525.0) < 1.0])
 
-	# 哪吒技能入口存在性（无法真发射，仅验证 can_use_skill 在等待时不触发）
+	# 狐狸技能入口存在性（无法真发射，仅验证 can_use_skill 在等待时不触发）
 	var can_before_launch: bool = game.can_use_skill()
 	checks.append(["skill_waiting_blocked", not can_before_launch])
 
 	# ===== 角色能力专项 =====
 	print("[step2] abilities")
-	# 狗·救援得分（直接触发 _on_ball_paddle 语义过深；验证判定 is_kind + 倍率宏）
 	checks.append(["dog_kind_detect", CharacterDB.cur_is("dog") == (GameState.skin_index == CharacterDB.DOG)])
-	# 熊猫：设熊猫 → is_kind 判定
 	GameState.set_skin(CharacterDB.PANDA)
 	checks.append(["panda_kind_detect", CharacterDB.cur_is("panda")])
-	# 卡皮：设卡皮 → 判定
 	GameState.set_skin(CharacterDB.CAPY)
 	checks.append(["capy_kind_detect", CharacterDB.cur_is("capy")])
-	# 哪吒：设哪吒，模拟发射后 can_use_skill 应为 true
-	GameState.set_skin(CharacterDB.NEZHA)
+	# 狐狸：设狐狸，模拟发射后 can_use_skill 应为 true，技能分 6 分身 + CD
+	GameState.set_skin(CharacterDB.FOX)
 	game.apply_skin_change()
 	game._waiting_launch = false
 	game._set_state(game.State.PLAYING)
-	print("[step3] skill")
+	print("[step3] fox skill")
 	checks.append(["skill_ready_after_launch", game.can_use_skill()])
 	game.use_skill()
-	checks.append(["use_skill_ok", game._nezha_ball2 != null])
-	checks.append(["ball2_spawned", game._nezha_ball2 != null])
-	checks.append(["skill_once_only", not game.can_use_skill()])
+	checks.append(["use_skill_ok", game._clones.size() == 6])
+	checks.append(["six_clones_spawned", game._clones.size() == 6])
+	checks.append(["skill_cd_set", game.get_skill_cd_left() > 0.0])
+	checks.append(["skill_cd_blocks", not game.can_use_skill()])
+	game._skill_cd = 0.0
+	checks.append(["skill_reusable", game.can_use_skill()])
+	game.use_skill()
+	checks.append(["second_use_ok", game._clones.size() == 6])
 	print("[step4] done asserts")
 
 	# 打印结果

@@ -331,7 +331,7 @@ func _sync_char_btn() -> void:
 	var cur_name: String = str(CharacterDB.role(GameState.skin_index).get("name", ""))
 	var cur_kind: String = CharacterDB.kind(GameState.skin_index)
 	var ability: String = str(CharacterDB.role(GameState.skin_index).get("ability", ""))
-	var emoji := {"cat": "🐱", "dog": "🐶", "panda": "🐼", "capy": "🦫", "nezha": "🧒"}
+	var emoji := {"cat": "🐱", "dog": "🐶", "panda": "🐼", "capy": "🦫", "fox": "🦊"}
 	char_btn.text = "🎭 %s %s：%s（点我切换）" % [str(emoji.get(cur_kind, "？")), cur_name, ability]
 	char_btn.tooltip_text = "在已拥有角色间切换"
 
@@ -357,13 +357,13 @@ func _cycle_character() -> void:
 		_toast("切换为：" + str(CharacterDB.role(next_idx).get("name", "")))
 
 
-# ===== 哪吒技能按钮 =====
+# ===== 狐狸技能按钮 =====
 
 func _build_skill_btn() -> void:
 	if skill_btn != null and is_instance_valid(skill_btn):
 		skill_btn.queue_free()
 	skill_btn = Button.new()
-	skill_btn.text = "⚡ 乾坤圈"
+	skill_btn.text = "🦊 影分身"
 	skill_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.7, 0.25, 0.12)))
 	skill_btn.visible = false
 	# 右下角
@@ -386,4 +386,32 @@ func _sync_skill_btn() -> void:
 	var can: bool = false
 	if game != null and is_instance_valid(game) and game.has_method("can_use_skill"):
 		can = bool(game.can_use_skill())
-	skill_btn.visible = can
+	var is_fox: bool = CharacterDB.cur_is("fox")
+	skill_btn.visible = can or (is_fox and _cd_left() > 0.0 and game != null and game.state == game.State.PLAYING)
+	if not is_fox:
+		skill_btn.visible = false
+		return
+	if can:
+		skill_btn.text = "🦊 影分身"
+		skill_btn.disabled = false
+	else:
+		var cd: float = _cd_left()
+		if cd > 0.0:
+			skill_btn.text = "⏳ %.1fs" % cd
+			skill_btn.disabled = true
+		else:
+			skill_btn.text = "🦊 影分身"
+			skill_btn.disabled = true
+
+
+func _cd_left() -> float:
+	if game != null and is_instance_valid(game) and game.has_method("get_skill_cd_left"):
+		return float(game.get_skill_cd_left())
+	return 0.0
+
+
+func _process(_delta: float) -> void:
+	# 冷却中刷新 CD 文本
+	if skill_btn != null and is_instance_valid(skill_btn) and skill_btn.visible:
+		if _cd_left() > 0.0:
+			skill_btn.text = "⏳ %.1fs" % _cd_left()

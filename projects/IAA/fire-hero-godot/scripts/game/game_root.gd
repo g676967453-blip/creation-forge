@@ -26,9 +26,8 @@ var _carry_is_red: bool = false   ## 当前携带是否来自红窗（不计硬�
 var _boost_timer: float = 0.0          ## 限时增益·灭火×2 剩余秒（下关生效）
 var _extinguish_pending: bool = false  ## 灭火器：下关首次着火自动扑灭
 var _capy_fire_timer: float = 0.0      ## 卡皮巴拉：着火自动熄灭倒计时（秒）
-var _nezha_ball2: Node2D = null        ## 哪吒双球第二球
-var _nezha_used: bool = false          ## 哪吒技能本关是否已用
-var _nezha_timer: float = 0.0          ## 双球剩余秒
+var _clones: Array = []                ## 狐狸·影分身列表
+var _skill_cd: float = 0.0             ## 技能冷却剩余秒（0=可用）
 var _shop_stock: Dictionary = {}       ## 当前商品组 {hero,items}
 var _shop_used: bool = false           ## 本关是否已弹出过商店
 
@@ -98,11 +97,18 @@ func _process(delta: float) -> void:
 			paddle.set_on_fire(false)
 			show_message.emit("卡皮巴拉：火自动熄灭")
 
-	# 哪吒双球倒计时
-	if _nezha_ball2 != null:
-		_nezha_timer = maxf(0.0, _nezha_timer - delta)
-		if _nezha_timer <= 0.0:
-			_remove_nezha_ball2()
+	# 技能冷却倒计时
+	if _skill_cd > 0.0:
+		_skill_cd = maxf(0.0, _skill_cd - delta)
+		if _skill_cd <= 0.0:
+			hud_refresh.emit()  # 让技能按钮恢复可点
+
+	# 影分身更新（只存活在 PLAYING 态，天然暂停安全）
+	for c in _clones:
+		if c != null and is_instance_valid(c):
+			if not (c as SkillClone).update_clone(delta):
+				(c as SkillClone).queue_free()
+	_clones = _clones.filter(func(c: Node) -> bool: return is_instance_valid(c) and c != null)
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
@@ -316,42 +322,103 @@ func _apply_skin_runtime() -> void:
 	apply_skin_change()
 
 
-# ===== 哪吒双球技能（每关 1 次，10 秒） =====
+# ===== 狐狸·影分身技能（6 分身 / CD 6 秒可重复） =====
+
+const SKILL_CLONE_COUNT: int = 6
+const SKILL_CLONE_LIFE: float = 6.0
+const SKILL_CD_TIME: float = 6.0
 
 func can_use_skill() -> bool:
 	return (
 		state == State.PLAYING
-		and CharacterDB.cur_is("nezha")
-		and not _nezha_used
-		and _nezha_ball2 == null
+		and CharacterDB.cur_is("fox")
+		and _skill_cd <= 0.0
 		and not _waiting_launch
 	)
+
+
+func get_skill_cd_left() -> float:
+	return _skill_cd
 
 
 func use_skill() -> void:
 	if not can_use_skill():
 		return
-	_nezha_used = true
-	_nezha_timer = 10.0
-	_nezha_ball2 = ball.duplicate()
-	_nezha_ball2.name = "Ball2"
-	add_child(_nezha_ball2)
-	# 断开主球信号重复连线，独立处理
-	if _nezha_ball2.has_signal("fell_off") and not _nezha_ball2.fell_off.is_connected(_on_ball_fell):
-		_nezha_ball2.fell_off.connect(_on_ball_fell)
-	if _nezha_ball2.has_signal("hit_brick") and not _nezha_ball2.hit_brick.is_connected(_on_ball_hit_brick):
-		_nezha_ball2.hit_brick.connect(_on_ball_hit_brick)
-	if _nezha_ball2.has_method("launch"):
-		_nezha_ball2.launch(Vector2(-0.3, -1.0))
-	show_message.emit("乾坤圈！双球 10 秒")
+	_skill_cd = SKILL_CD_TIME
+	_clear_clones()  # 点击=重新召唤一批（场上保持 6 个）
+	var tex: Texture2D = _clone_texture()
+	var origin: Vector2 = ball.position if ball != null else Vector2(225, 620)
+	# 6 个分身朝上半扇形 6 个方向飞出
+	for i in range(SKILL_CLONE_COUNT):
+		var ang: float = deg_to_rad(-165.0 + 30.0 * i + 7.0)  # -165°..-15° 均匀
+		var dir := Vector2(cos(ang), sin(ang))
+		var c := SkillClone.make(tex, origin + Vector2(0, -12), dir, 260.0, self)
+		add_child(c)
+		_clones.append(c)
+	show_message.emit("影分身！6 个分身出击")
 	hud_refresh.emit()
 
 
-func _remove_nezha_ball2() -> void:
-	if _nezha_ball2 != null and is_instance_valid(_nezha_ball2):
-		_nezha_ball2.queue_free()
-	_nezha_ball2 = null
-	_nezha_timer = 0.0
+func _clone_texture() -> Texture2D:
+	## 分身视觉用主球当前角色第一帧
+	if ball != null and is_instance_valid(ball) and ball.has_method("get_visual_frame"):
+		var t: Texture2D = ball.get_visual_frame()
+		if t != null:
+			return t
+	return preload("res://assets/props/ball/char_naruto.png")
+
+
+func _clear_clones() -> void:
+	for c in _clones:
+		if c != null and is_instance_valid(c):
+			c.queue_free()
+	_clones.clear()
+
+
+## 分身灭到火砖：计分/金币/掉落，与主球 fire_out 一致
+func _on_clone_extinguish(brick: Node, _clone: SkillClone) -> void:
+	if state != State.PLAYING or _level_closing:
+		return
+	if brick == null or not is_instance_valid(brick):
+		return
+	var dmg: int = 1 + maxi(0, GameState.power_level)
+	if CharacterDB.cur_is("panda"):
+		dmg *= 2
+	if _boost_timer > 0.0:
+		dmg *= 2
+	var result: String = str(brick.hit(dmg))
+	if result == "fire_out":
+		if bool(brick.get("is_dead")):
+			return
+		fire_left = maxi(0, fire_left - 1)
+		var fl: int = int(brick.get("fire_level"))
+		GameState.add_score(15 * maxi(1, fl))
+		GameState.add_coins(2)
+		var at: Vector2 = Vector2.ZERO
+		if brick is Node2D:
+			at = (brick as Node2D).global_position
+		brick.extinguish()
+		_maybe_drop_item(at)
+		_check_win()
+		hud_refresh.emit()
+
+
+# ===== 供 SkillClone 查询 =====
+
+func get_paddle_node() -> Node2D:
+	return paddle
+
+
+func get_paddle_half_w() -> float:
+	if paddle != null:
+		var bw: Variant = paddle.get("base_width")
+		if typeof(bw) == TYPE_FLOAT or typeof(bw) == TYPE_INT:
+			return float(bw) * 0.5
+	return GameConstants.PADDLE_W * 0.5
+
+
+func get_brick_host() -> Node2D:
+	return brick_host
 
 
 # ===== 下关道具生效 =====
@@ -385,12 +452,12 @@ func _start_level() -> void:
 	_carry_is_red = false
 	_clear_bricks()
 	_clear_items()
-	# 本关开始时清理双球/增益计时（商店 buff 在下关才用，这里先复位运行期状态）
-	_remove_nezha_ball2()
+	# 本关开始时清理分身/增益计时（商店 buff 在下关才用，这里先复位运行期状态）
+	_clear_clones()
 	_boost_timer = 0.0
 	_extinguish_pending = false
 	_capy_fire_timer = 0.0
-	_nezha_used = false
+	_skill_cd = 0.0
 	_shop_used = false
 
 	if paddle.has_method("apply_skin_speed"):

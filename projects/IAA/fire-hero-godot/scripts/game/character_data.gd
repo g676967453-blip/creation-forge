@@ -8,7 +8,7 @@ const CAT: int = 0
 const DOG: int = 1
 const PANDA: int = 2
 const CAPY: int = 3
-const NEZHA: int = 4
+const FOX: int = 4
 const COUNT: int = 5
 
 ## cost = 金币解锁价；unlock: free=初始 / coins=金币 / ad=广告或金币（按金币处理，广告 mock）
@@ -38,9 +38,9 @@ const ROLES: Array = [
 		"tex_ball": null,
 	},
 	{
-		"id": "nezha", "name": "哪吒", "cost": 5000, "unlock": "ad",
-		"kind": "nezha",
-		"ability": "爆发：主动技能双球 10 秒（每关 1 次）",
+		"id": "fox", "name": "狐狸", "cost": 5000, "unlock": "ad",
+		"kind": "fox",
+		"ability": "爆发：影分身——分出 6 个分身（CD 6 秒，可重复）",
 		"tex_ball": null,
 	},
 ]

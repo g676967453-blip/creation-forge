@@ -257,3 +257,13 @@ func refresh_visual() -> void:
 	_visual.modulate = Color(1.0, 0.9, 0.62) if carry_person else Color.WHITE
 	if not _visual.is_playing():
 		_visual.play("run")
+
+
+## 供影分身取当前角色第一帧
+func get_visual_frame() -> Texture2D:
+	if not _visual:
+		_visual = get_node_or_null("Visual") as AnimatedSprite2D
+	if _visual and _visual.sprite_frames and _visual.sprite_frames.has_animation("run") \
+			and _visual.sprite_frames.get_frame_count("run") > 0:
+		return _visual.sprite_frames.get_frame_texture("run", 0)
+	return null
