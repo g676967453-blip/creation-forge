@@ -106,6 +106,11 @@ func _run() -> void:
 	checks.append(["skill_reusable", game.can_use_skill()])
 	game.use_skill()
 	checks.append(["second_use_ok", game._clones.size() == 6])
+	# 过场清理回归：技能分身后过关 → 分身清空不残留悬浮
+	game._clear_clones()
+	game._level_complete()
+	await get_tree().process_frame
+	checks.append(["clones_cleared_on_levelup", game._clones.size() == 0])
 	print("[step4] done asserts")
 
 	# 打印结果

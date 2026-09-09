@@ -196,6 +196,7 @@ func go_menu() -> void:
 	ball.freeze_motion()
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(false)
+	_clear_clones()
 	# 回菜单也落盘：保证本局刷出的最高分/金币不丢
 	GameState.save()
 	_set_state(State.MENU)
@@ -747,6 +748,8 @@ func _level_complete() -> void:
 	GameState.add_score(level_bonus)
 	GameState.add_coins(level_bonus)
 	GameState.save()
+	# 过关：分身清理（避免结算界面残留悬浮影分身）
+	_clear_clones()
 	# 每关通关刷新补给队商品
 	_shop_stock = ShopDB.generate()
 	_set_state(State.LEVELUP)
@@ -759,6 +762,7 @@ func _game_over() -> void:
 	ball.freeze_motion()
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(false)
+	_clear_clones()
 	_set_state(State.OVER)
 	GameState.save()
 	hud_refresh.emit()

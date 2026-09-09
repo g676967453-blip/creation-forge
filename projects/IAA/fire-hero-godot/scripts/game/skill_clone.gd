@@ -9,6 +9,7 @@ const VIEW_W: float = 450.0
 const VIEW_H: float = 800.0
 const BRICK_HALF: float = 24.0   # 砖 48×48 半宽
 const PADDLE_HALF_H: float = 9.0
+const GRAVITY: float = 240.0     # 轻重力：影分身扑灭火点后自然下落消散，不做无重力悬浮
 
 var vel: Vector2 = Vector2(0, -1)
 var radius: float = 8.0
@@ -38,6 +39,9 @@ func update_clone(delta: float) -> bool:
 	if life_left <= 0.0:
 		return false
 
+	# 轻重力（限速），避免无重力无限悬浮
+	vel.y += GRAVITY * delta
+	vel.y = minf(vel.y, 320.0)
 	position += vel * delta
 
 	# 顶 / 左右壁
@@ -65,7 +69,8 @@ func update_clone(delta: float) -> bool:
 				position.y = top - radius
 				var rel: float = clampf((position.x - paddle.position.x) / maxf(1.0, game.get_paddle_half_w()), -1.0, 1.0)
 				var ang: float = lerpf(deg_to_rad(-150.0), deg_to_rad(-30.0), (rel + 1.0) * 0.5)
-				vel = Vector2(cos(ang), sin(ang)) * vel.length()
+				vel = Vector2(cos(ang), sin(ang)) * maxf(vel.length(), 200.0)
+				vel.y = minf(vel.y, 0.0)  # 反弹必向上
 				return true
 
 	# 与砖 AABB：分身只对火砖造成伤害，救援窗忽略（穿行不救人）
@@ -73,8 +78,25 @@ func update_clone(delta: float) -> bool:
 	if brick != null and is_instance_valid(brick) and game != null and is_instance_valid(game):
 		var bt: int = brick.get("brick_type")
 		if bt == WindowBrick.BrickType.FIRE and not bool(brick.get("is_dead")):
+			# 命中后向砖侧回弹一点，避免持续贴脸每帧触发
+			_bounce_off_brick(brick)
 			game._on_clone_extinguish(brick, self)
 	return true
+
+
+func _bounce_off_brick(brick: Node) -> void:
+	## 命中火砖：向砖外侧轻微反弹，防止分身卡砖内重复触发
+	var n2: Node2D = brick as Node2D
+	if n2 == null:
+		return
+	var nx: float = position.x - n2.position.x
+	var ny: float = position.y - n2.position.y
+	if absf(nx) > absf(ny):
+		position.x += (12.0 if nx >= 0.0 else -12.0)
+		vel.x = absf(vel.x) if nx >= 0.0 else -absf(vel.x)
+	else:
+		position.y += (12.0 if ny >= 0.0 else -12.0)
+		vel.y = absf(vel.y) if ny >= 0.0 else -absf(vel.y)
 
 
 func _find_hit_brick() -> Node:
