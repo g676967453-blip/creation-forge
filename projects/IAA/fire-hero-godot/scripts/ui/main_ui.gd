@@ -36,6 +36,8 @@ var shop_box: VBoxContainer = null
 var shop_coins_label: Label = null
 var char_btn: Button = null
 var skill_btn: Button = null
+var vpad_left: Button = null
+var vpad_right: Button = null
 
 var _toast_tween: Tween
 
@@ -66,6 +68,7 @@ func _ready() -> void:
 
 	_build_char_btn()
 	_build_skill_btn()
+	_build_virtual_buttons()
 	_on_state(game.state)
 	refresh_hud()
 	_toast("救火英雄 IAA · Godot 4.7")
@@ -121,6 +124,15 @@ func _on_state(s: int) -> void:
 	ov_over.visible = s == game.State.OVER
 	ov_pause.visible = s == game.State.PAUSE
 	hud.visible = s != game.State.MENU
+	# 虚拟按钮/技能只在游玩中显示
+	var playing: bool = s == game.State.PLAYING
+	if vpad_left:
+		vpad_left.visible = playing
+	if vpad_right:
+		vpad_right.visible = playing
+	if skill_btn:
+		skill_btn.visible = playing
+	_sync_skill_btn()
 
 	if s == game.State.LEVELUP:
 		level_stats.text = "本关奖励\n⭐ +%d 分　💰 +%d 金币" % [game.level_bonus, game.level_bonus]
@@ -379,6 +391,56 @@ func _cycle_character() -> void:
 		_toast("切换为：" + str(CharacterDB.role(next_idx).get("name", "")))
 
 
+# ===== 触屏左右虚拟按钮（手机操控蹦床）=====
+
+func _build_virtual_buttons() -> void:
+	_vpad_clear()
+	vpad_left = _make_vpad("◀", -1.0)
+	vpad_right = _make_vpad("▶", 1.0)
+
+func _vpad_clear() -> void:
+	for b in [vpad_left, vpad_right]:
+		if b != null and is_instance_valid(b):
+			b.queue_free()
+	vpad_left = null
+	vpad_right = null
+
+func _make_vpad(label_text: String, dir: float) -> Button:
+	var b := Button.new()
+	b.text = label_text
+	b.visible = false
+	# 大号半透明触控钮，屏幕底部左右两侧（逻辑 450×800）
+	var st := StyleBoxFlat.new()
+	st.bg_color = Color(1, 1, 1, 0.10)
+	st.border_color = Color(1, 1, 1, 0.35)
+	st.set_border_width_all(2)
+	st.set_corner_radius_all(999)
+	b.add_theme_stylebox_override("normal", st)
+	b.add_theme_font_size_override("font_size", 34)
+	b.custom_minimum_size = Vector2(120, 110)
+	var sz := b.custom_minimum_size
+	if dir < 0.0:
+		b.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+		b.offset_left = 18.0
+		b.offset_top = -sz.y - 20.0
+	else:
+		b.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		b.offset_left = -sz.x - 18.0
+		b.offset_top = -sz.y - 20.0
+	b.offset_right = b.offset_left + sz.x
+	b.offset_bottom = b.offset_top + sz.y
+	b.button_down.connect(func() -> void:
+		if game != null and is_instance_valid(game) and game.has_method("paddle_dir"):
+			game.paddle_dir(dir)
+	)
+	b.button_up.connect(func() -> void:
+		if game != null and is_instance_valid(game) and game.has_method("paddle_dir"):
+			game.paddle_dir(0.0)
+	)
+	hud.add_child(b)
+	return b
+
+
 # ===== 狐狸技能按钮 =====
 
 func _build_skill_btn() -> void:
@@ -388,12 +450,12 @@ func _build_skill_btn() -> void:
 	skill_btn.text = "🦊 影分身"
 	skill_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.7, 0.25, 0.12)))
 	skill_btn.visible = false
-	# 右下角
+	# 右下但抬升到蹦床上方空中（y≈560-610），避开底部左右虚拟按钮区
 	skill_btn.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	skill_btn.offset_left = -150.0
-	skill_btn.offset_top = -70.0
+	skill_btn.offset_top = -240.0
 	skill_btn.offset_right = -20.0
-	skill_btn.offset_bottom = -34.0
+	skill_btn.offset_bottom = -188.0
 	skill_btn.pressed.connect(func() -> void:
 		if game.has_method("use_skill"):
 			game.use_skill()

@@ -408,6 +408,12 @@ func get_paddle_node() -> Node2D:
 	return paddle
 
 
+## 触屏虚拟按钮设置蹦床移动方向（-1/0/1）
+func paddle_dir(d: float) -> void:
+	if paddle != null and is_instance_valid(paddle) and paddle.has_method("set_virtual_dir"):
+		paddle.set_virtual_dir(d)
+
+
 func get_paddle_half_w() -> float:
 	if paddle != null:
 		var bw: Variant = paddle.get("base_width")

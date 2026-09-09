@@ -29,6 +29,8 @@ const PADDLE_MIN_W: float = 40.0
 const PADDLE_MAX_W: float = float(GameConstants.VIEW_W)
 
 var _half_w: float = 46.0
+var _virtual_dir: float = 0.0   ## 触屏虚拟按钮方向（-1 左 / 1 右）
+var _suppress_drag: bool = false ## 虚拟按钮按下时禁鼠标拖动（避免两者冲突）
 var on_fire: bool = false
 var control_enabled: bool = true
 var _bounce_tween: Tween
@@ -79,6 +81,14 @@ func _setup_textures() -> void:
 
 func set_control_enabled(enabled: bool) -> void:
 	control_enabled = enabled
+	if not enabled:
+		_virtual_dir = 0.0
+
+
+## 触屏左右虚拟按钮设置的移动方向（-1 左 / 0 无 / 1 右）
+func set_virtual_dir(d: float) -> void:
+	_virtual_dir = clampf(d, -1.0, 1.0)
+	_suppress_drag = _virtual_dir != 0.0
 
 
 func _physics_process(delta: float) -> void:
@@ -92,13 +102,19 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("move_right"):
 		dir += 1.0
 
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if (not _suppress_drag) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		var mp: Vector2 = get_viewport().get_mouse_position()
 		var target_x: float = clampf(mp.x, _half_w, float(GameConstants.VIEW_W) - _half_w)
 		position.x = move_toward(position.x, target_x, move_speed * 1.8 * delta)
 	elif dir != 0.0:
 		position.x = clampf(
 			position.x + dir * move_speed * delta,
+			_half_w,
+			float(GameConstants.VIEW_W) - _half_w
+		)
+	elif _virtual_dir != 0.0:
+		position.x = clampf(
+			position.x + _virtual_dir * move_speed * delta,
 			_half_w,
 			float(GameConstants.VIEW_W) - _half_w
 		)
