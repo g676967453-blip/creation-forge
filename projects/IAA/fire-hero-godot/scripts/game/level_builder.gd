@@ -5,20 +5,24 @@ class_name LevelBuilder
 
 static func build(parent: Node, level: int) -> Dictionary:
 	## 返回 { bricks: Array, fire_left: int, rescue_left: int }
-	var layout: Array = LevelDB.get_layout(level)
-	if layout.is_empty():
+	var layout: Variant = LevelDB.get_layout(level)
+	if typeof(layout) == TYPE_DICTIONARY:
+		return _build_coord(parent, layout)
+
+	var layout_arr: Array = [] if typeof(layout) != TYPE_ARRAY else (layout as Array)
+	if layout_arr.is_empty():
 		return _build_procedural(parent, level)
 
 	var bricks: Array = []
 	var fire_left: int = 0
 	var rescue_left: int = 0
 
-	for r in range(layout.size()):
+	for r in range(layout_arr.size()):
 		for c in range(GameConstants.BRICK_COLS):
-			var ch: String = LevelDB.cell_at(layout, r, c)
+			var ch: String = LevelDB.cell_at(layout_arr, r, c)
 			if ch == "." or ch == "":
 				continue
-			var brick: WindowBrick = _spawn_from_char(parent, ch, c, r)
+			var brick: WindowBrick = _spawn_from_char(parent, ch, c, r, false, Vector2.ZERO)
 			if brick == null:
 				continue
 			bricks.append(brick)
@@ -30,7 +34,35 @@ static func build(parent: Node, level: int) -> Dictionary:
 	return {"bricks": bricks, "fire_left": fire_left, "rescue_left": rescue_left}
 
 
-static func _spawn_from_char(parent: Node, ch: String, col: int, row: int) -> WindowBrick:
+## 坐标模式：每窗带绝对 x/y（逻辑像素，左上角），任意位置摆放
+static func _build_coord(parent: Node, layout: Dictionary) -> Dictionary:
+	var bricks: Array = []
+	var fire_left: int = 0
+	var rescue_left: int = 0
+	var wins: Variant = layout.get("windows", null)
+	if typeof(wins) != TYPE_ARRAY:
+		return _build_procedural(parent, 1)
+
+	for w in wins as Array:
+		if typeof(w) != TYPE_DICTIONARY:
+			continue
+		var ch: String = LevelDB._norm_type(str(w.get("type", "F")))
+		var x: float = float(w.get("x", 0.0))
+		var y: float = float(w.get("y", 0.0))
+		# 用 col/row 传 0 占位，绝对坐标走 pos
+		var brick: WindowBrick = _spawn_from_char(parent, ch, 0, 0, true, Vector2(x, y))
+		if brick == null:
+			continue
+		bricks.append(brick)
+		if brick.brick_type == WindowBrick.BrickType.FIRE:
+			fire_left += 1
+		elif brick.brick_type == WindowBrick.BrickType.RESCUE and not brick.is_red:
+			rescue_left += 1
+
+	return {"bricks": bricks, "fire_left": fire_left, "rescue_left": rescue_left}
+
+
+static func _spawn_from_char(parent: Node, ch: String, col: int, row: int, use_abs: bool = false, abs_pos: Vector2 = Vector2.ZERO) -> WindowBrick:
 	var brick: WindowBrick = _make_brick_node(parent)
 	match ch:
 		"F":
@@ -48,8 +80,12 @@ static func _spawn_from_char(parent: Node, ch: String, col: int, row: int) -> Wi
 			return null
 	brick.grid_col = col
 	brick.grid_row = row
-	var pos: Vector2 = GameConstants.brick_pos(col, row)
-	brick.position = pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
+	if use_abs:
+		# 绝对坐标：abs_pos 是窗口左上角，Sprite 中心在砖中心
+		brick.position = abs_pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
+	else:
+		var pos: Vector2 = GameConstants.brick_pos(col, row)
+		brick.position = pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
 	return brick
 
 
