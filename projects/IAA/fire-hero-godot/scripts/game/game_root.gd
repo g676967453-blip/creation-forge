@@ -514,6 +514,7 @@ func _launch() -> void:
 	_waiting_launch = false
 	var ang: float = deg_to_rad(-90.0 + randf_range(-18.0, 18.0))
 	ball.launch(Vector2(cos(ang), sin(ang)))
+	Sfx.play("sfx_launch")
 	if paddle.has_method("play_bounce"):
 		paddle.play_bounce()
 	hud_refresh.emit()
@@ -526,6 +527,7 @@ func _on_ball_fell() -> void:
 	if ball.carry_person:
 		ball.carry_person = false
 		ball.refresh_visual()
+	Sfx.play("sfx_life_lose", 0.0, 0.9)
 	GameState.lose_life()
 	hud_refresh.emit()
 	if GameState.lives <= 0:
@@ -543,6 +545,7 @@ func _on_ball_paddle() -> void:
 	# 任何接球（球碰到蹦床）都播放弹跳动画
 	if paddle.has_method("play_bounce"):
 		paddle.play_bounce()
+	Sfx.play("sfx_bounce")
 
 	# 未带人：只是普通弹起，无需结算救人
 	if not ball.carry_person:
@@ -552,6 +555,7 @@ func _on_ball_paddle() -> void:
 	ball.carry_person = false
 	_carry_is_red = false
 	ball.refresh_visual()
+	Sfx.play("sfx_rescue_save")
 
 	# 红窗救人只加分，不扣硬目标 rescue_left
 	if not was_red and rescue_left > 0:
@@ -594,6 +598,7 @@ func _on_ball_hit_brick(brick: Node) -> void:
 			_carry_is_red = bool(brick.get("is_red"))
 			ball.carry_person = true
 			ball.refresh_visual()
+			Sfx.play("sfx_rescue_grab")
 			if brick.has_method("consume_for_rescue"):
 				brick.consume_for_rescue()
 			show_message.emit("抓住伤员！带回蹦床" if not _carry_is_red else "红窗伤员！带回加分")
@@ -605,6 +610,7 @@ func _on_ball_hit_brick(brick: Node) -> void:
 			var pts: int = 15 * maxi(1, fl)
 			GameState.add_score(pts)
 			GameState.add_coins(2)
+			Sfx.play("sfx_fire_out")
 			if brick.has_method("extinguish"):
 				var at: Vector2 = Vector2.ZERO
 				if brick is Node2D:
@@ -614,6 +620,7 @@ func _on_ball_hit_brick(brick: Node) -> void:
 			_check_win()
 		"fire_down":
 			GameState.add_score(5)
+			Sfx.play("sfx_fire_hit", 0.0, 1.0 + randf_range(-0.05, 0.05))
 		"none":
 			pass
 		_:
@@ -643,6 +650,14 @@ func _maybe_drop_item(at: Vector2) -> void:
 func _on_item_collected(it: GameItem) -> void:
 	if state != State.PLAYING or _level_closing:
 		return
+	# 音效：按道具类型先播提示音
+	match it.kind:
+		GameItem.Kind.BAG:
+			Sfx.play("sfx_coin")
+		GameItem.Kind.WIDE, GameItem.Kind.EXTINGUISH, GameItem.Kind.UP:
+			Sfx.play("sfx_item_pos")
+		GameItem.Kind.HAMMER, GameItem.Kind.FIREBALL:
+			Sfx.play("sfx_item_neg")
 	match it.kind:
 		GameItem.Kind.BAG:
 			var pts: int = 50 if randi_range(0, 1) == 1 else 25
@@ -744,6 +759,7 @@ func _level_complete() -> void:
 	level_bonus = 50 + GameState.level * 10
 	GameState.add_score(level_bonus)
 	GameState.add_coins(level_bonus)
+	Sfx.play("sfx_level_clear")
 	GameState.save()
 	# 过关：分身清理（避免结算界面残留悬浮影分身）
 	_clear_clones()

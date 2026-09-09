@@ -70,38 +70,45 @@ func _ready() -> void:
 
 
 func _on_start() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("start_run"):
 		game.start_run()
 
 
 func _on_next() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("continue_next_level"):
 		game.continue_next_level()
 
 
 func _on_double() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("mock_double_coins"):
 		game.mock_double_coins()
 	_sync_double_btn()
 
 
 func _on_retry() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("retry_run"):
 		game.retry_run()
 
 
 func _on_revive() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("mock_revive"):
 		game.mock_revive()
 	btn_revive.disabled = GameState.revive_used
 
 
 func _on_menu() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("go_menu"):
 		game.go_menu()
 
 
 func _on_resume() -> void:
+	Sfx.play("sfx_ui_click")
 	if game.has_method("resume_game"):
 		game.resume_game()
 

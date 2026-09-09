@@ -24,6 +24,7 @@ config/icon="res://icon.svg"
 
 GameState="*res://scripts/autoload/game_state.gd"
 LevelDB="*res://scripts/autoload/level_db.gd"
+Sfx="*res://scripts/game/sfx_player.gd"
 
 [display]
 
@@ -71,3 +72,8 @@ pause_game={
 
 textures/canvas_textures/default_texture_filter=0
 environment/defaults/default_clear_color=Color(0.06, 0.09, 0.14, 1)
+
+[sfx]
+
+base_url="http://127.0.0.1:8080/audio"
+
