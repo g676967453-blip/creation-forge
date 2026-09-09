@@ -38,6 +38,11 @@ var char_btn: Button = null
 var skill_btn: Button = null
 var vpad_left: Button = null
 var vpad_right: Button = null
+var coin_test_btn: Button = null
+
+## ==== 临时调试按钮开关（正式发布前置 false 或删除按钮即可）====
+const TEST_COIN_BTN_ENABLED: bool = true
+const TEST_COIN_AMOUNT: int = 500
 
 var _toast_tween: Tween
 
@@ -69,6 +74,7 @@ func _ready() -> void:
 	_build_char_btn()
 	_build_skill_btn()
 	_build_virtual_buttons()
+	_build_test_coin_btn()
 	_on_state(game.state)
 	refresh_hud()
 	_toast("救火英雄 IAA · Godot 4.7")
@@ -439,6 +445,34 @@ func _make_vpad(label_text: String, dir: float) -> Button:
 	)
 	hud.add_child(b)
 	return b
+
+
+# ===== 临时测试：右上角 +金币按钮（正式发布删此方法 + _ready 调用 + TEST 常量） =====
+
+func _build_test_coin_btn() -> void:
+	if not TEST_COIN_BTN_ENABLED:
+		return
+	if coin_test_btn != null and is_instance_valid(coin_test_btn):
+		coin_test_btn.queue_free()
+	coin_test_btn = Button.new()
+	coin_test_btn.text = "💰+%d" % TEST_COIN_AMOUNT
+	coin_test_btn.tooltip_text = "临时调试：加金币（正式版去掉）"
+	coin_test_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.8, 0.62, 0.1)))
+	coin_test_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	coin_test_btn.offset_left = -118.0
+	coin_test_btn.offset_top = 46.0
+	coin_test_btn.offset_right = -8.0
+	coin_test_btn.offset_bottom = 80.0
+	coin_test_btn.pressed.connect(func() -> void:
+		GameState.add_coins(TEST_COIN_AMOUNT)
+		GameState.save()
+		_toast("测试金币 +%d（当前 %d）" % [TEST_COIN_AMOUNT, GameState.coins])
+		# 商店开着则刷新商品行金币余额
+		if shop_panel != null and is_instance_valid(shop_panel):
+			_render_shop_rows()
+	)
+	# 挂到顶层 Overlays：主菜单/商店/游戏中都能点
+	$Overlays.add_child(coin_test_btn)
 
 
 # ===== 狐狸技能按钮 =====
