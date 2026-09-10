@@ -290,6 +290,11 @@ a:hover{color:var(--tx)}
 .token-setup button:hover{background:rgba(255,107,107,.18)}
 .token-help{font-size:10.5px;color:var(--tx-3);margin-bottom:12px}
 .token-help a{color:var(--tx-2);border-bottom:1px solid var(--line-2)}
+/* file:// 打开时的常驻指引（仅 file 协议出现） */
+.file-warn{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding:10px 14px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--r-s);font-size:12px;color:var(--warn)}
+.file-warn strong{font-weight:600}
+.file-warn span{color:var(--tx-2)}
+.file-warn a{color:var(--tx);border-bottom:1px solid var(--line-2)}
 /* 板块独立盘入口（由 dashboard-server 注入，静态产物不含） */
 .board-entry{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:28px;padding-top:16px;border-top:1px solid var(--line)}
 .be-label{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--tx-3);margin-right:2px}
@@ -443,6 +448,26 @@ function stripLead(s) {
   return s.slice(i);
 }
 
+// 本地服务提示：file:// 直接打开时相对 URL 无法解析，需指向 http 入口
+function svcHint(e) {
+  if (location.protocol === 'file:') {
+    return '当前以 file:// 直接打开 —— 该操作需要本地服务，请访问 http://127.0.0.1:3456/';
+  }
+  return '请启动本地服务: npx tsx 造化仪表盘/tools/dashboard-server.ts  （' + (e && e.message ? e.message : e) + '）';
+}
+
+// file:// 打开时在内容区顶部给出常驻指引（服务模式下不出现）
+(function () {
+  if (location.protocol !== 'file:') return;
+  var bar = document.createElement('div');
+  bar.className = 'file-warn';
+  bar.innerHTML = '<strong>当前以 file:// 直接打开</strong>' +
+    '<span>数据是静态快照；「任务完成 / 取消」「周度归档」需经本地服务。正确入口：' +
+    '<a href="http://127.0.0.1:3456/">http://127.0.0.1:3456/</a></span>';
+  var main = document.querySelector('.main');
+  if (main) main.insertBefore(bar, main.firstChild);
+})();
+
 function toast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -459,7 +484,7 @@ async function doRefresh() {
     toast('✅ 数据已刷新，重新渲染页面...', 'ok');
     setTimeout(() => location.reload(), 500);
   } catch(e) {
-    toast('⚠️ 仪表盘服务器未启动。请运行: npx tsx 造化仪表盘/tools/dashboard-server.ts', 'err');
+    toast(svcHint(), 'err');
   }
 }
 
@@ -726,7 +751,7 @@ function renderProjectCards(projects) {
       }
       throw new Error((body && body.error) || '未知错误');
     } catch (e) {
-      toast('请启动本地服务: npx tsx 造化仪表盘/tools/dashboard-server.ts  （' + e.message + '）', 'err');
+      toast(svcHint(e), 'err');
       return false;
     }
   }
@@ -801,7 +826,7 @@ function renderProjectCards(projects) {
       if (btn) { btn.disabled = false; btn.textContent = '📦 周度归档'; }
       setTimeout(function(){ location.reload(); }, 400);
     } catch (e) {
-      toast('请启动本地服务: npx tsx 造化仪表盘/tools/dashboard-server.ts  （' + e.message + '）', 'err');
+      toast(svcHint(e), 'err');
       if (btn) { btn.disabled = false; btn.textContent = '📦 周度归档'; }
     }
   };
