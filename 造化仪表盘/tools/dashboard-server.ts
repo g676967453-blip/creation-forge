@@ -29,7 +29,7 @@ app.use("/board", express.static(REPORTS_DIR));
 app.get("/", (_req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   let html = generateHTML();
-  const anchor = '<div class="sidebar-foot">';
+  const anchor = '<footer class="footer">'; // 顶部栏布局：入口条注入到页脚上方
   if (html.includes(anchor)) html = html.replace(anchor, boardEntryBarHtml() + anchor);
   res.send(html);
 });
