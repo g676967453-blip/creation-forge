@@ -24,10 +24,8 @@ export const BOARD_TARGETS: BoardTarget[] = [
 /** 本机模式入口条（dashboard-server GET / 注入侧栏底部；静态产物不含此内容） */
 export function boardEntryBarHtml(): string {
   const rows = BOARD_TARGETS.map(t =>
-    `<a class="tab" style="display:block;padding:9px 12px;font-size:12px" href="/board/${encodeURIComponent(t.file)}">${t.emoji} ${t.title}</a>`).join("");
-  return `<div style="margin-top:6px;padding:4px 0 8px;border-top:1px solid rgba(255,255,255,.08)">
-  <div style="padding:6px 12px;font-size:10px;color:rgba(255,255,255,.28)">板块独立盘 · 本机模式</div>
-  ${rows}</div>`;
+    `<a class="be-chip" href="/board/${encodeURIComponent(t.file)}">${t.emoji} ${t.title}</a>`).join("");
+  return `<div class="board-entry"><span class="be-label">板块独立盘 · 本机模式</span>${rows}</div>`;
 }
 
 /** 生成板块盘：不传 ids = 全部；传如 ["b2","b4"] = 仅指定盘（server 启动刷新 / CLI 共用），返回成功数 */
