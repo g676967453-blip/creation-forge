@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DSH 日报 2026-09-10</title>
+<style>﻿/* dsh-worktable 原生皮肤 · DSH 设计系统组件库
+   用法：<link rel="stylesheet" href="/api/worktable/template/dshell.css">
+   所有颜色走 DSH 主题变量（--dsw-alias-*），自动适配明暗主题。 */
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--dsw-alias-bg-base, #0b0e14);
+  color: var(--dsw-alias-label-primary, #e6e8eb);
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dshell { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; min-height: 100%; }
+/* 文字层级 */
+.dshell-title { margin: 0; font-size: 16px; font-weight: 600; color: var(--dsw-alias-label-primary, #e6e8eb); }
+.dshell-sub { margin: 0; font-size: 12px; color: var(--dsw-alias-label-secondary, #9aa4b2); }
+.dshell-muted { color: var(--dsw-alias-label-tertiary, #6b7280); font-size: 11.5px; }
+/* 卡片 */
+.dshell-card { border: 1px solid var(--dsw-alias-border-l1, #262b36); border-radius: 10px; background: var(--dsw-alias-fill-l1, rgba(255,255,255,.02)); padding: 12px 14px; }
+.dshell-card + .dshell-card { margin-top: 10px; }
+/* 按钮（绿色主按钮 / 幽灵按钮 / 危险） */
+.dshell-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; border: 1px solid transparent; background: #3fb950; color: #0b0e14; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.dshell-btn:hover { filter: brightness(1.08); }
+.dshell-btnGhost { background: transparent; border-color: var(--dsw-alias-border-l1, #262b36); color: var(--dsw-alias-label-secondary, #9aa4b2); }
+.dshell-btnGhost:hover { color: var(--dsw-alias-label-primary, #e6e8eb); border-color: var(--dsw-alias-border-l2, #3a4150); }
+.dshell-btnDanger { background: transparent; border-color: #f85149; color: #f85149; }
+/* 状态徽标（圆点 + 文字；绿=已完成 黄=待办/待发布 灰=未开始） */
+.dshell-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--dsw-alias-border-l1, #262b36); font-size: 11.5px; color: var(--dsw-alias-label-secondary, #9aa4b2); background: var(--dsw-alias-fill-l1, rgba(255,255,255,.03)); }
+.dshell-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--dsw-alias-label-tertiary, #6b7280); }
+.dshell-badgeDone { color: #3fb950; border-color: rgba(63,185,80,.4); }
+.dshell-badgeDone::before { background: #3fb950; box-shadow: 0 0 5px #3fb950; }
+.dshell-badgeWait { color: #d29922; border-color: rgba(210,153,34,.4); }
+.dshell-badgeWait::before { background: #d29922; box-shadow: 0 0 5px #d29922; }
+.dshell-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--dsw-alias-label-tertiary, #6b7280); }
+.dshell-dotDone { background: #3fb950; box-shadow: 0 0 5px #3fb950; }
+.dshell-dotWait { background: #d29922; box-shadow: 0 0 5px #d29922; }
+/* 标签页 */
+.dshell-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--dsw-alias-border-l1, #262b36); }
+.dshell-tab { padding: 7px 12px; font-size: 12.5px; color: var(--dsw-alias-label-secondary, #9aa4b2); cursor: pointer; border: none; background: none; font: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.dshell-tabOn { color: var(--dsw-alias-label-primary, #e6e8eb); border-bottom-color: var(--dsw-alias-state-accent-primary, #4f8ef7); }
+/* 列表 */
+.dshell-list { display: flex; flex-direction: column; gap: 6px; }
+.dshell-listItem { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border: 1px solid var(--dsw-alias-border-l1, #262b36); border-radius: 8px; background: var(--dsw-alias-fill-l1, rgba(255,255,255,.02)); cursor: pointer; }
+.dshell-listItem:hover { border-color: var(--dsw-alias-border-l2, #3a4150); background: var(--dsw-alias-fill-l1, rgba(255,255,255,.05)); }
+.dshell-listItemTitle { font-size: 12.5px; color: var(--dsw-alias-label-primary, #e6e8eb); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dshell-listItemMeta { flex: none; font-size: 11px; color: var(--dsw-alias-label-tertiary, #6b7280); }
+/* 网格 / 统计 */
+.dshell-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.dshell-stat { padding: 10px 12px; border: 1px solid var(--dsw-alias-border-l1, #262b36); border-radius: 10px; background: var(--dsw-alias-fill-l1, rgba(255,255,255,.02)); }
+.dshell-statLabel { font-size: 11px; color: var(--dsw-alias-label-secondary, #9aa4b2); }
+.dshell-statValue { font-size: 20px; font-weight: 600; color: var(--dsw-alias-label-primary, #e6e8eb); }
+.dshell-statDelta { font-size: 11px; color: #3fb950; }
+/* 进度条 */
+.dshell-progress { height: 6px; border-radius: 3px; background: var(--dsw-alias-fill-l1, rgba(255,255,255,.06)); overflow: hidden; }
+.dshell-progressBar { height: 100%; border-radius: 3px; background: #3fb950; }
+/* 输入 */
+.dshell-input, .dshell-textarea { width: 100%; padding: 7px 10px; border: 1px solid var(--dsw-alias-border-l1, #262b36); border-radius: 8px; background: var(--dsw-alias-fill-l1, rgba(255,255,255,.03)); color: var(--dsw-alias-label-primary, #e6e8eb); font: inherit; font-size: 12.5px; outline: none; }
+.dshell-input:focus, .dshell-textarea:focus { border-color: var(--dsw-alias-state-accent-primary, #4f8ef7); }
+/* 表格 */
+.dshell-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.dshell-table th, .dshell-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--dsw-alias-border-l1, #262b36); }
+.dshell-table th { color: var(--dsw-alias-label-secondary, #9aa4b2); font-weight: 500; }
+/* 键值对 */
+.dshell-kv { display: flex; flex-direction: column; gap: 6px; }
+.dshell-kvRow { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
+.dshell-kvKey { color: var(--dsw-alias-label-secondary, #9aa4b2); }
+.dshell-kvValue { color: var(--dsw-alias-label-primary, #e6e8eb); text-align: right; }
+/* 分割线 */
+.dshell-divider { height: 1px; background: var(--dsw-alias-border-l1, #262b36); margin: 6px 0; }
+/* 滚动条 */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+
+
+.dsh-report { max-width: 1040px; margin: 0 auto; }
+.dsh-report .dsh-h { margin: 22px 0 10px; line-height: 1.35; }
+.dsh-report .dsh-h1 { font-size: 22px; border-bottom: 1px solid var(--dsw-alias-border-l1, #262b36); padding-bottom: 8px; }
+.dsh-report .dsh-h2 { font-size: 17px; color: var(--dsw-alias-state-accent-primary, #4f8ef7); }
+.dsh-report .dsh-h3 { font-size: 14.5px; }
+.dsh-report p, .dsh-report li { font-size: 13px; line-height: 1.75; color: var(--dsw-alias-label-secondary, #9aa4b2); }
+.dsh-report strong { color: var(--dsw-alias-label-primary, #e6e8eb); }
+.dsh-report code { background: var(--dsw-alias-fill-l1, rgba(255,255,255,.05)); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.dsh-report .dshell-code { background: var(--dsw-alias-fill-l1, rgba(255,255,255,.04)); border: 1px solid var(--dsw-alias-border-l1, #262b36); border-radius: 8px; padding: 10px 12px; overflow-x: auto; }
+.dsh-report .dsh-quote { margin: 10px 0; padding: 8px 14px; border-left: 3px solid var(--dsw-alias-state-accent-primary, #4f8ef7); background: var(--dsw-alias-fill-l1, rgba(255,255,255,.03)); border-radius: 0 8px 8px 0; }
+.dsh-report a { color: var(--dsw-alias-state-accent-primary, #4f8ef7); text-decoration: none; }
+.dsh-report a:hover { text-decoration: underline; }
+.dsh-report table { margin: 10px 0 16px; }
+.dsh-report ul, .dsh-report ol { margin: 8px 0; padding-left: 22px; }
+.dsh-report hr.dshell-divider { margin: 18px 0; }
+.dsh-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+.dsh-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.dsh-nav a { font-size: 11.5px; padding: 2px 9px; border: 1px solid var(--dsw-alias-border-l1, #262b36); border-radius: 999px; }
+.dsh-alert { border: 1px solid #d29922; border-left-width: 3px; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 12.5px; color: #d29922; background: rgba(210,153,34,.06); }
+.dsh-alert.ok { border-color: #3fb950; color: #3fb950; background: rgba(63,185,80,.06); }
+</style>
+</head>
+<body>
+<div class="dshell dsh-report">
+  <h1 class="dshell-title">🧪 DSH 信息日报</h1>
+  <p class="dshell-sub">2026-09-10 · 自动生成于 2026/9/10 23:01:47</p>
+  <div class="dsh-meta">
+    <span class="dshell-badge">📄 原始 Markdown：<a href="2026-09-10.md">2026-09-10.md</a></span>
+  </div>
+  <div class="dsh-alert ok">✅ 数据源全部正常（1 项降级警告）</div>
+  <h1 class="dsh-h dsh-h1">DSH 信息日报 · 2026-09-10</h1>
+<blockquote class="dsh-quote">报告期：首期（基线） ｜ 生成方式：手动（首期） ｜ 数据源：本机文件系统 + npm registry + GitHub Releases 采集时间：2026-09-10 22:58 (+08:00)</blockquote>
+<p>本期是<strong>首期基线报告</strong>，重点是把「你现在到底跑在哪套 DSH 上」钉死，方便以后每期只讲变化。</p>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">① 本机 DSH 环境快照</h2>
+<table class="dshell-table"><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>DSH CLI 版本</td><td><strong>0.1.5-rc.1</strong></td></tr><tr><td>安装路径</td><td><code>C:\Users\Administrator\AppData\Roaming\npm\node_modules\@deepseek-ai\dsh</code></td></tr><tr><td>npm <code>latest</code> 标签</td><td>0.1.5-rc.1 —— <strong>已是最新</strong></td></tr><tr><td>npm <code>next</code> 标签</td><td>0.1.5-rc.2 —— 存在更新的预发布版</td></tr><tr><td>Node 运行时</td><td>v24.15.0</td></tr><tr><td>系统</td><td>win32 x64 · 10.0.26200</td></tr><tr><td>DSH_HOME</td><td><code>C:\Users\Administrator\.dsh</code></td></tr><tr><td>已启用 profile</td><td><code>web</code>（bundles: <code>@deepseek-ai/dsh-base</code>、<code>@deepseek-ai/dsh-web-app</code>）</td></tr><tr><td>默认模型</td><td>provider <code>deepseek-official</code> · model <strong><code>deepseek-flash</code></strong> · reasoningEffort <code>low</code></td></tr><tr><td>模型凭据</td><td>已配置（仅检查存在性，不读取内容）</td></tr><tr><td>活跃会话数</td><td>2</td></tr><tr><td>工作台插件</td><td><code>dsh-worktable</code> <strong>0.3.0</strong></td></tr></tbody></table>
+<p><strong>一句话结论</strong>：DSH 本体不需要动；真正有更新价值的是 <code>dsh-worktable</code> 插件（0.3.0 → 0.3.3）。</p>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">② 更新与变更提醒</h2>
+<h3 class="dsh-h dsh-h3">1. DSH 本体 —— 无需升级</h3>
+<p>当前 <code>0.1.5-rc.1</code> 就是 npm <code>latest</code>。另有 <code>next = 0.1.5-rc.2</code> 预发布版，属于官方灰度通道，<strong>不建议</strong>日常切过去。</p>
+<h3 class="dsh-h dsh-h3">2. <code>dsh-worktable</code> 0.3.0 → 0.3.3 —— 有更新，但升级要谨慎</h3>
+<p>上游三个版本的变更：</p>
+<table class="dshell-table"><thead><tr><th>版本</th><th>发布</th><th>关键内容</th></tr></thead><tbody><tr><td>v0.3.1</td><td>09-03</td><td>修复 v0.3.0 发布包为非标准 npm 格式、安装会报错的问题</td></tr><tr><td>v0.3.2</td><td>09-05</td><td>文件夹选择显示「等待选择…」、新增「手动输入」绝对路径入口、失败显式报错</td></tr><tr><td>v0.3.3</td><td>09-06</td><td>适配 DSH 0.1.2-rc.1 / 0.1.1-rc.2；<strong>数据读取不再依赖默认安装路径</strong>（自定义 <code>DSH_HOME</code> 也能读到项目与分组）；修复点击项目卡片无反应</td></tr></tbody></table>
+<p>⚠️ <strong>升级前必须注意两点</strong></p>
+<ol><li><strong>仓库里的 worktable 是本地优化版</strong>，不是原版 0.3.0。</li></ol>
+<p>   <code>造化仪表盘/tools/dsh-harness/plugins/dsh-worktable</code> 带有自加的「可编辑地址栏 / 右键文件操作 / <code>/api/worktable/rm|rename|copy|open-path</code>」等改动（见 dsh-harness README 的「本地优化摘要」）。    直接拉上游 0.3.3 覆盖会<strong>丢掉这些改动</strong>。正确顺序：先 diff 上游 → 把本地改动 rebase 到 0.3.3 → 再替换。</p>
+<ol><li><strong>兼容性未被上游声明</strong>。v0.3.3 官方只声明测过 DSH <code>0.1.2-rc.1</code> 与 <code>0.1.1-rc.2</code>，<strong>没有</strong>声明兼容你现在跑的 <code>0.1.5-rc.1</code>。而 0.1.5-rc.1 恰好改了 Web 插件面板 API（<code>sidebar.panellist</code>、<code>main</code>、原 <code>conversation</code> slot 迁移）。升级后必须实测再决定是否长期保留。</li></ol>
+<blockquote class="dsh-quote"><strong>建议</strong>：当前工作台既然能用，就不急着升。等确认要升时，按上面第 1 点的顺序做，升完实测「项目卡片点击 / 文件夹选择 / 资源管理器右键 / 控制台布局」四项。</blockquote>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">③ 本周期 DSH 动态</h2>
+<h3 class="dsh-h dsh-h3">发布节奏</h3>
+<table class="dshell-table"><thead><tr><th>日期</th><th>版本</th><th>说明</th></tr></thead><tbody><tr><td>09-04</td><td><code>dsh-v0.1.3-alpha.1</code></td><td>Session 格式升 v2；<code>SessionHandle</code> 破坏性变更</td></tr><tr><td>09-07</td><td><code>dsh-v0.1.3-alpha.2</code></td><td>「在应用中打开」；子代理支持排队/编辑/Steer</td></tr><tr><td>09-08</td><td><code>dsh-v0.1.5-alpha.1</code></td><td>动态系统提示词不破坏 KV Cache；实验性右侧 Sidebar</td></tr><tr><td>09-09</td><td><code>dsh-v0.1.5-alpha.2</code></td><td>Sidebar 文档预览（MD/代码/HTML/PDF/图片）</td></tr><tr><td><strong>09-10</strong></td><td><strong><code>dsh-v0.1.5-rc.1</code></strong> ← 你已装</td><td>0.1.5 首个候选版，汇总自 0.1.2-rc.1 以来全部变更</td></tr></tbody></table>
+<h3 class="dsh-h dsh-h3"><code>0.1.5-rc.1</code> 里与你直接相关的几条</h3>
+<ul><li><strong>模型</strong>：DeepSeek 适配器新增 <code>DeepSeek-V41-Flash</code>（<code>deepseek-flash</code>），支持文本、图片与会话历史中的系统提示词更新；新会话默认使用它。→ 你 settings 里钉的就是这个模型。</li><li><strong>右侧 Sidebar</strong>：多标签、分栏、全屏，支持 Markdown / 代码高亮 / HTML / PDF / 图片预览；模型可<strong>显式交付文件</strong>供预览、用默认应用打开、在文件管理器中定位。原 Detail 面板已移除。</li><li><strong>任意类型文件上传</strong>：文件与图片同一预览区混排，后台上传有进度、可取消、切换会话仍续显。</li><li><strong>可继续子代理</strong>：支持消息排队、编辑、删除、单条/全部 Steer、Stop。</li><li><strong>动态系统提示词</strong>：不破坏 KV Cache（需模型显式声明支持）。</li><li><strong>代理支持</strong>：所有出站请求遵循 <code>HTTP_PROXY</code> / <code>HTTPS_PROXY</code> / <code>ALL_PROXY</code> / <code>NO_PROXY</code>。</li><li><strong>Web 顶栏「在应用中打开」</strong>：用已装的编辑器 / IDE / 终端 / 文件管理器打开 Workspace。</li><li><strong>会话统计</strong>：拆成两个可展开摘要——轮次与速度、精确 Token 用量与缓存命中。</li><li><strong>Skill 选择器</strong>支持模糊搜索；内置斜杠命令说明中文化。</li><li><strong><code>/feedback</code></strong> 可独立提交，不必继续对话。</li></ul>
+<h3 class="dsh-h dsh-h3">需要注意的破坏性 / 行为变更</h3>
+<ul><li><strong>Session 数据格式升级至 V3</strong>：旧日志会迁移为新文件并保留原文件，但<strong>升级后的会话不支持降级读取</strong>；自定义日志读取器需适配。→ 你的 <code>sessions/</code> 不在 git 同步范围内，风险可控，但<strong>别在升级前把 DSH 降级回去</strong>。</li><li><strong>默认工具调整</strong>：SDK、<strong>Headless</strong>、ACP 默认使用 <code>read</code> / <code>write</code> / <code>edit</code> 编辑文件。→ 这条对你是<strong>好消息</strong>：本日报的自动生成正是靠 headless 写文件。</li><li><strong>插件 API 调整</strong>：移除 <code>ctx.agent</code>；<code>Inbox</code> 改为类型接口；Web 插件面板注册方式变更（<code>sidebar.panellist</code> / <code>main</code>）。→ 自己写插件的场景要留意，也是 worktable 兼容性的不确定性来源。</li></ul>
+<p>来源：<a href="https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.1" target="_blank" rel="noreferrer">v0.1.5-rc.1 release</a> · <a href="https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-alpha.2" target="_blank" rel="noreferrer">v0.1.5-alpha.2</a> · <a href="https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.3-alpha.1" target="_blank" rel="noreferrer">v0.1.3-alpha.1</a></p>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">④ 使用技巧（偏向「怎么用」）</h2>
+<h3 class="dsh-h dsh-h3">技巧 1 · 用右侧 Sidebar 当「第二屏」，别再切窗口</h3>
+<ul><li><strong>一句话</strong>：DSH 现在能在右侧直接预览 HTML / PDF / 图片 / Markdown，还能多标签分栏。</li><li><strong>怎么做</strong>：把文件拖进会话，或让模型把产物「交付到 Sidebar」；HTML 报表（你的 <code>reports/*.html</code>）、美术规格 PDF、Godot 截图都能直接在旁边看。</li><li><strong>对你的价值</strong>：做美术排期和仪表盘时，不用再来回切换浏览器和资源管理器。</li></ul>
+<h3 class="dsh-h dsh-h3">技巧 2 · 参考资料一律「拖进来」，不限类型</h3>
+<ul><li><strong>一句话</strong>：Web 现在支持上传任意类型文件，后台上传有进度、可取消。</li><li><strong>怎么做</strong>：把 PDF 规格、PSD 说明、Godot 场景文件直接拖进输入框；模型可以用文件工具按路径按需读取。</li><li><strong>对你的价值</strong>：IAA / 概念设计工作流的参考图与文档可以一次性投喂，不用先转格式。</li></ul>
+<h3 class="dsh-h dsh-h3">技巧 3 · 子代理跑着的时候，直接插话</h3>
+<ul><li><strong>一句话</strong>：可继续对话的子代理支持排队、编辑、删除和 Steer。</li><li><strong>怎么做</strong>：子代理还在跑时继续发消息（进入队列），需要它转向就用 Steer，不需要就 Stop。</li><li><strong>对你的价值</strong>：游戏 / 美术 / 小红书几条线并行时，不用等一个子代理跑完才下一条指令。</li></ul>
+<h3 class="dsh-h dsh-h3">技巧 4 · 养成看「会话统计」的习惯，把成本管住</h3>
+<ul><li><strong>一句话</strong>：统计拆成了「轮次与速度」和「精确 Token 与缓存命中」两个摘要。</li><li><strong>怎么做</strong>：点开会话统计，重点看缓存命中率——命中高说明上下文前缀稳定，重复读文件、随便改系统提示词都会拉低它。</li><li><strong>对你的价值</strong>：日报这类周期性任务最容易悄悄烧 token，有数字才能判断要不要降级成 <code>-NoLlm</code>。</li></ul>
+<h3 class="dsh-h dsh-h3">技巧 5 · 公司网络要代理时，写在 Harness-home 的 <code>.env</code> 里</h3>
+<ul><li><strong>一句话</strong>：出站请求现在遵循 <code>HTTP_PROXY</code> / <code>HTTPS_PROXY</code> / <code>ALL_PROXY</code> / <code>NO_PROXY</code>。</li><li><strong>怎么做</strong>：写进 <code>$DSH_HOME/.env</code>。注意代理变量<strong>只接受 Harness-home 的 <code>.env</code></strong>，不接受工作目录里的 <code>.env</code>（官方明确的安全边界）。</li><li><strong>对你的价值</strong>：公司/家里网络环境切换时，Web 搜索与模型调用不会莫名失败。</li></ul>
+<h3 class="dsh-h dsh-h3">技巧 6 · 「在应用中打开」+ Skill 模糊搜索</h3>
+<ul><li><strong>一句话</strong>：顶栏能把 Workspace 用已装应用打开；技能多了也能搜了。</li><li><strong>怎么做</strong>：用顶栏「在应用中打开」直接跳 VS Code / 终端 / 资源管理器；输入 <code>/</code> 后直接打关键词筛技能。</li><li><strong>对你的价值</strong>：你的 <code>.claude/skills</code> 下技能已经不少，模糊搜索省事。</li></ul>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">⑤ 今天可以试一下</h2>
+<ol><li><strong>验证 Sidebar 第二屏</strong>：在本会话里让我把 <code>造化仪表盘/reports/造化坊仪表盘.html</code> 交付到右侧 Sidebar，看看分栏预览顺不顺手。</li><li><strong>看一眼缓存命中</strong>：打开本会话的统计摘要，记下当前 Token 用量与缓存命中率，作为以后对比的基线。</li></ol>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">⑥ 与本仓库的联动</h2>
+<ul><li><strong>本日报工具链</strong>落在 <code>造化仪表盘/tools/dsh-report/</code>，产出在 <code>造化仪表盘/reports/dsh-daily/</code>，并被仪表盘 <code>/board/</code> 静态服务直接覆盖 —— 浏览器打开 <code>http://127.0.0.1:3456/board/dsh-daily/</code> 即可读。</li><li><strong><code>dsh-harness</code> 便携包</strong>：worktable 的升级取舍见第 ② 节；便携包本身不涉及 Session 格式（<code>sessions/</code> 不同步），V3 升级不影响跨机器同步。</li><li><strong>headless profile</strong>：本日报的自动生成依赖 <code>dsh --profile headless</code>，而 0.1.5-rc.1 恰好把 headless 的默认文件工具定为 <code>read</code>/<code>write</code>/<code>edit</code>，方向一致。</li></ul>
+<hr class="dshell-divider" />
+<h2 class="dsh-h dsh-h2">⑦ 附录：数据源与失败项</h2>
+<p><strong>数据源</strong></p>
+<ul><li>本机文件系统：<code>~/.dsh/settings.yaml</code>、<code>~/.dsh/profiles/*/package.json</code>、<code>~/.dsh/sessions/</code>、仓库 <code>dsh-worktable</code> 包</li><li>npm registry：<code>@deepseek-ai/dsh</code> 的 <code>dist-tags</code></li><li>GitHub Releases API：<code>deepseek-ai/deepseek-harness</code>、<code>Aisland-SJL/dsh-worktable</code></li></ul>
+<p><strong>采集异常</strong></p>
+<table class="dshell-table"><thead><tr><th>项</th><th>级别</th><th>说明</th></tr></thead><tbody><tr><td><code>git</code></td><td>warn</td><td>本期生成于受限沙箱内，git 子进程不可用，仓库分支信息降级为直接读 <code>.git/HEAD</code>（已取到 <code>main</code>）。正式的计划任务运行时无此限制。</td></tr></tbody></table>
+<p><strong>未采集项（有意）</strong></p>
+<ul><li>任何 API Key / <code>.credentials.yaml</code> 内容 —— 只报「是否已配置」的布尔值。</li></ul>
+  <nav class="dsh-nav"><a href="2026-09-10.html">2026-09-10（本期）</a></nav>
+</div>
+</body>
+</html>

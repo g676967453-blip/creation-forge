@@ -96,6 +96,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\install-to-machine.ps1
 - 资源管理器：右键打开/复制路径/复制/重命名/删除/新建/粘贴
 - 服务端：`/api/worktable/rm|rename|copy|open-path`
 
+## DSH 信息日报（tools/dsh-report/）
+
+与本便携包配套的 DSH 情报流水线：每个工作日采集「本机 DSH 版本/模型/插件 + 上游动态」，
+产出一份偏向「怎么用」的日报。
+
+```powershell
+cd <仓库>\造化仪表盘\tools\dsh-report
+powershell -NoProfile -ExecutionPolicy Bypass -File .\run-dsh-daily.ps1        # 生成
+powershell -NoProfile -ExecutionPolicy Bypass -File .\run-dsh-daily.ps1 -NoLlm # 零 token 只出硬事实
+powershell -NoProfile -ExecutionPolicy Bypass -File .\register-dsh-daily-task.ps1 -Action status
+```
+
+- 产出与索引：[`reports/dsh-daily/`](../reports/dsh-daily/README.md)（网页入口 `http://127.0.0.1:3456/board/dsh-daily/`）
+- 自动化：方式 A 计划任务（周一~周五 09:00，**需管理员执行一次**）/ 方式 B 登录自启（无需管理员）
+- 与便携包的关系：日报本身**不依赖**便携包；但自动生成依赖 `headless` profile，
+  若要「换机器后也能自动出日报」，需要把 `headless` profile 也纳入本包的 `profiles/`。
+
 ## 安全
 
 - 仓库请保持 **private**（状态 JSON 含本机路径）

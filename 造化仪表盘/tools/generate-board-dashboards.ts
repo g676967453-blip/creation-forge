@@ -25,7 +25,9 @@ export const BOARD_TARGETS: BoardTarget[] = [
 export function boardEntryBarHtml(): string {
   const rows = BOARD_TARGETS.map(t =>
     `<a class="be-chip" href="/board/${encodeURIComponent(t.file)}">${t.emoji} ${t.title}</a>`).join("");
-  return `<div class="board-entry"><span class="be-label">板块独立盘 · 本机模式</span>${rows}</div>`;
+  // DSH 日报是静态产物（非 BOARD_TARGETS 生成物），故单列一个 chip，不进生成数组
+  const dshDaily = `<a class="be-chip" href="/board/dsh-daily/index.html">🧪 DSH 日报</a>`;
+  return `<div class="board-entry"><span class="be-label">板块独立盘 · 本机模式</span>${rows}${dshDaily}</div>`;
 }
 
 /** 生成板块盘：不传 ids = 全部；传如 ["b2","b4"] = 仅指定盘（server 启动刷新 / CLI 共用），返回成功数 */

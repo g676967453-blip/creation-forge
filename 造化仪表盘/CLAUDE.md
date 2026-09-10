@@ -19,7 +19,7 @@
 | [works/](works/) | 工作日志（一事一记 + 视频草案），命名 `YYYY-MM-DD-[ai标签]-简述.md` | 各 AI 写自己的 |
 | [reports/](reports/) | 仪表盘 HTML（主盘 `造化坊仪表盘.html` + 板块盘 `板块{2,3,4,5}-*.html`）等生成物 | 工具生成 |
 | [data/](data/) | 仪表盘数据文件：goals-issues / goals-ai / assets / external（*.json） | 需锁（collect-data 数据源） |
-| [tools/](tools/) | 仪表盘工具链（collect-data / generate-dashboard / generate-board-dashboards / board-dashboard-lib / board{2-5}-dashboard / dashboard-server / todo-file / new-journal + dsh-harness/） | collect-data.ts 需锁 |
+| [tools/](tools/) | 仪表盘工具链（collect-data / generate-dashboard / generate-board-dashboards / board-dashboard-lib / board{2-5}-dashboard / dashboard-server / todo-file / new-journal + dsh-harness/ + dsh-report/） | collect-data.ts 需锁 |
 
 ## 日常操作（中枢循环）
 
@@ -35,6 +35,7 @@
 | `npx tsx 造化仪表盘/tools/generate-dashboard.ts` | 生成 `reports/造化坊仪表盘.html`（主盘静态页） |
 | `npx tsx 造化仪表盘/tools/generate-board-dashboards.ts [b2\|b3\|b4\|b5]` | 生成/刷新板块2-5 独立仪表盘（不带参数 = 全量） |
 | `npx tsx 造化仪表盘/tools/dashboard-server.ts` | 本地服务 http://127.0.0.1:3456（任务完成/取消 + `/api/activity`；启动时自动刷新板块盘，`/board/` 可看，侧栏有入口条） |
+| `powershell -File 造化仪表盘/tools/dsh-report/run-dsh-daily.ps1` | 生成 DSH 信息日报（`reports/dsh-daily/`，网页 `/board/dsh-daily/`）；`-NoLlm` 零 token 只出硬事实 |
 | `/update-dashboard` | SKILL：检查数据源 → 更新脚本 → 重新生成（主盘 + 板块盘） |
 
 - **板块盘零侵入**：`board{2-5}-dashboard.ts` 只读复用 [collect-data.ts](tools/collect-data.ts) 已导出纯函数（`loadProjectProgress` / `loadWorkflowsFromDocs` 等）；改 collect-data 时勿动导出签名，板块盘跟随重生成即可

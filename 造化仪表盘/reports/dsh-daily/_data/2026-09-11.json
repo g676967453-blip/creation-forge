@@ -1,0 +1,82 @@
+{
+  "collectedAt": "2026-09-11T06:50:44+08:00",
+  "date": "2026-09-11",
+  "ok": true,
+  "errors": [],
+  "dshCli": {
+    "version": "0.1.5-rc.1",
+    "path": "C:\\Users\\Administrator\\AppData\\Roaming\\npm\\node_modules\\@deepseek-ai\\dsh",
+    "found": true,
+    "npmLatest": "0.1.5-rc.1",
+    "distTags": {
+      "alpha": "0.1.5-alpha.2",
+      "next": "0.1.5-rc.2",
+      "latest": "0.1.5-rc.1"
+    },
+    "updateAvailable": false
+  },
+  "runtime": {
+    "node": "v24.15.0",
+    "os": "win32 x64",
+    "osRelease": "10.0.26200",
+    "execPath": "C:\\Program Files\\nodejs\\node.exe"
+  },
+  "dshHome": {
+    "path": "C:\\Users\\Administrator\\.dsh",
+    "exists": true,
+    "profiles": [
+      {
+        "name": "headless",
+        "bundles": [
+          "@deepseek-ai/dsh-base",
+          "@deepseek-ai/dsh-headless"
+        ]
+      },
+      {
+        "name": "web",
+        "bundles": [
+          "@deepseek-ai/dsh-base",
+          "@deepseek-ai/dsh-web-app"
+        ]
+      }
+    ],
+    "sessionCount": 2,
+    "storages": [
+      "session_projcache",
+      "workspace.json"
+    ]
+  },
+  "model": {
+    "default": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "low"
+    },
+    "settingsSections": [
+      "ui-onboarding",
+      "agent-default-model"
+    ],
+    "credentialPresent": true
+  },
+  "plugins": [
+    {
+      "name": "dsh-worktable",
+      "version": "0.3.0",
+      "source": "造化仪表盘/tools/dsh-harness/plugins/dsh-worktable",
+      "upstreamLatest": "0.3.3",
+      "updateAvailable": true,
+      "releaseUrl": "https://github.com/Aisland-SJL/dsh-worktable/releases/tag/v0.3.3",
+      "releaseName": "v0.3.3 — DSH 0.1.2-rc.1 兼容 + 数据路径修复",
+      "publishedAt": "2026-09-06T03:33:33Z"
+    }
+  ],
+  "repo": {
+    "root": "C:\\项目资料\\ever-forge",
+    "branch": "main",
+    "head": "2035119",
+    "headSubject": "[dsh] chore: 刷新板块2-5 仪表盘 HTML（服务重启后重生成）",
+    "headDate": "2026-09-11",
+    "dirtyCount": 15
+  },
+  "previousReportDate": "2026-09-10"
+}
