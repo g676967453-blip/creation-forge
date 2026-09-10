@@ -141,7 +141,7 @@ func _on_state(s: int) -> void:
 	_sync_skill_btn()
 
 	if s == game.State.LEVELUP:
-		level_stats.text = "本关奖励\n⭐ +%d 分　💰 +%d 金币" % [game.level_bonus, game.level_bonus]
+		level_stats.text = "本关奖励\n分数 +%d　金币 +%d" % [game.level_bonus, game.level_bonus]
 		_sync_double_btn()
 		_rebuild_shop()
 	if s == game.State.OVER:
@@ -159,12 +159,12 @@ func _sync_double_btn() -> void:
 	if game.has_method("is_double_claimed"):
 		claimed = bool(game.is_double_claimed())
 	btn_double.disabled = claimed
-	btn_double.text = "已领取双倍" if claimed else "📺 看广告双倍金币（mock）"
+	btn_double.text = "已领取双倍" if claimed else "看广告 · 双倍金币"
 
 
 func _refresh_menu_stats() -> void:
 	if menu_stats:
-		menu_stats.text = "🏆 最高分 %d　　💰 金币 %d" % [GameState.best, GameState.coins]
+		menu_stats.text = "最高分 %d　金币 %d" % [GameState.best, GameState.coins]
 	_sync_char_btn()
 
 
@@ -200,7 +200,7 @@ func _apply_global_font() -> void:
 		return
 	var th := Theme.new()
 	th.default_font = font
-	th.default_font_size = 14
+	th.default_font_size = 15
 	# 给 UI 下所有直接 Control 子节点设置（子控件继承）
 	for child in get_children():
 		if child is Control:
@@ -246,9 +246,9 @@ func _rebuild_shop() -> void:
 	shop_panel = VBoxContainer.new()
 	shop_panel.add_theme_constant_override("separation", 6)
 	var title := Label.new()
-	title.text = "🚒 补给队 · 过关补给"
+	title.text = "补给队 · 过关补给"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 16)
+	title.add_theme_font_size_override("font_size", 18)
 	shop_panel.add_child(title)
 
 	# 金币余额行
@@ -278,7 +278,7 @@ func _render_shop_rows() -> void:
 		if is_instance_valid(c):
 			c.queue_free()
 	if shop_coins_label:
-		shop_coins_label.text = "💰 金币 %d" % GameState.coins
+		shop_coins_label.text = "金币 %d" % GameState.coins
 	if game == null or not is_instance_valid(game):
 		return
 	var stock: Dictionary = game.get_shop_stock()
@@ -298,7 +298,7 @@ func _render_shop_rows() -> void:
 		row.add_child(info)
 		var btn := Button.new()
 		var cost: int = int(CharacterDB.role(hero).get("cost", 0))
-		btn.text = "%d💰 解锁" % cost
+		btn.text = "%d 金币解锁" % cost
 		btn.add_theme_stylebox_override("normal", _btn_style(Color(1, 0.69, 0.125)))
 		btn.disabled = GameState.coins < cost
 		btn.pressed.connect(func() -> void:
@@ -323,7 +323,7 @@ func _render_shop_rows() -> void:
 		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		row.add_child(info)
 		var btn := Button.new()
-		btn.text = "%d💰" % int(def.get("price", 100))
+		btn.text = "%d 金币" % int(def.get("price", 100))
 		btn.add_theme_stylebox_override("normal", _btn_style(Color(0.2, 0.45, 0.32)))
 		btn.disabled = GameState.coins < int(def.get("price", 100))
 		btn.pressed.connect(func() -> void:
@@ -340,7 +340,7 @@ func _render_shop_rows() -> void:
 	refresh_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	refresh_row.add_child(refresh_info)
 	var refresh_btn := Button.new()
-	refresh_btn.text = "📺 看广告刷新（mock）"
+	refresh_btn.text = "看广告刷新"
 	refresh_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.2, 0.36, 0.58)))
 	refresh_btn.pressed.connect(func() -> void:
 		game.mock_refresh_shop()
@@ -369,10 +369,9 @@ func _sync_char_btn() -> void:
 	if char_btn == null or not is_instance_valid(char_btn):
 		return
 	var cur_name: String = str(CharacterDB.role(GameState.skin_index).get("name", ""))
-	var cur_kind: String = CharacterDB.kind(GameState.skin_index)
 	var ability: String = str(CharacterDB.role(GameState.skin_index).get("ability", ""))
-	var emoji := {"cat": "🐱", "dog": "🐶", "panda": "🐼", "capy": "🦫", "fox": "🦊"}
-	char_btn.text = "🎭 %s %s：%s（点我切换）" % [str(emoji.get(cur_kind, "？")), cur_name, ability]
+	# 不用 emoji（Zpix 无 emoji 字形，Web 会显示方块）
+	char_btn.text = "角色：%s · %s（点击切换）" % [cur_name, ability]
 	char_btn.tooltip_text = "在已拥有角色间切换"
 
 
@@ -455,7 +454,7 @@ func _build_test_coin_btn() -> void:
 	if coin_test_btn != null and is_instance_valid(coin_test_btn):
 		coin_test_btn.queue_free()
 	coin_test_btn = Button.new()
-	coin_test_btn.text = "💰+%d" % TEST_COIN_AMOUNT
+	coin_test_btn.text = "+%d 金币" % TEST_COIN_AMOUNT
 	coin_test_btn.tooltip_text = "临时调试：加金币（正式版去掉）"
 	coin_test_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.8, 0.62, 0.1)))
 	coin_test_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -481,7 +480,7 @@ func _build_skill_btn() -> void:
 	if skill_btn != null and is_instance_valid(skill_btn):
 		skill_btn.queue_free()
 	skill_btn = Button.new()
-	skill_btn.text = "🦊 影分身"
+	skill_btn.text = "影分身"
 	skill_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.7, 0.25, 0.12)))
 	skill_btn.visible = false
 	# 右下但抬升到蹦床上方空中（y≈560-610），避开底部左右虚拟按钮区
@@ -510,15 +509,15 @@ func _sync_skill_btn() -> void:
 		skill_btn.visible = false
 		return
 	if can:
-		skill_btn.text = "🦊 影分身"
+		skill_btn.text = "影分身"
 		skill_btn.disabled = false
 	else:
 		var cd: float = _cd_left()
 		if cd > 0.0:
-			skill_btn.text = "⏳ %.1fs" % cd
+			skill_btn.text = "冷却 %.1fs" % cd
 			skill_btn.disabled = true
 		else:
-			skill_btn.text = "🦊 影分身"
+			skill_btn.text = "影分身"
 			skill_btn.disabled = true
 
 
@@ -532,4 +531,4 @@ func _process(_delta: float) -> void:
 	# 冷却中刷新 CD 文本
 	if skill_btn != null and is_instance_valid(skill_btn) and skill_btn.visible:
 		if _cd_left() > 0.0:
-			skill_btn.text = "⏳ %.1fs" % _cd_left()
+			skill_btn.text = "冷却 %.1fs" % _cd_left()

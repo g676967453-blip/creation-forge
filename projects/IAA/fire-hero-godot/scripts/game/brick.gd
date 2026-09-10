@@ -7,14 +7,25 @@ enum BrickType { FIRE, RESCUE }
 signal destroyed(brick: Node)
 
 const TEX_FIRE := preload("res://assets/props/windows/window_fire.png")
+## 火 1/2/3 级独立贴图（LOVART 生成：小火/中火/大火，色相体量可辨）
+const TEX_FIRE_LV1 := preload("res://assets/props/windows/window_fire_lv1.png")
+const TEX_FIRE_LV2 := preload("res://assets/props/windows/window_fire_lv2.png")
+const TEX_FIRE_LV3 := preload("res://assets/props/windows/window_fire_lv3.png")
 const TEX_RESCUE := preload("res://assets/props/windows/window_rescue.png")
 const TEX_RESCUE_RED := preload("res://assets/props/windows/window_rescue_red.png")
+
+## 待救村民素材（窗内叠加，随机动物）
+const VILLAGER_NAMES: Array[String] = [
+	"vil_rabbit", "vil_chick", "vil_fox", "vil_pig", "vil_sheep", "vil_squirrel",
+]
+const VILL_DIR: String = "res://assets/pixel/villagers/"
 
 var brick_type: BrickType = BrickType.FIRE
 var fire_level: int = 1
 var hp: int = 3
 var req: int = 3
 var is_red: bool = false
+var villager_kind: int = -1  ## -1=无；0..5=动物序号（rescue 砖用）
 var grid_col: int = 0
 var grid_row: int = 0
 var is_dead: bool = false  ## 已结算，防止 queue_free 前连撞
@@ -22,6 +33,7 @@ var is_dead: bool = false  ## 已结算，防止 queue_free 前连撞
 var _collision: CollisionShape2D
 var _visual: Sprite2D
 var _label: Label
+var _villager: Sprite2D
 
 
 func _ready() -> void:
@@ -44,6 +56,11 @@ func setup(p_type: BrickType, p_fire_level: int = 1, p_red: bool = false) -> voi
 	brick_type = p_type
 	is_red = p_red
 	fire_level = clampi(p_fire_level, 1, 3)
+	if brick_type == BrickType.RESCUE:
+		# 随机一只待救村民（红窗用 call 帧由 _refresh 决定）
+		villager_kind = randi_range(0, VILLAGER_NAMES.size() - 1)
+	else:
+		villager_kind = -1
 	if brick_type == BrickType.FIRE:
 		var idx: int = fire_level - 1
 		var hit_req: int = 3
@@ -126,15 +143,19 @@ func _refresh() -> void:
 		return
 	match brick_type:
 		BrickType.FIRE:
-			_visual.texture = TEX_FIRE
-			_visual.modulate = Color.WHITE
+			# 火 1/2/3 用各自的独立贴图（不再靠 modulate 调色）
 			match fire_level:
 				1:
-					_visual.modulate = Color(1.0, 0.85, 0.55)
+					_visual.texture = TEX_FIRE_LV1
 				2:
-					_visual.modulate = Color(1.0, 0.62, 0.45)
+					_visual.texture = TEX_FIRE_LV2
 				_:
-					_visual.modulate = Color(1.0, 0.42, 0.4)
+					_visual.texture = TEX_FIRE_LV3
+			_visual.modulate = Color.WHITE
+			# 规则 §3.3：撞击后火焰变小 → 按剩余 hp 比例轻微缩小（1.0 → 0.82）
+			var frac: float = clampf(float(hp) / maxf(1.0, float(req)), 0.0, 1.0)
+			var sc: float = lerpf(0.82, 1.0, frac)
+			_visual.scale = Vector2(sc, sc)
 			if _label:
 				_label.text = str(hp)
 				_label.modulate = Color(1, 1, 1, 0.95)
@@ -150,3 +171,43 @@ func _refresh() -> void:
 			_visual.modulate = Color.WHITE
 			if _label:
 				_label.modulate = Color(1, 1, 1, 1)
+			_ensure_villager()
+
+
+## 确保救援窗内叠有待救村民 Sprite（多样动物；红窗用呼救帧）
+func _ensure_villager() -> void:
+	_cache_nodes()
+	if villager_kind < 0:
+		_remove_villager()
+		return
+	var tex: Texture2D = _villager_texture(villager_kind, is_red)
+	if tex == null:
+		_remove_villager()
+		return
+	if _villager == null or not is_instance_valid(_villager):
+		_villager = Sprite2D.new()
+		_villager.name = "Villager"
+		_villager.z_index = 1
+		add_child(_villager)
+	_villager.texture = tex
+	# 显示在窗洞中央（村民脚贴窗台）：整体略放大，中心下沉
+	_villager.scale = Vector2(0.5, 0.5)  # 64px→32px，接近窗洞宽度
+	_villager.position = Vector2(0, 6)
+	_villager.visible = true
+
+
+func _remove_villager() -> void:
+	if _villager != null and is_instance_valid(_villager):
+		_villager.queue_free()
+	_villager = null
+
+
+func _villager_texture(kind: int, call: bool) -> Texture2D:
+	if kind < 0 or kind >= VILLAGER_NAMES.size():
+		return null
+	var base: String = VILLAGER_NAMES[kind]
+	var suffix: String = "_front_call.png" if call else "_front.png"
+	var p: String = VILL_DIR + base + suffix
+	if not ResourceLoader.exists(p):
+		return null
+	return load(p) as Texture2D

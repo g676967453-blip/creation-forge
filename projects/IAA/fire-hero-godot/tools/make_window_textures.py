@@ -58,32 +58,18 @@ def tint(img, color):
 fire = fit_center(load("17_着火窗户.png"))
 fire.save(os.path.join(out_dir, "window_fire.png"))
 
-# 2) 救援窗：窗框打底 + 兔子居中
+# 2) 救援窗：室内暗底垫底 + 窗框叠上（洞内透出暗底，居民由程序叠加）
 frame = load("07_窗框.png")
-rabbit = load("06_兔子-待救.png")
-rescue = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+INTERIOR = Image.new("RGBA", (SIZE, SIZE), (12, 16, 30, 255))  # 室内暗底
+rescue = INTERIOR.copy()
 if frame:
-    frame_f = fit_center(frame)
-    rescue.alpha_composite(frame_f)
-if rabbit:
-    # 兔子等比放到窗内偏上（模拟扒窗）
-    rw, rh = rabbit.size
-    rscale = (SIZE * 0.62) / rw
-    r2 = rabbit.resize((max(2, int(rw * rscale)), max(2, int(rh * rscale))), Image.NEAREST)
-    rox, roy = (SIZE - r2.size[0]) // 2, 4
-    rescue.alpha_composite(r2, (rox, roy))
+    rescue.alpha_composite(fit_center(frame))  # 窗框压住四周，洞内露出暗底
 rescue.save(os.path.join(out_dir, "window_rescue.png"))
 
-# 3) 红窗：窗框染色红 + 兔子
-red = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+# 3) 红窗：暗底 + 红窗框
+red = INTERIOR.copy()
 if frame:
     red.alpha_composite(tint(fit_center(frame), (1.0, 0.25, 0.25)))
-if rabbit:
-    rw, rh = rabbit.size
-    rscale = (SIZE * 0.62) / rw
-    r2 = rabbit.resize((max(2, int(rw * rscale)), max(2, int(rh * rscale))), Image.NEAREST)
-    rox, roy = (SIZE - r2.size[0]) // 2, 4
-    red.alpha_composite(r2, (rox, roy))
 red.save(os.path.join(out_dir, "window_rescue_red.png"))
 
 # 4) 普通未着火窗（蓝玻璃）
