@@ -69,7 +69,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px
 a{color:var(--tx-2);text-decoration:none}
 a:hover{color:var(--tx)}
 ::selection{background:var(--accent-bg);color:var(--tx)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:999px;border:3px solid var(--bg)}
@@ -113,13 +113,13 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .board-card{background:var(--s1);border:1px solid var(--line);border-radius:var(--r-m);padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s ease-out,background .15s ease-out}
 .board-card:hover{border-color:var(--line-2);background:var(--s2)}
 .board-card .bd-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.board-card .bd-emoji{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--s2);border:1px solid var(--line);border-radius:8px;flex-shrink:0}
+.board-card .bd-emoji{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--s2);border:1px solid var(--line);border-radius:6px;flex-shrink:0}
 .board-card .bd-name{font-size:14.5px;font-weight:600;color:var(--tx)}
 .board-card .bd-dir{font-family:var(--mono);font-size:10px;color:var(--tx-3)}
 .board-card .bd-desc{font-size:11.5px;color:var(--tx-2);line-height:1.6}
 .board-card .bd-dirty{font-size:11px;color:var(--warn)}
 .board-card .bd-commits{border-top:1px solid var(--line);padding-top:9px;margin-top:2px;font-size:11px;line-height:1.85;color:var(--tx-3);min-height:20px}
-.board-card .bd-commits .hash{font-family:var(--mono);font-size:10.5px;color:var(--tx-2);background:var(--s3);padding:1px 5px;border-radius:4px;margin-right:5px}
+.board-card .bd-commits .hash{font-family:var(--mono);font-size:10.5px;color:var(--tx-2);background:var(--s3);padding:1px 5px;border-radius:6px;margin-right:5px}
 /* 表格 */
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
 .tbl th{text-align:left;padding:9px 14px;background:transparent;border-bottom:1px solid var(--line-2);color:var(--tx-3);font-weight:500;font-size:11px;letter-spacing:.04em;white-space:nowrap}
@@ -127,7 +127,7 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .tbl tbody tr{transition:background .13s ease-out}
 .tbl tr:hover td{background:rgba(255,255,255,.022)}
 .tbl strong{color:var(--tx);font-weight:500}
-.tbl code{font-family:var(--mono);font-size:11px;background:var(--s2);padding:1px 5px;border-radius:4px;color:var(--tx-2)}
+.tbl code{font-family:var(--mono);font-size:11px;background:var(--s2);padding:1px 5px;border-radius:6px;color:var(--tx-2)}
 /* 徽章：仅作语义编码，低饱和发丝描边 */
 .badge{padding:2px 9px;border-radius:999px;font-size:11px;font-weight:500;display:inline-block;white-space:nowrap;line-height:1.75;border:1px solid transparent}
 .badge-active,.badge-done,.badge-mature{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-line)}
@@ -166,7 +166,7 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .log-item .log-file{font-size:12.5px;color:var(--tx);min-width:250px}
 .log-item .log-desc{font-size:12.5px;color:var(--tx-2);flex:1}
 .commit-item{padding:9px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;font-size:12px;color:var(--tx-2)}
-.commit-item .hash{font-family:var(--mono);font-size:11px;color:var(--tx-2);background:var(--s3);padding:1px 5px;border-radius:4px}
+.commit-item .hash{font-family:var(--mono);font-size:11px;color:var(--tx-2);background:var(--s3);padding:1px 5px;border-radius:6px}
 /* 层级标签 */
 .layers{display:flex;gap:8px;margin-bottom:16px}
 .layer-tag{padding:3px 11px;border-radius:999px;font-size:11px;border:1px solid transparent;display:inline-block}
@@ -190,12 +190,12 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 /* 无子条目时收成单行（诚实占位，不伪造数据） */
 .lt-dim-card--empty{padding:11px 20px;align-items:center}
 .lt-dim-card--empty .lt-left{width:auto;flex-direction:row;gap:10px;padding:0}
-.lt-dim-card--empty .lt-dim-icon{width:28px;height:28px;font-size:14px;border-radius:8px}
+.lt-dim-card--empty .lt-dim-icon{width:28px;height:28px;font-size:14px;border-radius:6px}
 .lt-dim-card--empty .lt-dim-item{border-bottom:none;padding:0;gap:10px;width:100%}
 .lt-dim-card--empty .lt-item-name{color:var(--tx);font-weight:500}
 .lt-dim-card--empty .lt-item-note{color:var(--tx-3);font-family:var(--mono);font-size:10px}
 .lt-left{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;flex-shrink:0;width:78px;text-align:center;padding-top:2px}
-.lt-dim-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--s2);border:1px solid var(--line);border-radius:9px}
+.lt-dim-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--s2);border:1px solid var(--line);border-radius:6px}
 .lt-dim-label{font-size:12.5px;font-weight:600;color:var(--tx);margin:8px 0 3px}
 .lt-dim-vision{font-size:10px;color:var(--tx-3);line-height:1.5}
 .lt-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:0}
