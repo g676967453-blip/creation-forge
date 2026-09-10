@@ -28,8 +28,14 @@ var _extinguish_pending: bool = false  ## 灭火器：下关首次着火自动�
 var _capy_fire_timer: float = 0.0      ## 卡皮巴拉：着火自动熄灭倒计时（秒）
 var _clones: Array = []                ## 狐狸·影分身列表
 var _skill_cd: float = 0.0             ## 技能冷却剩余秒（0=可用）
+var _fallers: Array = []               ## 红窗跳楼村民（下落中）
+var _fall_timer: float = 0.0           ## 下一次跳楼倒计时（秒）
 var _shop_stock: Dictionary = {}       ## 当前商品组 {hero,items}
 var _shop_used: bool = false           ## 本关是否已弹出过商店
+
+## 红窗跳楼节奏（规则 §3.4：周期性跳窗）
+const FALL_INTERVAL_MIN: float = 2.6
+const FALL_INTERVAL_MAX: float = 4.2
 
 ## 道具掉落：掉率随关卡微升（对齐 HTML maybeDropItem）
 const ITEM_CHANCE_BASE: float = 0.28
@@ -106,6 +112,25 @@ func _process(delta: float) -> void:
 		else:
 			clone.queue_free()
 	_clones = alive
+
+	# 红窗跳楼村民：更新下落 + 周期性生成（规则 §3.4）
+	var alive_fall: Array = []
+	for f in _fallers:
+		if f == null or not is_instance_valid(f):
+			continue
+		var faller := f as VillagerFall
+		if faller == null:
+			continue
+		if faller.update_fall(delta):
+			alive_fall.append(faller)
+		else:
+			faller.queue_free()
+	_fallers = alive_fall
+
+	_fall_timer -= delta
+	if _fall_timer <= 0.0:
+		_fall_timer = randf_range(FALL_INTERVAL_MIN, FALL_INTERVAL_MAX)
+		_spawn_red_window_faller()
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
@@ -195,6 +220,7 @@ func go_menu() -> void:
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(false)
 	_clear_clones()
+	_clear_fallers()
 	# 回菜单也落盘：保证本局刷出的最高分/金币不丢
 	GameState.save()
 	_set_state(State.MENU)
@@ -374,6 +400,102 @@ func _clear_clones() -> void:
 	_clones.clear()
 
 
+# ===== 红窗跳楼村民（规则 §3.4） =====
+
+const VILL_NAMES: Array[String] = [
+	"vil_rabbit", "vil_chick", "vil_fox", "vil_pig", "vil_sheep", "vil_squirrel",
+]
+const VILL_DIR: String = "res://assets/pixel/villagers/"
+
+
+func _villager_texture(call: bool) -> Texture2D:
+	var base: String = VILL_NAMES[randi_range(0, VILL_NAMES.size() - 1)]
+	var suffix: String = "_front_call.png" if call else "_front.png"
+	var p: String = VILL_DIR + base + suffix
+	if ResourceLoader.exists(p):
+		return load(p) as Texture2D
+	return null
+
+
+## 从随机红窗跳下一个村民（无可跳窗口时跳过）
+func _spawn_red_window_faller() -> void:
+	# 仅游玩态生成：结算/暂停/菜单态不得产生游离村民
+	if state != State.PLAYING or _level_closing:
+		return
+	if brick_host == null or not is_instance_valid(brick_host):
+		return
+	var reds: Array = []
+	for b in brick_host.get_children():
+		if b == null or not is_instance_valid(b):
+			continue
+		if b is WindowBrick:
+			var wb := b as WindowBrick
+			if wb.brick_type == WindowBrick.BrickType.RESCUE and wb.is_red and not wb.is_dead:
+				reds.append(wb)
+	if reds.is_empty():
+		return
+	var pick: WindowBrick = reds[randi_range(0, reds.size() - 1)]
+	var tex: Texture2D = _villager_texture(true)
+	if tex == null:
+		return
+	var f := VillagerFall.make(tex, pick.position + Vector2(randf_range(-8.0, 8.0), 10.0), self, true)
+	add_child(f)
+	_fallers.append(f)
+
+
+## 蹦床接住跳楼村民 → 加分/金币（红窗救人向）；返回是否接住
+func try_catch_faller(f: VillagerFall) -> bool:
+	if f == null or not is_instance_valid(f):
+		return false
+	if paddle == null or not is_instance_valid(paddle):
+		return false
+	var half_w: float = GameConstants.PADDLE_W * 0.5
+	var bw: Variant = paddle.get("base_width")
+	if typeof(bw) == TYPE_FLOAT or typeof(bw) == TYPE_INT:
+		half_w = float(bw) * 0.5
+	var top: float = paddle.position.y
+	var dx: float = absf(f.position.x - paddle.position.x)
+	var dy: float = f.position.y - top
+	if dx <= half_w + VillagerFall.CATCH_X_PAD and dy >= VillagerFall.CATCH_Y_MIN and dy <= VillagerFall.CATCH_Y_MAX:
+		var dog_mult: float = 1.5 if CharacterDB.cur_is("dog") else 1.0
+		var pts: int = int(round(150.0 * dog_mult))
+		var coin_gain: int = int(round(12.0 * dog_mult))
+		GameState.add_score(pts)
+		GameState.add_coins(coin_gain)
+		Sfx.play("sfx_rescue_save")
+		show_message.emit("接住跳楼村民 +%d" % pts)
+		hud_refresh.emit()
+		return true
+	return false
+
+
+func _clear_fallers() -> void:
+	for f in _fallers:
+		if f != null and is_instance_valid(f):
+			f.queue_free()
+	_fallers.clear()
+	_fall_timer = randf_range(FALL_INTERVAL_MIN, FALL_INTERVAL_MAX)
+
+
+## 获救表现：村民从弹起点上浮并淡出（规则 §3.4：弹起瞬间获救）
+func _spawn_rescued_villager(at: Vector2) -> void:
+	var tex: Texture2D = _villager_texture(true)
+	if tex == null:
+		return
+	var s := Sprite2D.new()
+	s.texture = tex
+	s.scale = Vector2(0.5, 0.5)
+	s.position = at + Vector2(0, -18)
+	s.z_index = 5
+	add_child(s)
+	var tw := create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(s, "position:y", s.position.y - 34.0, 0.75) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(s, "modulate:a", 0.0, 0.75)
+	tw.chain().tween_callback(s.queue_free)
+
+
 ## 分身灭到火砖：计分/金币/掉落，与主球 fire_out 一致
 func _on_clone_extinguish(brick: Node, _clone: SkillClone) -> void:
 	if state != State.PLAYING or _level_closing:
@@ -459,6 +581,7 @@ func _start_level(reset_paddle: bool = true) -> void:
 	_clear_items()
 	# 本关开始时清理分身/增益计时（商店 buff 在下关才用，这里先复位运行期状态）
 	_clear_clones()
+	_clear_fallers()
 	_boost_timer = 0.0
 	_extinguish_pending = false
 	_capy_fire_timer = 0.0
@@ -562,6 +685,8 @@ func _on_ball_paddle() -> void:
 	_carry_is_red = false
 	ball.refresh_visual()
 	Sfx.play("sfx_rescue_save")
+	# 获救表现：村民从蹦床处弹出上浮（规则 §3.4 弹起瞬间获救）
+	_spawn_rescued_villager(ball.position)
 
 	# 红窗救人只加分，不扣硬目标 rescue_left
 	if not was_red and rescue_left > 0:
@@ -767,8 +892,9 @@ func _level_complete() -> void:
 	GameState.add_coins(level_bonus)
 	Sfx.play("sfx_level_clear")
 	GameState.save()
-	# 过关：分身清理（避免结算界面残留悬浮影分身）
+	# 过关：分身/跳楼村民清理（避免结算界面残留）
 	_clear_clones()
+	_clear_fallers()
 	# 每关通关刷新补给队商品
 	_shop_stock = ShopDB.generate()
 	_set_state(State.LEVELUP)
@@ -782,6 +908,7 @@ func _game_over() -> void:
 	if paddle.has_method("set_control_enabled"):
 		paddle.set_control_enabled(false)
 	_clear_clones()
+	_clear_fallers()
 	_set_state(State.OVER)
 	GameState.save()
 	hud_refresh.emit()

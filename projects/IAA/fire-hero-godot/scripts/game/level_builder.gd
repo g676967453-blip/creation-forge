@@ -20,7 +20,9 @@ static func build(parent: Node, level: int) -> Dictionary:
 	for r in range(layout_arr.size()):
 		for c in range(GameConstants.BRICK_COLS):
 			var ch: String = LevelDB.cell_at(layout_arr, r, c)
+			# 空位补装饰正常窗（无碰撞、不计目标），让窗格成片
 			if ch == "." or ch == "":
+				_spawn_decor_window(parent, c, r)
 				continue
 			var brick: WindowBrick = _spawn_from_char(parent, ch, c, r, false, Vector2.ZERO)
 			if brick == null:
@@ -89,6 +91,17 @@ static func _spawn_from_char(parent: Node, ch: String, col: int, row: int, use_a
 	return brick
 
 
+## 装饰性正常窗（规则 §3.2 的 N 态）：无碰撞、不计目标，只为窗格成片更完整
+static func _spawn_decor_window(parent: Node, col: int, row: int) -> void:
+	var s := Sprite2D.new()
+	s.name = "DecorWindow"
+	s.texture = preload("res://assets/props/windows/window_normal.png")
+	s.z_index = -1  # 垫在可玩砖之下
+	var pos: Vector2 = GameConstants.brick_pos(col, row)
+	s.position = pos + Vector2(GameConstants.BRICK_W * 0.5, GameConstants.BRICK_H * 0.5)
+	parent.add_child(s)
+
+
 static func _build_procedural(parent: Node, level: int) -> Dictionary:
 	var bricks: Array = []
 	var fire_left: int = 0
@@ -102,6 +115,7 @@ static func _build_procedural(parent: Node, level: int) -> Dictionary:
 	for r in range(rows):
 		for c in range(GameConstants.BRICK_COLS):
 			if rng.randf() < 0.12:
+				_spawn_decor_window(parent, c, r)  # 空格补装饰窗
 				continue
 			var lev: int = 1
 			if max_lv >= 2 and rng.randf() < 0.3 + (float(r) / float(rows)) * 0.2:
