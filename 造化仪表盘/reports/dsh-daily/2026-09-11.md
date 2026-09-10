@@ -1,9 +1,9 @@
 # DSH 信息日报 · 2026-09-11
 
 > 报告期：2026-09-10 ~ 2026-09-11（第 2 期） ｜ 生成方式：自动（`dsh --profile headless` + 联网检索） ｜ 数据源：本机文件系统 + npm registry + GitHub Releases
-> 采集时间：2026-09-11 06:47 (+08:00)
+> 采集时间：2026-09-11 06:52 (+08:00)
 
-本期只有一件真事：上游在 09-10 23:09(+08:00) 补发了 **`v0.1.5-rc.2`**（候选版收尾打磨，无破坏性变更），本机 CLI 停在 `latest = 0.1.5-rc.1`，**本体不用动**；真正值得动手的仍是昨天已提示的 `dsh-worktable` 0.3.0 → 0.3.3。另外本机 `~/.dsh` 这次多了一个 `headless` profile —— 这正是今天这份日报能无人值守生成的底座。
+本期上游只多了一件小事：**`v0.1.5-rc.2`**（09-10 23:09 +08:00 发布，纯体验打磨、无破坏性变更），本机 CLI 仍停在 npm `latest = 0.1.5-rc.1`，**本体不用动**；真正值得动手的仍只有 `dsh-worktable` 0.3.0 → 0.3.3，而且**必须先 diff**。仓库这边，日报工具链已随 `62dd942` 入库，生成提示词的目标路径也已指向日报正文——上一期 ⑤-1 的路径错位已修好。
 
 ---
 
@@ -21,9 +21,9 @@
 | 已启用 profile | `headless`（`@deepseek-ai/dsh-base`、`@deepseek-ai/dsh-headless`）、`web`（`@deepseek-ai/dsh-base`、`@deepseek-ai/dsh-web-app`） |
 | 默认模型 | provider `deepseek-official` · model **`deepseek-flash`** · reasoningEffort `low` |
 | 模型凭据 | 已配置（仅检查存在性，不读取内容） |
-| 活跃会话数 | 2 |
-| 插件 | `dsh-worktable` **0.3.0**（本地优化版，上游最新 0.3.3） |
-| 仓库状态 | `main` @ `70e814c`（2026-09-10），未提交改动 19 项 |
+| 活跃会话数 | 2（存储：`session_projcache`、`workspace.json`） |
+| 插件 | `dsh-worktable` **0.3.0**（仓库内本地优化版，上游最新 0.3.3） |
+| 仓库状态 | `main` @ `62dd942`（2026-09-11），未提交改动 13 项 |
 
 **一句话结论**：DSH 本体已是最新、不用动；真正有更新价值的是 worktable 插件——但仓库里是本地优化版，**必须先 diff 再升级，不能直接覆盖**。
 
@@ -33,15 +33,14 @@
 
 ### 1. DSH 本体 —— 无需升级（`updateAvailable: false`）
 
-- 本机 `0.1.5-rc.1` 就是 npm `latest`，**已是最新**。
-- 上游另有 `next = 0.1.5-rc.2`、`alpha = 0.1.5-alpha.2`，都是预发布通道，**不建议**日常切过去。
-- 若确实想试 rc.2，命令与风险：
+- 本机 `0.1.5-rc.1` 就是 npm `latest`，**已是最新**；npm registry 复核结果一致（`latest = 0.1.5-rc.1`、`next = 0.1.5-rc.2`、`alpha = 0.1.5-alpha.2`）。
+- `next` / `alpha` 都是预发布通道，**不建议**日常切过去。若确实想试 `rc.2`：
 
   ```sh
   npm i -g @deepseek-ai/dsh@next
   ```
 
-  风险：预发布版不保证稳定，且 Session 格式为 V3、**升级后的会话不支持降级读取**；升级前先备份 `~/.dsh/sessions/`。生效步骤：升级后完整退出并重启 `dsh`。
+  **风险**：预发布版不保证稳定；Session 格式为 V3，**升级后的会话不支持降级读取**。升级前先备份 `~/.dsh/sessions/`，升级后完整退出并重启 `dsh` 才生效。
 
 ### 2. `dsh-worktable` 0.3.0 → 0.3.3 —— 有更新，先 diff 再升级
 
@@ -59,8 +58,9 @@
    `造化仪表盘/tools/dsh-harness/plugins/dsh-worktable` 带自加的「可编辑地址栏 / 右键文件操作 / `/api/worktable/rm|rename|copy|open-path`」等改动（见 dsh-harness README 的「本地优化摘要」）。直接拉上游 0.3.3 覆盖会**丢掉这些改动**。
    正确顺序：下载上游 tgz 解包 → 与仓库版本 diff → 把本地改动 rebase 到 0.3.3 → 再替换。
 2. **兼容性未被上游声明。** v0.3.3 官方只声明测过 DSH `0.1.2-rc.1` 与 `0.1.1-rc.2`，**没有**声明兼容你现在跑的 `0.1.5-rc.1`；而 0.1.5-rc.1 恰好改了 Web 插件面板 API（`sidebar.panellist` / `main`，原 `conversation` slot 迁移）。升级后必须实测再决定是否长期保留。
+   另：上游明确说明「选择文件夹窗口不置前」是 **DSH 宿主的已知缺陷**，不是插件问题。
 
-**要升级时的命令**（注意：先备份仓库内本地版）：
+**要升级时的命令**（先备份仓库内本地版）：
 
 ```sh
 dsh plugin --profile web add "https://github.com/Aisland-SJL/dsh-worktable/releases/latest/download/dsh-worktable.tgz"
@@ -87,18 +87,21 @@ dsh plugin --profile web add "https://github.com/Aisland-SJL/dsh-worktable/relea
 | 09-10 | `dsh-v0.1.5-rc.1` ← 你已装 | 0.1.5 首个候选版，汇总自 0.1.2-rc.1 以来全部变更 |
 | **09-10** | **`dsh-v0.1.5-rc.2`** ← 本期新增 | 反馈提交加弹窗确认；交付文件卡片排版与图标优化 |
 
+> 报告期内（09-10 ~ 09-11）**没有比 `v0.1.5-rc.2` 更新的发布**：Releases feed 最后一次更新停在 09-10，本期无新增版本。
+
 ### 与你直接相关的变更
 
 - **`v0.1.5-rc.2`（本期唯一新增）**：点赞 / 点踩都要经弹窗确认才提交，失败时保留已填内容并提示 —— 提 bug 更不容易手滑，也不会白填。
 - **`v0.1.5-rc.2`**：交付文件卡片排版、对话间距、代码文件图标重做，产物更易辨认、界面更紧凑 —— 对天天看 `reports/*.html`、Godot 场景文件的人直接可感。
-- **本机新增 `headless` profile**（`@deepseek-ai/dsh-headless`）：配合 0.1.5-rc.1 把 headless 默认文件工具定为 `read` / `write` / `edit`，才有本日报的全自动生成链路。
+- **本机两个 profile**（`headless` + `web`）：配合 0.1.5 起 headless 默认文件工具为 `read` / `write` / `edit`，才有本日报的自动生成链路。
 
 ### 需要注意的破坏性 / 行为变更
 
 - **本期（rc.2）无新增破坏性变更**，只是体验打磨。
 - rc.1 的三条仍然生效，升级 / 写插件前要记住：**Session 格式 V3**（升级后不支持降级读取）、**headless/SDK/ACP 默认 `read`/`write`/`edit`**、**插件 API 调整**（移除 `ctx.agent`；`Inbox` 变类型接口；Web 面板改走 `sidebar.panellist` 与 `main`）。
+- **Windows 相关修复值得知道**：本地非终端子进程不再弹控制台窗口；Windows 盘符根目录 Workspace 的路径校验已修；原生文件夹选择器「不置前」问题仍是宿主已知缺陷（见 worktable v0.3.3 说明）。
 
-来源：[v0.1.5-rc.2](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) · [v0.1.5-rc.1](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.1) · [npm dist-tags](https://registry.npmjs.org/@deepseek-ai/dsh) · [官方 README](https://github.com/deepseek-ai/deepseek-harness/blob/master/README.zh.md)
+来源：[v0.1.5-rc.2](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2) · [v0.1.5-rc.1](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.1) · [Releases feed](https://github.com/deepseek-ai/deepseek-harness/releases.atom) · [npm dist-tags](https://registry.npmjs.org/@deepseek-ai/dsh) · [dsh-worktable v0.3.3](https://github.com/Aisland-SJL/dsh-worktable/releases/tag/v0.3.3)
 
 ---
 
@@ -114,8 +117,8 @@ dsh plugin --profile web add "https://github.com/Aisland-SJL/dsh-worktable/relea
   dsh --profile headless "读取并严格执行 造化仪表盘/reports/dsh-daily/_data/<日期>.prompt.md，生成今日 DSH 日报。"
   ```
 
-  配合 `造化仪表盘/tools/dsh-report/register-dsh-daily-task.ps1 -Action install` 注册 Windows 计划任务。
-- **对你的价值**：仪表盘与工作台——日报、板块数据刷新这类「固定动作」可以完全离线自动跑，你只看结果。
+  配合 `造化仪表盘/tools/dsh-report/register-dsh-daily-task.ps1 -Action install` 注册 Windows 计划任务，`-Action status` 查上次结果码。
+- **对你的价值**：仪表盘与工作台——日报、板块数据刷新这类「固定动作」可以完全离线自动跑，你只看结果。本期这份日报就是这条链路跑出来的。
 
 ### 技巧 2 · 把右侧 Sidebar 当「第二屏」，产物直接交付预览
 
@@ -123,39 +126,40 @@ dsh plugin --profile web add "https://github.com/Aisland-SJL/dsh-worktable/relea
 - **怎么做**：让 agent 完成任务后交付产物路径（例如 `造化仪表盘/reports/造化坊仪表盘.html`）；在 Sidebar 里切换标签对照查看；需要编辑时右键「用默认应用打开」。
 - **对你的价值**：AI 美术产线——参考图、规格 PDF、Godot 截图与文档可以在同一屏并排比对，不用来回切资源管理器。
 
-### 技巧 3 · 写插件 / 改 worktable 前，先对齐 0.1.5 的插件面板 API
+### 技巧 3 · 参考资料一律「拖进来」，不限类型
+
+- **一句话**：Web 支持上传任意类型文件，文件与图片在同一预览区混排，后台上传有进度、可取消、切会话仍续显。
+- **怎么做**：把 PDF 规格、参考图、Godot 场景文件直接拖进输入框；文件会存到本地路径，模型可用文件工具按需读取，而不是一次性全塞进上下文。
+- **对你的价值**：IAA / 概念设计工作流的参考文档可以一次性投喂，不用先转格式；需要时再让模型按路径精读，省 token。
+
+### 技巧 4 · 养成看「会话统计」的习惯，把成本管住
+
+- **一句话**：统计拆成了「轮次与速度」和「精确 Token 与缓存命中」两个摘要。
+- **怎么做**：点开会话统计，重点看缓存命中率——命中高说明上下文前缀稳定；重复读文件、乱改系统提示词都会拉低它（0.1.5 起动态改系统提示词已不破坏 KV Cache，但模型需显式声明支持）。
+- **对你的价值**：日报这类周期性任务最容易悄悄烧 token，有数字才能判断要不要降级成 `-NoLlm`（零 token，只出硬事实）。
+
+### 技巧 5 · 写插件 / 改 worktable 前，先对齐 0.1.5 的插件面板 API
 
 - **一句话**：0.1.5 起插件全局面板改由 `sidebar.panellist` 与 `main` 注册，原 `conversation` Slot 迁成 `main` 下的 `conversation` key。
-- **怎么做**：在自己的插件 `dsh.plugin.json` / 客户端入口里按新 API 注册面板；同时把 `ctx.agent` 改为显式传入 Agent、`Inbox` 只当类型用（通过 `agent.inbox` 读写）。
+- **怎么做**：在自己的插件 `dsh.plugin.json` / 客户端入口里按新 API 注册面板；同时把 `ctx.agent` 改为显式传入 Agent，`Inbox` 只当类型用（通过 `agent.inbox` 读写）。
 - **对你的价值**：仪表盘与工作台——worktable 的本地优化改动要跟着这套 API 走，否则 0.1.5 上加载失败，也会拖住以后的升级。
-
-### 技巧 4 · 用 `/feedback` 提 bug（rc.2 起有确认弹窗）
-
-- **一句话**：反馈可独立提交，不必继续对话；rc.2 起点赞 / 点踩都先弹窗确认，提交失败会保留已填内容。
-- **怎么做**：在输入框输入 `/feedback`，写明明细；或对某条回答直接点赞 / 点踩并在弹窗里确认。提交会附带相关会话内容。
-- **对你的价值**：小红书自媒体 / 游戏开发——遇到「选择文件夹窗口不置前」这类宿主缺陷时，能一条带上下文的反馈发上去，比截图描述有效。
-
-### 技巧 5 · Session 已升 V3：升级前备份，别指望降级
-
-- **一句话**：受支持的旧日志会迁移成新版日志并**保留原文件**，但升级后的会话**不支持降级读取**。
-- **怎么做**：升级 `dsh` 前先复制一份 `~/.dsh/sessions/`；自定义日志读取脚本要按 `session-format-v2-to-v3/README.zh.md` 适配。
-- **对你的价值**：仪表盘与工作台——`sessions/` 不在 git 同步范围内（dsh-harness 便携包也不含它），风险可控，但**别在升级后再把 DSH 降级回去**。
 
 ---
 
 ## ⑤ 今天可以试一下
 
-1. **修掉日报工具链的路径错位**：`run-dsh-daily.ps1` 生成的提示词让 headless 把报告写回 `_data/<日期>.prompt.md`（被 gitignore 的中间文件），而脚本真正读取的是 `reports/dsh-daily/<日期>.md`——把模板里的 `%%PROMPT_REL_PATH%%` 改指日报正文路径，看是否能让自动链路一次跑通。
-2. **给 worktable 做一次「预备 diff」**：下载 v0.3.3 的 tgz 解包，与 `造化仪表盘/tools/dsh-harness/plugins/dsh-worktable` 对比，把本地改动列成清单（先不替换），为将来升级铺路。
+1. **给 worktable 做一次「预备 diff」**：下载 v0.3.3 的 tgz 解包，与 `造化仪表盘/tools/dsh-harness/plugins/dsh-worktable` 对比，把本地改动列成清单（**先不替换**），为将来升级铺路。
+2. **跑一次日报全链路自检**：用 `run-dsh-daily.ps1 -Force` 重跑，确认生成提示词里的目标路径已指向 `reports/dsh-daily/<日期>.md`（本期已确认修好），并核对报告正文确实被覆盖写入而不是落到 `_data/`。
 
 ---
 
 ## ⑥ 与本仓库的联动
 
-- **本日报工具链**在 `造化仪表盘/tools/dsh-report/`，产出在 `造化仪表盘/reports/dsh-daily/`，并可经仪表盘 `/board/` 静态服务直接读（`http://127.0.0.1:3456/board/dsh-daily/`）。本期发现提示词路径与脚本读取路径不一致（见 ⑤-1），属工具链自身待修项。
-- **`dsh-harness` 便携包**：worktable 的升级取舍见第 ② 节；便携包本身不同步 `sessions/`，Session V3 升级不影响跨机器同步。
-- **本机 profile 新增 `headless`**：与本日报的自动生成链路一致；对应便携包 `造化仪表盘/tools/dsh-harness/profiles/` 下目前只有 `web` / `desktop` 两个 profile —— 若希望换机器后也能自动出日报，需要把 headless profile 也纳入便携包。
-- **`dsh-worktable` 本地版仍是 0.3.0**：上游 0.3.3 未声明兼容 0.1.5-rc.1，暂不升级。
+- **日报工具链已入库**：仓库 head 是 `62dd942`「[dsh] feat: DSH 信息日报——首期基线 + 每工作日自动推送」，产出在 `造化仪表盘/reports/dsh-daily/`，可经仪表盘 `/board/` 静态服务直接读（`http://127.0.0.1:3456/board/dsh-daily/`）。
+- **上一期的路径错位已修好**：`run-dsh-daily.ps1` 用 `%%REPORT_REL_PATH%%` → `造化仪表盘/reports/dsh-daily/<日期>.md` 生成提示词，本期提示词的目标路径与脚本读取路径一致（上一期 ⑤-1 可结案）。
+- **`dsh-harness` 便携包**：worktable 的本地优化版仍是 0.3.0，上游 0.3.3 未声明兼容 0.1.5-rc.1，**暂不升级**。便携包不同步 `sessions/`，Session V3 升级不影响跨机器同步。
+- **headless profile 尚未进便携包**：本机 `~/.dsh` 已有 `headless`，但 `造化仪表盘/tools/dsh-harness/profiles/` 下目前只有 `web` / `desktop` —— 若希望换机器后也能自动出日报，需要把 `headless` profile 也纳入便携包。
+- **工作区未提交改动 13 项**：日报工具链入库后仍有未提交内容，建议按板块拆开提交，别让日报相关的中间产物混进来。
 
 ---
 
@@ -164,16 +168,16 @@ dsh plugin --profile web add "https://github.com/Aisland-SJL/dsh-worktable/relea
 **数据源**
 
 - 本机文件系统：`~/.dsh/settings.yaml`、`~/.dsh/profiles/*/package.json`、`~/.dsh/sessions/`、仓库 `dsh-worktable` 包
-- npm registry：`@deepseek-ai/dsh` 的 `dist-tags`（本机采集 + `registry.npmjs.org` 复核）
-- GitHub Releases API：`deepseek-ai/deepseek-harness`、`Aisland-SJL/dsh-worktable`
-- 官方 README：`deepseek-ai/deepseek-harness` 的 `README.zh.md`
+- npm registry：`@deepseek-ai/dsh` 的 `dist-tags`（本机采集 + `registry.npmjs.org` 复核，结果一致）
+- GitHub Releases API：`deepseek-ai/deepseek-harness`、`Aisland-SJL/dsh-worktable`（经 `.atom` feed 取到完整条目）
+- 仓库工具链：`造化仪表盘/tools/dsh-report/`（提示词模板与目标路径核对）
 
 **采集异常**
 
 | 项 | 级别 | 说明 |
 | --- | --- | --- |
-| `web_fetch` | warn | GitHub Releases 网页版首次抓取失败，已改用 `.atom` 与 Releases API 取到同日数据，结论不受影响 |
-| `web_fetch` | warn | 第三方实践文章 ofox.ai 抓取失败，本期未采用任何媒体报道，全部结论来自官方一手来源 |
+| `web_fetch` | warn | GitHub Releases 网页版返回被导航内容占满、有效条目不可读，已改用 `releases.atom` 取到完整发布说明，结论不受影响 |
+| `web_search` | warn | 第三方技术媒体文章（阿里云开发者社区、腾讯云社区、163 等）时效与来源无法核验，本期**未采用**任何媒体报道，全部结论来自官方一手来源 |
 
 **未采集项（有意）**
 

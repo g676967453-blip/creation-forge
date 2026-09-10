@@ -272,9 +272,10 @@ if (-not $NoLlm) {
         $proc.Kill()
         Write-Run "警告：headless 超时（${TimeoutMinutes} 分钟）已终止"
       } else {
-        # Start-Process -PassThru 在重定向场景下需 Refresh 才能拿到退出码
-        $exitCode = '未知'
-        try { $proc.Refresh(); $exitCode = $proc.ExitCode } catch { }
+        # Start-Process -PassThru 在重定向场景下退出码可能读不到，做无值兜底
+        $exitCode = $null
+        try { $proc.Refresh(); if ($proc.HasExited) { $exitCode = $proc.ExitCode } } catch { }
+        if ($null -eq $exitCode) { $exitCode = '未知（以报告是否产出为准）' }
         Write-Run "headless 结束，退出码 $exitCode"
       }
     } catch {

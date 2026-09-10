@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-09-11T06:50:44+08:00",
+  "collectedAt": "2026-09-11T06:52:15+08:00",
   "date": "2026-09-11",
   "ok": true,
   "errors": [],
@@ -73,10 +73,10 @@
   "repo": {
     "root": "C:\\项目资料\\ever-forge",
     "branch": "main",
-    "head": "2035119",
-    "headSubject": "[dsh] chore: 刷新板块2-5 仪表盘 HTML（服务重启后重生成）",
+    "head": "62dd942",
+    "headSubject": "[dsh] feat: DSH 信息日报——首期基线 + 每工作日自动推送",
     "headDate": "2026-09-11",
-    "dirtyCount": 15
+    "dirtyCount": 13
   },
   "previousReportDate": "2026-09-10"
 }
