@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://ct84hjimb6fo4" path="res://assets/props/trampoline/mat.png" id="4_tipki"]
 [ext_resource type="Script" uid="uid://ikvi5wpywgvk" path="res://scripts/ui/main_ui.gd" id="4_ui"]
 [ext_resource type="Texture2D" uid="uid://ce16v6xy6cidp" path="res://assets/backgrounds/bg_level_default.png" id="5_bg"]
-[ext_resource type="FontFile" path="res://assets/fonts/zpix.ttf" id="6_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/round_ui.ttf" id="6_font"]
 [ext_resource type="Texture2D" path="res://assets/pixel/ui/ui_icon_level.png" id="7_ic_lv"]
 [ext_resource type="Texture2D" path="res://assets/pixel/ui/ui_icon_score.png" id="8_ic_sc"]
 [ext_resource type="Texture2D" path="res://assets/pixel/ui/ui_icon_coin.png" id="9_ic_cn"]

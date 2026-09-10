@@ -48,7 +48,7 @@ var _toast_tween: Tween
 
 
 func _ready() -> void:
-	# Web/全局默认中文字体：Zpix（动态控件无显式字体时也走中文，避免 Web 无系统中文字体乱码）
+	# Web/全局默认中文字体：圆润中文字体（动态控件无显式字体时也走中文，避免 Web 无系统中文字体乱码）
 	_apply_global_font()
 	btn_start.pressed.connect(_on_start)
 	btn_next.pressed.connect(_on_next)
@@ -193,9 +193,9 @@ func _toast(text: String) -> void:
 
 # ===== 补给队商店（过关结算内，代码构建） =====
 
-## 全局默认字体：Zpix（Web 无系统中文字体，必须给所有 UI 子树兜底）
+## 全局默认字体：圆润中文字体（站酷快乐体子集，Web 无系统中文字体时兜底）
 func _apply_global_font() -> void:
-	var font: Font = load("res://assets/fonts/zpix.ttf") as Font
+	var font: Font = load("res://assets/fonts/round_ui.ttf") as Font
 	if font == null:
 		return
 	var th := Theme.new()
@@ -370,7 +370,7 @@ func _sync_char_btn() -> void:
 		return
 	var cur_name: String = str(CharacterDB.role(GameState.skin_index).get("name", ""))
 	var ability: String = str(CharacterDB.role(GameState.skin_index).get("ability", ""))
-	# 不用 emoji（Zpix 无 emoji 字形，Web 会显示方块）
+	# 不用 emoji（字体无 emoji 字形，Web 会显示方块）
 	char_btn.text = "角色：%s · %s（点击切换）" % [cur_name, ability]
 	char_btn.tooltip_text = "在已拥有角色间切换"
 
