@@ -62,7 +62,7 @@ export function generateHTML() {
     --plan-bg:color-mix(in oklab,var(--plan) 12%,transparent);--plan-line:color-mix(in oklab,var(--plan) 26%,transparent);
     --zcool-bg:color-mix(in oklab,var(--zcool) 12%,transparent);--zcool-line:color-mix(in oklab,var(--zcool) 26%,transparent);
   }
-  header{background:color-mix(in oklab,var(--bg) 84%,transparent)}
+  .topbar{background:color-mix(in oklab,var(--bg) 86%,transparent)}
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;text-wrap:pretty;font-variant-numeric:tabular-nums}
@@ -74,24 +74,24 @@ a:hover{color:var(--tx)}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:999px;border:3px solid var(--bg)}
 ::-webkit-scrollbar-thumb:hover{background:var(--s2)}
-.app{display:flex;min-height:100vh}
-.sidebar{width:232px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar-brand{padding:2px 10px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.sidebar-brand h1{display:flex;align-items:center;font-family:var(--serif);font-size:21px;font-weight:600;color:var(--tx);line-height:1.25;letter-spacing:.04em}
-.sidebar-brand h1::before{content:'';width:6px;height:6px;border-radius:1px;background:var(--accent);margin-right:9px;flex-shrink:0}
-.sidebar-brand .brand-en{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--tx-3);margin:7px 0 0 15px}
-.sidebar-brand .sub{font-size:11px;color:var(--tx-3);margin-top:11px;line-height:1.65}
-.sidebar-nav{display:flex;flex-direction:column;gap:2px;flex:1}
-.tab{display:flex;align-items:center;gap:9px;padding:9px 10px;font-size:13px;color:var(--tx-2);cursor:pointer;border-radius:var(--r-s);border:none;background:transparent;text-align:left;font-family:inherit;transition:color .15s ease-out,background .15s ease-out;width:100%}
+.app{min-height:100vh}
+/* 顶部导航栏（粘性 · 毛玻璃） */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(11,12,14,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar-inner{display:flex;align-items:center;gap:18px;flex-wrap:wrap;max-width:1320px;margin:0 auto;padding:10px 30px}
+.brand{display:flex;flex-direction:column;justify-content:center;flex-shrink:0}
+.brand h1{display:flex;align-items:center;font-family:var(--serif);font-size:18px;font-weight:600;color:var(--tx);line-height:1.2;letter-spacing:.04em}
+.brand h1::before{content:'';width:6px;height:6px;border-radius:1px;background:var(--accent);margin-right:8px;flex-shrink:0}
+.brand .brand-en{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--tx-3);margin:3px 0 0 14px}
+.topnav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;flex:1;min-width:0}
+.tab{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;font-size:13px;color:var(--tx-2);cursor:pointer;border-radius:var(--r-s);border:none;background:transparent;text-align:left;font-family:inherit;transition:color .15s ease-out,background .15s ease-out;white-space:nowrap}
 .tab .ico{width:15px;height:15px;flex-shrink:0;opacity:.7;transition:opacity .15s ease-out}
-.tab:hover{color:var(--tx);background:rgba(255,255,255,.035)}
+.tab:hover{color:var(--tx);background:rgba(255,255,255,.04)}
 .tab:hover .ico{opacity:1}
 .tab.active{color:var(--tx);background:var(--s2);box-shadow:inset 0 0 0 1px var(--line)}
 .tab.active .ico{opacity:1;color:var(--accent)}
-.sidebar-foot{padding:12px 10px;font-size:10.5px;color:var(--tx-3);line-height:1.65;border-top:1px solid var(--line);margin-top:12px}
-.main{flex:1;min-width:0;padding:0 30px 48px;max-width:1320px}
-header{position:sticky;top:0;z-index:30;padding:13px 0;margin-bottom:8px;background:rgba(11,12,14,.84);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.main{max-width:1320px;margin:0 auto;padding:22px 30px 48px}
+.page-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;color:var(--tx-3);padding-bottom:12px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
 .panel{display:none}
 .panel.active{display:block;animation:panelIn .35s var(--ease)}
 @keyframes panelIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -176,7 +176,7 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .layer-b3{background:var(--info-bg);color:var(--info);border-color:var(--info-line)}
 .layer-b4{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-line)}
 .layer-b5{background:var(--zcool-bg);color:var(--zcool);border-color:var(--zcool-line)}
-.footer{padding:44px 0 22px;text-align:center;font-size:11px;color:var(--tx-3);font-family:var(--mono);letter-spacing:.04em}
+.footer{padding:28px 0 22px;text-align:center;font-size:11px;color:var(--tx-3);font-family:var(--mono);letter-spacing:.04em}
 .footer a{color:var(--tx-2);border-bottom:1px solid var(--line-2)}
 .footer a:hover{color:var(--tx)}
 /* 宣言条：宋体引文，不用彩色侧边条 */
@@ -290,25 +290,30 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
 .token-setup button:hover{background:rgba(255,107,107,.18)}
 .token-help{font-size:10.5px;color:var(--tx-3);margin-bottom:12px}
 .token-help a{color:var(--tx-2);border-bottom:1px solid var(--line-2)}
-@media (max-width:900px){
-  .app{flex-direction:column}
-  .sidebar{width:100%;height:auto;position:relative;border-right:none;border-bottom:1px solid var(--line);padding:14px}
-  .sidebar-nav{flex-direction:row;flex-wrap:wrap;gap:6px}
-  .tab{width:auto;padding:7px 11px}
-  .sidebar-brand{padding:0 0 12px;margin-bottom:10px}
-  .main{padding:0 16px 40px}
+/* 板块独立盘入口（由 dashboard-server 注入，静态产物不含） */
+.board-entry{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:28px;padding-top:16px;border-top:1px solid var(--line)}
+.be-label{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--tx-3);margin-right:2px}
+.be-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;font-size:12px;color:var(--tx-2);background:var(--s1);border:1px solid var(--line);border-radius:999px;transition:all .15s ease-out}
+.be-chip:hover{color:var(--tx);background:var(--s2);border-color:var(--line-2)}
+@media (max-width:1000px){
+  .topbar-inner{padding:10px 16px;gap:10px}
+  .brand{order:1}
+  .top-actions{order:2;margin-left:auto}
+  .topnav{order:3;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
+  .topnav::-webkit-scrollbar{height:0}
+  .main{padding:18px 16px 40px}
 }
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="sidebar">
-  <div class="sidebar-brand">
-    <h1>造化坊</h1>
-    <div class="brand-en">CREATION FORGE</div>
-    <div class="sub">${D.today}<br>任务/目标 → 板块 → 明细 → 知识</div>
-  </div>
-  <nav class="sidebar-nav">
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <h1>造化坊</h1>
+      <div class="brand-en">CREATION FORGE</div>
+    </div>
+    <nav class="topnav">
     <button class="tab" onclick="switchTab('boards',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>板块</button>
     <button class="tab active" onclick="switchTab('personal-tasks',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.6 1.6L8.1 4.6"/><path d="M3.5 12l1.6 1.6L8.1 10.6"/><path d="M3.5 18l1.6 1.6L8.1 16.6"/></svg>任务</button>
     <button class="tab" onclick="switchTab('goals',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>目标</button>
@@ -316,18 +321,17 @@ header .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end
     <button class="tab" onclick="switchTab('workflows',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="12" r="2.6"/><path d="M6 8.6v6.8"/><path d="M8.6 6h4.4a2.5 2.5 0 012.5 2.5v.9"/></svg>工作流</button>
     <button class="tab" onclick="switchTab('guides',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.6A2.6 2.6 0 016.6 3H19v15.4H6.6A2.6 2.6 0 004 21V5.6z"/><path d="M4 18.4A2.6 2.6 0 016.6 15.8H19"/></svg>知识库</button>
     <button class="tab" onclick="switchTab('assets',this)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.2-5.4 6.2-10.2A6.2 6.2 0 105.8 10.8C5.8 15.6 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.3"/></svg>资产地址</button>
-  </nav>
-  <div class="sidebar-foot">默认打开任务总览<br>本地服务可秒完成/取消</div>
-</aside>
-<div class="main">
-<header>
-  <div class="top-actions">
+    </nav>
+    <div class="top-actions">
     <button class="btn" onclick="openIssues()" title="系统诊断问题"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="M15.8 15.8L20.5 20.5"/></svg>系统问题</button>
     <button class="btn" onclick="openAiSuggest()" title="AI 方向建议"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 3.5l1.7 4.8 4.8 1.7-4.8 1.7-1.7 4.8-1.7-4.8L4.9 10l4.8-1.7 1.8-4.8z"/><path d="M18 15.8l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z"/></svg>AI 建议</button>
     <button class="btn btn-primary" onclick="openRecentLogs()" title="查看近期工作日志"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3h7.2L18 7.3V21H6.5z"/><path d="M13.6 3v4.4H18"/><path d="M9.4 12.4h5.6M9.4 16.2h5.6"/></svg>近期日志</button>
     <button class="btn" onclick="archiveTasks(this)" title="将已完成/已取消移入本周归档（本地）"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.4" y="4.2" width="17.2" height="4.2" rx="1.3"/><path d="M5.2 8.4v11.1a1.3 1.3 0 001.3 1.3h11a1.3 1.3 0 001.3-1.3V8.4"/><path d="M10.2 12.6h3.6"/></svg>周度归档<span id="archive-badge" style="margin-left:4px;color:#ffd93d;font-size:11px"></span></button>
+    </div>
   </div>
-</header>
+</div>
+<div class="main">
+<div class="page-meta"><span>${D.today} · 任务 / 目标 → 板块 → 明细 → 知识</span><span>本地服务 :3456 · 可秒完成 / 取消</span></div>
 
 <div id="tab-boards" class="panel"><div class="section-title" style="margin:0 0 6px;padding:0;border:none">五板块总览</div><div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:12px;line-height:1.6">板块 git 变动监控（含迁移前历史路径回溯）· 工作日志统一记录于 造化仪表盘/works/</div><div id="tbl-boards"></div><div class="section-title">近期工作日志</div><div id="tbl-recent-works"></div></div>
 <div id="tab-personal-tasks" class="panel active"><div class="section-title" style="margin:0 0 16px;padding:0;border:none">个人待办</div><div class="abc-filter" id="abc-filter"><button class="abc-tag active-a" onclick="switchAbc('all',this)">全部</button><button class="abc-tag" onclick="switchAbc('A',this)">A · 要事</button><button class="abc-tag" onclick="switchAbc('B',this)">B · 紧急</button><button class="abc-tag" onclick="switchAbc('C',this)">C · 杂事</button></div><div class="sub-tabs" id="pt-sub-tabs"><button class="sub-tab active" onclick="switchPtSub('all',this)">全部<span class="sub-count" id="pt-count-all"></span></button><button class="sub-tab" style="color:#4caf50" onclick="switchPtSub('D',this)">🏢 主美<span class="sub-count" id="pt-count-D"></span></button><button class="sub-tab" style="color:#ff9800" onclick="switchPtSub('X',this)">📱 小红书<span class="sub-count" id="pt-count-X"></span></button><button class="sub-tab" style="color:#42a5f5" onclick="switchPtSub('G',this)">🎮 游戏<span class="sub-count" id="pt-count-G"></span></button><button class="sub-tab" style="color:#ce93d8" onclick="switchPtSub('F',this)">🔧 造化坊<span class="sub-count" id="pt-count-F"></span></button><button class="sub-tab" style="color:#78909c" onclick="switchPtSub('L',this)">🏠 日常<span class="sub-count" id="pt-count-L"></span></button></div><div id="tbl-personal-tasks"></div><div class="section-title" style="cursor:pointer;user-select:none" onclick="toggleArchive()">周度归档 <span style="font-size:12px;color:rgba(255,255,255,.35)" id="archive-toggle">▶ 展开</span></div><div id="archive-section" style="display:none"></div></div>
@@ -533,7 +537,7 @@ function closeWfDetail() { document.getElementById('wf-detail-overlay').classLis
 
 function switchTab(name, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-nav .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.topnav .tab').forEach(t => t.classList.remove('active'));
   var panel = document.getElementById('tab-' + name);
   if (panel) panel.classList.add('active');
   if (el) el.classList.add('active');
