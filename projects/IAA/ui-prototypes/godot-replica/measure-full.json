@@ -1,0 +1,13 @@
+{
+  "id": 2,
+  "jsonrpc": "2.0",
+  "result": {
+    "content": [
+      {
+        "text": "Script compilation failed. Check syntax.",
+        "type": "text"
+      }
+    ],
+    "isError": true
+  }
+}

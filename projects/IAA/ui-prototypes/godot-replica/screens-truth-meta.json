@@ -1,0 +1,32 @@
+[
+  {
+    "file": "T01-Menu.html",
+    "name": "T01-Menu",
+    "w": 450,
+    "h": 800
+  },
+  {
+    "file": "T02-InGame.html",
+    "name": "T02-InGame",
+    "w": 450,
+    "h": 800
+  },
+  {
+    "file": "T03-LevelClear.html",
+    "name": "T03-LevelClear",
+    "w": 450,
+    "h": 800
+  },
+  {
+    "file": "T04-GameOver.html",
+    "name": "T04-GameOver",
+    "w": 450,
+    "h": 800
+  },
+  {
+    "file": "T05-Pause.html",
+    "name": "T05-Pause",
+    "w": 450,
+    "h": 800
+  }
+]

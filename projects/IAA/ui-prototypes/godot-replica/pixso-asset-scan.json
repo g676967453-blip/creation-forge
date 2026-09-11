@@ -1,0 +1,148 @@
+{
+  "page": "Godot-UI-Replica",
+  "pages": [
+    {
+      "id": "0:1",
+      "name": "页面 1",
+      "frames": []
+    },
+    {
+      "id": "2:2",
+      "name": "FireHero-UI-Prototypes",
+      "frames": [
+        "01-MainMenu",
+        "02-InGameHUD",
+        "03-CharacterSelect",
+        "04-LevelClear",
+        "05-Shop",
+        "06-GameOver",
+        "07-AdReward",
+        "08-Pause",
+        "09-FriendRank"
+      ]
+    },
+    {
+      "id": "10:1",
+      "name": "Godot-UI-Replica",
+      "frames": [
+        "T01-Menu",
+        "T02-InGame",
+        "T03-LevelClear",
+        "T04-GameOver",
+        "T05-Pause"
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "T01-Menu",
+      "id": "10:1503",
+      "w": 450,
+      "h": 800,
+      "totalNodes": 73,
+      "imageNodes": 61,
+      "imgSample": [
+        "img:450x800",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48"
+      ]
+    },
+    {
+      "name": "T02-InGame",
+      "id": "10:1578",
+      "w": 450,
+      "h": 800,
+      "totalNodes": 88,
+      "imageNodes": 65,
+      "imgSample": [
+        "img:450x800",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48"
+      ]
+    },
+    {
+      "name": "T03-LevelClear",
+      "id": "10:1668",
+      "w": 450,
+      "h": 800,
+      "totalNodes": 82,
+      "imageNodes": 62,
+      "imgSample": [
+        "img:450x800",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48"
+      ]
+    },
+    {
+      "name": "T04-GameOver",
+      "id": "10:1752",
+      "w": 450,
+      "h": 800,
+      "totalNodes": 73,
+      "imageNodes": 61,
+      "imgSample": [
+        "img:450x800",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48"
+      ]
+    },
+    {
+      "name": "T05-Pause",
+      "id": "10:1898",
+      "w": 450,
+      "h": 800,
+      "totalNodes": 69,
+      "imageNodes": 61,
+      "imgSample": [
+        "img:450x800",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48",
+        "img:48x48"
+      ]
+    }
+  ]
+}

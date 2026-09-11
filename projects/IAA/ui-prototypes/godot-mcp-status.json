@@ -1,0 +1,178 @@
+{
+  "project": {
+    "godot_version": "4.7.stable",
+    "main_scene": "res://scenes/main.tscn",
+    "project_description": "以经典 FC Flying Hero 玩法为基准的竖屏 IAA 休闲小游戏（Godot 4.7）",
+    "project_name": "救火英雄 IAA",
+    "project_path": "J:/ceshi/projects/IAA/fire-hero-godot/",
+    "project_version": "0.1.4"
+  },
+  "current_scene": {
+    "is_modified": true,
+    "node_count": 57,
+    "root_node_type": "Node",
+    "scene_name": "Main",
+    "scene_path": "res://scenes/main.tscn"
+  },
+  "editor_state": {
+    "active_scene": "Main",
+    "editor_mode": "editor",
+    "selected_count": 1,
+    "selected_nodes": [
+      {
+        "path": "/root/Main/UI/Overlays/Menu/VBox/Sub",
+        "type": "Label"
+      }
+    ]
+  },
+  "tree_summary": {
+    "scene_name": "Main",
+    "total_nodes": 57
+  },
+  "node_props": {
+    "/root/Main/UI": {
+      "visible": true,
+      "name": "UI"
+    },
+    "/root/Main/UI/HUD": {
+      "visible": false,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "HUD",
+      "global_position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "/root/Main/UI/Overlays/Menu": {
+      "visible": true,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "Menu",
+      "global_position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "/root/Main/UI/Overlays/LevelClear": {
+      "visible": false,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "LevelClear",
+      "global_position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "/root/Main/UI/Overlays/GameOver": {
+      "visible": false,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "GameOver",
+      "global_position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "/root/Main/UI/Overlays/Pause": {
+      "visible": false,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "Pause",
+      "global_position": {
+        "x": 0.0,
+        "y": 0.0
+      }
+    },
+    "/root/Main/GameRoot/Background": {
+      "visible": true,
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "Background"
+    },
+    "/root/Main/GameRoot/Paddle": {
+      "visible": true,
+      "position": {
+        "x": 225.0,
+        "y": 650.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "Paddle",
+      "global_position": {
+        "x": 225.0,
+        "y": 650.0
+      }
+    },
+    "/root/Main/GameRoot/Ball": {
+      "visible": true,
+      "position": {
+        "x": 226.0,
+        "y": 625.0
+      },
+      "modulate": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+      },
+      "name": "Ball",
+      "global_position": {
+        "x": 226.0,
+        "y": 625.0
+      }
+    }
+  }
+}

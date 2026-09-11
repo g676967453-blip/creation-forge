@@ -1,0 +1,488 @@
+{
+  "UI/Overlays/Menu": {
+    "class": "ColorRect",
+    "x": 0.0,
+    "y": 0.0,
+    "w": 450.0,
+    "h": 800.0,
+    "visible": true,
+    "color": [
+      0.05000000074506,
+      0.07000000029802,
+      0.10000000149012,
+      0.9200000166893
+    ]
+  },
+  "UI/Overlays/Menu/VBox": {
+    "class": "VBoxContainer",
+    "x": 75.0,
+    "y": 260.0,
+    "w": 300.0,
+    "h": 280.0,
+    "visible": true
+  },
+  "UI/Overlays/Menu/VBox/Title": {
+    "class": "Label",
+    "x": 75.0,
+    "y": 260.0,
+    "w": 300.0,
+    "h": 29.0,
+    "visible": true,
+    "text": "救火英雄",
+    "font_size": 28,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/Menu/VBox/Sub": {
+    "class": "Label",
+    "x": 75.0,
+    "y": 303.0,
+    "w": 300.0,
+    "h": 31.0,
+    "visible": true,
+    "text": "灭火或救人 · 双通道过关\nGodot 4.7 · IAA 验证版",
+    "font_size": 13,
+    "font_color": [
+      0.69999998807907,
+      0.77999997138977,
+      0.87999999523163,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/Menu/VBox/MenuStats": {
+    "class": "Label",
+    "x": 75.0,
+    "y": 348.0,
+    "w": 300.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "最高分 0　金币 0",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      0.87999999523163,
+      0.44999998807907,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/Menu/VBox/StartButton": {
+    "class": "Button",
+    "x": 75.0,
+    "y": 378.0,
+    "w": 300.0,
+    "h": 36.0,
+    "visible": true,
+    "text": "开始游戏"
+  },
+  "UI/HUD/TopBar/LevelBox": {
+    "class": "HBoxContainer",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 26.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/LevelBox/Icon": {
+    "class": "TextureRect",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 16.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/LevelBox/LevelLabel": {
+    "class": "Label",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 6.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "1",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 0
+  },
+  "UI/HUD/TopBar/ScoreBox": {
+    "class": "HBoxContainer",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 30.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/ScoreBox/Icon": {
+    "class": "TextureRect",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 16.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/ScoreBox/ScoreLabel": {
+    "class": "Label",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 10.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "0",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/HUD/TopBar/CoinsBox": {
+    "class": "HBoxContainer",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 30.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/CoinsBox/Icon": {
+    "class": "TextureRect",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 16.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/CoinsBox/CoinsLabel": {
+    "class": "Label",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 10.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "0",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/HUD/TopBar/LivesBox": {
+    "class": "HBoxContainer",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 30.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/LivesBox/Icon": {
+    "class": "TextureRect",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 16.0,
+    "h": 16.0,
+    "visible": true
+  },
+  "UI/HUD/TopBar/LivesBox/LivesLabel": {
+    "class": "Label",
+    "x": 8.0,
+    "y": 8.0,
+    "w": 10.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "3",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 2
+  },
+  "UI/HUD/GoalLabel": {
+    "class": "Label",
+    "x": 8.0,
+    "y": 44.0,
+    "w": 434.0,
+    "h": 28.0,
+    "visible": true,
+    "text": "火 0   人 0",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/HUD/Hint": {
+    "class": "Label",
+    "x": 25.0,
+    "y": 752.0,
+    "w": 400.0,
+    "h": 36.0,
+    "visible": true,
+    "text": "A/D 或拖拽移动 · 空格/点击发射 · Esc 暂停",
+    "font_size": 12,
+    "font_color": [
+      0.64999997615814,
+      0.72000002861023,
+      0.80000001192093,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/LevelClear": {
+    "class": "ColorRect",
+    "x": 0.0,
+    "y": 0.0,
+    "w": 450.0,
+    "h": 800.0,
+    "visible": false,
+    "color": [
+      0.05000000074506,
+      0.10000000149012,
+      0.07999999821186,
+      0.89999997615814
+    ]
+  },
+  "UI/Overlays/LevelClear/VBox/Title": {
+    "class": "Label",
+    "x": 20.0,
+    "y": 55.0,
+    "w": 120.0,
+    "h": 27.0,
+    "visible": true,
+    "text": "扑灭成功！",
+    "font_size": 26,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/LevelClear/VBox/Stats": {
+    "class": "Label",
+    "x": 20.0,
+    "y": 55.0,
+    "w": 56.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "本关奖励",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/LevelClear/VBox/DoubleButton": {
+    "class": "Button",
+    "x": 20.0,
+    "y": 55.0,
+    "w": 126.0,
+    "h": 24.0,
+    "visible": true,
+    "text": "看广告 · 双倍金币"
+  },
+  "UI/Overlays/LevelClear/VBox/NextButton": {
+    "class": "Button",
+    "x": 20.0,
+    "y": 55.0,
+    "w": 91.0,
+    "h": 41.0,
+    "visible": true,
+    "text": "下一关 →"
+  },
+  "UI/Overlays/GameOver": {
+    "class": "ColorRect",
+    "x": 0.0,
+    "y": 0.0,
+    "w": 450.0,
+    "h": 800.0,
+    "visible": false,
+    "color": [
+      0.11999999731779,
+      0.05000000074506,
+      0.05000000074506,
+      0.9200000166893
+    ]
+  },
+  "UI/Overlays/GameOver/VBox/Title": {
+    "class": "Label",
+    "x": 75.0,
+    "y": 250.0,
+    "w": 118.0,
+    "h": 27.0,
+    "visible": true,
+    "text": "任务失败…",
+    "font_size": 26,
+    "font_color": [
+      1.0,
+      0.40000000596046,
+      0.34999999403954,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/GameOver/VBox/Stats": {
+    "class": "Label",
+    "x": 75.0,
+    "y": 250.0,
+    "w": 28.0,
+    "h": 16.0,
+    "visible": true,
+    "text": "统计",
+    "font_size": 15,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/GameOver/VBox/ReviveButton": {
+    "class": "Button",
+    "x": 75.0,
+    "y": 250.0,
+    "w": 99.0,
+    "h": 24.0,
+    "visible": true,
+    "text": "看广告 · 复活"
+  },
+  "UI/Overlays/GameOver/VBox/RetryButton": {
+    "class": "Button",
+    "x": 75.0,
+    "y": 250.0,
+    "w": 88.0,
+    "h": 36.0,
+    "visible": true,
+    "text": "重新开始"
+  },
+  "UI/Overlays/GameOver/VBox/MenuButton": {
+    "class": "Button",
+    "x": 75.0,
+    "y": 250.0,
+    "w": 50.0,
+    "h": 24.0,
+    "visible": true,
+    "text": "主菜单"
+  },
+  "UI/Overlays/Pause": {
+    "class": "ColorRect",
+    "x": 0.0,
+    "y": 0.0,
+    "w": 450.0,
+    "h": 800.0,
+    "visible": false,
+    "color": [
+      0.05000000074506,
+      0.0599999986589,
+      0.10000000149012,
+      0.85000002384186
+    ]
+  },
+  "UI/Overlays/Pause/VBox/Title": {
+    "class": "Label",
+    "x": 105.0,
+    "y": 320.0,
+    "w": 72.0,
+    "h": 27.0,
+    "visible": true,
+    "text": "已暂停",
+    "font_size": 26,
+    "font_color": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "halign": 1
+  },
+  "UI/Overlays/Pause/VBox/ResumeButton": {
+    "class": "Button",
+    "x": 105.0,
+    "y": 320.0,
+    "w": 60.0,
+    "h": 36.0,
+    "visible": true,
+    "text": "继续"
+  },
+  "UI/Overlays/Pause/VBox/MenuButton": {
+    "class": "Button",
+    "x": 105.0,
+    "y": 320.0,
+    "w": 50.0,
+    "h": 24.0,
+    "visible": true,
+    "text": "主菜单"
+  },
+  "GameRoot/Paddle": {
+    "class": "CharacterBody2D",
+    "x": 225.0,
+    "y": 650.0
+  },
+  "GameRoot/Ball": {
+    "class": "CharacterBody2D",
+    "x": 226.0,
+    "y": 625.0
+  },
+  "menu_kids": [
+    {
+      "name": "Title",
+      "class": "Label",
+      "x": 75.0,
+      "y": 260.0,
+      "w": 300.0,
+      "h": 29.0,
+      "text": "救火英雄"
+    },
+    {
+      "name": "Sub",
+      "class": "Label",
+      "x": 75.0,
+      "y": 303.0,
+      "w": 300.0,
+      "h": 31.0,
+      "text": "灭火或救人 · 双通道过关\nGodot 4.7 · IAA 验证版"
+    },
+    {
+      "name": "MenuStats",
+      "class": "Label",
+      "x": 75.0,
+      "y": 348.0,
+      "w": 300.0,
+      "h": 16.0,
+      "text": "最高分 0　金币 0"
+    },
+    {
+      "name": "StartButton",
+      "class": "Button",
+      "x": 75.0,
+      "y": 378.0,
+      "w": 300.0,
+      "h": 36.0,
+      "text": "开始游戏"
+    }
+  ]
+}

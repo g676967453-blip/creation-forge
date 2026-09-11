@@ -1,0 +1,80 @@
+{
+  "report": {
+    "T01-Menu": {
+      "images": 61,
+      "children": 69
+    },
+    "T02-InGame": {
+      "images": 65,
+      "children": 81
+    },
+    "T03-LevelClear": {
+      "images": 62,
+      "children": 96
+    },
+    "T04-GameOver": {
+      "images": 61,
+      "children": 70
+    },
+    "T05-Pause": {
+      "images": 61,
+      "children": 67
+    }
+  },
+  "frames": [
+    {
+      "id": "10:1503",
+      "name": "T01-Menu",
+      "x": 0,
+      "y": 0,
+      "w": 450,
+      "h": 800,
+      "childCount": 69
+    },
+    {
+      "id": "10:1578",
+      "name": "T02-InGame",
+      "x": 530,
+      "y": 0,
+      "w": 450,
+      "h": 800,
+      "childCount": 81
+    },
+    {
+      "id": "10:1668",
+      "name": "T03-LevelClear",
+      "x": 1060,
+      "y": 0,
+      "w": 450,
+      "h": 800,
+      "childCount": 96
+    },
+    {
+      "id": "10:1752",
+      "name": "T04-GameOver",
+      "x": 0,
+      "y": 900,
+      "w": 450,
+      "h": 800,
+      "childCount": 70
+    },
+    {
+      "id": "10:1898",
+      "name": "T05-Pause",
+      "x": 530,
+      "y": 900,
+      "w": 450,
+      "h": 800,
+      "childCount": 67
+    },
+    {
+      "id": "11:1",
+      "name": "G06-AssetBoard",
+      "x": 0,
+      "y": 1800,
+      "w": 1400,
+      "h": 1267,
+      "childCount": 39
+    }
+  ]
+}

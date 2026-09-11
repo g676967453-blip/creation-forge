@@ -109,7 +109,12 @@ fire-hero-godot/
 
 ## 关联文档
 
+- 通用落地流程：`../../../docs/workflows/游戏开发-Godot-Pixso-Lovart四阶段.md`（**跨项目**；画风不在此）
+- 本项目工作流配置：`../docs/project-workflow-profile.md`（风格锁与目录 **仅 IAA**）
+- 占位资产表：`docs/placeholder-asset-map.md`
+- 场景规则 / 像素规范（本项目）：`docs/scene-config-rules.md` · `docs/pixel-art-spec.md`
 - `../救火英雄IAA游戏企划.md`
 - `../fire-hero-game-rules.md`
 - `../微创新需求规格.md`
 - `../fire-hero-iaa.html`（参考原型）
+- Pixso 原型：`../ui-prototypes/`

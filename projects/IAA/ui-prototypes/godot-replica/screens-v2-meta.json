@@ -1,0 +1,52 @@
+{
+  "screens": [
+    {
+      "file": "G01-Menu.html",
+      "name": "G01-Menu",
+      "w": 450,
+      "h": 800,
+      "col": 0,
+      "row": 0
+    },
+    {
+      "file": "G02-InGame.html",
+      "name": "G02-InGame",
+      "w": 450,
+      "h": 800,
+      "col": 1,
+      "row": 0
+    },
+    {
+      "file": "G03-LevelClear-Shop.html",
+      "name": "G03-LevelClear-Shop",
+      "w": 450,
+      "h": 800,
+      "col": 2,
+      "row": 0
+    },
+    {
+      "file": "G04-GameOver.html",
+      "name": "G04-GameOver",
+      "w": 450,
+      "h": 800,
+      "col": 0,
+      "row": 1
+    },
+    {
+      "file": "G05-Pause.html",
+      "name": "G05-Pause",
+      "w": 450,
+      "h": 800,
+      "col": 1,
+      "row": 1
+    },
+    {
+      "file": "G06-AssetBoard.html",
+      "name": "G06-AssetBoard",
+      "w": 1400,
+      "h": 1267,
+      "col": 0,
+      "row": 2
+    }
+  ]
+}
