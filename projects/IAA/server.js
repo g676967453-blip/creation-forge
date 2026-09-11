@@ -44,6 +44,15 @@ function handle(req,res){
   var urlPath=decodeURIComponent((req.url||'/').split('?')[0]);
   // 根路径 → 默认试玩页（兼容旧行为）
   if(urlPath==='/'||urlPath==='') urlPath='/'+INDEX;
+  // H5（Godot Web）必须运行在安全上下文：HTTP 访问 /web-build 时自动跳转 HTTPS
+  if(!req.socket.encrypted && urlPath.indexOf('/web-build')===0){
+    var hostOnly=(req.headers.host||'').split(':')[0];
+    if(hostOnly && hostOnly!=='localhost' && hostOnly!=='127.0.0.1'){
+      res.writeHead(302,{'Location':'https://'+hostOnly+':'+HTTPS_PORT+urlPath});
+      res.end();
+      return;
+    }
+  }
   // 防目录穿越
   var safePath=path.normalize(urlPath).replace(/^(\.\.[/\\])+/,'');
   var filePath=path.join(ROOT,safePath);
