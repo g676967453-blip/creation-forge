@@ -1,4 +1,0 @@
-# dsh-worktable 服务端插件：注册 /api/worktable/health 健康路由
-- insert:
-    - id: dsh-worktable
-      name: dsh-worktable
