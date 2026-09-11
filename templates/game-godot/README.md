@@ -1,6 +1,6 @@
 # Godot 游戏模板
 
-> Godot 4 项目起点（含 **MCP 插件**，AI 可直接操作项目）。
+> Godot 4 项目起点（含 **MCP 插件** + **GodotPrompter 技能包**，AI 可直接操作项目并按官方规范写码）。
 
 ## 已预置：Godot MCP Native 插件
 
@@ -36,13 +36,37 @@ Cursor / Trae / Cline / Claude Desktop 等通过 `mcp-remote` 接入，详见插
 
 ---
 
+## 已预置：GodotPrompter 技能包
+
+模板自带 `.claude/skills/` 下 **55 个 Godot 4.x 专属 Agent Skills**，用途是让 AI 按 Godot 官方风格写 GDScript / 场景树 / 工程结构 —— 而不是自由发挥。
+
+- 来源：[jame581/GodotPrompter](https://github.com/jame581/GodotPrompter)（**MIT** 许可）
+- 版本：v1.13.2（commit `eae755a1`）
+- 入口技能：`using-godot-prompter`（索引）；写码前优先读 `gdscript-patterns`、`godot-code-review`、`scene-organization`
+- 覆盖：项目结构、GDScript 模式与进阶、场景组织、资源模式、事件总线、状态机、组件系统、UI、物理、输入、动画、音频、存档、测试、性能、调试、导出与移动端
+- 许可与来源取证见同目录 `GODOT-PROMPTER-LICENSE.txt`、`GODOT-PROMPTER-SOURCE.md`
+
+### 给已有项目安装
+
+```powershell
+powershell -NoProfile -File tools/install-godot-skills.ps1
+```
+
+脚本会：拉取上游 → 复制到 `.claude/skills/` 与 `templates/game-godot/.claude/skills/` → 附许可与来源（幂等，可重复执行）。
+加 `-DshPresetId godot` 还会在 `%USERPROFILE%\.dsh\.agent-presets\godot\` 建一个带这些技能的 DSH agent preset。
+
+> ⚠️ 技能必须是扁平的 `<name>/SKILL.md`。Claude Code 与 `dsh-skill-filesystem` 的技能发现都只有一层，**嵌套的 `**/SKILL.md` 不会被发现**，所以不要给技能加分类子目录。
+
+---
+
 ## 计划内容（其余部分待补齐）
 
 - Godot 4 项目结构
 - 基础场景模板（2D）
-- GDScript 编码规范
 - 常用节点配置（CharacterBody2D, TileMap, AnimationPlayer 等）
 - Phaser 与 Godot 的概念对照表
+
+> GDScript 编码规范已由上方 **GodotPrompter 技能包**覆盖（`gdscript-patterns` / `godot-code-review` / `scene-organization`）。
 
 ## 参考
 
