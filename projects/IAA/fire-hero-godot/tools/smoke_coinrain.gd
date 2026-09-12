@@ -191,6 +191,25 @@ func _run() -> void:
 		rain._settle_coin != null and rain._settle_num != null
 			and rain._settle_coin.z_index > rain._settle_num.z_index
 	])
+	# 版面自检：金币只允许压住数字字形顶部一小条，不能把它盖住。
+	# 旧版面把数字与金币都放在画布中心，132px 金币把数字字形完全覆盖
+	# （字形 213~267 全在金币 149~281 内）→ 玩家只看到金币，这条必挂。
+	var coin_half: float = CoinRain.BIG_COIN_SIZE * 0.5
+	var coin_top: float = CoinRain.SETTLE_COIN_CY - coin_half
+	var coin_bottom: float = CoinRain.SETTLE_COIN_CY + coin_half
+	var glyph_half: float = float(CoinRain.SETTLE_NUM_SIZE) * 0.36  # 数字字形高度约为字号的一半多一点
+	var glyph_top: float = CoinRain.SETTLE_NUM_CY - glyph_half
+	var glyph_bottom: float = CoinRain.SETTLE_NUM_CY + glyph_half
+	var covered: float = maxf(0.0, minf(coin_bottom, glyph_bottom) - maxf(coin_top, glyph_top))
+	checks.append([
+		"number_not_buried_by_coin",
+		covered < (glyph_bottom - glyph_top) * 0.5
+	])
+	checks.append([
+		"number_glyphs_on_canvas",
+		glyph_top > 0.0 and glyph_bottom < float(GameConstants.VIEW_H)
+	])
+	checks.append(["big_coin_on_canvas", coin_top > 0.0 and coin_bottom < float(GameConstants.VIEW_H)])
 
 	# 滚动中：数值应在 0..total 之间且不等于最终值
 	rain._settle_elapsed = CoinRain.SETTLE_ROLL * 0.5

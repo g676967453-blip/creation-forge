@@ -51,11 +51,22 @@ const POP_COLOR: Color = Color(1.0, 0.9, 0.45)
 const POP_FONT_SIZE: int = 20
 
 ## 结算演出
-const SETTLE_ROLL: float = 1.1           ## 数值快速滚动时长（秒）
-const SETTLE_HOLD: float = 1.0           ## 定格后停留时长（秒）
+const SETTLE_ROLL: float = 1.8           ## 数值快速滚动时长（秒）——太短会看不清
+const SETTLE_HOLD: float = 1.4           ## 定格后停留时长（秒）
 const BIG_COIN_SIZE: float = 132.0       ## 结算大金币边长
-const SETTLE_NUM_SIZE: int = 74          ## 结算数字字号
+const SETTLE_NUM_SIZE: int = 92          ## 结算数字字号
 const SETTLE_CAPTION: String = "金币雨结算"
+
+## 结算版面：纵向排布，只让金币压住数字顶部一点点。
+##
+## 第一版把数字与金币都放在画布中心，结果 132px 的金币把数字字形整个盖住
+## （数字字形 y 213~267 完全落在金币 y 149~281 之内），玩家只能看到金币。
+## 现在把数字整体下移到金币下方，靠「金币 z_index 更高 + 压住数字顶部约 20px」
+## 来表达前后层次，同时保证数字读得清。
+const SETTLE_CAPTION_Y: float = 280.0    ## 标题 Label 顶边 y
+const SETTLE_COIN_CY: float = 378.0      ## 大金币中心 y
+const SETTLE_NUM_CY: float = 458.0       ## 数字中心 y
+const SETTLE_NUM_H: float = 130.0        ## 数字 Label 高度（用于垂直居中）
 
 ## 接取判定盒（蹦床中心为原点）——与 item.gd 保持一致，玩家直觉一致
 const CATCH_Y_MIN: float = -24.0
@@ -312,7 +323,7 @@ func _build_settle() -> void:
 	caption.name = "SettleCaption"
 	caption.theme = UI_THEME
 	caption.text = SETTLE_CAPTION
-	caption.position = Vector2(0.0, cx - 130.0)
+	caption.position = Vector2(0.0, SETTLE_CAPTION_Y)
 	caption.size = Vector2(float(GameConstants.VIEW_W), 28.0)
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	caption.add_theme_font_size_override("font_size", 20)
@@ -324,13 +335,14 @@ func _build_settle() -> void:
 	caption.z_index = 1
 	_settle_root.add_child(caption)
 
-	# 数值：先建、z_index 更低 → 被金币压住一部分，形成「金币在前面」的层次
+	# 数值：先建、z_index 更低 → 被金币压住顶部一小条，形成「金币在前面」的层次
+	# （位置必须让字形整体落在金币下方，否则会被整个盖住 —— 见 SETTLE_* 版面常量注释）
 	_settle_num = Label.new()
 	_settle_num.name = "SettleNumber"
 	_settle_num.theme = UI_THEME
 	_settle_num.text = "0"
-	_settle_num.position = Vector2(0.0, cx - 40.0)
-	_settle_num.size = Vector2(float(GameConstants.VIEW_W), 110.0)
+	_settle_num.position = Vector2(0.0, SETTLE_NUM_CY - SETTLE_NUM_H * 0.5)
+	_settle_num.size = Vector2(float(GameConstants.VIEW_W), SETTLE_NUM_H)
 	_settle_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_settle_num.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_settle_num.add_theme_font_size_override("font_size", SETTLE_NUM_SIZE)
@@ -349,14 +361,14 @@ func _build_settle() -> void:
 	_settle_coin.texture = COIN_TEX
 	var s: float = BIG_COIN_SIZE / float(COIN_TEX.get_width())
 	_settle_coin.scale = Vector2(s, s)
-	_settle_coin.position = Vector2(cx, cx - 10.0)
+	_settle_coin.position = Vector2(cx, SETTLE_COIN_CY)
 	_settle_coin.z_index = 2
 	_settle_root.add_child(_settle_coin)
 
 	# 金币入场：从上方落下并回弹一下
-	_settle_coin.position.y = cx - 240.0
+	_settle_coin.position.y = SETTLE_COIN_CY - 240.0
 	var drop: Tween = create_tween()
-	drop.tween_property(_settle_coin, "position:y", cx - 10.0, 0.5) \
+	drop.tween_property(_settle_coin, "position:y", SETTLE_COIN_CY, 0.5) \
 		.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 
 
