@@ -39,10 +39,12 @@ var skill_btn: Button = null
 var vpad_left: Button = null
 var vpad_right: Button = null
 var coin_test_btn: Button = null
+var chest_test_btn: Button = null
 
 ## ==== 临时调试按钮开关（正式发布前置 false 或删除按钮即可）====
 const TEST_COIN_BTN_ENABLED: bool = true
 const TEST_COIN_AMOUNT: int = 500
+const TEST_CHEST_BTN_ENABLED: bool = true
 
 var _toast_tween: Tween
 
@@ -75,6 +77,7 @@ func _ready() -> void:
 	_build_skill_btn()
 	_build_virtual_buttons()
 	_build_test_coin_btn()
+	_build_test_chest_btn()
 	_on_state(game.state)
 	refresh_hud()
 	_toast("救火英雄 IAA · Godot 4.7")
@@ -472,6 +475,34 @@ func _build_test_coin_btn() -> void:
 	)
 	# 挂到顶层 Overlays：主菜单/商店/游戏中都能点
 	$Overlays.add_child(coin_test_btn)
+
+
+# ===== 临时测试：右上角「掉宝箱」按钮（正式发布删此方法 + _ready 调用 + TEST 常量） =====
+
+## 一键掉一个金币宝箱（落在蹦床正上方、直线落下），用于反复验证金币雨 + 结算演出，
+## 不必等 1.4% 的自然掉落率。位置排在「+金币」按钮下方，同样挂 Overlays 顶层。
+func _build_test_chest_btn() -> void:
+	if not TEST_CHEST_BTN_ENABLED:
+		return
+	if chest_test_btn != null and is_instance_valid(chest_test_btn):
+		chest_test_btn.queue_free()
+	chest_test_btn = Button.new()
+	chest_test_btn.name = "TestChestButton"  # 固定名字，冒烟测试按路径查得到
+	chest_test_btn.text = "掉宝箱"
+	chest_test_btn.tooltip_text = "临时调试：立刻在蹦床上方掉一个金币宝箱（正式版去掉）"
+	chest_test_btn.add_theme_stylebox_override("normal", _btn_style(Color(0.62, 0.42, 0.12)))
+	chest_test_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	chest_test_btn.offset_left = -118.0
+	chest_test_btn.offset_top = 88.0
+	chest_test_btn.offset_right = -8.0
+	chest_test_btn.offset_bottom = 122.0
+	chest_test_btn.pressed.connect(func() -> void:
+		if game == null or not is_instance_valid(game):
+			_toast("游戏未就绪")
+			return
+		game.debug_drop_chest()
+	)
+	$Overlays.add_child(chest_test_btn)
 
 
 # ===== 狐狸技能按钮 =====

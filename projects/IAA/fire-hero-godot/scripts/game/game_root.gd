@@ -33,6 +33,17 @@ var _fall_timer: float = 0.0           ## 下一次跳楼倒计时（秒）
 var _shop_stock: Dictionary = {}       ## 当前商品组 {hero,items}
 var _shop_used: bool = false           ## 本关是否已弹出过商店
 
+## 金币雨小游戏（蹦床接住「金币宝箱」触发）
+var _coin_rain: CoinRain = null        ## 进行中的金币雨节点
+var _coin_rain_active: bool = false    ## 是否正在金币雨中（主玩法冻结）
+
+## 表现层：球擦过「单纯窗户」（DecorWindow）时闪烁
+var _decor_touching: Dictionary = {}   ## 上一帧仍与球重叠的窗户 → 只在「进入」时闪一次
+
+## 跳字配色：灭火得分（金） / 命中伤害（白）
+const FLOAT_SCORE_COLOR: Color = Color(1.0, 0.86, 0.32)
+const FLOAT_DAMAGE_COLOR: Color = Color(0.94, 0.94, 0.94)
+
 ## 红窗跳楼节奏（规则 §3.4：周期性跳窗）
 const FALL_INTERVAL_MIN: float = 2.6
 const FALL_INTERVAL_MAX: float = 4.2
@@ -127,13 +138,18 @@ func _process(delta: float) -> void:
 			faller.queue_free()
 	_fallers = alive_fall
 
-	_fall_timer -= delta
-	if _fall_timer <= 0.0:
-		_fall_timer = randf_range(FALL_INTERVAL_MIN, FALL_INTERVAL_MAX)
-		_spawn_red_window_faller()
+	# 金币雨期间不刷跳楼村民：玩家要专注接金币，且黑幕下跳窗视觉混乱
+	if not _coin_rain_active:
+		_fall_timer -= delta
+		if _fall_timer <= 0.0:
+			_fall_timer = randf_range(FALL_INTERVAL_MIN, FALL_INTERVAL_MAX)
+			_spawn_red_window_faller()
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
+
+	# 表现层：球擦过单纯窗户 → 闪一下
+	_check_decor_flash()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -221,6 +237,7 @@ func go_menu() -> void:
 		paddle.set_control_enabled(false)
 	_clear_clones()
 	_clear_fallers()
+	_clear_coin_rain()
 	# 回菜单也落盘：保证本局刷出的最高分/金币不丢
 	GameState.save()
 	_set_state(State.MENU)
@@ -582,6 +599,7 @@ func _start_level(reset_paddle: bool = true) -> void:
 	# 本关开始时清理分身/增益计时（商店 buff 在下关才用，这里先复位运行期状态）
 	_clear_clones()
 	_clear_fallers()
+	_clear_coin_rain()
 	_boost_timer = 0.0
 	_extinguish_pending = false
 	_capy_fire_timer = 0.0
@@ -742,16 +760,27 @@ func _on_ball_hit_brick(brick: Node) -> void:
 			GameState.add_score(pts)
 			GameState.add_coins(2)
 			Sfx.play("sfx_fire_out")
+			var at: Vector2 = Vector2.ZERO
+			if brick is Node2D:
+				at = (brick as Node2D).global_position
+			# 跳字：灭火成功 → 金色得分
+			FloatText.spawn(brick_host, at, "+%d" % pts, FLOAT_SCORE_COLOR, 24)
 			if brick.has_method("extinguish"):
-				var at: Vector2 = Vector2.ZERO
-				if brick is Node2D:
-					at = (brick as Node2D).global_position
 				brick.extinguish()
 				_maybe_drop_item(at)
 			_check_win()
 		"fire_down":
 			GameState.add_score(5)
 			Sfx.play("sfx_fire_hit", 0.0, 1.0 + randf_range(-0.05, 0.05))
+			# 跳字：这一下打掉多少血（嫌吵就把这几行删掉，灭火跳字不受影响）
+			if brick is Node2D:
+				FloatText.spawn(
+					brick_host,
+					(brick as Node2D).global_position,
+					"-%d" % dmg,
+					FLOAT_DAMAGE_COLOR,
+					18
+				)
 		"none":
 			pass
 		_:
@@ -777,6 +806,27 @@ func _maybe_drop_item(at: Vector2) -> void:
 	it.collected.connect(_on_item_collected)
 
 
+## 调试入口：立刻在蹦床正上方掉一个金币宝箱。
+##
+## 与 _maybe_drop_item 的区别：不定概率、不走权重，vx 固定为 0 —— 宝箱直线落下，
+## 一接就中，方便反复验证金币雨而不用等 1.4% 的掉落率撞运气。
+## 由右上角「掉宝箱」临时按钮调用，正式发布删按钮即可（本方法可留着，无副作用）。
+func debug_drop_chest() -> void:
+	if state != State.PLAYING or _level_closing:
+		show_message.emit("先开始游戏，再掉宝箱")
+		return
+	if _coin_rain_active:
+		show_message.emit("金币雨进行中，稍后再掉")
+		return
+	var it := GameItem.new()
+	it.setup(self, GameItem.Kind.CHEST)
+	item_host.add_child(it)  # add_child 会触发 _ready 随机 vx，下面覆盖掉
+	it.global_position = Vector2(paddle.global_position.x, -float(GameItem.SIZE))
+	it.vx = 0.0
+	it.collected.connect(_on_item_collected)
+	show_message.emit("调试：宝箱已掉落")
+
+
 ## 蹦床接住道具 → 结算效果（数值对齐 HTML applyItem）
 func _on_item_collected(it: GameItem) -> void:
 	if state != State.PLAYING or _level_closing:
@@ -789,6 +839,8 @@ func _on_item_collected(it: GameItem) -> void:
 			Sfx.play("sfx_item_pos")
 		GameItem.Kind.HAMMER, GameItem.Kind.FIREBALL:
 			Sfx.play("sfx_item_neg")
+		GameItem.Kind.CHEST:
+			Sfx.play("sfx_item_pos")
 	match it.kind:
 		GameItem.Kind.BAG:
 			var pts: int = 50 if randi_range(0, 1) == 1 else 25
@@ -847,6 +899,9 @@ func _on_item_collected(it: GameItem) -> void:
 				# 卡皮巴拉：着火 3 秒自动熄灭
 				if CharacterDB.cur_is("capy"):
 					_capy_fire_timer = 3.0
+		GameItem.Kind.CHEST:
+			# 金币宝箱：不即时给分，转入 10 秒金币雨小游戏
+			_start_coin_rain()
 	hud_refresh.emit()
 
 
@@ -857,6 +912,87 @@ func _clear_items() -> void:
 	for c in item_host.get_children():
 		if is_instance_valid(c):
 			c.free()
+
+
+# ===== 金币雨小游戏（蹦床接住「金币宝箱」触发）=====
+
+## 进入金币雨：冻结主玩法（球停在原地），玩家专注接金币。
+## 刻意不新增 State —— main_ui._on_state 用 playing=(s==PLAYING) 控制虚拟按键与
+## 技能键显隐，新增状态会让它们在金币雨期间整个消失。
+func _start_coin_rain() -> void:
+	if _coin_rain_active or state != State.PLAYING or _level_closing:
+		return
+	_coin_rain_active = true
+	if ball.has_method("freeze_motion"):
+		ball.freeze_motion()
+	else:
+		ball.active = false
+		ball.velocity = Vector2.ZERO
+
+	_coin_rain = CoinRain.new()
+	_coin_rain.name = "CoinRain"
+	_coin_rain.setup(self)
+	add_child(_coin_rain)  # 运行期最后一个子节点 → 黑幕天然盖在背景/蹦床/球之上
+	_coin_rain.finished.connect(_on_coin_rain_finished)
+	show_message.emit("金币宝箱！10 秒疯狂接金币")
+
+
+## 结算完成：金币与分数一次性入账（rain 期间不逐枚到账，让结算演出有意义）
+func _on_coin_rain_finished(caught: int, coins: int, score: int) -> void:
+	if not _coin_rain_active:
+		return
+	_coin_rain_active = false
+	_coin_rain = null
+	GameState.add_score(score)
+	GameState.add_coins(coins)
+	if _waiting_launch:
+		ball.reset_on_paddle(paddle)
+	elif ball.has_method("unfreeze_motion"):
+		ball.unfreeze_motion()
+	else:
+		ball.active = true
+	show_message.emit("金币雨结束：接住 %d 枚，+%d 金币" % [caught, coins])
+	hud_refresh.emit()
+
+
+## 强制清理：金币雨没走完就回菜单/换关/结束时调用。
+## 只负责撤掉节点与标志位；球由各调用方自行复位（它们本来就会复位）。
+func _clear_coin_rain() -> void:
+	if not _coin_rain_active:
+		return
+	_coin_rain_active = false
+	if _coin_rain != null and is_instance_valid(_coin_rain):
+		_coin_rain.free()
+	_coin_rain = null
+
+
+## 球擦过「单纯窗户」（DecorWindow）→ 让它闪一下。
+##
+## 用「球心 vs 砖格矩形」的 AABB 判定，只保留本帧仍重叠的集合，
+## 因此是「进入时闪一次」而不是每帧闪。
+##
+## 刻意不用带类型注解的循环变量：窗户在换关时被 free()，数组里会留下已释放对象，
+## 带注解会触发 Object→Node 转换错误中断本帧（分身 filter 踩过同一个坑）。
+func _check_decor_flash() -> void:
+	if ball == null or not is_instance_valid(ball):
+		return
+	var ball_pos: Vector2 = ball.global_position
+	var r: float = ball.radius
+	var half_w: float = GameConstants.BRICK_W * 0.5 + r
+	var half_h: float = GameConstants.BRICK_H * 0.5 + r
+	var now: Dictionary = {}
+	for n in get_tree().get_nodes_in_group("decor_window"):
+		if n == null or not is_instance_valid(n):
+			continue
+		var w := n as DecorWindow
+		if w == null:
+			continue
+		var d: Vector2 = ball_pos - w.rest_global_position()
+		if absf(d.x) <= half_w and absf(d.y) <= half_h:
+			now[w] = true
+			if not _decor_touching.has(w):
+				w.flash()
+	_decor_touching = now
 
 
 func _on_brick_destroyed(brick: Node) -> void:
@@ -909,6 +1045,7 @@ func _game_over() -> void:
 		paddle.set_control_enabled(false)
 	_clear_clones()
 	_clear_fallers()
+	_clear_coin_rain()
 	_set_state(State.OVER)
 	GameState.save()
 	hud_refresh.emit()

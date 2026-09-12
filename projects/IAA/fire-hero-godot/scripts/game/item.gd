@@ -1,19 +1,20 @@
 class_name GameItem
 extends Node2D
-## 掉落道具：钱袋 / 长条 / 锤子 / 灭火器 / 1UP / 火球
+## 掉落道具：钱袋 / 长条 / 锤子 / 灭火器 / 1UP / 火球 / 金币宝箱
 ## 灭掉火砖后按概率从砖位掉落 → 重力下落 + 左右壁反弹
 ## → 被蹦床接住（game_root 结算效果）或落出屏幕自动清理
 ## 数值对齐 HTML 原型 fire-hero-iaa.html（maybeDropItem / applyItem）
 
 signal collected(item: GameItem)
 
-enum Kind { BAG, WIDE, HAMMER, EXTINGUISH, UP, FIREBALL }
+enum Kind { BAG, WIDE, HAMMER, EXTINGUISH, UP, FIREBALL, CHEST }
 
 ## 贴图尺寸（像素）
 const SIZE: int = 24
 
-## 掉落权重：与 HTML 前 6 档一致；boost/life/heli/horn/keychain
-## 尚未实现，抽中这些档位视为不掉落（P1 扩充分量再启用）
+## 掉落权重：前 6 档与 HTML 一致；CHEST（金币宝箱）为本版新增的稀有奖励档，
+## 从原来的「不掉落」余量里切出 0.05，其余档位比例不变。
+## boost/life/heli/horn/keychain 尚未实现，抽中这些档位视为不掉落（P1 扩充分量再启用）
 const PICK_BOUNDS: Array = [
 	[Kind.BAG, 0.16],
 	[Kind.WIDE, 0.14],
@@ -21,6 +22,7 @@ const PICK_BOUNDS: Array = [
 	[Kind.EXTINGUISH, 0.14],
 	[Kind.UP, 0.12],
 	[Kind.FIREBALL, 0.10],
+	[Kind.CHEST, 0.05],
 ]
 
 ## 下落速度（px/s）：HTML 1.2 px/frame 起步，0.08 px/f² 加速，3.4 px/frame 封顶（≈60fps）
@@ -131,6 +133,8 @@ func _kind_file(kind_key: int) -> String:
 			return "item_up.png"
 		Kind.FIREBALL:
 			return "item_fireball.png"
+		Kind.CHEST:
+			return "item_chest.png"
 	return ""
 
 
@@ -180,6 +184,16 @@ func _paint(kind_key: int) -> ImageTexture:
 			_fill_circle(img, 12, 12, 10, Color(0.95, 0.28, 0.2))
 			_fill_circle(img, 12, 13, 7, Color(1.0, 0.45, 0.2))
 			_fill_circle(img, 16, 7, 3, Color(1.0, 0.85, 0.35))
+		Kind.CHEST:
+			# 金币宝箱：木箱身 + 金箍 + 锁扣
+			# 目前是程序绘制占位（换 assets/props/items/item_chest.png 即自动生效）
+			_fill_rect(img, 2, 5, 20, 6, Color(0.45, 0.29, 0.14))    # 箱盖
+			_fill_rect(img, 3, 11, 18, 10, Color(0.55, 0.36, 0.18))  # 箱身
+			_fill_rect(img, 2, 9, 20, 2, Color(0.95, 0.78, 0.28))    # 盖身之间金边
+			_fill_rect(img, 3, 5, 3, 16, Color(0.95, 0.78, 0.28))    # 左金箍
+			_fill_rect(img, 18, 5, 3, 16, Color(0.95, 0.78, 0.28))   # 右金箍
+			_fill_rect(img, 10, 9, 4, 8, Color(1.0, 0.86, 0.38))     # 锁扣
+			_fill_rect(img, 11, 12, 2, 3, Color(0.30, 0.19, 0.09))   # 锁孔
 		_:
 			_fill_rect(img, 6, 6, 12, 12, Color.WHITE)
 	return ImageTexture.create_from_image(img)

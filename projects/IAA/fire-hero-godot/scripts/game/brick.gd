@@ -34,12 +34,28 @@ var _collision: CollisionShape2D
 var _visual: Sprite2D
 var _label: Label
 var _villager: Sprite2D
+var _impact: HitImpact = null  ## 撞击反馈（晃动/放大/红白闪）——只驱动视觉层，不动碰撞体
 
 
 func _ready() -> void:
 	_cache_nodes()
 	_apply_shape()
 	_refresh()
+	set_process(false)  # 平时不跑 _process，只有撞击期间才开
+
+
+## 撞击反馈推进（仅在撞击期间由 _start_impact 打开）
+func _process(delta: float) -> void:
+	if _impact == null or not _impact.update(delta):
+		set_process(false)
+
+
+## 起一次撞击反馈
+func _start_impact() -> void:
+	if _impact == null:
+		return
+	_impact.start()
+	set_process(true)
 
 
 func _cache_nodes() -> void:
@@ -89,6 +105,14 @@ func _apply_shape() -> void:
 		_label.size = Vector2(GameConstants.BRICK_W, 20.0)
 		_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_label.z_index = 2
+	# 撞击反馈只驱动 _visual（视觉层）：砖的 position 与 CollisionShape2D 保持静止 ——
+	# 火砖是 StaticBody2D，晃本体等于晃碰撞形状，会干扰球路。
+	# 必须在 _visual.position 归零之后再建，否则会把当时的偏移当成静止位置。
+	if _visual and _impact == null:
+		_impact = HitImpact.new(_visual)
+		# 血量数字跟着一起晃，否则窗户在抖、数字钉在原地很怪
+		if _label:
+			_impact.add_co_shaker(_label)
 
 
 func hit(damage: int = 1) -> String:
@@ -96,10 +120,13 @@ func hit(damage: int = 1) -> String:
 	if is_dead:
 		return "none"
 	if brick_type == BrickType.RESCUE:
+		# 救援窗被撞也给反馈 —— 尤其是「已抱着人」时窗不会被消耗、会留在场上
+		_start_impact()
 		return "rescue_grab"
 	var d: int = maxi(1, damage)
 	hp = maxi(0, hp - d)
 	_refresh()
+	_start_impact()
 	if hp <= 0:
 		return "fire_out"
 	return "fire_down"
@@ -111,6 +138,7 @@ func shave_hp() -> void:
 		return
 	hp = maxi(1, hp - 1)
 	_refresh()
+	_start_impact()
 
 
 func _disable_collision() -> void:
@@ -172,6 +200,10 @@ func _refresh() -> void:
 			if _label:
 				_label.modulate = Color(1, 1, 1, 1)
 			_ensure_villager()
+
+	# 声明静止外观：火砖按剩余 hp 缩放，撞击复原必须回到「当前这档」而不是旧值
+	if _impact != null:
+		_impact.configure(_visual.modulate, _visual.scale)
 
 
 ## 确保救援窗内叠有待救村民 Sprite（多样动物；红窗用呼救帧）
