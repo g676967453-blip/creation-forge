@@ -33,6 +33,10 @@ var _fall_timer: float = 0.0           ## 下一次跳楼倒计时（秒）
 var _shop_stock: Dictionary = {}       ## 当前商品组 {hero,items}
 var _shop_used: bool = false           ## 本关是否已弹出过商店
 
+## 金币雨小游戏（蹦床接住「金币宝箱」触发）
+var _coin_rain: CoinRain = null        ## 进行中的金币雨节点
+var _coin_rain_active: bool = false    ## 是否正在金币雨中（主玩法冻结）
+
 ## 红窗跳楼节奏（规则 §3.4：周期性跳窗）
 const FALL_INTERVAL_MIN: float = 2.6
 const FALL_INTERVAL_MAX: float = 4.2
@@ -127,10 +131,12 @@ func _process(delta: float) -> void:
 			faller.queue_free()
 	_fallers = alive_fall
 
-	_fall_timer -= delta
-	if _fall_timer <= 0.0:
-		_fall_timer = randf_range(FALL_INTERVAL_MIN, FALL_INTERVAL_MAX)
-		_spawn_red_window_faller()
+	# 金币雨期间不刷跳楼村民：玩家要专注接金币，且黑幕下跳窗视觉混乱
+	if not _coin_rain_active:
+		_fall_timer -= delta
+		if _fall_timer <= 0.0:
+			_fall_timer = randf_range(FALL_INTERVAL_MIN, FALL_INTERVAL_MAX)
+			_spawn_red_window_faller()
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
@@ -221,6 +227,7 @@ func go_menu() -> void:
 		paddle.set_control_enabled(false)
 	_clear_clones()
 	_clear_fallers()
+	_clear_coin_rain()
 	# 回菜单也落盘：保证本局刷出的最高分/金币不丢
 	GameState.save()
 	_set_state(State.MENU)
@@ -582,6 +589,7 @@ func _start_level(reset_paddle: bool = true) -> void:
 	# 本关开始时清理分身/增益计时（商店 buff 在下关才用，这里先复位运行期状态）
 	_clear_clones()
 	_clear_fallers()
+	_clear_coin_rain()
 	_boost_timer = 0.0
 	_extinguish_pending = false
 	_capy_fire_timer = 0.0
@@ -789,6 +797,8 @@ func _on_item_collected(it: GameItem) -> void:
 			Sfx.play("sfx_item_pos")
 		GameItem.Kind.HAMMER, GameItem.Kind.FIREBALL:
 			Sfx.play("sfx_item_neg")
+		GameItem.Kind.CHEST:
+			Sfx.play("sfx_item_pos")
 	match it.kind:
 		GameItem.Kind.BAG:
 			var pts: int = 50 if randi_range(0, 1) == 1 else 25
@@ -847,6 +857,9 @@ func _on_item_collected(it: GameItem) -> void:
 				# 卡皮巴拉：着火 3 秒自动熄灭
 				if CharacterDB.cur_is("capy"):
 					_capy_fire_timer = 3.0
+		GameItem.Kind.CHEST:
+			# 金币宝箱：不即时给分，转入 10 秒金币雨小游戏
+			_start_coin_rain()
 	hud_refresh.emit()
 
 
@@ -857,6 +870,64 @@ func _clear_items() -> void:
 	for c in item_host.get_children():
 		if is_instance_valid(c):
 			c.free()
+
+
+# ===== 金币雨小游戏（蹦床接住「金币宝箱」触发）=====
+
+## 进入金币雨：冻结主玩法（球停在原地），玩家专注接金币。
+## 刻意不新增 State —— main_ui._on_state 用 playing=(s==PLAYING) 控制虚拟按键与
+## 技能键显隐，新增状态会让它们在金币雨期间整个消失。
+func _start_coin_rain() -> void:
+	if _coin_rain_active or state != State.PLAYING or _level_closing:
+		return
+	_coin_rain_active = true
+	if ball.has_method("freeze_motion"):
+		ball.freeze_motion()
+	else:
+		ball.active = false
+		ball.velocity = Vector2.ZERO
+
+	_coin_rain = CoinRain.new()
+	_coin_rain.name = "CoinRain"
+	_coin_rain.setup(self)
+	add_child(_coin_rain)  # 运行期最后一个子节点 → 黑幕天然盖在背景/蹦床/球之上
+	_coin_rain.coin_caught.connect(_on_coin_rain_caught)
+	_coin_rain.finished.connect(_on_coin_rain_finished)
+	show_message.emit("金币宝箱！10 秒疯狂接金币")
+
+
+## 每接住一枚金币：仍由 GameRoot 记账，分数唯一权威留在 game_root
+func _on_coin_rain_caught(score: int, coins: int) -> void:
+	GameState.add_score(score)
+	GameState.add_coins(coins)
+
+
+## 10 秒结束：恢复主玩法。
+## 这里不 free 金币雨节点 —— 它在 _finish() 里自行 queue_free()，
+## 若在此立即释放会在其自身方法执行期间销毁对象。
+func _on_coin_rain_finished(caught: int) -> void:
+	if not _coin_rain_active:
+		return
+	_coin_rain_active = false
+	_coin_rain = null
+	if _waiting_launch:
+		ball.reset_on_paddle(paddle)
+	elif ball.has_method("unfreeze_motion"):
+		ball.unfreeze_motion()
+	else:
+		ball.active = true
+	show_message.emit("金币雨结束：接住 %d 枚" % caught)
+
+
+## 强制清理：金币雨没走完就回菜单/换关/结束时调用。
+## 只负责撤掉节点与标志位；球由各调用方自行复位（它们本来就会复位）。
+func _clear_coin_rain() -> void:
+	if not _coin_rain_active:
+		return
+	_coin_rain_active = false
+	if _coin_rain != null and is_instance_valid(_coin_rain):
+		_coin_rain.free()
+	_coin_rain = null
 
 
 func _on_brick_destroyed(brick: Node) -> void:
@@ -909,6 +980,7 @@ func _game_over() -> void:
 		paddle.set_control_enabled(false)
 	_clear_clones()
 	_clear_fallers()
+	_clear_coin_rain()
 	_set_state(State.OVER)
 	GameState.save()
 	hud_refresh.emit()
