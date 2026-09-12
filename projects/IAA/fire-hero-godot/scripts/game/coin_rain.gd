@@ -81,6 +81,17 @@ const CATCH_Y_MIN: float = -24.0
 const CATCH_Y_MAX: float = 22.0
 const CATCH_X_PAD: float = 6.0
 
+## 下落拖尾粒子
+## 思路与 Ball/Trail 一致：粒子初速归零、且 local_coords = false（不跟随父节点），
+## 于是残影留在发射点，金币移开自然拉出一条轨迹。
+## 与球不同的是这里**显式给了贴图** —— 球那条没设 texture，无贴图粒子只画亚像素白点，
+## 是否可见取决于引擎默认行为；拖尾不能赌这个。
+const TRAIL_AMOUNT: int = 10          ## 同时存在的残影数
+const TRAIL_LIFETIME: float = 0.30    ## 单个残影存活时长（秒）
+const TRAIL_TEX_SIZE: int = 16        ## 程序生成的柔光点贴图边长
+const TRAIL_SCALE_MIN: float = 0.35   ## 残影相对贴图的缩放
+const TRAIL_SCALE_MAX: float = 0.70
+
 ## 金币图标复用已有 UI 素材（64×64 真实插画，不另造美术）
 const COIN_TEX: Texture2D = preload("res://assets/pixel/ui/ui_icon_coin.png")
 ## 结算画面用的大金币：原生 132px 贴图（tools/make_big_coin.py 生成）。
@@ -98,6 +109,7 @@ class Coin extends Sprite2D:
 	var vy: float = 0.0
 	var caught: bool = false   ## 已被接住 → 进入回弹淡出，不再判定
 	var fade: float = 0.0      ## 回弹剩余时长
+	var trail: CPUParticles2D = null  ## 下落拖尾（接住后停发）
 
 
 var _game: GameRoot = null
@@ -196,6 +208,60 @@ func _process_rain(delta: float) -> void:
 
 # ===== 金币 =====
 
+# 拖尾贴图与渐变色静态共享，避免每枚金币各造一份资源
+static var _trail_tex: Texture2D = null
+static var _trail_ramp: Gradient = null
+
+
+## 程序生成柔光点：中心实、边缘柔（平方衰减）
+static func _trail_texture() -> Texture2D:
+	if _trail_tex != null:
+		return _trail_tex
+	var img := Image.create(TRAIL_TEX_SIZE, TRAIL_TEX_SIZE, false, Image.FORMAT_RGBA8)
+	var c: float = float(TRAIL_TEX_SIZE) * 0.5
+	var r: float = c - 0.5
+	for y in TRAIL_TEX_SIZE:
+		for x in TRAIL_TEX_SIZE:
+			var dx: float = float(x) + 0.5 - c
+			var dy: float = float(y) + 0.5 - c
+			var a: float = clampf(1.0 - sqrt(dx * dx + dy * dy) / r, 0.0, 1.0)
+			img.set_pixel(x, y, Color(1.0, 0.92, 0.55, a * a))
+	_trail_tex = ImageTexture.create_from_image(img)
+	return _trail_tex
+
+
+## 暖金 → 透明
+static func _trail_gradient() -> Gradient:
+	if _trail_ramp != null:
+		return _trail_ramp
+	var g := Gradient.new()
+	g.set_color(0, Color(1.0, 0.88, 0.42, 0.55))
+	g.set_color(1, Color(1.0, 0.70, 0.18, 0.0))
+	_trail_ramp = g
+	return _trail_ramp
+
+
+## 造一条挂在金币上的拖尾
+func _make_trail() -> CPUParticles2D:
+	var p := CPUParticles2D.new()
+	p.name = "Trail"
+	p.texture = _trail_texture()
+	p.z_index = -1  ## 压在金币本体之下
+	p.amount = TRAIL_AMOUNT
+	p.lifetime = TRAIL_LIFETIME
+	p.local_coords = false  ## 关键：不跟随金币 → 残影留在原地，金币移开拉出轨迹
+	p.direction = Vector2.ZERO
+	p.spread = 180.0
+	p.gravity = Vector2.ZERO
+	p.initial_velocity_min = 0.0
+	p.initial_velocity_max = 0.0
+	p.scale_amount_min = TRAIL_SCALE_MIN
+	p.scale_amount_max = TRAIL_SCALE_MAX
+	p.color_ramp = _trail_gradient()
+	p.emitting = true
+	return p
+
+
 func _spawn_coin() -> void:
 	var coin := Coin.new()
 	coin.name = "Coin"
@@ -210,6 +276,8 @@ func _spawn_coin() -> void:
 	)
 	coin.vx = randf_range(-VX_MAX, VX_MAX)
 	coin.vy = randf_range(VY_MIN, VY_MAX)
+	coin.trail = _make_trail()
+	coin.add_child(coin.trail)
 	add_child(coin)
 	_coins.append(coin)
 
@@ -260,6 +328,9 @@ func _catch_coin(coin: Coin) -> void:
 	coin.fade = CATCH_FADE
 	coin.vy = CATCH_BOUNCE_VY
 	coin.vx *= 0.35  # 收一下横向速度，回弹更「直上直下」好辨认
+	# 接住后停发拖尾：不然回弹那一小段还拖着一条，看着脏
+	if coin.trail != null and is_instance_valid(coin.trail):
+		coin.trail.emitting = false
 	_caught += 1
 	# 飘字 = 这一枚真实入账的金币数；结算总量就是它们的和，不会对不上
 	var gain: int = POP_SERIES[mini(_pop_index, POP_SERIES.size() - 1)]

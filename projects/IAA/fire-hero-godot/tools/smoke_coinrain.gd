@@ -135,6 +135,16 @@ func _run() -> void:
 		sizes[snappedf(c.scale.x, 0.01)] = true
 	checks.append(["coin_sizes_vary", sizes.size() > 3])
 
+	# 拖尾粒子：两条「配错了就完全看不见」的项必须守住
+	#  - 必须有贴图（无贴图粒子只画亚像素白点）
+	#  - local_coords 必须为 false（否则粒子跟着金币走，形不成轨迹）
+	var trail: CPUParticles2D = rain._coins[0].get_node_or_null("Trail") as CPUParticles2D
+	checks.append(["coin_has_trail", trail != null])
+	checks.append(["trail_has_texture", trail != null and trail.texture != null])
+	checks.append(["trail_not_local_coords", trail != null and not trail.local_coords])
+	checks.append(["trail_emitting", trail != null and trail.emitting])
+	checks.append(["trail_behind_coin", trail != null and trail.z_index < 0])
+
 	# ===== 7) 接住：回弹 + 跳字 + 不当帧入账 =====
 	# 清场，做单枚接住的精细断言
 	for c: CoinRain.Coin in rain._coins:
@@ -158,6 +168,7 @@ func _run() -> void:
 	checks.append(["bounced_coin_kept_for_animation", rain._coins.has(coin)])
 	checks.append(["catch_counted", rain._caught == 1])
 	checks.append(["catch_pops_float", _count_float_texts(rain) > ft0])
+	checks.append(["trail_stops_when_caught", coin.trail != null and not coin.trail.emitting])
 	# 本版改动：接住当帧不入账，等结算统一发
 	checks.append(["no_immediate_score", GameState.score == score0])
 	checks.append(["no_immediate_coins", GameState.coins == coins0])
