@@ -81,7 +81,7 @@ func _run() -> void:
 	# 关键断言：必须真的「变亮」。modulate 是乘法，三通道 ≤1 的颜色只会让窗户变暗
 	# （第一版写成 (1.0, 0.96, 0.78) 就是暗黄，看着根本不像闪），必须 >1 才提亮
 	checks.append(["flash_actually_brightens", dw.modulate.r > 1.0])
-	var glow: Sprite2D = dw.get_node_or_null("FlashGlow") as Sprite2D
+	var glow: Sprite2D = dw.get_node_or_null("HitGlow") as Sprite2D
 	checks.append(["flash_glow_exists", glow != null])
 	checks.append([
 		"flash_glow_is_additive",
@@ -110,7 +110,7 @@ func _run() -> void:
 	var saw_white: bool = false
 	var steps: int = 40
 	for i in steps:
-		dw._process(DecorWindow.IMPACT_TIME / float(steps))
+		dw._process(HitImpact.IMPACT_TIME / float(steps))
 		max_offset = maxf(max_offset, absf(dw.position.x - base_x))
 		max_scale = maxf(max_scale, dw.scale.x)
 		var g: Color = glow.modulate
@@ -138,13 +138,77 @@ func _run() -> void:
 	game._check_decor_flash()
 	var retriggered: bool = false
 	for i in 20:
-		dw._process(DecorWindow.IMPACT_TIME / 20.0)
+		dw._process(HitImpact.IMPACT_TIME / 20.0)
 		game._check_decor_flash()
 		if not game._decor_touching.has(dw):
 			retriggered = true
 			break
 	checks.append(["no_retrigger_while_shaking", not retriggered])
 	game.ball.global_position = Vector2(5.0, 5.0)
+
+	# ================= 2b) 火砖撞击反馈 =================
+	# 最关键的不变量：撞击只驱动 _visual，砖本体 position 与碰撞形状必须一动不动 ——
+	# 火砖是 StaticBody2D，晃本体等于晃碰撞体，会干扰球路。
+	GameState.power_level = 0
+	game.fire_left = 99
+	game.rescue_left = 99
+	var bb: WindowBrick = LevelBuilder._make_brick_node(host)
+	bb.setup(WindowBrick.BrickType.FIRE, 1, false)
+	bb.position = Vector2(120.0, 420.0)
+	await get_tree().process_frame
+
+	var brick_pos_before: Vector2 = bb.position
+	var shape: CollisionShape2D = bb.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	var shape_size_before: Vector2 = Vector2.ZERO
+	if shape != null and shape.shape is RectangleShape2D:
+		shape_size_before = (shape.shape as RectangleShape2D).size
+	var vis: Sprite2D = bb.get_node_or_null("Visual") as Sprite2D
+	checks.append(["brick_has_visual", vis != null])
+	var brick_glow: Sprite2D = null
+	if vis != null:
+		brick_glow = vis.get_node_or_null("HitGlow") as Sprite2D
+	checks.append(["brick_glow_exists", brick_glow != null])
+
+	bb.hit(1)
+	checks.append(["brick_hit_starts_impact", bb._impact != null and bb._impact.playing()])
+	checks.append(["brick_visual_scales_up", vis != null and vis.scale.x > 1.0])
+
+	var b_max_offset: float = 0.0
+	var b_saw_red: bool = false
+	var b_saw_white: bool = false
+	var b_body_moved: bool = false
+	for i in 40:
+		bb._process(HitImpact.IMPACT_TIME / 40.0)
+		if not bb.position.is_equal_approx(brick_pos_before):
+			b_body_moved = true
+		if vis == null:
+			continue
+		b_max_offset = maxf(b_max_offset, absf(vis.position.x))
+		if brick_glow != null:
+			var bg: Color = brick_glow.modulate
+			if bg.a > 0.1:
+				if bg.g < 0.35:
+					b_saw_red = true
+				elif bg.g > 0.7:
+					b_saw_white = true
+	bb._process(0.01)  # 兜底走完
+
+	checks.append(["brick_visual_shakes", b_max_offset > 1.0])
+	checks.append(["brick_alternates_red_white", b_saw_red and b_saw_white])
+	checks.append(["brick_body_never_moves", not b_body_moved])
+	checks.append(["brick_visual_position_restores", vis != null and is_zero_approx(vis.position.x)])
+	# 复原目标必须是「按剩余 hp 算出的那档缩放」（火 1 级 req=3，打到 hp=2 → lerp(0.82,1.0,2/3)），
+	# 既不是撞击峰值 1.16、也不是 1.0 —— 这条同时验证了 configure() 有被调用
+	var expected_rest: float = lerpf(0.82, 1.0, 2.0 / 3.0)
+	checks.append([
+		"brick_visual_scale_restores_to_hp_tier",
+		vis != null and is_equal_approx(vis.scale.x, expected_rest)
+	])
+	if shape != null and shape.shape is RectangleShape2D:
+		checks.append([
+			"brick_collision_size_intact",
+			(shape.shape as RectangleShape2D).size.is_equal_approx(shape_size_before)
+		])
 
 	# ================= 2) 跳字：独立生成与自毁 =================
 	var ft: FloatText = FloatText.spawn(host, Vector2(200.0, 300.0), "+45", game.FLOAT_SCORE_COLOR, 24)
