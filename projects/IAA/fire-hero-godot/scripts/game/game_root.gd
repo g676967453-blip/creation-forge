@@ -912,32 +912,26 @@ func _start_coin_rain() -> void:
 	_coin_rain.name = "CoinRain"
 	_coin_rain.setup(self)
 	add_child(_coin_rain)  # 运行期最后一个子节点 → 黑幕天然盖在背景/蹦床/球之上
-	_coin_rain.coin_caught.connect(_on_coin_rain_caught)
 	_coin_rain.finished.connect(_on_coin_rain_finished)
 	show_message.emit("金币宝箱！10 秒疯狂接金币")
 
 
-## 每接住一枚金币：仍由 GameRoot 记账，分数唯一权威留在 game_root
-func _on_coin_rain_caught(score: int, coins: int) -> void:
-	GameState.add_score(score)
-	GameState.add_coins(coins)
-
-
-## 10 秒结束：恢复主玩法。
-## 这里不 free 金币雨节点 —— 它在 _finish() 里自行 queue_free()，
-## 若在此立即释放会在其自身方法执行期间销毁对象。
-func _on_coin_rain_finished(caught: int) -> void:
+## 结算完成：金币与分数一次性入账（rain 期间不逐枚到账，让结算演出有意义）
+func _on_coin_rain_finished(caught: int, coins: int, score: int) -> void:
 	if not _coin_rain_active:
 		return
 	_coin_rain_active = false
 	_coin_rain = null
+	GameState.add_score(score)
+	GameState.add_coins(coins)
 	if _waiting_launch:
 		ball.reset_on_paddle(paddle)
 	elif ball.has_method("unfreeze_motion"):
 		ball.unfreeze_motion()
 	else:
 		ball.active = true
-	show_message.emit("金币雨结束：接住 %d 枚" % caught)
+	show_message.emit("金币雨结束：接住 %d 枚，+%d 金币" % [caught, coins])
+	hud_refresh.emit()
 
 
 ## 强制清理：金币雨没走完就回菜单/换关/结束时调用。

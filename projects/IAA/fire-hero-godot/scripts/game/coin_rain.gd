@@ -2,20 +2,24 @@ class_name CoinRain
 extends Node2D
 ## 金币雨小游戏：蹦床接住「金币宝箱」后进入
 ##
-## 规则：40% 黑幕盖场 + 天上疯狂掉金币 + 10 秒限时 + 蹦床接住即计分
-## 期间主玩法冻结（球停在原地），玩家专注接金币，结束后发 finished 回主流程。
+## 三段式流程：
+##   1. RAIN   40% 黑幕 + 金币疯狂坠落（有大有小）+ 蹦床接住 → 金币回弹 + 跳字
+##   2. SETTLE 10 秒到 → 大金币浮在前面，后面数值快速滚动 → 定格动画
+##   3. 结束   统一结算发奖（金币/分数一次性到账）→ 回主流程
 ##
 ## 设计取舍：
 ## - 不新增 GameRoot.State，改用 _coin_rain_active 标志位。main_ui._on_state 里
 ##   playing = (s == State.PLAYING) 控制虚拟按键与技能键显隐，新增状态会让它们
 ##   在金币雨期间消失。
-## - 暂停安全：_process 首行判断 _game.state != PLAYING 即整体冻结（含倒计时），
+## - 暂停安全：_process 首行判断 _game.state != PLAYING 即整体冻结（含倒计时与结算演出），
 ##   复用主状态机，无需额外暂停逻辑。
+## - 分数/金币只在结束时统一入账（GameRoot 负责记账），rain 期间 HUD 不动，
+##   避免「逐个到账」把结算演出的意义冲掉。
 
-## 每接住一枚金币：score/coins 由 GameRoot 记账（保持分数唯一权威在 game_root）
-signal coin_caught(score: int, coins: int)
-## 10 秒结束：caught = 本次共接住多少枚
-signal finished(caught: int)
+## 结算完成：caught=接住枚数，coins/score=本次应入账总量（由 GameRoot 记账）
+signal finished(caught: int, coins: int, score: int)
+
+enum Phase { RAIN, SETTLE }
 
 # ===== 可调数值（手感集中在这里）=====
 
@@ -25,13 +29,33 @@ const SPAWN_INTERVAL_MIN: float = 0.05   ## 金币生成间隔下限（秒）—
 const SPAWN_INTERVAL_MAX: float = 0.12   ## 金币生成间隔上限（秒）
 const COIN_SCORE: int = 5                ## 每枚金币分数
 const COIN_COIN: int = 1                 ## 每枚金币的金币数
-const COIN_DISPLAY: float = 26.0         ## 金币显示边长（逻辑像素）
+const COIN_DISPLAY: float = 26.0         ## 金币基准显示边长（逻辑像素）
+const COIN_SCALE_MIN: float = 0.72       ## 金币大小随机下限（有大有小）
+const COIN_SCALE_MAX: float = 1.35       ## 金币大小随机上限
 const VY_MIN: float = 240.0              ## 下落速度下限（px/s）
 const VY_MAX: float = 430.0              ## 下落速度上限（px/s）
 const VX_MAX: float = 40.0               ## 横向漂移上限（px/s）
 const WALL_MARGIN: float = 8.0           ## 左右壁反弹边界
 const FALL_Y: float = float(GameConstants.VIEW_H) + 20.0  ## 落出屏幕即回收
 const SFX_CD: float = 0.08               ## 接币音效最小间隔（防止叠成机关枪）
+
+## 接住后的回弹弧线（只是动画，不再参与接取判定）
+const CATCH_BOUNCE_VY: float = -320.0    ## 接住瞬间的向上初速
+const CATCH_GRAVITY: float = 1150.0      ## 回弹弧线重力
+const CATCH_FADE: float = 0.42           ## 回弹+淡出总时长（秒）
+
+## 接住时弹的数值：**纯动画表现**，按连击递增，不影响实际结算
+## （实际入账恒为 COIN_SCORE / COIN_COIN × 接住枚数）
+const POP_SERIES: Array[int] = [1, 2, 4, 8, 16]
+const POP_COLOR: Color = Color(1.0, 0.9, 0.45)
+const POP_FONT_SIZE: int = 20
+
+## 结算演出
+const SETTLE_ROLL: float = 1.1           ## 数值快速滚动时长（秒）
+const SETTLE_HOLD: float = 1.0           ## 定格后停留时长（秒）
+const BIG_COIN_SIZE: float = 132.0       ## 结算大金币边长
+const SETTLE_NUM_SIZE: int = 74          ## 结算数字字号
+const SETTLE_CAPTION: String = "金币雨结算"
 
 ## 接取判定盒（蹦床中心为原点）——与 item.gd 保持一致，玩家直觉一致
 const CATCH_Y_MIN: float = -24.0
@@ -40,26 +64,34 @@ const CATCH_X_PAD: float = 6.0
 
 ## 金币图标复用已有 UI 素材（64×64 真实插画，不另造美术）
 const COIN_TEX: Texture2D = preload("res://assets/pixel/ui/ui_icon_coin.png")
-## 倒计时 Label 在 GameRoot 空间下，拿不到 HUD 的 Theme，需自带字体
+## Label 在 GameRoot 空间下拿不到 HUD 的 Theme，需自带字体
 ## （Web 导出无系统中文字体，不设会显示成方框）
 const UI_THEME: Theme = preload("res://assets/fonts/ui_theme.tres")
 
 
 ## 单枚金币：Sprite2D + 自己的速度
-## 用内类而不是独立脚本，金币只是一次性小对象，不值得多一个文件
 class Coin extends Sprite2D:
 	var vx: float = 0.0
 	var vy: float = 0.0
+	var caught: bool = false   ## 已被接住 → 进入回弹淡出，不再判定
+	var fade: float = 0.0      ## 回弹剩余时长
 
 
 var _game: GameRoot = null
 var _coins: Array[Coin] = []
+var _phase: int = Phase.RAIN
 var _elapsed: float = 0.0
 var _spawn_timer: float = 0.0
 var _sfx_timer: float = 0.0
 var _caught: int = 0
+var _pop_index: int = 0
+var _settle_elapsed: float = 0.0
+var _settle_locked: bool = false
 var _finished: bool = false
 var _label: Label = null
+var _settle_root: Node2D = null
+var _settle_num: Label = null
+var _settle_coin: Sprite2D = null
 
 
 func setup(game: GameRoot) -> void:
@@ -71,9 +103,11 @@ func _ready() -> void:
 	_build_label()
 
 
+# ===== 黑幕与 HUD =====
+
 ## 40% 黑幕：盖住整个画布。
 ## CoinRain 是 GameRoot 运行期新增的最后一个子节点，因此这块黑幕天然画在
-## 背景/砖块/蹦床/球之上；金币与倒计时作为它的后续子节点，再画在黑幕之上。
+## 背景/砖块/蹦床/球之上；金币与文字作为它的后续子节点，再画在黑幕之上。
 func _build_curtain() -> void:
 	var curtain := ColorRect.new()
 	curtain.name = "Curtain"
@@ -103,16 +137,25 @@ func _build_label() -> void:
 	_refresh_label()
 
 
+# ===== 主循环 =====
+
 func _process(delta: float) -> void:
 	if _finished:
 		return
-	# 暂停/结算/回菜单：整体冻结（倒计时也停），无需额外暂停逻辑
+	# 暂停/结算/回菜单：整体冻结（含倒计时与结算演出），无需额外暂停逻辑
 	if _game == null or _game.state != GameRoot.State.PLAYING:
 		return
 
+	if _phase == Phase.RAIN:
+		_process_rain(delta)
+	else:
+		_process_settle(delta)
+
+
+func _process_rain(delta: float) -> void:
 	_elapsed += delta
 	if _elapsed >= DURATION:
-		_finish()
+		_start_settle()
 		return
 
 	if _sfx_timer > 0.0:
@@ -127,11 +170,14 @@ func _process(delta: float) -> void:
 	_refresh_label()
 
 
+# ===== 金币 =====
+
 func _spawn_coin() -> void:
 	var coin := Coin.new()
 	coin.name = "Coin"
 	coin.texture = COIN_TEX
-	var s: float = COIN_DISPLAY / float(COIN_TEX.get_width())
+	# 有大有小：判定盒挂在蹦床上而不是金币上，所以尺寸纯视觉、不影响手感
+	var s: float = COIN_DISPLAY / float(COIN_TEX.get_width()) * randf_range(COIN_SCALE_MIN, COIN_SCALE_MAX)
 	coin.scale = Vector2(s, s)
 	coin.z_index = 1  ## 黑幕之上、倒计时之下
 	coin.position = Vector2(
@@ -156,6 +202,11 @@ func _update_coins(delta: float) -> void:
 		if not is_instance_valid(coin):
 			continue
 
+		if coin.caught:
+			if _update_caught_coin(coin, delta):
+				alive.append(coin)
+			continue
+
 		coin.position.y += coin.vy * delta
 		coin.position.x += coin.vx * delta
 		if coin.position.x < WALL_MARGIN:
@@ -166,12 +217,8 @@ func _update_coins(delta: float) -> void:
 			coin.vx = -absf(coin.vx)
 
 		if _is_caught(coin, paddle, paddle_pos, half_w):
-			coin.queue_free()
-			_caught += 1
-			coin_caught.emit(COIN_SCORE, COIN_COIN)
-			if _sfx_timer <= 0.0:
-				_sfx_timer = SFX_CD
-				Sfx.play("sfx_coin")
+			_catch_coin(coin)
+			alive.append(coin)  # 回弹期间还要继续画
 			continue
 
 		if coin.position.y > FALL_Y:
@@ -181,6 +228,36 @@ func _update_coins(delta: float) -> void:
 		alive.append(coin)
 
 	_coins = alive
+
+
+## 接住：只标记 + 起跳，实际的回弹与淡出交给 _update_caught_coin
+func _catch_coin(coin: Coin) -> void:
+	coin.caught = true
+	coin.fade = CATCH_FADE
+	coin.vy = CATCH_BOUNCE_VY
+	coin.vx *= 0.35  # 收一下横向速度，回弹更「直上直下」好辨认
+	_caught += 1
+	# 跳字：纯动画表现，按连击递增（POP_SERIES），不影响实际结算
+	var shown: int = POP_SERIES[mini(_pop_index, POP_SERIES.size() - 1)]
+	_pop_index += 1
+	FloatText.spawn(self, coin.global_position, "+%d" % shown, POP_COLOR, POP_FONT_SIZE)
+	if _sfx_timer <= 0.0:
+		_sfx_timer = SFX_CD
+		Sfx.play("sfx_coin")
+
+
+## 回弹弧线 + 淡出；返回 false 表示该金币可以回收了
+func _update_caught_coin(coin: Coin, delta: float) -> bool:
+	coin.vy += CATCH_GRAVITY * delta
+	coin.position.y += coin.vy * delta
+	coin.position.x += coin.vx * delta
+	coin.fade -= delta
+	var t: float = clampf(coin.fade / CATCH_FADE, 0.0, 1.0)
+	coin.modulate.a = t
+	if coin.fade <= 0.0:
+		coin.queue_free()
+		return false
+	return true
 
 
 ## 蹦床半宽（吃长条加成；取不到时退回常量）
@@ -208,12 +285,132 @@ func _refresh_label() -> void:
 	_label.text = "金币雨 %d 秒 ｜ 已接 %d 枚" % [maxi(left, 0), _caught]
 
 
-## 10 秒到：交回结果并自毁。
+# ===== 结算演出 =====
+
+## 时间到：清掉还在掉的金币，进入结算
+func _start_settle() -> void:
+	_phase = Phase.SETTLE
+	_settle_elapsed = 0.0
+	if _label != null:
+		_label.visible = false
+	for coin: Coin in _coins:
+		if is_instance_valid(coin):
+			coin.queue_free()
+	_coins.clear()
+	_build_settle()
+	Sfx.play("sfx_level_clear")
+
+
+## 大金币浮在前面，数值在它后面滚动
+func _build_settle() -> void:
+	var cx: float = float(GameConstants.VIEW_W) * 0.5
+	_settle_root = Node2D.new()
+	_settle_root.name = "Settle"
+	add_child(_settle_root)
+
+	var caption := Label.new()
+	caption.name = "SettleCaption"
+	caption.theme = UI_THEME
+	caption.text = SETTLE_CAPTION
+	caption.position = Vector2(0.0, cx - 130.0)
+	caption.size = Vector2(float(GameConstants.VIEW_W), 28.0)
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caption.add_theme_font_size_override("font_size", 20)
+	caption.add_theme_color_override("font_color", Color(0.92, 0.94, 1.0))
+	caption.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.85))
+	caption.add_theme_constant_override("shadow_offset_x", 2)
+	caption.add_theme_constant_override("shadow_offset_y", 2)
+	caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	caption.z_index = 1
+	_settle_root.add_child(caption)
+
+	# 数值：先建、z_index 更低 → 被金币压住一部分，形成「金币在前面」的层次
+	_settle_num = Label.new()
+	_settle_num.name = "SettleNumber"
+	_settle_num.theme = UI_THEME
+	_settle_num.text = "0"
+	_settle_num.position = Vector2(0.0, cx - 40.0)
+	_settle_num.size = Vector2(float(GameConstants.VIEW_W), 110.0)
+	_settle_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_settle_num.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_settle_num.add_theme_font_size_override("font_size", SETTLE_NUM_SIZE)
+	_settle_num.add_theme_color_override("font_color", Color(1.0, 0.95, 0.72))
+	_settle_num.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	_settle_num.add_theme_constant_override("shadow_offset_x", 3)
+	_settle_num.add_theme_constant_override("shadow_offset_y", 3)
+	_settle_num.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_settle_num.pivot_offset = _settle_num.size * 0.5
+	_settle_num.z_index = 1
+	_settle_root.add_child(_settle_num)
+
+	# 大金币：z_index 更高 = 在前面
+	_settle_coin = Sprite2D.new()
+	_settle_coin.name = "SettleCoin"
+	_settle_coin.texture = COIN_TEX
+	var s: float = BIG_COIN_SIZE / float(COIN_TEX.get_width())
+	_settle_coin.scale = Vector2(s, s)
+	_settle_coin.position = Vector2(cx, cx - 10.0)
+	_settle_coin.z_index = 2
+	_settle_root.add_child(_settle_coin)
+
+	# 金币入场：从上方落下并回弹一下
+	_settle_coin.position.y = cx - 240.0
+	var drop: Tween = create_tween()
+	drop.tween_property(_settle_coin, "position:y", cx - 10.0, 0.5) \
+		.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+
+
+## 数值快速滚动 → 到点定格
+func _process_settle(delta: float) -> void:
+	_settle_elapsed += delta
+	var total: int = _caught * COIN_COIN
+
+	if _settle_elapsed < SETTLE_ROLL:
+		# 先快后慢（三次方缓出），收尾那段慢下来才有「要停住了」的期待感
+		var t: float = clampf(_settle_elapsed / SETTLE_ROLL, 0.0, 1.0)
+		var eased: float = 1.0 - pow(1.0 - t, 3.0)
+		if _settle_num != null:
+			_settle_num.text = str(int(round(eased * float(total))))
+		return
+
+	if not _settle_locked:
+		_lock_settle(total)
+		return
+
+	if _settle_elapsed >= SETTLE_ROLL + SETTLE_HOLD:
+		_finish()
+
+
+## 定格动画：数字弹一下并转金，金币同时脉冲
+func _lock_settle(total: int) -> void:
+	_settle_locked = true
+	if _settle_num != null:
+		_settle_num.text = str(total)
+		_settle_num.add_theme_color_override("font_color", Color(1.0, 0.86, 0.32))
+		_settle_num.scale = Vector2(1.0, 1.0)
+		var punch: Tween = create_tween()
+		punch.tween_property(_settle_num, "scale", Vector2(1.32, 1.32), 0.14) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		punch.tween_property(_settle_num, "scale", Vector2(1.0, 1.0), 0.20) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if _settle_coin != null:
+		var s: float = BIG_COIN_SIZE / float(COIN_TEX.get_width())
+		var pulse: Tween = create_tween()
+		pulse.tween_property(_settle_coin, "scale", Vector2(s * 1.18, s * 1.18), 0.14) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		pulse.tween_property(_settle_coin, "scale", Vector2(s, s), 0.20) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	Sfx.play("sfx_coin")
+
+
+# ===== 收尾 =====
+
+## 结算完成：交回结果并自毁。
 ## 先 emit 再 queue_free —— GameRoot 的处理器只清引用与恢复球，不会 free 本节点，
 ## 避免在自身方法执行期间被立即 free。
 func _finish() -> void:
 	if _finished:
 		return
 	_finished = true
-	finished.emit(_caught)
+	finished.emit(_caught, _caught * COIN_COIN, _caught * COIN_SCORE)
 	queue_free()

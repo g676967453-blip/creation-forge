@@ -2,7 +2,9 @@ extends Node
 ## 冒烟：金币宝箱 + 金币雨小游戏
 ## 运行：godot --headless --path . res://tools/smoke_coinrain.tscn
 ## 覆盖：宝箱权重可抽中 → 接住宝箱进入金币雨 → 40% 黑幕 / 倒计时 Label / 球冻结
-##      → 金币坠落与蹦床接取计分 → 10 秒结束恢复主玩法 → 中途离开强制清理
+##      → 金币大小随机 → 接住回弹 + 跳字 + 不当帧入账 → 落空不计
+##      → 到点进结算（大金币在前 / 数值滚动 / 定格）→ 统一个人入账 → 恢复主玩法
+##      → 中途离开强制清理 → 金币雨期间不刷跳楼村民
 ##
 ## 注：直接调用 coin_rain 的内部方法并传入显式 delta，不依赖真实时钟
 ## —— headless 下每秒帧数不确定，等真实 10 秒既慢又不稳。
@@ -21,6 +23,14 @@ func _chest_weight() -> float:
 		if int(row[0]) == GameItem.Kind.CHEST:
 			return float(row[1])
 	return 0.0
+
+
+func _count_float_texts(parent: Node) -> int:
+	var n: int = 0
+	for c in parent.get_children():
+		if c is FloatText:
+			n += 1
+	return n
 
 
 func _run() -> void:
@@ -88,40 +98,59 @@ func _run() -> void:
 		"curtain_covers_canvas",
 		curtain != null and curtain.size == Vector2(float(GameConstants.VIEW_W), float(GameConstants.VIEW_H))
 	])
-	# 黑幕必须画在蹦床之上：CoinRain 是 GameRoot 的最后一个子节点
 	var kids: Array = game.get_children()
 	checks.append(["rain_is_last_child", kids[kids.size() - 1] == rain])
 
 	# ===== 5) 倒计时 Label（自带 Theme，否则 Web 下中文成方框）=====
-	var label: Label = rain.get_node_or_null("RainLabel") as Label
-	checks.append(["label_exists", label != null])
-	checks.append(["label_has_theme", label != null and label.theme != null])
-	checks.append(["label_shows_time", label != null and label.text.contains("金币雨")])
+	checks.append(["label_exists", rain._label != null])
+	checks.append(["label_has_theme", rain._label != null and rain._label.theme != null])
+	checks.append(["label_shows_time", rain._label != null and rain._label.text.contains("金币雨")])
 
-	# ===== 6) 金币生成 + 下落 =====
-	# 注意：_spawn_timer 初值为 0，金币雨的首次 _process 本身就会生成一枚，
-	# 所以这里断言 >= 1 而不是 == 1。
-	rain._spawn_coin()
+	# ===== 6) 金币生成 + 大小随机 =====
+	for i in 30:
+		rain._spawn_coin()
 	await get_tree().process_frame
-	checks.append(["coin_spawned", rain._coins.size() >= 1])
-	if rain._coins.is_empty():
-		print("== coinrain smoke: 金币未生成，提前结束 ==")
-		get_tree().quit(1)
-		return
-	var coin: CoinRain.Coin = rain._coins[0]
-	checks.append(["coin_uses_ui_icon", coin.texture == CoinRain.COIN_TEX])
-	var y0: float = coin.position.y
-	rain._update_coins(0.1)
-	checks.append(["coin_falls", coin.position.y > y0])
+	checks.append(["coin_spawned", rain._coins.size() >= 30])
+	checks.append(["coin_uses_ui_icon", rain._coins.size() > 0 and rain._coins[0].texture == CoinRain.COIN_TEX])
+	var sizes: Dictionary = {}
+	for c: CoinRain.Coin in rain._coins:
+		sizes[snappedf(c.scale.x, 0.01)] = true
+	checks.append(["coin_sizes_vary", sizes.size() > 3])
 
-	# ===== 7) 蹦床接住 → 计分 =====
+	# ===== 7) 接住：回弹 + 跳字 + 不当帧入账 =====
+	# 清场，做单枚接住的精细断言
+	for c: CoinRain.Coin in rain._coins:
+		if is_instance_valid(c):
+			c.free()
+	rain._coins.clear()
+	rain._caught = 0
+	rain._pop_index = 0
+	await get_tree().process_frame
+
+	rain._spawn_coin()
+	var coin: CoinRain.Coin = rain._coins[0]
 	var score0: int = GameState.score
 	var coins0: int = GameState.coins
+	var ft0: int = _count_float_texts(rain)
 	coin.position = Vector2(game.paddle.position.x, game.paddle.position.y)
 	rain._update_coins(0.0)
-	checks.append(["coin_caught", rain._caught == 1])
-	checks.append(["coin_scored", GameState.score > score0])
-	checks.append(["coin_added_coins", GameState.coins > coins0])
+	checks.append(["coin_caught_flag", coin.caught])
+	checks.append(["coin_bounces_upward", coin.vy < 0.0])
+	checks.append(["bounced_coin_kept_for_animation", rain._coins.has(coin)])
+	checks.append(["catch_counted", rain._caught == 1])
+	checks.append(["catch_pops_float", _count_float_texts(rain) > ft0])
+	# 本版改动：接住当帧不入账，等结算统一发
+	checks.append(["no_immediate_score", GameState.score == score0])
+	checks.append(["no_immediate_coins", GameState.coins == coins0])
+
+	# 回弹动画走完应被回收（不看真实时钟，靠内部列表判断）
+	var bounced_removed: bool = false
+	for i in 100:
+		rain._update_coins(0.02)
+		if not rain._coins.has(coin):
+			bounced_removed = true
+			break
+	checks.append(["bounced_coin_removed", bounced_removed])
 
 	# 接不到（落到屏幕外）不应计分
 	var missed0: int = rain._caught
@@ -131,12 +160,65 @@ func _run() -> void:
 	rain._update_coins(0.0)
 	checks.append(["miss_not_counted", rain._caught == missed0])
 
-	# ===== 8) 10 秒结束 → 恢复主玩法 =====
+	# ===== 8) 结算演出：大金币在前 / 数值滚动 / 定格 =====
+	# 接满 6 枚，构造可观察的结算总量
+	for c: CoinRain.Coin in rain._coins:
+		if is_instance_valid(c):
+			c.free()
+	rain._coins.clear()
+	rain._caught = 0
+	for i in 6:
+		rain._spawn_coin()
+		var c: CoinRain.Coin = rain._coins[rain._coins.size() - 1]
+		c.position = Vector2(game.paddle.position.x, game.paddle.position.y)
+		rain._update_coins(0.0)
+	checks.append(["caught_six", rain._caught == 6])
+	var total_coins: int = 6 * CoinRain.COIN_COIN
+	var total_score: int = 6 * CoinRain.COIN_SCORE
+	var score_before: int = GameState.score
+	var coins_before: int = GameState.coins
+
 	rain._elapsed = CoinRain.DURATION
 	await get_tree().process_frame
+	checks.append(["enter_settle", rain._phase == CoinRain.Phase.SETTLE])
+	checks.append(["rain_label_hidden", rain._label != null and not rain._label.visible])
+	checks.append(["coins_cleared_on_settle", rain._coins.is_empty()])
+	checks.append(["settle_number_exists", rain._settle_num != null])
+	checks.append(["settle_big_coin_exists", rain._settle_coin != null])
+	# 「金币在前面」= 金币 z_index 高于数值
+	checks.append([
+		"big_coin_in_front_of_number",
+		rain._settle_coin != null and rain._settle_num != null
+			and rain._settle_coin.z_index > rain._settle_num.z_index
+	])
+
+	# 滚动中：数值应在 0..total 之间且不等于最终值
+	rain._settle_elapsed = CoinRain.SETTLE_ROLL * 0.5
+	rain._process_settle(0.02)
+	var mid_text: String = rain._settle_num.text
+	checks.append(["rolling_in_progress", mid_text != str(total_coins)])
+	checks.append(["rolling_within_range", int(mid_text) > 0 and int(mid_text) <= total_coins])
+	# 再推进一点：单调不减
+	rain._settle_elapsed = CoinRain.SETTLE_ROLL * 0.7
+	rain._process_settle(0.02)
+	checks.append(["rolling_monotonic", int(rain._settle_num.text) >= int(mid_text)])
+
+	# 定格：数值锁到最终值
+	rain._settle_elapsed = CoinRain.SETTLE_ROLL + 0.01
+	rain._process_settle(0.0)
+	checks.append(["settle_locked", rain._settle_locked])
+	checks.append(["settle_shows_total", rain._settle_num.text == str(total_coins)])
+
+	# 结算走完 → 统一个人入账 + 恢复主玩法（emit 是同步的，无需等帧）
+	rain._settle_elapsed = CoinRain.SETTLE_ROLL + CoinRain.SETTLE_HOLD + 0.01
+	rain._process_settle(0.0)
 	checks.append(["rain_finished", not game._coin_rain_active])
 	checks.append(["rain_ref_cleared", game._coin_rain == null])
 	checks.append(["ball_unfrozen", game.ball.active])
+	checks.append(["settle_awards_score", GameState.score == score_before + total_score])
+	checks.append(["settle_awards_coins", GameState.coins == coins_before + total_coins])
+
+	await get_tree().process_frame
 
 	# ===== 9) 中途离开 → 强制清理，无残留节点 =====
 	game._start_coin_rain()
