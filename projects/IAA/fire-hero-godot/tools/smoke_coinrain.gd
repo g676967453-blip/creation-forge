@@ -43,14 +43,6 @@ func _chest_items(game: GameRoot) -> Array:
 	return found
 
 
-## 按 POP_SERIES 累加出「接住 n 枚应得多少金币」——结算是这个和，不是枚数
-func _expected_gain(catches: int) -> int:
-	var total: int = 0
-	for i in catches:
-		total += CoinRain.POP_SERIES[mini(i, CoinRain.POP_SERIES.size() - 1)]
-	return total
-
-
 func _run() -> void:
 	var guard := Timer.new()
 	guard.one_shot = true
@@ -129,11 +121,63 @@ func _run() -> void:
 		rain._spawn_coin()
 	await get_tree().process_frame
 	checks.append(["coin_spawned", rain._coins.size() >= 30])
-	checks.append(["coin_uses_ui_icon", rain._coins.size() > 0 and rain._coins[0].texture == CoinRain.COIN_TEX])
-	var sizes: Dictionary = {}
+	checks.append(["coin_uses_ui_icon", rain._coins.size() > 0 and rain._coins[0].texture != null])
+
+	# ===== 6b) 档位：数值落在该档区间内 =====
+	var tiers_seen: Dictionary = {}
+	var values_ok: bool = true
 	for c: CoinRain.Coin in rain._coins:
-		sizes[snappedf(c.scale.x, 0.01)] = true
-	checks.append(["coin_sizes_vary", sizes.size() > 3])
+		tiers_seen[c.tier] = true
+		if c.value < CoinRain.TIER_VALUE_MIN[c.tier] or c.value > CoinRain.TIER_VALUE_MAX[c.tier]:
+			values_ok = false
+	checks.append(["coin_value_in_tier_range", values_ok])
+	checks.append(["coin_tiers_vary", tiers_seen.size() >= 2])
+
+	# ===== 6c) 概率分布：高档必须更稀有，且五档都抽得到 =====
+	var counts: Array[int] = [0, 0, 0, 0, 0]
+	for i in 20000:
+		counts[CoinRain.roll_tier()] += 1
+	var monotonic: bool = true
+	for i in range(1, counts.size()):
+		if counts[i] > counts[i - 1]:
+			monotonic = false
+	checks.append(["tier_rarity_monotonic", monotonic])
+	var all_reachable: bool = true
+	for c: int in counts:
+		if c <= 0:
+			all_reachable = false
+	checks.append(["all_tiers_reachable", all_reachable])
+
+	# ===== 6d) 档位视觉：特效档独立贴图 + 加法光晕 =====
+	checks.append([
+		"tier_textures_distinct",
+		CoinRain.TIER_TEX[2] != CoinRain.TIER_TEX[0]
+			and CoinRain.TIER_TEX[3] != CoinRain.TIER_TEX[0]
+			and CoinRain.TIER_TEX[4] != CoinRain.TIER_TEX[0]
+	])
+	var halo: Sprite2D = rain._make_halo(Color(0.42, 0.72, 1.0))
+	checks.append(["halo_has_texture", halo.texture != null])
+	checks.append([
+		"halo_is_additive",
+		halo.material is CanvasItemMaterial
+			and (halo.material as CanvasItemMaterial).blend_mode == CanvasItemMaterial.BLEND_MODE_ADD
+	])
+	checks.append(["halo_bigger_than_coin", halo.scale.x > 1.5])
+	halo.free()
+
+	# 真抽到特效档时，金币上确实挂了光晕（最多试 500 次，抽到即验证）
+	var effect_halo_ok: bool = false
+	var tried: int = 0
+	while tried < 500 and not effect_halo_ok:
+		tried += 1
+		rain._spawn_coin()
+		var hc: CoinRain.Coin = rain._coins[rain._coins.size() - 1]
+		if hc.tier >= CoinRain.HALO_FROM_TIER:
+			effect_halo_ok = hc.halo != null
+			break
+		rain._coins.remove_at(rain._coins.size() - 1)
+		hc.free()
+	checks.append(["effect_tier_gets_halo", effect_halo_ok])
 
 	# 拖尾粒子：两条「配错了就完全看不见」的项必须守住
 	#  - 必须有贴图（无贴图粒子只画亚像素白点）
@@ -152,7 +196,6 @@ func _run() -> void:
 			c.free()
 	rain._coins.clear()
 	rain._caught = 0
-	rain._pop_index = 0
 	rain._coins_gained = 0
 	await get_tree().process_frame
 
@@ -169,6 +212,8 @@ func _run() -> void:
 	checks.append(["catch_counted", rain._caught == 1])
 	checks.append(["catch_pops_float", _count_float_texts(rain) > ft0])
 	checks.append(["trail_stops_when_caught", coin.trail != null and not coin.trail.emitting])
+	# 接住即按这一枚的真实数值累加（不是按枚数 ×1）
+	checks.append(["catch_adds_coin_value", rain._coins_gained == coin.value])
 	# 本版改动：接住当帧不入账，等结算统一发
 	checks.append(["no_immediate_score", GameState.score == score0])
 	checks.append(["no_immediate_coins", GameState.coins == coins0])
@@ -197,20 +242,19 @@ func _run() -> void:
 			c.free()
 	rain._coins.clear()
 	rain._caught = 0
-	rain._pop_index = 0
 	rain._coins_gained = 0
+	# 逐枚记录 value，最后断言累计 == 这些 value 之和（= 玩家看到的飘字加起来）
+	var expect_total: int = 0
 	for i in 6:
 		rain._spawn_coin()
 		var c: CoinRain.Coin = rain._coins[rain._coins.size() - 1]
+		expect_total += c.value
 		c.position = Vector2(game.paddle.position.x, game.paddle.position.y)
 		rain._update_coins(0.0)
 	checks.append(["caught_six", rain._caught == 6])
-	# 本次修复的核心断言：累计入账必须精确等于「按 POP_SERIES 逐个加出来的和」，
-	# 也就是玩家在雨里看到的那些飘字加起来 —— 两者对不上就是这次报的 bug 复现
-	checks.append([
-		"pop_sum_matches_accumulator",
-		rain._coins_gained == _expected_gain(rain._caught)
-	])
+	# 核心断言：累计入账必须精确等于逐枚 value 之和，
+	# 也就是玩家在雨里看到的那些飘字加起来 —— 对不上就是「结算和接到的数值对不上」复现
+	checks.append(["gained_equals_sum_of_values", rain._coins_gained == expect_total])
 	var total_coins: int = rain._coins_gained
 	var total_score: int = total_coins * CoinRain.COIN_SCORE
 	var score_before: int = GameState.score

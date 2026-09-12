@@ -29,8 +29,6 @@ const SPAWN_INTERVAL_MIN: float = 0.05   ## 金币生成间隔下限（秒）—
 const SPAWN_INTERVAL_MAX: float = 0.12   ## 金币生成间隔上限（秒）
 const COIN_SCORE: int = 5                ## 金币 → 分数的换算系数
 const COIN_DISPLAY: float = 26.0         ## 金币基准显示边长（逻辑像素）
-const COIN_SCALE_MIN: float = 0.72       ## 金币大小随机下限（有大有小）
-const COIN_SCALE_MAX: float = 1.35       ## 金币大小随机上限
 const VY_MIN: float = 340.0              ## 下落速度下限（px/s）—— 调大 = 掉得更急
 const VY_MAX: float = 620.0              ## 下落速度上限（px/s）
 const VX_MAX: float = 40.0               ## 横向漂移上限（px/s）
@@ -43,15 +41,48 @@ const CATCH_BOUNCE_VY: float = -320.0    ## 接住瞬间的向上初速
 const CATCH_GRAVITY: float = 1150.0      ## 回弹弧线重力
 const CATCH_FADE: float = 0.42           ## 回弹+淡出总时长（秒）
 
-## 接住时弹的数值 = **这一枚真实入账的金币数**，按连击递增。
+# ===== 金币档位（数值 + 视觉）=====
 ##
-## 早先这里是「纯动画表现」：飘字按 +1/+2/+4/+8/+16 递增，但每枚实际只记 1 金币。
-## 结果玩家把飘字加起来和结算数字对不上（反馈即为「和我接到的数值对不上」）。
-## 现在飘字就是真实入账，结算总量 = 所有飘字之和，两者永远一致。
-## 想改手感/产出曲线，只动这一个数组即可。
-const POP_SERIES: Array[int] = [1, 2, 4]
-const POP_COLOR: Color = Color(1.0, 0.9, 0.45)
-const POP_FONT_SIZE: int = 20
+## 档位越高 → 单枚数值越大、体型/特效越显眼、但出现几率越低。
+## 飘字直接显示这一枚的真实数值，结算数字 = 雨里所有飘字之和 —— 所见即所得。
+
+enum Tier { SMALL, BIG, BLUE, PURPLE, RED }
+
+const TIER_NAME: Array[String] = [
+	"小金币", "大金币", "蓝色特效金币", "紫色特效金币", "红色特效金币",
+]
+## 每档随机数值区间（闭区间）
+const TIER_VALUE_MIN: Array[int] = [1, 10, 100, 300, 1000]
+const TIER_VALUE_MAX: Array[int] = [10, 99, 300, 999, 9999]
+## 出现权重（万分比，合计 10000）。按「每档约为上一档的 1/5」递减。
+## 换算成一次金币雨（约 30 枚）的期望出现次数：小 24 / 大 4.5 / 蓝 1.2 / 紫 0.2 / 红 0.09
+## —— 约每 11 次金币雨才见到一枚红币，属于「头奖」定位。
+const TIER_WEIGHT: Array[int] = [8000, 1500, 400, 70, 30]
+## 体型倍率：小金币明显小、大金币明显大，特效档略大
+const TIER_SCALE: Array[float] = [0.78, 1.30, 1.00, 1.06, 1.12]
+## 贴图：小/大共用金图；蓝/紫/红用 tools/make_coin_tiers.py 做色相偏移生成的独立贴图
+## （不能在运行时用 modulate 上色 —— 乘法把金色乘成橄榄绿，不是蓝）
+const TIER_TEX: Array[Texture2D] = [
+	preload("res://assets/pixel/ui/ui_icon_coin.png"),
+	preload("res://assets/pixel/ui/ui_icon_coin.png"),
+	preload("res://assets/pixel/ui/ui_icon_coin_blue.png"),
+	preload("res://assets/pixel/ui/ui_icon_coin_purple.png"),
+	preload("res://assets/pixel/ui/ui_icon_coin_red.png"),
+]
+## 档位主色：驱动光晕 / 拖尾 / 飘字
+const TIER_COLOR: Array[Color] = [
+	Color(1.0, 0.86, 0.42),
+	Color(1.0, 0.90, 0.55),
+	Color(0.42, 0.72, 1.0),
+	Color(0.78, 0.52, 1.0),
+	Color(1.0, 0.36, 0.30),
+]
+
+const POP_FONT_SIZE: int = 20      ## 飘字基准字号（档位越高越大）
+const HALO_FROM_TIER: int = 2      ## 从这一档（BLUE）起加加法混合光晕 = 「特效金币」
+const HALO_ALPHA: float = 0.55
+const HALO_SCALE: float = 2.2      ## 光晕相对金币的尺寸倍率
+const HALO_PULSE_HZ: float = 4.0   ## 光晕呼吸频率（次/秒）
 
 ## 结算演出
 const SETTLE_ROLL: float = 1.8           ## 数值快速滚动时长（秒）——太短会看不清
@@ -103,13 +134,16 @@ const SETTLE_COIN_TEX: Texture2D = preload("res://assets/props/items/coin_big.pn
 const UI_THEME: Theme = preload("res://assets/fonts/ui_theme.tres")
 
 
-## 单枚金币：Sprite2D + 自己的速度
+## 单枚金币：Sprite2D + 自己的速度 + 档位
 class Coin extends Sprite2D:
 	var vx: float = 0.0
 	var vy: float = 0.0
 	var caught: bool = false   ## 已被接住 → 进入回弹淡出，不再判定
 	var fade: float = 0.0      ## 回弹剩余时长
+	var tier: int = 0          ## Tier 枚举值
+	var value: int = 0         ## 这一枚接住能拿多少金币（结算就是它累加）
 	var trail: CPUParticles2D = null  ## 下落拖尾（接住后停发）
+	var halo: Sprite2D = null         ## 特效档的加法混合光晕
 
 
 var _game: GameRoot = null
@@ -120,7 +154,7 @@ var _spawn_timer: float = 0.0
 var _sfx_timer: float = 0.0
 var _caught: int = 0
 var _coins_gained: int = 0     ## 本次已累计的真实入账金币（= 所有飘字之和），结算就报它
-var _pop_index: int = 0
+var _pulse_t: float = 0.0      ## 光晕呼吸用的累计时间
 var _settle_elapsed: float = 0.0
 var _settle_locked: bool = false
 var _finished: bool = false
@@ -208,15 +242,15 @@ func _process_rain(delta: float) -> void:
 
 # ===== 金币 =====
 
-# 拖尾贴图与渐变色静态共享，避免每枚金币各造一份资源
-static var _trail_tex: Texture2D = null
-static var _trail_ramp: Gradient = null
+# 拖尾/光晕贴图与渐变静态共享，避免每枚金币各造一份资源
+static var _soft_dot: Texture2D = null
+static var _trail_ramps: Dictionary = {}   ## tier -> Gradient
 
 
 ## 程序生成柔光点：中心实、边缘柔（平方衰减）
-static func _trail_texture() -> Texture2D:
-	if _trail_tex != null:
-		return _trail_tex
+static func _soft_dot_texture() -> Texture2D:
+	if _soft_dot != null:
+		return _soft_dot
 	var img := Image.create(TRAIL_TEX_SIZE, TRAIL_TEX_SIZE, false, Image.FORMAT_RGBA8)
 	var c: float = float(TRAIL_TEX_SIZE) * 0.5
 	var r: float = c - 0.5
@@ -225,28 +259,30 @@ static func _trail_texture() -> Texture2D:
 			var dx: float = float(x) + 0.5 - c
 			var dy: float = float(y) + 0.5 - c
 			var a: float = clampf(1.0 - sqrt(dx * dx + dy * dy) / r, 0.0, 1.0)
-			img.set_pixel(x, y, Color(1.0, 0.92, 0.55, a * a))
-	_trail_tex = ImageTexture.create_from_image(img)
-	return _trail_tex
+			img.set_pixel(x, y, Color(1.0, 1.0, 1.0, a * a))
+	_soft_dot = ImageTexture.create_from_image(img)
+	return _soft_dot
 
 
-## 暖金 → 透明
-static func _trail_gradient() -> Gradient:
-	if _trail_ramp != null:
-		return _trail_ramp
+## 该档的拖尾渐变（本色 → 透明），按档缓存
+static func _trail_gradient(tint: Color) -> Gradient:
+	var key: int = int(tint.to_rgba32())
+	if _trail_ramps.has(key):
+		return _trail_ramps[key]
 	var g := Gradient.new()
-	g.set_color(0, Color(1.0, 0.88, 0.42, 0.55))
-	g.set_color(1, Color(1.0, 0.70, 0.18, 0.0))
-	_trail_ramp = g
-	return _trail_ramp
+	g.set_color(0, Color(tint.r, tint.g, tint.b, 0.60))
+	g.set_color(1, Color(tint.r, tint.g, tint.b, 0.0))
+	_trail_ramps[key] = g
+	return g
 
 
-## 造一条挂在金币上的拖尾
-func _make_trail() -> CPUParticles2D:
+## 造一条挂在金币上的拖尾，颜色跟随档位
+func _make_trail(tint: Color) -> CPUParticles2D:
 	var p := CPUParticles2D.new()
 	p.name = "Trail"
-	p.texture = _trail_texture()
-	p.z_index = -1  ## 压在金币本体之下
+	p.texture = _soft_dot_texture()
+	p.color = tint              ## 与贴图相乘 → 该档的颜色
+	p.z_index = -2              ## 压在金币本体与光晕之下
 	p.amount = TRAIL_AMOUNT
 	p.lifetime = TRAIL_LIFETIME
 	p.local_coords = false  ## 关键：不跟随金币 → 残影留在原地，金币移开拉出轨迹
@@ -257,17 +293,51 @@ func _make_trail() -> CPUParticles2D:
 	p.initial_velocity_max = 0.0
 	p.scale_amount_min = TRAIL_SCALE_MIN
 	p.scale_amount_max = TRAIL_SCALE_MAX
-	p.color_ramp = _trail_gradient()
+	p.color_ramp = _trail_gradient(tint)
 	p.emitting = true
 	return p
 
 
+## 特效档的光晕：加法混合的柔光圆，比金币大一圈，还会呼吸
+func _make_halo(tint: Color) -> Sprite2D:
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	var h := Sprite2D.new()
+	h.name = "Halo"
+	h.texture = _soft_dot_texture()
+	h.material = mat
+	h.z_index = -1  ## 金币本体之下、拖尾之上
+	h.scale = Vector2(HALO_SCALE, HALO_SCALE)
+	h.modulate = Color(tint.r, tint.g, tint.b, HALO_ALPHA)
+	return h
+
+
+## 按权重抽一个档位。权重和不必等于 10000，按实际总和归一化
+static func roll_tier() -> int:
+	var total: int = 0
+	for w: int in TIER_WEIGHT:
+		total += w
+	if total <= 0:
+		return Tier.SMALL
+	var r: int = randi_range(1, total)
+	var acc: int = 0
+	for i in TIER_WEIGHT.size():
+		acc += TIER_WEIGHT[i]
+		if r <= acc:
+			return i
+	return Tier.SMALL
+
+
 func _spawn_coin() -> void:
+	var tier: int = roll_tier()
+	var tex: Texture2D = TIER_TEX[tier]
 	var coin := Coin.new()
 	coin.name = "Coin"
-	coin.texture = COIN_TEX
-	# 有大有小：判定盒挂在蹦床上而不是金币上，所以尺寸纯视觉、不影响手感
-	var s: float = COIN_DISPLAY / float(COIN_TEX.get_width()) * randf_range(COIN_SCALE_MIN, COIN_SCALE_MAX)
+	coin.tier = tier
+	coin.value = randi_range(TIER_VALUE_MIN[tier], TIER_VALUE_MAX[tier])
+	coin.texture = tex
+	# 体型 = 基准显示尺寸 × 该档倍率；判定盒挂在蹦床上，所以尺寸纯视觉、不影响手感
+	var s: float = COIN_DISPLAY / float(tex.get_width()) * TIER_SCALE[tier]
 	coin.scale = Vector2(s, s)
 	coin.z_index = 1  ## 黑幕之上、倒计时之下
 	coin.position = Vector2(
@@ -276,7 +346,10 @@ func _spawn_coin() -> void:
 	)
 	coin.vx = randf_range(-VX_MAX, VX_MAX)
 	coin.vy = randf_range(VY_MIN, VY_MAX)
-	coin.trail = _make_trail()
+	if tier >= HALO_FROM_TIER:
+		coin.halo = _make_halo(TIER_COLOR[tier])
+		coin.add_child(coin.halo)
+	coin.trail = _make_trail(TIER_COLOR[tier])
 	coin.add_child(coin.trail)
 	add_child(coin)
 	_coins.append(coin)
@@ -290,6 +363,9 @@ func _update_coins(delta: float) -> void:
 	var limit_x: float = float(GameConstants.VIEW_W) - WALL_MARGIN
 
 	var alive: Array[Coin] = []
+	_pulse_t += delta
+	# 光晕呼吸系数（所有特效金币共用，算一次就够）
+	var pulse: float = 0.75 + 0.25 * sin(_pulse_t * TAU * HALO_PULSE_HZ)
 	for coin: Coin in _coins:
 		if not is_instance_valid(coin):
 			continue
@@ -298,6 +374,9 @@ func _update_coins(delta: float) -> void:
 			if _update_caught_coin(coin, delta):
 				alive.append(coin)
 			continue
+
+		if coin.halo != null and is_instance_valid(coin.halo):
+			coin.halo.modulate.a = HALO_ALPHA * pulse
 
 		coin.position.y += coin.vy * delta
 		coin.position.x += coin.vx * delta
@@ -328,15 +407,21 @@ func _catch_coin(coin: Coin) -> void:
 	coin.fade = CATCH_FADE
 	coin.vy = CATCH_BOUNCE_VY
 	coin.vx *= 0.35  # 收一下横向速度，回弹更「直上直下」好辨认
-	# 接住后停发拖尾：不然回弹那一小段还拖着一条，看着脏
+	# 接住后停发拖尾并收掉光晕：不然回弹那一小段还拖着一条，看着脏
 	if coin.trail != null and is_instance_valid(coin.trail):
 		coin.trail.emitting = false
+	if coin.halo != null and is_instance_valid(coin.halo):
+		coin.halo.visible = false
 	_caught += 1
-	# 飘字 = 这一枚真实入账的金币数；结算总量就是它们的和，不会对不上
-	var gain: int = POP_SERIES[mini(_pop_index, POP_SERIES.size() - 1)]
-	_pop_index += 1
-	_coins_gained += gain
-	FloatText.spawn(self, coin.global_position, "+%d" % gain, POP_COLOR, POP_FONT_SIZE)
+	# 飘字显示这一枚的真实数值；结算总量就是所有飘字之和，不会对不上
+	_coins_gained += coin.value
+	FloatText.spawn(
+		self,
+		coin.global_position,
+		"+%d" % coin.value,
+		TIER_COLOR[coin.tier],
+		POP_FONT_SIZE + coin.tier * 5  # 档位越高字越大
+	)
 	if _sfx_timer <= 0.0:
 		_sfx_timer = SFX_CD
 		Sfx.play("sfx_coin")
