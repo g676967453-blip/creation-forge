@@ -13,14 +13,15 @@ const SPEED_MAX: float = 520.0
 const TEX_DOG := preload("res://assets/props/ball/char_dog.png")
 const TEX_PANDA := preload("res://assets/props/ball/char_panda.png")
 const TEX_CAPY := preload("res://assets/props/ball/char_capybara.png")
-const TEX_NARUTO := preload("res://assets/props/ball/char_naruto.png")
+## 狐狸（原占位文件 char_naruto.png，画面为狐狸忍者；未换名避免资源缓存连锁）
+const TEX_FOX := preload("res://assets/props/ball/char_naruto.png")
 
 ## 猫帧动画（底边对齐后的帧，脚底同一水平线）
 const CAT_F0 := preload("res://assets/props/ball/frames/cat_anim_00.png")
 const CAT_F1 := preload("res://assets/props/ball/frames/cat_anim_01.png")
 
 ## 按 game_state.skin_index 的角色纹理（猫用 SpriteFrames 动画，其它单张）
-const CHAR_TEX: Array = [TEX_DOG, TEX_PANDA, TEX_CAPY, TEX_NARUTO]  # 索引1..4
+const CHAR_TEX: Array = [TEX_DOG, TEX_PANDA, TEX_CAPY, TEX_FOX]  # 索引1..4
 const CAT_ANIM_FPS: float = 6.0
 
 ## 角色使用原始大小（原图约 38~41 宽），不缩放
@@ -257,3 +258,13 @@ func refresh_visual() -> void:
 	_visual.modulate = Color(1.0, 0.9, 0.62) if carry_person else Color.WHITE
 	if not _visual.is_playing():
 		_visual.play("run")
+
+
+## 供影分身取当前角色第一帧
+func get_visual_frame() -> Texture2D:
+	if not _visual:
+		_visual = get_node_or_null("Visual") as AnimatedSprite2D
+	if _visual and _visual.sprite_frames and _visual.sprite_frames.has_animation("run") \
+			and _visual.sprite_frames.get_frame_count("run") > 0:
+		return _visual.sprite_frames.get_frame_texture("run", 0)
+	return null

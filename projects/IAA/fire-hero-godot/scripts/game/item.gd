@@ -61,6 +61,8 @@ func _ready() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.name = "Visual"
 	_sprite.texture = _texture_for(kind)
+	# 像素道具图 64px，显示为 32 逻辑像素（更大更易辨认），视觉略大于判定盒
+	_sprite.scale = Vector2(32.0 / 64.0, 32.0 / 64.0)
 	add_child(_sprite)
 
 
@@ -111,13 +113,38 @@ func _check_caught() -> bool:
 
 static var _tex_cache: Dictionary = {}
 
+## 道具贴图目录（美术定稿图标；缺文件时回退程序绘制）
+const ITEM_TEX_DIR: String = "res://assets/props/items/"
+
+
+func _kind_file(kind_key: int) -> String:
+	match kind_key:
+		Kind.BAG:
+			return "item_bag.png"
+		Kind.WIDE:
+			return "item_wide.png"
+		Kind.HAMMER:
+			return "item_hammer.png"
+		Kind.EXTINGUISH:
+			return "item_extinguish.png"
+		Kind.UP:
+			return "item_up.png"
+		Kind.FIREBALL:
+			return "item_fireball.png"
+	return ""
+
 
 func _texture_for(kind_key: int) -> Texture2D:
 	if _tex_cache.has(kind_key):
 		return _tex_cache[kind_key]
-	var tex := _paint(kind_key)
-	_tex_cache[kind_key] = tex
-	return tex
+	var path := ITEM_TEX_DIR + _kind_file(kind_key)
+	var loaded: Texture2D = null
+	if ResourceLoader.exists(path):
+		loaded = load(path) as Texture2D
+	if loaded == null:
+		loaded = _paint(kind_key)
+	_tex_cache[kind_key] = loaded
+	return loaded
 
 
 func _paint(kind_key: int) -> ImageTexture:

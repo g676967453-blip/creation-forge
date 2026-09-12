@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>救火英雄 · 窗口配置编辑器（坐标版）</title>
+<style>
+:root{
+  --bg:#101720;--panel:#1a2534;--panel2:#26364c;--line:#2f4258;
+  --text:#eaf1fb;--muted:#93a7c2;--accent:#ffb020;--ok:#3dd68c;--danger:#ff5c5c;
+  --fire1:#ff6b35;--fire2:#ff3b30;--fire3:#c41e3a;--rescue:#4fc3f7;--redwin:#ff5252;--empty:#3a4556;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button,select,input{font:inherit}
+.app{display:grid;grid-template-columns:280px 1fr 300px;min-height:100vh}
+@media(max-width:1100px){.app{grid-template-columns:1fr}}
+.side,.main,.right{padding:16px}
+.side{border-right:1px solid var(--line)}
+.right{border-left:1px solid var(--line)}
+@media(max-width:1100px){.side,.right{border:0;border-bottom:1px solid var(--line)}}
+h1{font-size:18px;margin-bottom:4px}
+.sub{color:var(--muted);font-size:12px;line-height:1.55;margin-bottom:14px}
+.sec{margin-bottom:16px}
+.sec h2{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;font-size:13px}
+.btn:hover{border-color:var(--accent);color:#fff}
+.btn.primary{background:linear-gradient(180deg,#ffc14d,#e89a10);color:#1a1200;border-color:#c88700;font-weight:600}
+.btn.danger{background:#3a1c1c;border-color:#7a3030;color:#ffb4b4}
+.btn.ok{background:#163528;border-color:#2a6b4a;color:#9dffc9}
+.btn.sm{padding:5px 8px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.level-list{display:flex;flex-direction:column;gap:6px;max-height:44vh;overflow:auto;padding-right:4px}
+.level-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--panel);border:1px solid transparent;cursor:pointer}
+.level-item:hover{border-color:var(--line)}
+.level-item.active{border-color:var(--accent);background:#2a2418}
+.level-item .idx{width:26px;height:26px;border-radius:6px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.level-item .meta{flex:1;min-width:0}
+.level-item .meta b{display:block;font-size:13px}
+.level-item .meta span{font-size:11px;color:var(--muted)}
+.canvas-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.board-frame{background:linear-gradient(180deg,#1e2a3a,#15202c);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+#stage{position:relative;width:450px;height:800px;margin:0 auto;background:#0c121a;border-radius:6px;overflow:hidden;user-select:none;touch-action:none}
+#bgImg{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:fill}
+#gridOverlay{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+canvas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+#cursor{position:absolute;pointer-events:none;border:1px dashed rgba(255,255,32,.85);display:none;z-index:5}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;width:100%;max-width:470px}
+.toolbar .spacer{flex:1}
+.toolbar .val{font-size:12px;color:var(--muted)}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:10px;border-radius:10px;border:2px solid transparent;background:var(--panel);cursor:pointer;text-align:left}
+.tool.active{border-color:var(--accent);box-shadow:0 0 0 1px rgba(255,176,32,.25)}
+.tool .swatch{width:100%;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.tool small{color:var(--muted);font-size:11px}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:20px;line-height:1.2}
+.stat span{font-size:11px;color:var(--muted)}
+.stat.warn b{color:var(--accent)}
+.stat.bad b{color:var(--danger)}
+.stat.good b{color:var(--ok)}
+textarea{width:100%;min-height:150px;resize:vertical;background:#0c121a;color:#d7e3f4;border:1px solid var(--line);border-radius:10px;padding:10px;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.45}
+label.field{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+input[type=text],input[type=number],input[type=file]{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text)}
+input[type=file]{padding:6px}
+.hint{font-size:12px;color:var(--muted);line-height:1.55}
+.hint code{background:#0c121a;padding:1px 5px;border-radius:4px;color:#ffd79a}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#102018;color:#b6ffd6;border:1px solid #2a6b4a;padding:10px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:99;font-size:13px}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:4px}
+.footer-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 左：关卡列表 + 背景 -->
+  <aside class="side">
+    <h1>🏢 窗口配置编辑器</h1>
+    <p class="sub">把<strong>关卡背景图垫在底下</strong>对位，窗口用自由坐标摆放（自动/手动），导出给 Godot 用</p>
+
+    <div class="sec">
+      <h2>关卡列表</h2>
+      <div class="row">
+        <button class="btn primary sm" id="btnAdd">＋ 新关</button>
+        <button class="btn sm" id="btnDup">复制</button>
+        <button class="btn danger sm" id="btnDel">删除</button>
+      </div>
+      <div class="row">
+        <button class="btn sm" id="btnUp">↑</button>
+        <button class="btn sm" id="btnDown">↓</button>
+        <button class="btn sm" id="btnReset">恢复默认 6 关</button>
+      </div>
+      <div class="level-list" id="levelList"></div>
+    </div>
+
+    <div class="sec">
+      <h2>关卡背景图（垫底对位）</h2>
+      <div class="row">
+        <input type="file" id="fileBg" accept="image/*" />
+      </div>
+      <div class="row">
+        <button class="btn sm" id="btnLoadDefaultBg">加载默认森林背景</button>
+        <button class="btn sm" id="btnClearBg">不垫图</button>
+      </div>
+      <label class="field">背景图透明度：<span id="bgAlphaVal">100%</span></label>
+      <input type="range" id="bgAlpha" min="20" max="100" value="100" style="width:100%"/>
+    </div>
+
+    <div class="sec">
+      <h2>自动配置</h2>
+      <div class="row">
+        <button class="btn ok sm" id="btnAutoGrid">铺标准网格(7列)</button>
+        <button class="btn ok sm" id="btnAutoRandom">随机铺</button>
+      </div>
+      <div class="row">
+        <label class="field" style="flex:1">行数
+          <input type="number" id="inpRows" value="6" min="1" max="12" style="margin-top:4px"/>
+        </label>
+      </div>
+      <p class="hint">铺网格：按 <code>GRID_TOP=80</code>、砖48×48 间隙4、7列自动对齐；随机：随机挑火/救援。</p>
+    </div>
+  </aside>
+
+  <!-- 中：画布 -->
+  <main class="main">
+    <div class="canvas-wrap">
+      <div class="toolbar">
+        <span class="toolbar"><b id="titleLevel">第 1 关</b></span>
+        <span class="spacer"></span>
+        <label class="toggle"><input type="checkbox" id="chkGrid" checked/> 网格线</label>
+        <label class="toggle"><input type="checkbox" id="chkSnap" checked/> 吸附(48px)</label>
+        <span class="val" id="posVal"></span>
+      </div>
+      <div class="board-frame">
+        <div id="stage">
+          <img id="bgImg" alt="" style="display:none"/>
+          <div id="gridOverlay"></div>
+          <canvas id="cv" width="450" height="800"></canvas>
+          <div id="cursor"></div>
+        </div>
+      </div>
+      <p class="hint" style="width:100%;max-width:470px;text-align:center">
+        左键点选笔刷后在图上<strong>点/拖摆放</strong>；拖动已有窗<strong>改位置</strong>；右键<strong>删除</strong>。世界坐标 = 450×800。
+      </p>
+      <div class="stats" style="width:min(100%,470px);margin-top:10px">
+        <div class="stat" id="stFire"><b>0</b><span>燃烧窗·灭火通道</span></div>
+        <div class="stat" id="stRescue"><b>0</b><span>救援窗(不含红窗)</span></div>
+        <div class="stat" id="stRed"><b>0</b><span>红窗·跳楼加分</span></div>
+        <div class="stat" id="stTotal"><b>0</b><span>总窗数</span></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 右：笔刷 + 导出 -->
+  <aside class="right">
+    <div class="sec">
+      <h2>窗口笔刷</h2>
+      <div class="tools" id="tools"></div>
+      <p class="hint" style="margin-top:8px">快捷键 <code>1–5</code> 选笔刷，<code>Z</code> 撤销，<code>Del</code> 删除选中窗。</p>
+    </div>
+
+    <div class="sec">
+      <h2>本关名称（可空）</h2>
+      <input type="text" id="inpName" placeholder="例如：入门教学"/>
+    </div>
+
+    <div class="sec">
+      <h2>导入 / 导出</h2>
+      <div class="row">
+        <button class="btn ok sm" id="btnSaveLS">存浏览器</button>
+        <button class="btn sm" id="btnLoadLS">读浏览器</button>
+      </div>
+      <div class="row">
+        <button class="btn sm" id="btnExportJson">下载 JSON(坐标)</button>
+        <button class="btn sm" id="btnImportJson">导入 JSON</button>
+        <input type="file" id="fileJson" accept="application/json,.json" hidden/>
+      </div>
+      <div class="row">
+        <button class="btn primary sm" id="btnExportCoord">复制坐标数组(Godot)</button>
+        <button class="btn sm" id="btnExportGrid">复制 LEVEL_LAYOUTS</button>
+      </div>
+      <label class="field" style="margin-top:10px">预览 / 粘贴区</label>
+      <textarea id="out" spellcheck="false"></textarea>
+      <div class="footer-actions">
+        <button class="btn sm" id="btnFromText">从文本解析</button>
+        <button class="btn sm" id="btnRefresh">刷新预览</button>
+      </div>
+      <p class="hint" style="margin-top:8px">
+        <b>坐标数组</b>：`[{x,y,type},…]`，type=F/f/g/R/r，x/y=窗口左上角逻辑像素。<br/>
+        <b>LEVEL_LAYOUTS</b>：仅当窗口全部落在标准网格时可用，兼容现有字符引擎。
+      </p>
+    </div>
+
+    <div class="sec">
+      <h2>图例</h2>
+      <div class="legend">
+        <span><i style="background:#ff6b35"></i>F 火1</span>
+        <span><i style="background:#ff3b30"></i>f 火2</span>
+        <span><i style="background:#c41e3a"></i>g 火3</span>
+        <span><i style="background:#4fc3f7"></i>R 救援</span>
+        <span><i style="background:#ff5252"></i>r 红窗</span>
+      </div>
+    </div>
+  </aside>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+// —— 常量：与 Godot GameConstants 同源（450×800）——
+var VW=450, VH=800;
+var BRICK_W=48, BRICK_H=48, BRICK_GAP=4, GRID_TOP=80, BRICK_COLS=7;
+var FACADE_X0=(VW-(BRICK_COLS*BRICK_W+(BRICK_COLS-1)*BRICK_GAP))/2; // =45
+
+var TYPES={
+  '.':{ch:'.',name:'空',color:'#3a4556',label:''},
+  'F':{ch:'F',name:'火1',color:'#ff6b35',label:'F1'},
+  'f':{ch:'f',name:'火2',color:'#ff3b30',label:'F2'},
+  'g':{ch:'g',name:'火3',color:'#c41e3a',label:'F3'},
+  'R':{ch:'R',name:'救援',color:'#4fc3f7',label:'救'},
+  'r':{ch:'r',name:'红窗',color:'#ff5252',label:'红'}
+};
+var BRUSH_ORDER=['F','f','g','R','r'];
+var DEFAULT_BG='fire-hero-godot/assets/backgrounds/bg_level_default.png';
+
+// —— 状态 ——
+var state={levels:[],cur:0,brush:'F',drag:-1,dragOff:null,cursor:{x:0,y:0,show:false},selected:-1,history:[]};
+var bgImage=null, bgUrl='';
+var LS_KEY='fireHeroWindowEditor.v1';
+var LS_GAME='fireHeroCustomLevels';
+
+var $=function(id){return document.getElementById(id);};
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},1800);}
+function curLevel(){return state.levels[state.cur];}
+function cloneWin(ws){return ws.map(function(w){return {x:w.x,y:w.y,type:w.type};});}
+
+// —— 默认 6 关（标准网格，从字符解析）——
+function charToWin(layout){
+  // 字符行 → 网格坐标窗口
+  var ws=[];
+  for(var r=0;r<layout.length;r++){
+    var row=layout[r];
+    for(var c=0;c<BRICK_COLS;c++){
+      var ch=c<row.length?row.charAt(c):'.';
+      if(ch==='.'||ch==='N')continue;
+      ws.push({x:FACADE_X0+c*(BRICK_W+BRICK_GAP), y:GRID_TOP+r*(BRICK_H+BRICK_GAP), type:ch});
+    }
+  }
+  return ws;
+}
+var DEFAULT_SHORT=[
+  {name:'L1 入门', layout:['FFF','F.F','R.R']},
+  {name:'L2 二级火+红窗', layout:['FFR','FfF','RFr','...']},
+  {name:'L3 三级火', layout:['FfR','RgF','fF.','RrR']},
+  {name:'L4 混编', layout:['gFR','fgr','FRf','rRF']},
+  {name:'L5 火人平衡', layout:['RrR','FgF','fRf','gRg','RrR']},
+  {name:'L6 高压', layout:['ffR','ggr','FFr','fRg','rRf','RrF']}
+];
+function defaultLevels(){
+  return DEFAULT_SHORT.map(function(p){return {name:p.name,windows:charToWin(p.layout)};});
+}
+
+// —— 历史/撤销 ——
+function pushHistory(){state.history.push({cur:state.cur,windows:cloneWin(curLevel().windows)});if(state.history.length>100)state.history.shift();}
+function undo(){var h=state.history.pop();if(!h)return;if(state.levels[h.cur])state.levels[h.cur].windows=h.windows;state.cur=h.cur;renderAll();toast('已撤销');}
+
+// —— 序列化 ——
+function winToGridKey(w){
+  // 判断是否落在标准网格上；返回 {col,row} 或 null
+  var c=Math.round((w.x-FACADE_X0)/(BRICK_W+BRICK_GAP));
+  var r=Math.round((w.y-GRID_TOP)/(BRICK_H+BRICK_GAP));
+  var gx=FACADE_X0+c*(BRICK_W+BRICK_GAP), gy=GRID_TOP+r*(BRICK_H+BRICK_GAP);
+  if(Math.abs(w.x-gx)<1 && Math.abs(w.y-gy)<1 && c>=0 && c<BRICK_COLS && r>=0)return {col:c,row:r};
+  return null;
+}
+function toCoordArray(levels){ // Godot 主格式
+  return JSON.stringify({version:2,vw:VW,vh:VH,levels:levels.map(function(lv){
+    return {name:lv.name||'',windows:lv.windows.map(function(w){return {x:Math.round(w.x),y:Math.round(w.y),type:w.type};})};
+  })},null,2);
+}
+function toCoordJs(levels){
+  return '// 窗口坐标清单 (450x800)，type: F/f/g/R/r；x/y=窗口左上角逻辑像素\n'
+    + 'var WINDOW_LAYOUTS='+JSON.stringify(levels.map(function(lv){
+      return {name:lv.name||'',windows:lv.windows.map(function(w){return {x:Math.round(w.x),y:Math.round(w.y),type:w.type};})};
+    }))+';';
+}
+function toGridJs(levels){ // 兼容字符
+  var lines=['var LEVEL_LAYOUTS=['];
+  levels.forEach(function(lv,i){
+    // 放到网格数组
+    var rows={};
+    lv.windows.forEach(function(w){
+      var g=winToGridKey(w); if(!g)return;
+      if(!rows[g.row]){rows[g.row]={};}
+      rows[g.row][g.col]=w.type;
+    });
+    var maxRow=0; for(var r in rows)maxRow=Math.max(maxRow,parseInt(r,10));
+    var arr=[];
+    for(var rr=0;rr<=maxRow;rr++){
+      var line='';
+      for(var c=0;c<BRICK_COLS;c++){
+        var ch=(rows[rr]&&rows[rr][c])||'.';
+        line+=ch;
+      }
+      line=line.replace(/\.+$/,''); if(line==='')line='.';
+      arr.push(JSON.stringify(line));
+    }
+    var comma=i<levels.length-1?',':'';
+    lines.push('  ['+arr.join(',')+']'+comma+'  // '+(lv.name||('L'+(i+1))));
+  });
+  lines.push('];');
+  return lines.join('\n');
+}
+function toJson(levels){return toCoordArray(levels);}
+
+// —— 解析 ——
+function parseCoord(list){
+  // wins: [{x,y,type}]
+  var wins=[];
+  list.forEach(function(w){
+    var t=TYPES[w.type]?w.type:'.';
+    if(t==='.')return;
+    wins.push({x:Number(w.x)||0,y:Number(w.y)||0,type:t});
+  });
+  return wins;
+}
+function detectGridSource(wins){
+  // 有非网格窗 → 用坐标；全在网格 → 能转 grid
+  for(var i=0;i<wins.length;i++){ if(!winToGridKey(wins[i]))return 'coord'; }
+  return 'grid';
+}
+function parseAny(text){
+  text=(text||'').trim();
+  // JSON
+  if(text[0]==='{'||text[0]==='['){
+    var data=JSON.parse(text);
+    var list = data.levels || data;
+    if(!Array.isArray(list))throw new Error('JSON 格式无效');
+    return list.map(function(item,i){
+      if(Array.isArray(item))return {name:'L'+(i+1),windows:parseCoord(item)};
+      var wins=item.windows||item.wins||[];
+      if(!Array.isArray(wins)){ // 可能是字符 layout
+        var layout=item.layout||item.rows||[];
+        if(Array.isArray(layout))return {name:item.name||('L'+(i+1)),windows:charToWin(layout)};
+        throw new Error('窗口数据无效');
+      }
+      return {name:item.name||('L'+(i+1)),windows:parseCoord(wins)};
+    });
+  }
+  // LEVEL_LAYOUTS = [ ... ]
+  var m=text.match(/LEVEL_LAYOUTS\s*=\s*(\[[\s\S]*?\]);?/);
+  if(m){
+    var arr=Function('"use strict";return ('+m[1]+');')();
+    return arr.map(function(layout,i){return {name:'L'+(i+1),windows:charToWin(layout)};});
+  }
+  // WINDOW_LAYOUTS = [ ... ]
+  m=text.match(/WINDOW_LAYOUTS\s*=\s*(\[[\s\S]*?\]);?/);
+  if(m){
+    var arr2=Function('"use strict";return ('+m[1]+');')();
+    return arr2.map(function(item,i){
+      var wins=item.windows||item;
+      return {name:item.name||('L'+(i+1)),windows:parseCoord(Array.isArray(wins)?wins:item)};
+    });
+  }
+  throw new Error('未识别格式（支持 JSON / LEVEL_LAYOUTS / WINDOW_LAYOUTS）');
+}
+
+// —— 渲染 ——
+function renderTools(){
+  var host=$('tools');host.innerHTML='';
+  BRUSH_ORDER.forEach(function(ch,i){
+    var t=TYPES[ch];
+    var b=document.createElement('button');b.type='button';
+    b.className='tool'+(state.brush===ch?' active':'');
+    b.innerHTML='<div class="swatch" style="background:'+t.color+'">'+(t.label||'空')+'</div><b>'+t.name+'</b><small>键 '+(i+1)+' · '+ch+'</small>';
+    b.onclick=function(){state.brush=ch;renderTools();};
+    host.appendChild(b);
+  });
+}
+function renderList(){
+  var host=$('levelList');host.innerHTML='';
+  state.levels.forEach(function(lv,i){
+    var s=statsOf(lv);
+    var d=document.createElement('div');
+    d.className='level-item'+(i===state.cur?' active':'');
+    d.innerHTML='<div class="idx">'+(i+1)+'</div><div class="meta"><b>'+(lv.name||('关卡 '+(i+1)))+'</b><span>'+s.fire+'火 · '+s.rescue+'救 · '+s.red+'红 · '+s.total+'窗</span></div>';
+    d.onclick=function(){state.cur=i;state.selected=-1;renderAll();};
+    host.appendChild(d);
+  });
+}
+function statsOf(lv){
+  var fire=0,rescue=0,red=0;
+  lv.windows.forEach(function(w){
+    if(w.type==='R')rescue++;
+    else if(w.type==='r')red++;
+    else if(w.type!=='.')fire++;
+  });
+  return {fire:fire,rescue:rescue,red:red,total:lv.windows.length};
+}
+function drawGridOverlay(){
+  var host=$('gridOverlay');host.innerHTML='';
+  if(!$('chkGrid').checked){return;}
+  var svg='';
+  // 竖线
+  for(var c=0;c<=BRICK_COLS;c++){
+    var x=FACADE_X0+c*(BRICK_W+BRICK_GAP)-BRICK_GAP/2;
+    svg+='<line x1="'+x+'" y1="0" x2="'+x+'" y2="'+VH+'" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+  }
+  // 横线（每行）
+  for(var r=0;r<12;r++){
+    var y=GRID_TOP+r*(BRICK_H+BRICK_GAP);
+    svg+='<line x1="0" y1="'+y+'" x2="'+VW+'" y2="'+y+'" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+  }
+  // 网格单元虚线框（更容易对齐树冠）
+  for(var rr=0;rr<12;rr++){
+    for(var cc=0;cc<BRICK_COLS;cc++){
+      var gx=FACADE_X0+cc*(BRICK_W+BRICK_GAP), gy=GRID_TOP+rr*(BRICK_H+BRICK_GAP);
+      svg+='<rect x="'+gx+'" y="'+gy+'" width="'+BRICK_W+'" height="'+BRICK_H+'" fill="none" stroke="rgba(120,180,255,0.06)" stroke-width="1"/>';
+    }
+  }
+  host.innerHTML='<svg width="'+VW+'" height="'+VH+'" xmlns="http://www.w3.org/2000/svg">'+svg+'</svg>';
+}
+function renderCanvas(){
+  var cv=$('cv'),ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,VW,VH);
+  // 画背景图（image 元素负责铺，canvas 仅画窗口；但图可能在 canvas 下层）
+  var lv=curLevel();
+  lv.windows.forEach(function(w){
+    var t=TYPES[w.type]||TYPES['.'];
+    if(t.ch==='.')return;
+    // 外发光
+    ctx.save();
+    ctx.shadowColor=t.color;ctx.shadowBlur=8;
+    ctx.fillStyle=t.color;
+    ctx.fillRect(w.x+1,w.y+1,BRICK_W-2,BRICK_H-2);
+    ctx.restore();
+    // 窗框
+    ctx.strokeStyle='rgba(255,255,255,0.7)';ctx.lineWidth=2;
+    ctx.strokeRect(w.x+1,w.y+1,BRICK_W-2,BRICK_H-2);
+    // 选中高亮
+    var idx=state.selected;
+    if(idx>=0 && lv.windows[idx]===w){
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.strokeRect(w.x-2,w.y-2,BRICK_W+4,BRICK_H+4);
+      ctx.setLineDash([]);
+    }
+    // 标签
+    ctx.fillStyle='#fff';ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(t.label,w.x+BRICK_W/2,w.y+BRICK_H/2);
+  });
+}
+function renderStats(){
+  var s=statsOf(curLevel());
+  $('stFire').innerHTML='<b>'+s.fire+'</b><span>燃烧窗·灭火通道</span>';
+  $('stRescue').innerHTML='<b>'+s.rescue+'</b><span>救援窗(不含红窗)</span>';
+  $('stRed').innerHTML='<b>'+s.red+'</b><span>红窗·跳楼加分</span>';
+  $('stTotal').innerHTML='<b>'+s.total+'</b><span>总窗数</span>';
+}
+function renderTitle(){
+  var lv=curLevel();
+  $('titleLevel').textContent='第 '+(state.cur+1)+' 关'+(lv.name?(' · '+lv.name):'');
+  $('inpName').value=lv.name||'';
+}
+function refreshOut(){
+  // 默认给坐标格式；若全是网格窗则给两者提示
+  $('out').value=toCoordJs(state.levels);
+}
+function renderAll(){renderTools();renderList();renderTitle();renderCanvas();renderStats();drawGridOverlay();refreshOut();}
+function reloadBg(){
+  var img=$('bgImg');
+  if(bgImage){img.src=bgImage;img.style.display='block';}
+  else{img.removeAttribute('src');img.style.display='none';}
+  img.style.opacity=($('bgAlpha').value/100);
+  $('bgAlphaVal').textContent=$('bgAlpha').value+'%';
+}
+
+// —— 操作 ——
+function addLevel(){state.levels.push({name:'新关卡',windows:[]});state.cur=state.levels.length-1;state.selected=-1;state.history=[];renderAll();toast('已添加关卡');}
+function dupLevel(){var lv=curLevel();state.levels.splice(state.cur+1,0,{name:(lv.name||'关卡')+' 副本',windows:cloneWin(lv.windows)});state.cur++;renderAll();toast('已复制');}
+function delLevel(){if(state.levels.length<=1){toast('至少保留 1 关');return;}state.levels.splice(state.cur,1);state.cur=Math.min(state.cur,state.levels.length-1);renderAll();toast('已删除');}
+function moveLevel(d){var j=state.cur+d;if(j<0||j>=state.levels.length)return;var t=state.levels[state.cur];state.levels[state.cur]=state.levels[j];state.levels[j]=t;state.cur=j;renderAll();}
+function resetDefault(){if(!confirm('恢复默认 6 关？未导出的修改会丢失。'))return;state.levels=defaultLevels();state.cur=0;renderAll();toast('已恢复默认 6 关');}
+function autoGrid(){
+  pushHistory();
+  var rows=parseInt($('inpRows').value,10)||3;rows=Math.max(1,Math.min(12,rows));
+  var ws=[];var types=['R','F','.','.','f','.','.'];
+  for(var r=0;r<rows;r++)for(var c=0;c<BRICK_COLS;c++){
+    var x=FACADE_X0+c*(BRICK_W+BRICK_GAP),y=GRID_TOP+r*(BRICK_H+BRICK_GAP);
+    // 交错填充，保证双通道
+    var t=(r%2===0)?(c%2===0?'F':(c%3?'R':'.')): 'F';
+    if(t==='.')continue;
+    ws.push({x:x,y:y,type:t});
+  }
+  curLevel().windows=ws;renderAll();toast('已铺标准网格 ('+rows+'行)');
+}
+function autoRandom(){
+  pushHistory();
+  var rows=parseInt($('inpRows').value,10)||3;rows=Math.max(1,Math.min(12,rows));
+  var ws=[];var pool=['F','F','F','f','R','R'];
+  for(var r=0;r<rows;r++)for(var c=0;c<BRICK_COLS;c++){
+    if(Math.random()<0.25)continue;
+    var x=FACADE_X0+c*(BRICK_W+BRICK_GAP),y=GRID_TOP+r*(BRICK_H+BRICK_GAP);
+    var t=pool[Math.floor(Math.random()*pool.length)];
+    ws.push({x:x,y:y,type:t});
+  }
+  // 至少保一个救援，保证双通道可玩
+  if(!ws.some(function(w){return w.type==='R';})){
+    if(ws.length)ws[Math.floor(ws.length/2)].type='R';
+    else ws.push({x:FACADE_X0+3*(BRICK_W+BRICK_GAP),y:GRID_TOP,type:'R'});
+  }
+  curLevel().windows=ws;renderAll();toast('已随机铺 '+ws.length+' 窗');
+}
+
+// —— 鼠标（点在 stage 上）——
+function stagePoint(e){
+  var rect=$('stage').getBoundingClientRect();
+  var scaleX=VW/rect.width, scaleY=VH/rect.height;
+  return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
+}
+function findWin(p){
+  var ws=curLevel().windows;
+  for(var i=ws.length-1;i>=0;i--){
+    var w=ws[i];
+    if(p.x>=w.x-4&&p.x<=w.x+BRICK_W+4&&p.y>=w.y-4&&p.y<=w.y+BRICK_H+4)return i;
+  }
+  return -1;
+}
+function snapVal(v,base,offset){ // 吸附到网格
+  return offset+Math.round((v-offset)/base)*base;
+}
+function placeAt(p){
+  pushHistory();
+  var w={x:p.x,y:p.y,type:state.brush};
+  if($('chkSnap').checked){
+    w.x=FACADE_X0+Math.round((p.x-FACADE_X0)/(BRICK_W+BRICK_GAP))*(BRICK_W+BRICK_GAP);
+    w.y=GRID_TOP+Math.round((p.y-GRID_TOP)/(BRICK_H+BRICK_GAP))*(BRICK_H+BRICK_GAP);
+    if(w.x<-10||w.x>VW)w.x=Math.max(0,Math.min(VW-BRICK_W,p.x));
+    if(w.y<-10||w.y>VH)w.y=Math.max(0,Math.min(VH-BRICK_H,p.y));
+  }
+  // 边界
+  w.x=Math.max(0,Math.min(VW-BRICK_W,w.x));
+  w.y=Math.max(0,Math.min(VH-BRICK_H,w.y));
+  curLevel().windows.push(w);
+  state.selected=curLevel().windows.length-1;
+  renderAll();
+}
+
+var painting=false;
+$('stage').addEventListener('mousedown',function(e){
+  e.preventDefault();
+  var p=stagePoint(e);
+  var i=findWin(p);
+  if(e.button===2){ // 右键：删
+    if(i>=0){pushHistory();curLevel().windows.splice(i,1);state.selected=-1;renderAll();}
+    return;
+  }
+  if(e.button!==0){return;}
+  if(i>=0){ // 拖已有
+    var w=curLevel().windows[i];
+    pushHistory(); // 拖动前记录，便于撤销改位置
+    state.drag=i;
+    state.dragOff={x:w.x-p.x,y:w.y-p.y};
+    state.selected=i;
+    renderCanvas();
+  }else{ // 放新
+    painting=true;
+    placeAt(p);
+  }
+});
+$('stage').addEventListener('mousemove',function(e){
+  var p=stagePoint(e);
+  $('posVal').textContent='x:'+Math.round(p.x)+' y:'+Math.round(p.y);
+  var cu=$('cursor');
+  if(state.drag>=0){
+    var w=curLevel().windows[state.drag];
+    var nx=p.x+state.dragOff.x, ny=p.y+state.dragOff.y;
+    w.x=Math.max(0,Math.min(VW-BRICK_W,nx));
+    w.y=Math.max(0,Math.min(VH-BRICK_H,ny));
+    renderCanvas();
+  }else if(painting){
+    placeAt(p);
+  }else{
+    cu.style.display='block';
+    cu.style.left=(p.x-1)+'px';cu.style.top=(p.y-1)+'px';
+    cu.style.width=(BRICK_W+2)+'px';cu.style.height=(BRICK_H+2)+'px';
+  }
+});
+window.addEventListener('mouseup',function(){
+  if(state.drag>=0){
+    state.drag=-1;state.dragOff=null;
+  }
+  painting=false;
+  var cu=$('cursor');cu.style.display='none';
+  renderCanvas();
+});
+$('stage').addEventListener('contextmenu',function(e){e.preventDefault();});
+
+// —— 键盘 ——
+document.addEventListener('keydown',function(e){
+  var tag=(e.target&&e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea')return;
+  if(e.key>='1'&&e.key<='5'){
+    state.brush=BRUSH_ORDER[parseInt(e.key,10)-1];renderTools();
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo();}
+  if(e.key.toLowerCase()==='z'&&!e.ctrlKey&&!e.metaKey){undo();}
+  if(e.key==='Delete'&&state.selected>=0){
+    var ws=curLevel().windows;
+    if(ws[state.selected]){pushHistory();ws.splice(state.selected,1);state.selected=-1;renderAll();toast('已删除选中窗');}
+  }
+});
+
+// —— 事件绑定 ——
+$('btnAdd').onclick=addLevel;
+$('btnDup').onclick=dupLevel;
+$('btnDel').onclick=delLevel;
+$('btnUp').onclick=function(){moveLevel(-1);};
+$('btnDown').onclick=function(){moveLevel(1);};
+$('btnReset').onclick=resetDefault;
+$('btnAutoGrid').onclick=autoGrid;
+$('btnAutoRandom').onclick=autoRandom;
+$('btnClearBg').onclick=function(){bgImage=null;reloadBg();toast('已清除背景图');};
+$('btnLoadDefaultBg').onclick=function(){
+  var img=new Image();
+  img.onload=function(){bgImage=DEFAULT_BG;reloadBg();toast('已加载默认森林背景');};
+  img.onerror=function(){toast('默认背景加载失败（需在 projects/IAA 下打开）；可手动选图');};
+  img.src=DEFAULT_BG;
+};
+$('fileBg').onchange=function(){
+  var f=this.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){bgImage=String(r.result||'');reloadBg();toast('已加载背景图');};
+  r.readAsDataURL(f);this.value='';
+};
+$('bgAlpha').oninput=function(){reloadBg();};
+$('chkGrid').onchange=drawGridOverlay;
+$('btnSaveLS').onclick=function(){localStorage.setItem(LS_KEY,toJson(state.levels));toast('已存浏览器');};
+$('btnLoadLS').onclick=function(){
+  var raw=localStorage.getItem(LS_KEY);if(!raw){toast('浏览器无存档');return;}
+  try{state.levels=parseAny(raw);state.cur=0;state.selected=-1;renderAll();toast('已读浏览器存档');}catch(e){toast('读取失败：'+e.message);}
+};
+$('btnExportJson').onclick=function(){
+  var blob=new Blob([toJson(state.levels)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='fire-hero-windows.json';a.click();URL.revokeObjectURL(a.href);toast('已下载 JSON');
+};
+$('btnImportJson').onclick=function(){$('fileJson').click();};
+$('fileJson').onchange=function(){
+  var f=this.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{state.levels=parseAny(String(r.result||''));state.cur=0;state.selected=-1;renderAll();toast('导入成功 '+state.levels.length+' 关');}
+    catch(e){toast('导入失败：'+e.message);}
+  };
+  r.readAsText(f,'utf-8');this.value='';
+};
+$('btnExportCoord').onclick=function(){
+  refreshOut();
+  copyOut('已复制坐标数组(Godot)');
+};
+$('btnExportGrid').onclick=function(){
+  $('out').value=toGridJs(state.levels);
+  copyOut('已复制 LEVEL_LAYOUTS');
+};
+function copyOut(msg){
+  var text=$('out').value;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){toast(msg);}).catch(function(){fallbackCopy();});
+  }else fallbackCopy();
+}
+function fallbackCopy(){var t=$('out');t.focus();t.select();try{document.execCommand('copy');toast('已复制');}catch(e){toast('请手动复制文本');}}
+$('btnFromText').onclick=function(){
+  try{state.levels=parseAny($('out').value);state.cur=0;state.selected=-1;renderAll();toast('解析成功 '+state.levels.length+' 关');}
+  catch(e){toast('解析失败：'+e.message);}
+};
+$('btnRefresh').onclick=function(){refreshOut();toast('预览已刷新');};
+$('inpName').addEventListener('change',function(){curLevel().name=$('inpName').value.trim();renderList();renderTitle();});
+
+// —— 启动 ——
+try{
+  var raw=localStorage.getItem(LS_KEY);
+  if(raw)state.levels=parseAny(raw);
+}catch(e){}
+if(!state.levels.length)state.levels=defaultLevels();
+renderAll();
+})();
+</script>
+</body>
+</html>

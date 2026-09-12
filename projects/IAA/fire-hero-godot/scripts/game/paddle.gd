@@ -15,15 +15,22 @@ const FIREMAN_FPS: float = 5.0
 ## ✅ 方向已修正：棕消防员在左、紫消防员在右、踩床居中
 ## 位置 = 你在 Godot 引擎里调好的值（main.tscn）
 const MAT_POS := Vector2(0, 9)                 # 踩床位置 (Mat)
-const FIREMAN_LEFT_POS := Vector2(-40, -2)     # 左消防员 (FiremanLeft)
-const FIREMAN_RIGHT_POS := Vector2(40, 0)      # 右消防员 (FiremanRight)
+const MAT_TEX_W: float = 74.0                  # mat.png 源图宽
+const FIREMAN_EDGE_GAP: float = 6.0            # 消防员距床面边缘的横向间距（92 宽时 =40）
 ## 消防员缩放（保持 1:1 像素，不缩放）
 const FIREMAN_SCALE := Vector2(1, 1)
 
 @export var move_speed: float = 420.0
 @export var base_width: float = 92.0
+## 基础移动速度（皮肤/道具叠加用，随关卡不再变化）
+var base_move_speed: float = 420.0
+## 蹦床宽度范围：基准 92；长条永久加长到顶屏边（450），螺丝永久缩短下限 40
+const PADDLE_MIN_W: float = 40.0
+const PADDLE_MAX_W: float = float(GameConstants.VIEW_W)
 
 var _half_w: float = 46.0
+var _virtual_dir: float = 0.0   ## 触屏虚拟按钮方向（-1 左 / 1 右）
+var _suppress_drag: bool = false ## 虚拟按钮按下时禁鼠标拖动（避免两者冲突）
 var on_fire: bool = false
 var control_enabled: bool = true
 var _bounce_tween: Tween
@@ -49,9 +56,18 @@ func _make_frames(f0: Texture2D, f1: Texture2D) -> SpriteFrames:
 
 func _ready() -> void:
 	base_width = GameConstants.PADDLE_W
+	base_move_speed = move_speed
 	position = Vector2(float(GameConstants.VIEW_W) * 0.5, GameConstants.PADDLE_Y)
 	_setup_textures()
 	_apply_width(base_width)
+
+
+## 按角色能力重设移动速度：小猫敏捷 +25%
+func apply_skin_speed() -> void:
+	base_move_speed = GameConstants.PADDLE_SPEED_BASE
+	if CharacterDB.cur_is("cat"):
+		base_move_speed *= 1.25
+	move_speed = base_move_speed
 
 
 func _setup_textures() -> void:
@@ -65,6 +81,14 @@ func _setup_textures() -> void:
 
 func set_control_enabled(enabled: bool) -> void:
 	control_enabled = enabled
+	if not enabled:
+		_virtual_dir = 0.0
+
+
+## 触屏左右虚拟按钮设置的移动方向（-1 左 / 0 无 / 1 右）
+func set_virtual_dir(d: float) -> void:
+	_virtual_dir = clampf(d, -1.0, 1.0)
+	_suppress_drag = _virtual_dir != 0.0
 
 
 func _physics_process(delta: float) -> void:
@@ -78,7 +102,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("move_right"):
 		dir += 1.0
 
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if (not _suppress_drag) and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		var mp: Vector2 = get_viewport().get_mouse_position()
 		var target_x: float = clampf(mp.x, _half_w, float(GameConstants.VIEW_W) - _half_w)
 		position.x = move_toward(position.x, target_x, move_speed * 1.8 * delta)
@@ -88,11 +112,18 @@ func _physics_process(delta: float) -> void:
 			_half_w,
 			float(GameConstants.VIEW_W) - _half_w
 		)
+	elif _virtual_dir != 0.0:
+		position.x = clampf(
+			position.x + _virtual_dir * move_speed * delta,
+			_half_w,
+			float(GameConstants.VIEW_W) - _half_w
+		)
 
 	position.y = GameConstants.PADDLE_Y
 
 
 func _apply_width(w: float) -> void:
+	w = clampf(w, PADDLE_MIN_W, PADDLE_MAX_W)
 	base_width = w
 	_half_w = w * 0.5
 	if _collision == null:
@@ -103,18 +134,21 @@ func _apply_width(w: float) -> void:
 
 
 func _relayout() -> void:
-	# 尊重你在引擎里调好的位置（基准常量），脚本不覆盖
+	# 床面视觉宽度 = 当前碰撞宽（长条拉长 / 锤子收窄时床面可见变化）
+	var w: float = maxf(40.0, base_width)
 	if _mat:
-		_mat.scale = Vector2.ONE
+		_mat.scale = Vector2(w / MAT_TEX_W, 1.0)
 		_mat.position = MAT_POS
+	# 左右消防员贴床面两端（基准 92 宽 → ±40）
+	var edge: float = w * 0.5 - FIREMAN_EDGE_GAP
 	if _fireman_left:
 		_fireman_left.scale = FIREMAN_SCALE
-		_fireman_left.position = FIREMAN_LEFT_POS
+		_fireman_left.position = Vector2(-edge, -2.0)
 		if not _fireman_left.is_playing():
 			_fireman_left.play("run")
 	if _fireman_right:
 		_fireman_right.scale = FIREMAN_SCALE
-		_fireman_right.position = FIREMAN_RIGHT_POS
+		_fireman_right.position = Vector2(edge, 0.0)
 		if not _fireman_right.is_playing():
 			_fireman_right.play("run")
 
@@ -123,9 +157,14 @@ func set_width_factor(factor: float) -> void:
 	_apply_width(GameConstants.PADDLE_W * factor)
 
 
-## 道具直接指定宽度（长条 +30 / 锤子 -24，HTML 数值），超时后由 game_root 调 reset_width
+## 长条 / 螺丝：永久增减蹦床长度（无时限），clamp 到 [40, 顶屏边 450]
+func adjust_width_permanent(delta: float) -> void:
+	_apply_width(base_width + delta)
+
+
+## 旧接口保留（内部调用方若传绝对值会按 clamp 处理；现改为永久语义）
 func set_effect_width(width: float) -> void:
-	_apply_width(maxf(40.0, width))
+	_apply_width(width)
 
 
 func reset_width() -> void:

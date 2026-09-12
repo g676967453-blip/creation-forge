@@ -1,0 +1,56 @@
+var root = EditorInterface.get_edited_scene_root()
+var out = {}
+if root == null:
+	return {"error": "no root"}
+out["root"] = str(root.name)
+var paths = [
+	"UI/Overlays/Menu/VBox",
+	"UI/Overlays/Menu/VBox/Title",
+	"UI/Overlays/Menu/VBox/Sub",
+	"UI/Overlays/Menu/VBox/MenuStats",
+	"UI/Overlays/Menu/VBox/StartButton",
+	"UI/HUD/TopBar",
+	"UI/HUD/GoalLabel",
+	"UI/HUD/Hint",
+	"UI/Overlays/LevelClear/VBox",
+	"UI/Overlays/LevelClear/VBox/Title",
+	"UI/Overlays/LevelClear/VBox/DoubleButton",
+	"UI/Overlays/LevelClear/VBox/NextButton",
+	"UI/Overlays/GameOver/VBox",
+	"UI/Overlays/GameOver/VBox/Title",
+	"UI/Overlays/Pause/VBox",
+	"UI/Overlays/Pause/VBox/Title",
+	"GameRoot/Paddle",
+	"GameRoot/Ball"
+]
+for i in range(paths.size()):
+	var p = paths[i]
+	var n = root.get_node_or_null(p)
+	if n == null:
+		out[p] = {"missing": true}
+		continue
+	var item = {"class": n.get_class()}
+	if n is Control:
+		var r = n.get_global_rect()
+		item["rect"] = {"x": r.position.x, "y": r.position.y, "w": r.size.x, "h": r.size.y}
+		item["visible"] = n.visible
+		if n is Label:
+			item["text"] = n.text
+		if n is Button:
+			item["text"] = n.text
+	elif n is Node2D:
+		item["pos"] = {"x": n.position.x, "y": n.position.y}
+	out[p] = item
+var mv = root.get_node_or_null("UI/Overlays/Menu/VBox")
+if mv != null:
+	var kids = []
+	for ch in mv.get_children():
+		var e = {"name": str(ch.name), "class": ch.get_class()}
+		if ch is Control:
+			var rr = ch.get_global_rect()
+			e["rect"] = {"x": rr.position.x, "y": rr.position.y, "w": rr.size.x, "h": rr.size.y}
+		if ch is Label or ch is Button:
+			e["text"] = ch.text
+		kids.append(e)
+	out["menu_vbox_children"] = kids
+return out

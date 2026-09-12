@@ -124,7 +124,7 @@ assets/props/ball/
 ├── char_dog.png       小狗消防员
 ├── char_panda.png     熊猫消防员
 ├── char_capybara.png  卡皮巴拉消防员
-├── char_naruto.png    鸣人消防员（哪吒暂用兜底）
+├── char_naruto.png    狐狸消防员（文件沿用旧名 char_naruto，画面=狐狸忍者）
 └── frames/
     ├── cat_00.png            小猫原始帧0
     ├── cat_01.png            小猫原始帧1

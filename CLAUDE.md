@@ -209,9 +209,13 @@ AI 不是替代人类创造力，而是放大它。它同时扮演两个底层�
 
 ### Godot
 
-- 节点命名使用 snake_case；脚本类名 PascalCase
+- **节点命名用 PascalCase**（`Paddle`、`BrickHost`、`TopBar`），变量/函数/信号用 snake_case，`class_name` 用 PascalCase
+  —— 以 [Godot 官方 GDScript 风格指南](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html) 为准
+  （注：本文档早期误写为「节点命名使用 snake_case」，2026-09-11 修正）
 - 场景间通过信号（signal）通信，避免直接引用兄弟节点
 - 每个游戏项目必须有 README.md（中文）说明玩法和开发笔记
+- **写 Godot 代码前先读技能**（`.claude/skills/` 下 GodotPrompter 55 个 Godot 4.x 技能）：
+  `gdscript-patterns`（写法与静态类型）、`godot-code-review`（审查清单）、`scene-organization`（场景树）、`godot-project-setup`（工程结构）
 
 ### 通用
 

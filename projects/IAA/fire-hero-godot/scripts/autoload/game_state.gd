@@ -18,6 +18,47 @@ var revive_used: bool = false
 var skin_index: int = 0
 var owned_skins: Array = [0, 1]
 
+## 商店购买的「下一关生效道具」（kind 字符串：wide/up/extinguish/boost/bag）
+## 过关结算入队 → 下一关 _start_level 时消费
+var pending_buffs: Array = []
+
+## 当前已进入过的最远关卡（首次过关解锁补给队显示用，简单用 level 判断即可，不强制）
+var _unlocked_any_hero: bool = false
+
+
+func has_skin(index: int) -> bool:
+	return owned_skins.has(index)
+
+
+func unlock_skin(index: int) -> bool:
+	if has_skin(index):
+		return false
+	owned_skins.append(index)
+	save()
+	return true
+
+
+func set_skin(index: int) -> bool:
+	if index < 0 or index >= CharacterDB.COUNT:
+		return false
+	skin_index = index
+	save()
+	return true
+
+
+## 尝试金币购买角色（扣除 coins + 解锁 + 装备）。返回是否成功
+func buy_skin_with_coins(index: int) -> bool:
+	if has_skin(index):
+		return false
+	var cost: int = int(CharacterDB.role(index).get("cost", 0))
+	if coins < cost:
+		return false
+	coins -= cost
+	owned_skins.append(index)
+	skin_index = index
+	save()
+	return true
+
 
 func _ready() -> void:
 	load_save()

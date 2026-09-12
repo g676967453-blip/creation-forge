@@ -7,6 +7,3 @@
 **/node_modules/
 **/*.map
 lib/client.css
-
-# optional personal live state (uncomment to ignore)
-# state/worktable-state.json\n

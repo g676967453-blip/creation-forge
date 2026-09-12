@@ -1,12 +1,28 @@
 # 救火英雄 · 游戏界面 Pixso 原型
 
 > 日期：2026-09-01  
-> 状态：9 屏已导入 Pixso 桌面端（含好友排行榜弹窗） 
+> 状态：9 屏已导入 Pixso 桌面端（含好友排行榜弹窗）  
 > 对齐：`救火英雄IAA游戏企划.md` §4 / `微创新需求规格.md` / `救火英雄美术输出规格与MVP资产清单.md` / `fire-hero-iaa.html`
+
+## 0. 工作流位置（阶段 2 / 3）
+
+本目录是 **IAA 项目** 在通用四阶段 SOP 中的 **Pixso 界面与审核入口**，不是平台级默认画风说明。
+
+| 文档 | 作用 |
+|------|------|
+| [游戏开发-Godot-Pixso-Lovart四阶段](../../../docs/workflows/游戏开发-Godot-Pixso-Lovart四阶段.md) | **通用**引擎落地链（Godot→Pixso→Lovart→Godot）；不含像素风默认 |
+| [项目工作流配置](../docs/project-workflow-profile.md) | **仅本项目**：画幅、风格锁链接、目录、Frame 约定 |
+| [占位资产表](../fire-hero-godot/docs/placeholder-asset-map.md) | 阶段 1/4 节点 ↔ 资产 key |
+| [godot-replica/](./godot-replica/) | **从当前 Godot 界面+PNG 复刻到 Pixso**（页 `Godot-UI-Replica`，除特效） |
+
+- **阶段 2**：在此维护 HTML 单屏 / 导入 Pixso / 写资产需求表（风格锁引用见项目 profile）。  
+- **阶段 3**：Lovart 出图后贴回本页 Frame，人审通过再回灌 Godot。  
+- **引擎现状复刻**：见 `godot-replica/`（与早期概念页 `FireHero-UI-Prototypes` 分开）。  
+- MCP 默认：`http://127.0.0.1:3667/mcp`（Pixso 桌面端 + 当前文件激活）。
 
 ## 1. 目标
 
-按项目需求，先把 **竖屏 9:16（逻辑 450×800）** 核心游戏界面在 Pixso 做成可评审原型图，作为：
+按 **本项目** 需求，把竖屏 9:16（逻辑 450×800）核心界面在 Pixso 做成可评审原型图，作为：
 
 - 交互/信息架构确认稿
 - 美术换皮与组件切图参考
@@ -72,11 +88,12 @@ start ui-prototypes/fire-hero-ui-screens.html
 
 ## 5. 人机协作下一步
 
-1. **人在 Pixso 目视确认**：信息是否够用、按钮层级是否对、有无缺屏。  
+1. **人在 Pixso 目视确认**（通用 Gate B）：信息是否够用、按钮层级是否对、有无缺屏。  
 2. **改文案/层级**：直接在 Frame 内改，或改 `screens/*.html` 后重跑导入脚本。  
-3. **美术替换**：角色卡/标题字/主按钮换 `art/final/ui` 与 `char_*_card`。  
-4. **组件化**：主按钮、广告按钮、角色卡、商品卡抽成 Pixso Component。  
-5. **D2C**（可选）：选中 Frame → MCP `design_to_code` 出 HTML/CSS 对照现有 `fire-hero-iaa.html`。
+3. **阶段 3**：按项目风格锁出 Lovart 图 → 贴屏审核（Gate C）→ `art/final`。  
+4. **阶段 4**：严格按通过稿回灌 `fire-hero-godot`，更新占位资产表为 `replaced`。  
+5. **组件化**（可选）：主按钮、广告按钮、角色卡、商品卡抽成 Pixso Component。  
+6. **D2C**（可选）：选中 Frame → MCP `design_to_code` 对照 `fire-hero-iaa.html` / Godot UI。
 
 ## 6. 已知限制
 
