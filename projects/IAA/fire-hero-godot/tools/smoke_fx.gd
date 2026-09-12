@@ -77,6 +77,18 @@ func _run() -> void:
 	game._check_decor_flash()
 	checks.append(["flash_changes_modulate", dw.modulate != base_mod])
 	checks.append(["flash_scales_up", dw.scale != base_scale])
+	# 关键断言：必须真的「变亮」。modulate 是乘法，三通道 ≤1 的颜色只会让窗户变暗
+	# （第一版写成 (1.0, 0.96, 0.78) 就是暗黄，看着根本不像闪），必须 >1 才提亮
+	checks.append(["flash_actually_brightens", dw.modulate.r > 1.0])
+	var glow: Sprite2D = dw.get_node_or_null("FlashGlow") as Sprite2D
+	checks.append(["flash_glow_exists", glow != null])
+	checks.append([
+		"flash_glow_is_additive",
+		glow != null
+			and glow.material is CanvasItemMaterial
+			and (glow.material as CanvasItemMaterial).blend_mode == CanvasItemMaterial.BLEND_MODE_ADD
+	])
+	checks.append(["flash_glow_lit", glow != null and glow.modulate.a > 0.0])
 	checks.append(["flash_recorded", game._decor_touching.has(dw)])
 
 	# 同帧再判一次：仍在重叠 → 不应重启（值保持不变）
@@ -93,6 +105,7 @@ func _run() -> void:
 	await get_tree().create_timer(DecorWindow.FLASH_TIME + 0.2).timeout
 	checks.append(["flash_restores_modulate", dw.modulate.is_equal_approx(base_mod)])
 	checks.append(["flash_restores_scale", dw.scale.is_equal_approx(base_scale)])
+	checks.append(["flash_glow_restores", glow != null and is_zero_approx(glow.modulate.a)])
 
 	# ================= 2) 跳字：独立生成与自毁 =================
 	var ft: FloatText = FloatText.spawn(host, Vector2(200.0, 300.0), "+45", game.FLOAT_SCORE_COLOR, 24)
