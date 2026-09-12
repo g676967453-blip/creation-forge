@@ -71,8 +71,9 @@ func _run() -> void:
 
 	var base_mod: Color = dw.modulate
 	var base_scale: Vector2 = dw.scale
+	var base_x: float = dw.position.x
 
-	# 球移到窗户上 → 应闪
+	# 球移到窗户上 → 应触发撞击反馈
 	game.ball.global_position = dw.global_position
 	game._check_decor_flash()
 	checks.append(["flash_changes_modulate", dw.modulate != base_mod])
@@ -101,11 +102,49 @@ func _run() -> void:
 	game._check_decor_flash()
 	checks.append(["records_cleared_when_away", not game._decor_touching.has(dw)])
 
-	# 等闪烁结束 → 回到初始外观
-	await get_tree().create_timer(DecorWindow.FLASH_TIME + 0.2).timeout
+	# ===== 手动步进撞击动画：不依赖真实时钟，逐帧取样 =====
+	dw.set_process(false)  # 交给测试自己步进，避免引擎同时在跑造成双倍推进
+	var max_offset: float = 0.0
+	var max_scale: float = 0.0
+	var saw_red: bool = false
+	var saw_white: bool = false
+	var steps: int = 40
+	for i in steps:
+		dw._process(DecorWindow.IMPACT_TIME / float(steps))
+		max_offset = maxf(max_offset, absf(dw.position.x - base_x))
+		max_scale = maxf(max_scale, dw.scale.x)
+		var g: Color = glow.modulate
+		if g.a > 0.1:
+			if g.g < 0.35:
+				saw_red = true
+			elif g.g > 0.7:
+				saw_white = true
+	dw._process(0.01)  # 兜底再推一帧，确保走完并触发 _restore
+
+	checks.append(["flash_shakes_horizontally", max_offset > 1.0])
+	checks.append(["flash_scale_peaks", max_scale > base_scale.x + 0.05])
+	checks.append(["flash_alternates_red_white", saw_red and saw_white])
+	checks.append(["flash_restores_position", is_equal_approx(dw.position.x, base_x)])
 	checks.append(["flash_restores_modulate", dw.modulate.is_equal_approx(base_mod)])
 	checks.append(["flash_restores_scale", dw.scale.is_equal_approx(base_scale)])
 	checks.append(["flash_glow_restores", glow != null and is_zero_approx(glow.modulate.a)])
+
+	# ===== 晃动不得反过来触发自己 =====
+	# 球停在重叠区「边缘内侧」，窗户晃动 ±SHAKE_AMP 会把它晃出重叠区。
+	# 若判定用 global_position，就会出现「晃出→清空→晃回→重触发」的自激循环。
+	var edge_offset: float = GameConstants.BRICK_W * 0.5 + game.ball.radius - 2.0
+	dw.flash()
+	game.ball.global_position = dw.rest_global_position() + Vector2(edge_offset, 0.0)
+	game._check_decor_flash()
+	var retriggered: bool = false
+	for i in 20:
+		dw._process(DecorWindow.IMPACT_TIME / 20.0)
+		game._check_decor_flash()
+		if not game._decor_touching.has(dw):
+			retriggered = true
+			break
+	checks.append(["no_retrigger_while_shaking", not retriggered])
+	game.ball.global_position = Vector2(5.0, 5.0)
 
 	# ================= 2) 跳字：独立生成与自毁 =================
 	var ft: FloatText = FloatText.spawn(host, Vector2(200.0, 300.0), "+45", game.FLOAT_SCORE_COLOR, 24)

@@ -966,7 +966,7 @@ func _check_decor_flash() -> void:
 		var w := n as DecorWindow
 		if w == null:
 			continue
-		var d: Vector2 = ball_pos - w.global_position
+		var d: Vector2 = ball_pos - w.rest_global_position()
 		if absf(d.x) <= half_w and absf(d.y) <= half_h:
 			now[w] = true
 			if not _decor_touching.has(w):
