@@ -92,8 +92,9 @@ static func _spawn_from_char(parent: Node, ch: String, col: int, row: int, use_a
 
 
 ## 装饰性正常窗（规则 §3.2 的 N 态）：无碰撞、不计目标，只为窗格成片更完整
+## 球擦过时会闪一下（见 DecorWindow.flash），给「砸到窗户」一个即时反馈
 static func _spawn_decor_window(parent: Node, col: int, row: int) -> void:
-	var s := Sprite2D.new()
+	var s := DecorWindow.new()
 	s.name = "DecorWindow"
 	s.texture = preload("res://assets/props/windows/window_normal.png")
 	s.z_index = -1  # 垫在可玩砖之下

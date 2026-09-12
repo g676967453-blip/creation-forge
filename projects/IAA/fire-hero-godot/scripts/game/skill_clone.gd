@@ -72,7 +72,7 @@ func update_clone(delta: float) -> bool:
 	# 与砖 AABB：分身只对火砖造成伤害，救援窗忽略（穿行不救人）
 	var brick: Node = _find_hit_brick()
 	if brick != null and is_instance_valid(brick) and game != null and is_instance_valid(game):
-		var bt: int = brick.get("brick_type")
+		var bt: int = int(brick.get("brick_type"))
 		if bt == WindowBrick.BrickType.FIRE and not bool(brick.get("is_dead")):
 			# 命中后向砖侧回弹一点，避免持续贴脸每帧触发
 			_bounce_off_brick(brick)
@@ -104,11 +104,15 @@ func _find_hit_brick() -> Node:
 	for b: Node in host.get_children():
 		if b == null or not is_instance_valid(b):
 			continue
-		var n2: Node2D = b as Node2D
-		if n2 == null:
+		# 必须只认真正的砖。brick_host 下还挂着装饰窗（DecorWindow，也是 Sprite2D/Node2D）与
+		# 跳字等非砖节点；此前只按「是不是 Node2D」筛，会把装饰窗当砖返回，
+		# 随后 update_clone 里 `brick.get("brick_type")` 得到 null，赋给 int 触发
+		# 「Trying to assign value of type 'Nil' to a variable of type 'int'」。
+		var wb := b as WindowBrick
+		if wb == null:
 			continue
-		var dx: float = absf(n2.position.x - position.x)
-		var dy: float = absf(n2.position.y - position.y)
+		var dx: float = absf(wb.position.x - position.x)
+		var dy: float = absf(wb.position.y - position.y)
 		if dx < BRICK_HALF + radius and dy < BRICK_HALF + radius:
-			return b
+			return wb
 	return null

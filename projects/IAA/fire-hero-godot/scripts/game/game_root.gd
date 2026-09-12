@@ -37,6 +37,13 @@ var _shop_used: bool = false           ## 本关是否已弹出过商店
 var _coin_rain: CoinRain = null        ## 进行中的金币雨节点
 var _coin_rain_active: bool = false    ## 是否正在金币雨中（主玩法冻结）
 
+## 表现层：球擦过「单纯窗户」（DecorWindow）时闪烁
+var _decor_touching: Dictionary = {}   ## 上一帧仍与球重叠的窗户 → 只在「进入」时闪一次
+
+## 跳字配色：灭火得分（金） / 命中伤害（白）
+const FLOAT_SCORE_COLOR: Color = Color(1.0, 0.86, 0.32)
+const FLOAT_DAMAGE_COLOR: Color = Color(0.94, 0.94, 0.94)
+
 ## 红窗跳楼节奏（规则 §3.4：周期性跳窗）
 const FALL_INTERVAL_MIN: float = 2.6
 const FALL_INTERVAL_MAX: float = 4.2
@@ -140,6 +147,9 @@ func _process(delta: float) -> void:
 
 	if _waiting_launch and ball.stuck_to_paddle:
 		ball.position = _ball_rest_pos()
+
+	# 表现层：球擦过单纯窗户 → 闪一下
+	_check_decor_flash()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -750,16 +760,27 @@ func _on_ball_hit_brick(brick: Node) -> void:
 			GameState.add_score(pts)
 			GameState.add_coins(2)
 			Sfx.play("sfx_fire_out")
+			var at: Vector2 = Vector2.ZERO
+			if brick is Node2D:
+				at = (brick as Node2D).global_position
+			# 跳字：灭火成功 → 金色得分
+			FloatText.spawn(brick_host, at, "+%d" % pts, FLOAT_SCORE_COLOR, 24)
 			if brick.has_method("extinguish"):
-				var at: Vector2 = Vector2.ZERO
-				if brick is Node2D:
-					at = (brick as Node2D).global_position
 				brick.extinguish()
 				_maybe_drop_item(at)
 			_check_win()
 		"fire_down":
 			GameState.add_score(5)
 			Sfx.play("sfx_fire_hit", 0.0, 1.0 + randf_range(-0.05, 0.05))
+			# 跳字：这一下打掉多少血（嫌吵就把这几行删掉，灭火跳字不受影响）
+			if brick is Node2D:
+				FloatText.spawn(
+					brick_host,
+					(brick as Node2D).global_position,
+					"-%d" % dmg,
+					FLOAT_DAMAGE_COLOR,
+					18
+				)
 		"none":
 			pass
 		_:
@@ -928,6 +949,35 @@ func _clear_coin_rain() -> void:
 	if _coin_rain != null and is_instance_valid(_coin_rain):
 		_coin_rain.free()
 	_coin_rain = null
+
+
+## 球擦过「单纯窗户」（DecorWindow）→ 让它闪一下。
+##
+## 用「球心 vs 砖格矩形」的 AABB 判定，只保留本帧仍重叠的集合，
+## 因此是「进入时闪一次」而不是每帧闪。
+##
+## 刻意不用带类型注解的循环变量：窗户在换关时被 free()，数组里会留下已释放对象，
+## 带注解会触发 Object→Node 转换错误中断本帧（分身 filter 踩过同一个坑）。
+func _check_decor_flash() -> void:
+	if ball == null or not is_instance_valid(ball):
+		return
+	var ball_pos: Vector2 = ball.global_position
+	var r: float = ball.radius
+	var half_w: float = GameConstants.BRICK_W * 0.5 + r
+	var half_h: float = GameConstants.BRICK_H * 0.5 + r
+	var now: Dictionary = {}
+	for n in get_tree().get_nodes_in_group("decor_window"):
+		if n == null or not is_instance_valid(n):
+			continue
+		var w := n as DecorWindow
+		if w == null:
+			continue
+		var d: Vector2 = ball_pos - w.global_position
+		if absf(d.x) <= half_w and absf(d.y) <= half_h:
+			now[w] = true
+			if not _decor_touching.has(w):
+				w.flash()
+	_decor_touching = now
 
 
 func _on_brick_destroyed(brick: Node) -> void:
