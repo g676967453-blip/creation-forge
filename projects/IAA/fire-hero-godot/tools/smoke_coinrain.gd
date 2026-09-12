@@ -33,6 +33,16 @@ func _count_float_texts(parent: Node) -> int:
 	return n
 
 
+## 场上现存的宝箱道具
+func _chest_items(game: GameRoot) -> Array:
+	var found: Array = []
+	for c in game.item_host.get_children():
+		var it := c as GameItem
+		if it != null and it.kind == GameItem.Kind.CHEST:
+			found.append(it)
+	return found
+
+
 func _run() -> void:
 	var guard := Timer.new()
 	guard.one_shot = true
@@ -239,7 +249,32 @@ func _run() -> void:
 
 	await get_tree().process_frame
 
-	# ===== 9) 中途离开 → 强制清理，无残留节点 =====
+	# ===== 9) 调试入口：debug_drop_chest（右上角「掉宝箱」按钮背后）=====
+	game._clear_coin_rain()
+	await get_tree().process_frame
+	var chests_before: int = _chest_items(game).size()
+	game.debug_drop_chest()
+	await get_tree().process_frame
+	var chests_now: Array = _chest_items(game)
+	checks.append(["debug_drop_spawns_chest", chests_now.size() == chests_before + 1])
+	var radar: Node = main.get_node_or_null("UI/Overlays/TestChestButton")
+	checks.append(["test_chest_button_on_screen", radar != null])
+	# 必须正好落在蹦床正上方且 vx=0 —— 否则调试按钮还得靠运气接
+	var dropped: GameItem = null
+	if not chests_now.is_empty():
+		dropped = chests_now[chests_now.size() - 1] as GameItem
+	checks.append([
+		"debug_chest_above_paddle",
+		dropped != null and is_equal_approx(dropped.global_position.x, game.paddle.global_position.x)
+	])
+	checks.append(["debug_chest_falls_straight", dropped != null and is_zero_approx(dropped.vx)])
+	# 清场，别影响后面的清理断言
+	for c in chests_now:
+		if c != null and is_instance_valid(c):
+			c.free()
+	await get_tree().process_frame
+
+	# ===== 10) 中途离开 → 强制清理，无残留节点 =====
 	game._start_coin_rain()
 	await get_tree().process_frame
 	checks.append(["rain_restarted", game._coin_rain_active])
@@ -253,7 +288,7 @@ func _run() -> void:
 			leftovers += 1
 	checks.append(["no_leftover_node", leftovers == 0])
 
-	# ===== 10) 金币雨期间不刷跳楼村民 =====
+	# ===== 11) 金币雨期间不刷跳楼村民 =====
 	game._start_coin_rain()
 	await get_tree().process_frame
 	var fall_before: int = game._fallers.size()

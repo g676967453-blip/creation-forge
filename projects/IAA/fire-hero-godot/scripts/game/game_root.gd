@@ -806,6 +806,27 @@ func _maybe_drop_item(at: Vector2) -> void:
 	it.collected.connect(_on_item_collected)
 
 
+## 调试入口：立刻在蹦床正上方掉一个金币宝箱。
+##
+## 与 _maybe_drop_item 的区别：不定概率、不走权重，vx 固定为 0 —— 宝箱直线落下，
+## 一接就中，方便反复验证金币雨而不用等 1.4% 的掉落率撞运气。
+## 由右上角「掉宝箱」临时按钮调用，正式发布删按钮即可（本方法可留着，无副作用）。
+func debug_drop_chest() -> void:
+	if state != State.PLAYING or _level_closing:
+		show_message.emit("先开始游戏，再掉宝箱")
+		return
+	if _coin_rain_active:
+		show_message.emit("金币雨进行中，稍后再掉")
+		return
+	var it := GameItem.new()
+	it.setup(self, GameItem.Kind.CHEST)
+	item_host.add_child(it)  # add_child 会触发 _ready 随机 vx，下面覆盖掉
+	it.global_position = Vector2(paddle.global_position.x, -float(GameItem.SIZE))
+	it.vx = 0.0
+	it.collected.connect(_on_item_collected)
+	show_message.emit("调试：宝箱已掉落")
+
+
 ## 蹦床接住道具 → 结算效果（数值对齐 HTML applyItem）
 func _on_item_collected(it: GameItem) -> void:
 	if state != State.PLAYING or _level_closing:
