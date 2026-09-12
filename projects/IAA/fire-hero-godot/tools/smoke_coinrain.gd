@@ -43,6 +43,14 @@ func _chest_items(game: GameRoot) -> Array:
 	return found
 
 
+## 按 POP_SERIES 累加出「接住 n 枚应得多少金币」——结算是这个和，不是枚数
+func _expected_gain(catches: int) -> int:
+	var total: int = 0
+	for i in catches:
+		total += CoinRain.POP_SERIES[mini(i, CoinRain.POP_SERIES.size() - 1)]
+	return total
+
+
 func _run() -> void:
 	var guard := Timer.new()
 	guard.one_shot = true
@@ -135,6 +143,7 @@ func _run() -> void:
 	rain._coins.clear()
 	rain._caught = 0
 	rain._pop_index = 0
+	rain._coins_gained = 0
 	await get_tree().process_frame
 
 	rain._spawn_coin()
@@ -177,14 +186,22 @@ func _run() -> void:
 			c.free()
 	rain._coins.clear()
 	rain._caught = 0
+	rain._pop_index = 0
+	rain._coins_gained = 0
 	for i in 6:
 		rain._spawn_coin()
 		var c: CoinRain.Coin = rain._coins[rain._coins.size() - 1]
 		c.position = Vector2(game.paddle.position.x, game.paddle.position.y)
 		rain._update_coins(0.0)
 	checks.append(["caught_six", rain._caught == 6])
-	var total_coins: int = 6 * CoinRain.COIN_COIN
-	var total_score: int = 6 * CoinRain.COIN_SCORE
+	# 本次修复的核心断言：累计入账必须精确等于「按 POP_SERIES 逐个加出来的和」，
+	# 也就是玩家在雨里看到的那些飘字加起来 —— 两者对不上就是这次报的 bug 复现
+	checks.append([
+		"pop_sum_matches_accumulator",
+		rain._coins_gained == _expected_gain(rain._caught)
+	])
+	var total_coins: int = rain._coins_gained
+	var total_score: int = total_coins * CoinRain.COIN_SCORE
 	var score_before: int = GameState.score
 	var coins_before: int = GameState.coins
 
@@ -195,6 +212,13 @@ func _run() -> void:
 	checks.append(["coins_cleared_on_settle", rain._coins.is_empty()])
 	checks.append(["settle_number_exists", rain._settle_num != null])
 	checks.append(["settle_big_coin_exists", rain._settle_coin != null])
+	# 结算大金币必须是原生大贴图，不能是 64px UI 图标放大（Nearest 下会成马赛克）
+	checks.append([
+		"settle_coin_not_upscaled",
+		rain._settle_coin != null
+			and rain._settle_coin.texture != null
+			and float(rain._settle_coin.texture.get_width()) >= CoinRain.BIG_COIN_SIZE
+	])
 	# 「金币在前面」= 金币 z_index 高于数值
 	checks.append([
 		"big_coin_in_front_of_number",
@@ -215,6 +239,8 @@ func _run() -> void:
 		"number_not_buried_by_coin",
 		covered < (glyph_bottom - glyph_top) * 0.5
 	])
+	# 用户明确要求「不再重叠」：金币底边必须在字形顶边之上，且留出可见空隙
+	checks.append(["number_clear_of_coin", glyph_top - coin_bottom >= 20.0])
 	checks.append([
 		"number_glyphs_on_canvas",
 		glyph_top > 0.0 and glyph_bottom < float(GameConstants.VIEW_H)

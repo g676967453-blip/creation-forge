@@ -27,13 +27,12 @@ const DURATION: float = 10.0             ## 限时（秒）
 const CURTAIN_ALPHA: float = 0.4         ## 黑幕不透明度（0.4 = 40% 黑）
 const SPAWN_INTERVAL_MIN: float = 0.05   ## 金币生成间隔下限（秒）——「疯狂」体现在这里
 const SPAWN_INTERVAL_MAX: float = 0.12   ## 金币生成间隔上限（秒）
-const COIN_SCORE: int = 5                ## 每枚金币分数
-const COIN_COIN: int = 1                 ## 每枚金币的金币数
+const COIN_SCORE: int = 5                ## 金币 → 分数的换算系数
 const COIN_DISPLAY: float = 26.0         ## 金币基准显示边长（逻辑像素）
 const COIN_SCALE_MIN: float = 0.72       ## 金币大小随机下限（有大有小）
 const COIN_SCALE_MAX: float = 1.35       ## 金币大小随机上限
-const VY_MIN: float = 240.0              ## 下落速度下限（px/s）
-const VY_MAX: float = 430.0              ## 下落速度上限（px/s）
+const VY_MIN: float = 340.0              ## 下落速度下限（px/s）—— 调大 = 掉得更急
+const VY_MAX: float = 620.0              ## 下落速度上限（px/s）
 const VX_MAX: float = 40.0               ## 横向漂移上限（px/s）
 const WALL_MARGIN: float = 8.0           ## 左右壁反弹边界
 const FALL_Y: float = float(GameConstants.VIEW_H) + 20.0  ## 落出屏幕即回收
@@ -44,9 +43,13 @@ const CATCH_BOUNCE_VY: float = -320.0    ## 接住瞬间的向上初速
 const CATCH_GRAVITY: float = 1150.0      ## 回弹弧线重力
 const CATCH_FADE: float = 0.42           ## 回弹+淡出总时长（秒）
 
-## 接住时弹的数值：**纯动画表现**，按连击递增，不影响实际结算
-## （实际入账恒为 COIN_SCORE / COIN_COIN × 接住枚数）
-const POP_SERIES: Array[int] = [1, 2, 4, 8, 16]
+## 接住时弹的数值 = **这一枚真实入账的金币数**，按连击递增。
+##
+## 早先这里是「纯动画表现」：飘字按 +1/+2/+4/+8/+16 递增，但每枚实际只记 1 金币。
+## 结果玩家把飘字加起来和结算数字对不上（反馈即为「和我接到的数值对不上」）。
+## 现在飘字就是真实入账，结算总量 = 所有飘字之和，两者永远一致。
+## 想改手感/产出曲线，只动这一个数组即可。
+const POP_SERIES: Array[int] = [1, 2, 4]
 const POP_COLOR: Color = Color(1.0, 0.9, 0.45)
 const POP_FONT_SIZE: int = 20
 
@@ -57,15 +60,20 @@ const BIG_COIN_SIZE: float = 132.0       ## 结算大金币边长
 const SETTLE_NUM_SIZE: int = 92          ## 结算数字字号
 const SETTLE_CAPTION: String = "金币雨结算"
 
-## 结算版面：纵向排布，只让金币压住数字顶部一点点。
+## 结算版面：纵向三段式（标题 / 金币 / 数字），金币与数字之间**完全留空不重叠**。
 ##
-## 第一版把数字与金币都放在画布中心，结果 132px 的金币把数字字形整个盖住
-## （数字字形 y 213~267 完全落在金币 y 149~281 之内），玩家只能看到金币。
-## 现在把数字整体下移到金币下方，靠「金币 z_index 更高 + 压住数字顶部约 20px」
-## 来表达前后层次，同时保证数字读得清。
-const SETTLE_CAPTION_Y: float = 280.0    ## 标题 Label 顶边 y
-const SETTLE_COIN_CY: float = 378.0      ## 大金币中心 y
-const SETTLE_NUM_CY: float = 458.0       ## 数字中心 y
+## 第一版把数字与金币都放在画布中心，132px 金币把数字字形整个盖住
+## （字形 y 213~267 全在金币 y 149~281 内），玩家只看到金币。
+## 第二版改成「压住字形顶部 19px」，用户反馈仍有重叠。
+## 现在改成彻底分开：金币与数字之间留 35px 空隙，仍保持前后层次
+## （金币 z_index 更高），但不再互相遮挡。
+##
+## 注意：金币不能只往上挪 —— 上方 32px 处就是标题。要让「不重叠 + 整体居中」
+## 同时成立，必须标题上移、金币上移、数字下移三者一起动。
+## 当前排布：标题 240~268 / 金币 296~428 / 字形 463~529，间隙 28 与 35，整块中心 ≈384。
+const SETTLE_CAPTION_Y: float = 240.0    ## 标题 Label 顶边 y
+const SETTLE_COIN_CY: float = 362.0      ## 大金币中心 y
+const SETTLE_NUM_CY: float = 496.0       ## 数字中心 y
 const SETTLE_NUM_H: float = 130.0        ## 数字 Label 高度（用于垂直居中）
 
 ## 接取判定盒（蹦床中心为原点）——与 item.gd 保持一致，玩家直觉一致
@@ -75,6 +83,10 @@ const CATCH_X_PAD: float = 6.0
 
 ## 金币图标复用已有 UI 素材（64×64 真实插画，不另造美术）
 const COIN_TEX: Texture2D = preload("res://assets/pixel/ui/ui_icon_coin.png")
+## 结算画面用的大金币：原生 132px 贴图（tools/make_big_coin.py 生成）。
+## 不能复用上面那张 64px UI 图标 —— 放大 2.06 倍 + canvas 默认 Nearest 过滤
+## 会变成块状马赛克（UI 图标平时都是缩小使用，只有这里被放大）。
+const SETTLE_COIN_TEX: Texture2D = preload("res://assets/props/items/coin_big.png")
 ## Label 在 GameRoot 空间下拿不到 HUD 的 Theme，需自带字体
 ## （Web 导出无系统中文字体，不设会显示成方框）
 const UI_THEME: Theme = preload("res://assets/fonts/ui_theme.tres")
@@ -95,6 +107,7 @@ var _elapsed: float = 0.0
 var _spawn_timer: float = 0.0
 var _sfx_timer: float = 0.0
 var _caught: int = 0
+var _coins_gained: int = 0     ## 本次已累计的真实入账金币（= 所有飘字之和），结算就报它
 var _pop_index: int = 0
 var _settle_elapsed: float = 0.0
 var _settle_locked: bool = false
@@ -248,10 +261,11 @@ func _catch_coin(coin: Coin) -> void:
 	coin.vy = CATCH_BOUNCE_VY
 	coin.vx *= 0.35  # 收一下横向速度，回弹更「直上直下」好辨认
 	_caught += 1
-	# 跳字：纯动画表现，按连击递增（POP_SERIES），不影响实际结算
-	var shown: int = POP_SERIES[mini(_pop_index, POP_SERIES.size() - 1)]
+	# 飘字 = 这一枚真实入账的金币数；结算总量就是它们的和，不会对不上
+	var gain: int = POP_SERIES[mini(_pop_index, POP_SERIES.size() - 1)]
 	_pop_index += 1
-	FloatText.spawn(self, coin.global_position, "+%d" % shown, POP_COLOR, POP_FONT_SIZE)
+	_coins_gained += gain
+	FloatText.spawn(self, coin.global_position, "+%d" % gain, POP_COLOR, POP_FONT_SIZE)
 	if _sfx_timer <= 0.0:
 		_sfx_timer = SFX_CD
 		Sfx.play("sfx_coin")
@@ -293,7 +307,8 @@ func _refresh_label() -> void:
 	if _label == null:
 		return
 	var left: int = int(ceil(DURATION - _elapsed))
-	_label.text = "金币雨 %d 秒 ｜ 已接 %d 枚" % [maxi(left, 0), _caught]
+	# 同时显示枚数与累计金币：让玩家在雨里就能看到最终会结算多少，和结算数字对得上
+	_label.text = "金币雨 %d 秒 ｜ %d 枚 · +%d 金币" % [maxi(left, 0), _caught, _coins_gained]
 
 
 # ===== 结算演出 =====
@@ -358,8 +373,8 @@ func _build_settle() -> void:
 	# 大金币：z_index 更高 = 在前面
 	_settle_coin = Sprite2D.new()
 	_settle_coin.name = "SettleCoin"
-	_settle_coin.texture = COIN_TEX
-	var s: float = BIG_COIN_SIZE / float(COIN_TEX.get_width())
+	_settle_coin.texture = SETTLE_COIN_TEX
+	var s: float = BIG_COIN_SIZE / float(SETTLE_COIN_TEX.get_width())
 	_settle_coin.scale = Vector2(s, s)
 	_settle_coin.position = Vector2(cx, SETTLE_COIN_CY)
 	_settle_coin.z_index = 2
@@ -375,7 +390,7 @@ func _build_settle() -> void:
 ## 数值快速滚动 → 到点定格
 func _process_settle(delta: float) -> void:
 	_settle_elapsed += delta
-	var total: int = _caught * COIN_COIN
+	var total: int = _coins_gained  # 结算数字 = 雨里所有飘字之和
 
 	if _settle_elapsed < SETTLE_ROLL:
 		# 先快后慢（三次方缓出），收尾那段慢下来才有「要停住了」的期待感
@@ -406,7 +421,7 @@ func _lock_settle(total: int) -> void:
 		punch.tween_property(_settle_num, "scale", Vector2(1.0, 1.0), 0.20) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	if _settle_coin != null:
-		var s: float = BIG_COIN_SIZE / float(COIN_TEX.get_width())
+		var s: float = BIG_COIN_SIZE / float(SETTLE_COIN_TEX.get_width())
 		var pulse: Tween = create_tween()
 		pulse.tween_property(_settle_coin, "scale", Vector2(s * 1.18, s * 1.18), 0.14) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -424,5 +439,5 @@ func _finish() -> void:
 	if _finished:
 		return
 	_finished = true
-	finished.emit(_caught, _caught * COIN_COIN, _caught * COIN_SCORE)
+	finished.emit(_caught, _coins_gained, _coins_gained * COIN_SCORE)
 	queue_free()
